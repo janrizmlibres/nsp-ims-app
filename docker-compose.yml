@@ -1,0 +1,61 @@
+version: "3"
+services:
+  backend:
+    build: backend
+    develop:
+      watch:
+        - action: sync
+          path: backend/
+          target: /app
+          ignore:
+            - backend/node_modules/
+        - action: rebuild
+          path: backend/package.json
+    environment:
+      - DATABASE_DB=nsp_db
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=#NSP_2024
+      - DATABASE_HOST=db
+    ports:
+      - 8080:8080
+    networks:
+      - public
+      - private
+    depends_on:
+      - db
+  db:
+    image: "mariadb:10.11"
+    restart: always
+    container_name: db
+    environment:
+      - MYSQL_DATABASE=nsp_db
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=#NSP_2024
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - private
+  frontend:
+    build: frontend
+    develop:
+      watch:
+        - action: sync
+          path: frontend/
+          target: /app
+          ignore:
+            - frontend/node_modules/
+        - action: rebuild
+          path: frontend/package.json
+    ports:
+      - "3000:3000"
+    networks:
+      - public
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
+networks:
+  public:
+  private:
