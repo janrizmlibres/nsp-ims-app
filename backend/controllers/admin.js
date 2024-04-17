@@ -8,6 +8,9 @@ export async function getAllStaff(req, res, next) {
       staffs: allStaff,
     });
   } catch (error) {
-    console.log(error);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 }

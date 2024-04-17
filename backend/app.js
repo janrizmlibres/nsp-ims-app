@@ -18,7 +18,14 @@ app.use((req, res, next) => {
 app.use("/admin", adminRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Please enter a valid endpoint.");
+});
+
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500;
+  const message = error.message;
+  res.status(status).json({ message: message });
 });
 
 try {
