@@ -1,3 +1,13 @@
+import Staff from "../models/staff.js";
+
 export async function getAllStaff(req, res, next) {
-  res.send("List of all staff here!");
+  try {
+    const allStaff = await Staff.findAll();
+    res.status(200).json({
+      message: "Fetched all staff successfully.",
+      staffs: allStaff,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }

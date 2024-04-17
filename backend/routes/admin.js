@@ -3,6 +3,6 @@ import * as adminController from "../controllers/admin.js";
 
 const router = express.Router();
 
-router.get("/staff", adminController.getAllStaff);
+router.get("/all-staff", adminController.getAllStaff);
 
 export default router;
