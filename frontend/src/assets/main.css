@@ -27,3 +27,17 @@
   --surface-900: 15 23 42;
   --surface-950: 3 6 23;
 }
+
+@layer utilities {
+  .u-bg-primary {
+    background-color: rgba(238, 238, 238, 1);
+  }
+
+  .u-text-blue {
+    color: rgb(38, 84, 146, 1);
+  }
+
+  .u-tab-border-blue {
+    border-color: rgb(38, 84, 146, 1);
+  }
+}
