@@ -5,7 +5,7 @@
 <template>
   <div class="leftSide">
     <img src="@/assets/login/logo.png" alt="logo" class="loginLogo" />
-    <p class="logoText">ENROLLMENT & INFORMATION<br />MANAGEMENT SYSTEM</p>
+    <p class="logoText">INFORMATION<br />MANAGEMENT SYSTEM</p>
   </div>
 </template>
 
