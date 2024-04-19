@@ -9,89 +9,114 @@ import { ref } from "vue";
 
 const items = ref([
     {
-        label: 'Dashboard'
+        label: 'Dashboard',
+        icon: 'fa fa-chart-simple'
     },
     {
         label: 'Student Management',
+        icon: 'fa fa-id-card',
         items: [
             {
-                label: 'Student Records'
+                label: 'Student Records',
+                icon: 'fa fa-address-book'
             },
             {
-                label: 'Student Requirements'
+                label: 'Student Requirements',
+                icon: 'fa fa-list-check'
             },
             {
-                label: 'Admit Students'
+                label: 'Admit Students',
+                icon: 'fa fa-user-plus'
             }
         ]
     },
     {
         label: 'Enrollment Management',
+        icon: 'fa fa-school',
         items: [
             {
-                label: 'Active Academic Year'
+                label: 'Active Academic Year',
+                icon: 'fa fa-calendar-week'
             },
             {
-                label: 'Enrollment History'
+                label: 'Enrollment History',
+                icon: 'fa fa-scroll'
             },
             {
-                label: 'Enroll Students'
+                label: 'Enroll Students',
+                icon: 'fa fa-school-flag'
             }
         ]
     },
     {
         label: 'Volunteer Management',
+        icon: 'fa fa-users',
         items: [
             {
-                label: 'Volunteer Records'
+                label: 'Volunteer Records',
+                icon: 'fa fa-address-book'
             },
             {
-                label: 'Admit Volunteers'
+                label: 'Admit Volunteers',
+                icon: 'fa fa-user-plus'
             },
         ]
     },
     {
         label: 'Class Management',
+        icon: 'fa fa-book-open',
         items: [
             {
-                label: 'Active Classes'
+                label: 'Active Classes',
+                icon: 'fa fa-book-bookmark'
             },
             {
-                label: 'Class History'
+                label: 'Class History',
+                icon: 'fa fa-scroll'
             },
             {
-                label: 'Create Class'
+                label: 'Create Class',
+                icon: 'fa fa-book-medical'
             }
         ]
     },
     {
-        label: 'Term Management'
+        label: 'Term Management',
+        icon: 'fa fa-calendar-days'
     },
     {
-        label: 'Learning Strand Management'
+        label: 'Learning Strand Management',
+        icon: 'fa fa-book'
     },
     {
-        label: 'Student Requirement Management'
+        label: 'Student Requirement Management',
+        icon: 'fa fa-list'
     },
     {
         label: 'Staff Management',
+        icon: 'fa fa-user',
         items: [
             {
-                label: 'Staff Records'
+                label: 'Staff Records',
+                icon: 'fa fa-address-book'
             },
             {
-                label: 'Staff Permissions'
+                label: 'Staff Permissions',
+                icon: 'fa fa-shield-halved'
             }
         ]
     },
     {
         label: 'Utilities',
+        icon: 'fa fa-gear',
         items: [
             {
-                label: 'Generate Reports'
+                label: 'Generate Reports',
+                icon: 'fa fa-note-sticky'
             },
             {
-                label: 'Audit Trails'
+                label: 'Audit Trails',
+                icon: 'fa fa-clock-rotate-left'
             }
         ]
     },
