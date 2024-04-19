@@ -1,29 +1,13 @@
-<script>
+<script setup>
 import TabMenu from 'primevue/tabmenu'
 import Card from 'primevue/card'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
+import TheTable from '@/components/TheTable.vue'
 
-export default {
-  data() {
-    return {
-      items: [{ label: 'Staffs' }, { label: 'Permissions' }],
-      students: [
-        {
-          userId: '52513',
-          fullName: 'Janriz Libres',
-          position: 'Social Media Manager'
-        },
-        {
-          userId: '52514',
-          fullName: 'Nazib Dimal',
-          position: 'Lead Engineer'
-        }
-      ]
-    }
-  },
-  components: { TabMenu, Card, DataTable, Column }
-}
+import { ref } from 'vue'
+
+const items = [{ label: 'Staffs' }, { label: 'Permissions' }]
+const content = ref('the-table')
+const componentMap = { 'the-table': TheTable }
 </script>
 
 <template>
@@ -44,12 +28,11 @@ export default {
           }"
           :pt-options="{ mergeProps: true }"
         />
-        <DataTable :value="students">
-          <Column field="userId" header="User ID"></Column>
-          <Column field="fullName" header="Full Name"></Column>
-          <Column field="position" header="Position"></Column>
-        </DataTable>
+        <component :is="componentMap[content]"></component>
       </template>
     </Card>
+    <div class="pl-8 pt-2">
+      <p>Record(s) count: 1</p>
+    </div>
   </div>
 </template>
