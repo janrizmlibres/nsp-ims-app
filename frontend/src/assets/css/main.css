@@ -34,6 +34,8 @@
   --active-text: #3C4043;
   --inactive-text: #B1B7BB;
   --main-bg-color: #EEEEEE;
+
+  --p-txt-size: 1rem;
 }
 
 @font-face {
