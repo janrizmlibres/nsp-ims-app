@@ -2,22 +2,7 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
-import { ref } from 'vue'
-
-const students = ref([
-  {
-    userId: '52513',
-    fullName: 'Janriz Libres',
-    position: 'Social Media Manager'
-  },
-  {
-    userId: '52514',
-    fullName: 'Nazib Dimal',
-    position: 'Lead Engineer'
-  }
-])
-
-// const selectedStudent = ref()
+defineProps(['students'])
 </script>
 
 <template>
@@ -27,10 +12,11 @@ const students = ref([
     :pt="{ column: { headercell: 'bg-white' } }"
     :pt-options="{ mergeProps: true }"
   >
-    <!-- <Column selectionMode="multiple" headerStyle="width: 3rem"></Column> -->
     <Column header="">
       <template #body>
-        <h1>Foo</h1>
+        <a href="#">
+          <h1>View</h1>
+        </a>
       </template>
     </Column>
     <Column field="userId" header="User ID" sortable></Column>
