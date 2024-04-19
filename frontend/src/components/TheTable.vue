@@ -15,7 +15,7 @@ defineProps(['students'])
     <Column header="">
       <template #body>
         <a href="#">
-          <h1>View</h1>
+          <h1>Edit</h1>
         </a>
       </template>
     </Column>

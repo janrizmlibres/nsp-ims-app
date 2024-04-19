@@ -40,4 +40,8 @@
   .u-tab-border-blue {
     border-color: rgb(38, 84, 146, 1);
   }
+
+  .u-txt-pcolor {
+    color: rgba(60, 64, 67, 1);
+  }
 }

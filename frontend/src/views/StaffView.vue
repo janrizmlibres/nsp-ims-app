@@ -1,27 +1,8 @@
-<script setup>
-import TabView from 'primevue/tabview'
-import TabPanel from 'primevue/tabpanel'
-import Card from 'primevue/card'
-import TheTable from '@/components/TheTable.vue'
-
-import { ref } from 'vue'
-
-const students = ref([
-  {
-    userId: '52513',
-    fullName: 'Janriz Libres',
-    position: 'Social Media Manager'
-  },
-  {
-    userId: '52514',
-    fullName: 'Nazib Dimal',
-    position: 'Lead Engineer'
-  }
-])
-</script>
-
 <template>
   <div class="h-screen p-12">
+    <div>
+      
+    </div>
     <Card :pt="{ content: '' }" class="h-full rounded-[5px]">
       <template #content>
         <TabView>
@@ -29,14 +10,7 @@ const students = ref([
             <TheTable :students="students" />
           </TabPanel>
           <TabPanel header="Permissions">
-            <p class="m-0">
-              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-              laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-              architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas
-              sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione
-              voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-              modi.
-            </p>
+            <ThePermissions :students="students" />
           </TabPanel>
         </TabView>
       </template>
@@ -46,3 +20,37 @@ const students = ref([
     </div>
   </div>
 </template>
+
+<script setup>
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import Card from 'primevue/card'
+
+import TheTable from '@/components/TheTable.vue'
+import ThePermissions from '@/components/ThePermissions.vue'
+
+import { ref } from 'vue'
+
+const students = ref([
+  {
+    userId: '52513',
+    fullName: 'Janriz Libres',
+    position: 'Social Media Manager',
+    canAddStuds: false,
+    canEnroll: false,
+    canUpdateStuds: false,
+    canGrade: false,
+    canAttendance: false
+  },
+  {
+    userId: '52514',
+    fullName: 'Nazib Dimal',
+    position: 'Lead Engineer',
+    canAddStuds: false,
+    canEnroll: false,
+    canUpdateStuds: false,
+    canGrade: false,
+    canAttendance: false
+  }
+])
+</script>
