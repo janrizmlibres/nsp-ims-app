@@ -1,18 +1,21 @@
 <script setup>
-import Button from 'primevue/button'
+import { RouterLink, RouterView } from 'vue-router'
+
+import Sidebar from './components/Sidebar.vue'
+import Navbar from './components/Navbar.vue'
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faEnvelope } from '@fortawesome/free-regular-svg-icons'
 </script>
 
 <template>
-  <div class="p-4">
-    <!-- Example PrimeVue component -->
-    <Button label="Submit" />
-
-    <!-- Example element styled with Tailwind -->
-    <h1 class="text-3xl font-bold underline">Hello world!</h1>
-
-    <!-- Example icon from Font Awesome -->
-    <FontAwesomeIcon :icon="faEnvelope" size="lg" />
+  <Sidebar />
+  <div class="w-full h-full fixed left-72 p-4">
+    <Navbar />
+    <RouterView class="h-full pt-4"/>
   </div>
 </template>
+
+<style>
+
+</style>
