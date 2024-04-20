@@ -2,16 +2,20 @@
 <script setup>
 
 import Button from 'primevue/button';
-import TieredMenu from 'primevue/tieredmenu';
 import Divider from 'primevue/divider';
 import PanelMenu from 'primevue/panelmenu';
 
 import { ref } from "vue";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const items = ref([
     {
         label: 'Dashboard',
-        icon: 'fa fa-chart-simple relative'
+        icon: 'fa fa-home',
+        route: '/'
+
     },
     {
         label: 'Student Management',
@@ -20,17 +24,17 @@ const items = ref([
             {
                 label: 'Student Records',
                 icon: 'fa fa-address-book',
-                route: ''
+                route: '/student-records'
             },
             {
                 label: 'Student Requirements',
                 icon: 'fa fa-list-check',
-                route: ''
+                route: '/student-requirements'
             },
             {
                 label: 'Admit Students',
                 icon: 'fa fa-user-plus',
-                route: ''
+                route: '/admit-students'
             }
         ]
     },
@@ -41,17 +45,17 @@ const items = ref([
             {
                 label: 'Active Academic Year',
                 icon: 'fa fa-calendar-week',
-                route: ''
+                route: '/active-academic-year'
             },
             {
                 label: 'Enrollment History',
                 icon: 'fa fa-scroll',
-                route: ''
+                route: '/enrollment-history'
             },
             {
                 label: 'Enroll Students',
                 icon: 'fa fa-school-flag',
-                route: ''
+                route: '/enroll-students'
             }
         ]
     },
@@ -62,12 +66,12 @@ const items = ref([
             {
                 label: 'Volunteer Records',
                 icon: 'fa fa-address-book',
-                route: ''
+                route: '/volunteer-records'
             },
             {
                 label: 'Admit Volunteers',
                 icon: 'fa fa-user-plus',
-                route: ''
+                route: '/admit-volunteers'
             },
         ]
     },
@@ -78,34 +82,34 @@ const items = ref([
             {
                 label: 'Active Classes',
                 icon: 'fa fa-book-bookmark',
-                route: ''
+                route: '/active-classes'
             },
             {
                 label: 'Class History',
                 icon: 'fa fa-scroll',
-                route: ''
+                route: '/class-history'
             },
             {
-                label: 'Create Class',
+                label: 'Create Classes',
                 icon: 'fa fa-book-medical',
-                route: ''
+                route: '/create-classes'
             }
         ]
     },
     {
         label: 'Term Management',
         icon: 'fa fa-calendar-days',
-        route: ''
+        route: '/term-management'
     },
     {
         label: 'Learning Strand Management',
         icon: 'fa fa-book',
-        route: ''
+        route: '/learning-strand-management'
     },
     {
-        label: 'Student Requirement Management',
+        label: 'Student Requirements Management',
         icon: 'fa fa-list',
-        route: ''
+        route: '/student-requirements-management'
     },
     {
         label: 'Staff Management',
@@ -114,12 +118,12 @@ const items = ref([
             {
                 label: 'Staff Records',
                 icon: 'fa fa-address-book',
-                route: ''
+                route: '/staff-records'
             },
             {
                 label: 'Staff Permissions',
                 icon: 'fa fa-shield-halved',
-                route: ''
+                route: '/staff-permissions'
             }
         ]
     },
@@ -130,12 +134,12 @@ const items = ref([
             {
                 label: 'Generate Reports',
                 icon: 'fa fa-note-sticky',
-                route: ''
+                route: '/generate-reports'
             },
             {
                 label: 'Audit Trails',
                 icon: 'fa fa-clock-rotate-left',
-                route: ''
+                route: '/audit-trails'
             }
         ]
     },
@@ -143,9 +147,9 @@ const items = ref([
 </script>
 
 <template>
-    <div class="z-auto fixed h-full w-80 pl-4 py-4">
+    <div class="z-50 fixed h-full w-80 pl-4 py-4">
         <div class="flex flex-col rounded-xl h-full min-w-[12rem] py-1 u-bg-pcolor dark:bg-surface-700 border border-surface-200 dark:border-surface-700 text-white shadow-lg">
-            <Card>
+            <div>
                 <span class="inline-flex items-center gap-4 px-6 pt-4">
                     <Button icon="fa fa-bars" class="w-8 h-8 u-bg-scolor"
                     :pt="{
@@ -171,7 +175,7 @@ const items = ref([
                 <div class="px-4">
                     <Divider />
                 </div>
-            </Card>
+            </div>
             <PanelMenu class="w-full h-full md:w-20rem overflow-y-auto mb-4"
             :model="items"
             :pt="{
@@ -181,8 +185,7 @@ const items = ref([
                 header: {
                     class: ['rounded-md', 'outline-none', 'focus-visible:outline-none focus-visible:outline-offset-0 focus-visible:ring focus-visible:ring-primary-400/50 dark:focus-visible:ring-primary-300/50']
                 },
-                headercontent: ({ context, instance }) => {
-                    var _a, _b;
+                headercontent: ({ context }) => {
                     return {
                     class: [
                         // Color
@@ -253,22 +256,30 @@ const items = ref([
                     enterToClass: 'max-h-[1000px]',
                     leaveFromClass: 'max-h-[1000px]',
                     leaveActiveClass: 'overflow-hidden transition-[max-height] duration-[450ms] ease-[cubic-bezier(0,1,0,1)]',
-                    leaveToClass: 'max-h-0'
+                    leaveToClass: 'max-h-0',
+                    
                 }
             }">
                 <template #item="{ item, props, hasSubmenu, active }">
-                    <a v-ripple class="flex items-center px-6 py-3" v-bind="props.action">
+                    <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+                        <a v-ripple class="flex items-center px-6 py-3" v-bind="props.action" :href="href" @click="navigate">
+                            <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
+                                <span :class="item.icon" class="fa-lg text-white"/>
+                            </span>
+                            <span class="ml-4">{{ item.label }}</span>
+                        </a>
+                    </router-link> 
+                    <a v-else v-ripple class="flex items-center px-6 py-3" v-bind="props.action" :href="item.url" :target="item.target">
                         <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
                             <span :class="item.icon" class="fa-lg text-white"/>
                         </span>
                         <span class="ml-4">{{ item.label }}</span>
-                        <span v-if="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{ item.shortcut }}</span>
                         <i v-if="hasSubmenu && !active" class="pi pi-angle-right ml-auto"></i>
-                        <i v-if="hasSubmenu && active" class="pi pi-angle-down ml-auto"></i>
-                    </a>
+                        <i v-else class="pi pi-angle-down ml-auto"></i>
+                    </a>   
                 </template>
             </PanelMenu>
-            <Card>
+            <div>
                 <div class="px-4">
                     <Divider />
                 </div>
@@ -296,7 +307,7 @@ const items = ref([
                         </Button>
                     </span>
                 </div>
-            </Card>
+            </div>
         </div>
         
     </div>
