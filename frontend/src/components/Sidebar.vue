@@ -6,32 +6,34 @@ import Divider from 'primevue/divider';
 import PanelMenu from 'primevue/panelmenu';
 
 import { ref } from "vue";
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
 
 const items = ref([
     {
+        key: '1',
         label: 'Dashboard',
         icon: 'fa fa-home',
         route: '/'
 
     },
     {
+        key: '2',
         label: 'Student Management',
         icon: 'fa fa-id-card',
         items: [
             {
+                key: '2-1',
                 label: 'Student Records',
                 icon: 'fa fa-address-book',
                 route: '/student-records'
             },
             {
+                key: '2-2',
                 label: 'Student Requirements',
                 icon: 'fa fa-list-check',
                 route: '/student-requirements'
             },
             {
+                key: '2-3',
                 label: 'Admit Students',
                 icon: 'fa fa-user-plus',
                 route: '/admit-students'
@@ -39,20 +41,24 @@ const items = ref([
         ]
     },
     {
+        key: '3',
         label: 'Enrollment Management',
         icon: 'fa fa-school',
         items: [
             {
+                key: '3-1',
                 label: 'Active Academic Year',
                 icon: 'fa fa-calendar-week',
                 route: '/active-academic-year'
             },
             {
+                key: '3-2',
                 label: 'Enrollment History',
                 icon: 'fa fa-scroll',
                 route: '/enrollment-history'
             },
             {
+                key: '3-3',
                 label: 'Enroll Students',
                 icon: 'fa fa-school-flag',
                 route: '/enroll-students'
@@ -60,15 +66,18 @@ const items = ref([
         ]
     },
     {
+        key: '4',
         label: 'Volunteer Management',
         icon: 'fa fa-users',
         items: [
             {
+                key: '4-1',
                 label: 'Volunteer Records',
                 icon: 'fa fa-address-book',
                 route: '/volunteer-records'
             },
             {
+                key: '4-2',
                 label: 'Admit Volunteers',
                 icon: 'fa fa-user-plus',
                 route: '/admit-volunteers'
@@ -76,20 +85,24 @@ const items = ref([
         ]
     },
     {
+        key: '5',
         label: 'Class Management',
         icon: 'fa fa-book-open',
         items: [
             {
+                key: '5-1',
                 label: 'Active Classes',
                 icon: 'fa fa-book-bookmark',
                 route: '/active-classes'
             },
             {
+                key: '5-2',
                 label: 'Class History',
                 icon: 'fa fa-scroll',
                 route: '/class-history'
             },
             {
+                key: '5-3',
                 label: 'Create Classes',
                 icon: 'fa fa-book-medical',
                 route: '/create-classes'
@@ -97,30 +110,36 @@ const items = ref([
         ]
     },
     {
+        key: '6',
         label: 'Term Management',
         icon: 'fa fa-calendar-days',
         route: '/term-management'
     },
     {
+        key: '7',
         label: 'Learning Strand Management',
         icon: 'fa fa-book',
         route: '/learning-strand-management'
     },
     {
+        key: '8',
         label: 'Student Requirements Management',
         icon: 'fa fa-list',
         route: '/student-requirements-management'
     },
     {
+        key: '9',
         label: 'Staff Management',
         icon: 'fa fa-user',
         items: [
             {
+                key: '9-1',
                 label: 'Staff Records',
                 icon: 'fa fa-address-book',
                 route: '/staff-records'
             },
             {
+                key: '9-2',
                 label: 'Staff Permissions',
                 icon: 'fa fa-shield-halved',
                 route: '/staff-permissions'
@@ -128,15 +147,18 @@ const items = ref([
         ]
     },
     {
+        key: '10',
         label: 'Utilities',
         icon: 'fa fa-gear',
         items: [
             {
+                key: '10-1',
                 label: 'Generate Reports',
                 icon: 'fa fa-note-sticky',
                 route: '/generate-reports'
             },
             {
+                key: '10-2',
                 label: 'Audit Trails',
                 icon: 'fa fa-clock-rotate-left',
                 route: '/audit-trails'
@@ -144,87 +166,80 @@ const items = ref([
         ]
     },
 ]);
+
+const expandedKeys = ref({});
+const collapseAll = () => {
+    expandedKeys.value = {};
+};
+
+const isExpanded = ref(true)
+const ToggleMenu = () => {
+    isExpanded.value = !isExpanded.value
+}
 </script>
 
 <template>
-    <div class="z-50 fixed h-full w-80 pl-4 py-4">
-        <div class="flex flex-col rounded-xl h-full min-w-[12rem] py-1 u-bg-pcolor dark:bg-surface-700 border border-surface-200 dark:border-surface-700 text-white shadow-lg">
-            <div>
-                <span class="inline-flex items-center gap-4 px-6 pt-4">
-                    <Button icon="fa fa-bars" class="w-8 h-8 u-bg-scolor"
-                    :pt="{
-                        root: ({ props }) => ({
-                            class: [
-                                {
-                                    'text-white dark:text-surface-900': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                                    'u-bg-scolor dark:bg-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                                    'border-none dark:border-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
-                                },
-                                { 'hover:u-bg-pcolor-darker dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
-                                { 'focus:u-ring-scolor dark:focus:ring-primary-300/50': props.severity === null },
-                            ]
-                        })
-                    }"
-                    :pt-options="{mergeProps:true}">
-
-                    </Button>
-                    <span class="text-lg">
-                        Menu
-                    </span>
-                </span>
-                <div class="px-4">
-                    <Divider />
-                </div>
+    <div class="left-0 shadow-xl fixed inset-y-0 w-full !u-sidebar-max-w z-50 transition-all duration-100 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none" :class="`${ isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'}`">
+        <div class="flex flex-col h-full text-surface-100 u-sidebar-pl">
+            <div class="px-6 py-6 block text-white whitespace-nowrap" :class="`${isExpanded ? 'flex justify-between' : ''}`">
+                <span class="text-3xl">{{ isExpanded ? 'Menu' : ''}}</span>
+                <Button type="button" icon="fa fa-bars" class="w-8 h-8" @click="ToggleMenu"
+                :pt="{
+                    root: ({ props }) => ({
+                        class: [
+                            // Colors
+                            {
+                                'text-surface-100': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                                'u-bg-scolor': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                                'border-none': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+                            },
+                            // States
+                            { 'hover:u-bg-pcolor-darker dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
+                            { 'focus:u-ring-scolor dark:focus:ring-primary-300/50': props.severity === null },
+                        ]
+                    })
+                }"
+                :pt-options="{mergeProps:true, mergeSections:true}">
+                </Button>
             </div>
-            <PanelMenu class="w-full h-full md:w-20rem overflow-y-auto mb-4"
+            <div class="border-b mx-6 mr-8"></div>
+            <PanelMenu class="h-full overflow-y-auto mb-4"
+            v-model:expandedKeys="expandedKeys"
             :model="items"
             :pt="{
+                root: {
+                    class: 'my-4'
+                },
                 panel: {
                     class: 'text-sm'
                 },
-                header: {
-                    class: ['rounded-md', 'outline-none', 'focus-visible:outline-none focus-visible:outline-offset-0 focus-visible:ring focus-visible:ring-primary-400/50 dark:focus-visible:ring-primary-300/50']
-                },
-                headercontent: ({ context }) => {
+                headercontent: ({ context, item }) => {
                     return {
                     class: [
                         // Color
                         'border-none',
-                        'bg-transparent dark:bg-surface-800',
-                        'text-white dark:text-surface-0/80',
-                        { 'u-bg-pcolor-darker': context.active },
+                        'u-bg-pcolor',
+                        'text-surface-100',
                         // States
-                        {
-                            'hover:u-bg-pcolor-darker text-white dark:hover:bg-surface-600/80': !context.active,
-                            'hover:u-bg-pcolor-2 dark:hover:bg-primary-300/30 dark:text-surface-0/80': context.active
-                        },
+                        'hover:bg-surface-100',
+                        'hover:u-txt-active', 
                         // Transition
                         'transition duration-200 ease-in-out',
-                        'transition-shadow duration-200',
-                        'transition-shadow'
+                        'transition-shadow duration-200'
                     ]
                     };
                 },
                 headeraction: {
-                    class: ['relative', 'flex', 'items-center', 'py-3', 'px-5', 'dark:text-white/80', 'no-underline', 'overflow-hidden', 'cursor-pointer', 'select-none']
-                },
-                headerlabel: {
-                    class: 'leading-none'
-                },
-                headerIcon: {
-                    class: 'mr-2'
-                },
-                submenuicon: {
-                    class: 'mr-2'
+                    class: ['relative', 'leading-none', 'flex items-center', 'p-5', 'select-none cursor-pointer no-underline']
                 },
                 menucontent: {
-                    class: ['border-none', 'rounded-t-none', 'text-surface-700 dark:text-white/80', 'u-bg-pcolor-2 dark:bg-surface-800', 'border-surface-200 dark:border-surface-700']
+                    class: ['border-none', 'rounded-t-none', 'u-bg-pcolor-2']
                 },
                 menu: {
                     class: ['outline-none', 'm-0 p-0 list-none']
                 },
                 content: {
-                    class: ['border-none rounded-none', 'text-surface-700 dark:text-white/80', 'transition-shadow duration-200']
+                    class: ['border-none rounded-none', 'transition-shadow duration-200']
                 },
                 action: ({ context }) => ({
                     class: [
@@ -234,11 +249,11 @@ const items = ref([
                     // Flex & Alignments
                     'flex items-center',
                     // Spacing
-                    'py-3 pl-10',
+                    isExpanded ? 'pl-10' : '',
                     // Color
-                    'text-white dark:text-white/80',
+                    'text-surface-100',
                     // States
-                    'hover:bg-surface-200/80 dark:hover:bg-surface-700/80 hover:u-txt-active dark:hover:text-white/80',
+                    'hover:bg-surface-100 hover:u-txt-active',
                     // Misc
                     'cursor-pointer no-underline',
                     'select-none overflow-hidden'
@@ -262,54 +277,49 @@ const items = ref([
             }">
                 <template #item="{ item, props, hasSubmenu, active }">
                     <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-                        <a v-ripple class="flex items-center px-6 py-3" v-bind="props.action" :href="href" @click="navigate">
-                            <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
-                                <span :class="item.icon" class="fa-lg text-white"/>
-                            </span>
-                            <span class="ml-4">{{ item.label }}</span>
+                        <a v-ripple v-bind="props.action" :href="href" @click="navigate">
+                            <div class="px-6 py-3" @click="collapseAll" :class="`${isExpanded ? 'flex items-center' : ''}`">
+                                <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
+                                    <span :class="item.icon" class="fa-lg text-surface-100" />
+                                </span>
+                                <span :class="`${ isExpanded ? 'ml-4' : ''}`">{{ isExpanded ? item.label : '' }}</span>
+                            </div>
                         </a>
                     </router-link> 
                     <a v-else v-ripple class="flex items-center px-6 py-3" v-bind="props.action" :href="item.url" :target="item.target">
                         <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
-                            <span :class="item.icon" class="fa-lg text-white"/>
+                            <span :class="item.icon" class="fa-lg text-surface-100" />
                         </span>
-                        <span class="ml-4">{{ item.label }}</span>
-                        <i v-if="hasSubmenu && !active" class="pi pi-angle-right ml-auto"></i>
-                        <i v-else class="pi pi-angle-down ml-auto"></i>
+                        <span :class="`${ isExpanded ? 'ml-4' : ''}`">{{ isExpanded ? item.label : '' }}</span>
+                        <i v-if="hasSubmenu && !active" :class="`${ isExpanded ? 'pi pi-angle-right ml-auto' : ''}`"></i>
+                        <i v-else :class="`${ isExpanded ? 'pi pi-angle-down ml-auto' : ''}`"></i>
                     </a>   
                 </template>
             </PanelMenu>
-            <div>
-                <div class="px-4">
-                    <Divider />
+            <div class="border-t mx-6 mr-8"></div>
+            <div class="px-6 pr-8 py-6 items-center text-surface-100 whitespace-nowrap" :class="`${isExpanded ? 'flex justify-between' : ''}`">
+                <div class="flex flex-col">
+                    <span>{{ isExpanded ? 'Account Name' : ''}}</span>
+                    <span class="text-sm">{{ isExpanded ? 'Role' : ''}}</span>
                 </div>
-                <div class="flex flex-row justify-between items-center px-6 pb-4">
-                    <div class="flex flex-col">
-                        <span class="inline-flex justify-between items-center gap-1">Account Name</span>
-                        <span class="inline-flex justify-between items-center gap-1 text-sm">Role</span>
-                    </div>
-                    <span>
-                        <Button icon="fa fa-right-from-bracket" class="w-8 h-8"
-                        :pt="{
-                            root: ({ props, context, parent }) => ({
-                                class: [
-                                    {
-                                        'text-white dark:text-surface-900': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                                        'u-bg-scolor dark:bg-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                                        'border-none dark:border-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
-                                    },
-                                    { 'hover:u-bg-red dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
-                                    { 'focus:u-ring-scolor dark:focus:ring-primary-300/50': props.severity === null },
-                                ]
-                            })
-                        }"
-                        :pt-options="{mergeProps:true}">
-                        </Button>
-                    </span>
-                </div>
+                <Button type="button" icon="fa fa-right-from-bracket" :loading="loading" class="w-8 h-8"
+                :pt="{
+                    root: ({ props, context, parent }) => ({
+                        class: [
+                            {
+                                'text-white dark:text-surface-900': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                                'u-bg-scolor dark:bg-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                                'border-none dark:border-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+                            },
+                            { 'hover:u-bg-red dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
+                            { 'focus:u-ring-scolor dark:focus:ring-primary-300/50': props.severity === null },
+                        ]
+                    })
+                }"
+                :pt-options="{mergeProps:true}">
+                </Button>
             </div>
         </div>
-        
     </div>
 </template>
 
