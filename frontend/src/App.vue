@@ -9,11 +9,7 @@ import { faEnvelope } from '@fortawesome/free-regular-svg-icons'
 </script>
 
 <template>
-  <Sidebar />
-  <div class="w-full h-full fixed left-72 p-4">
-    <Navbar />
-    <RouterView class="h-full pt-4"/>
-  </div>
+  <RouterView class="h-full pt-4"/>
 </template>
 
 <style>
