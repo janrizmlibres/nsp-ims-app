@@ -144,7 +144,7 @@ const items = ref([
 
 <template>
     <div class="z-auto fixed h-full w-80 pl-4 py-4">
-        <div class="flex flex-col rounded-xl h-full min-w-[12rem] py-1 u-bg-pcolor dark:bg-surface-700 border border-surface-200 dark:border-surface-700 text-white">
+        <div class="flex flex-col rounded-xl h-full min-w-[12rem] py-1 u-bg-pcolor dark:bg-surface-700 border border-surface-200 dark:border-surface-700 text-white shadow-lg">
             <Card>
                 <span class="inline-flex items-center gap-4 px-6 pt-4">
                     <Button icon="fa fa-bars" class="w-8 h-8 u-bg-scolor"
@@ -235,7 +235,7 @@ const items = ref([
                     // Color
                     'text-white dark:text-white/80',
                     // States
-                    'hover:bg-surface-0 dark:hover:bg-surface-700/80 hover:u-txt-active dark:hover:text-white/80',
+                    'hover:bg-surface-200/80 dark:hover:bg-surface-700/80 hover:u-txt-active dark:hover:text-white/80',
                     // Misc
                     'cursor-pointer no-underline',
                     'select-none overflow-hidden'
@@ -256,14 +256,15 @@ const items = ref([
                     leaveToClass: 'max-h-0'
                 }
             }">
-                <template #item="{ item, props, hasSubmenu }">
+                <template #item="{ item, props, hasSubmenu, active }">
                     <a v-ripple class="flex items-center px-6 py-3" v-bind="props.action">
                         <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
                             <span :class="item.icon" class="fa-lg text-white"/>
                         </span>
                         <span class="ml-4">{{ item.label }}</span>
                         <span v-if="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{ item.shortcut }}</span>
-                        <i v-if="hasSubmenu" class="pi pi-angle-right ml-auto"></i>
+                        <i v-if="hasSubmenu && !active" class="pi pi-angle-right ml-auto"></i>
+                        <i v-if="hasSubmenu && active" class="pi pi-angle-down ml-auto"></i>
                     </a>
                 </template>
             </PanelMenu>
