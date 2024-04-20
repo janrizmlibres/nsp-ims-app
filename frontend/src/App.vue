@@ -1,16 +1,19 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import { useSideBarStateStore } from '@/stores/sidebar_state';
 
 import Sidebar from './components/Sidebar.vue'
 import Navbar from './components/Navbar.vue'
+
+const sideBarStateStore = useSideBarStateStore()
 </script>
 
 <template>
   <Sidebar />
-  <div class="flex flex-col w-full h-full fixed pl-96 p-4">
+  <main class="transition-all duration-200 ease-in-out max-h-full h-full relative" :class="`${sideBarStateStore.isExpanded ? 'ml-96' : 'ml-36'}`">
     <Navbar />
-    <RouterView class="w-fullh-full pt-4"/>
-  </div>
+    <RouterView class="w-full h-full pt-4"/>
+  </main>
 </template>
 
 <style>

@@ -5,6 +5,7 @@ import Button from 'primevue/button';
 import Divider from 'primevue/divider';
 import PanelMenu from 'primevue/panelmenu';
 
+import { useSideBarStateStore } from '@/stores/sidebar_state';
 import { ref } from "vue";
 
 const items = ref([
@@ -172,18 +173,15 @@ const collapseAll = () => {
     expandedKeys.value = {};
 };
 
-const isExpanded = ref(true)
-const ToggleMenu = () => {
-    isExpanded.value = !isExpanded.value
-}
+const sideBarStateStore = useSideBarStateStore()
 </script>
 
 <template>
-    <div class="left-0 shadow-xl fixed inset-y-0 w-full !u-sidebar-max-w z-50 transition-all duration-100 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none" :class="`${ isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'}`">
+    <div class="left-0 shadow-xl fixed inset-y-0 w-full !u-sidebar-max-w z-50 transition-all duration-100 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none" :class="`${ sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'}`">
         <div class="flex flex-col h-full text-surface-100 u-sidebar-pl">
-            <div class="px-6 py-6 block text-white whitespace-nowrap" :class="`${isExpanded ? 'flex justify-between' : ''}`">
-                <span class="text-3xl">{{ isExpanded ? 'Menu' : ''}}</span>
-                <Button type="button" icon="fa fa-bars" class="w-8 h-8" @click="ToggleMenu"
+            <div class="px-6 py-6 block text-white whitespace-nowrap" :class="`${sideBarStateStore.isExpanded ? 'flex justify-between' : ''}`">
+                <span class="text-3xl">{{ sideBarStateStore.isExpanded ? 'Menu' : ''}}</span>
+                <Button type="button" icon="fa fa-bars" class="w-8 h-8" @click="sideBarStateStore.changeState()"
                 :pt="{
                     root: ({ props }) => ({
                         class: [
@@ -249,7 +247,7 @@ const ToggleMenu = () => {
                     // Flex & Alignments
                     'flex items-center',
                     // Spacing
-                    isExpanded ? 'pl-10' : '',
+                    sideBarStateStore.isExpanded ? 'pl-10' : '',
                     // Color
                     'text-surface-100',
                     // States
@@ -278,11 +276,11 @@ const ToggleMenu = () => {
                 <template #item="{ item, props, hasSubmenu, active }">
                     <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
                         <a v-ripple v-bind="props.action" :href="href" @click="navigate">
-                            <div class="px-6 py-3" @click="collapseAll" :class="`${isExpanded ? 'flex items-center' : ''}`">
+                            <div class="px-6 py-3" @click="collapseAll" :class="`${sideBarStateStore.isExpanded ? 'flex items-center' : ''}`">
                                 <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
                                     <span :class="item.icon" class="fa-lg text-surface-100" />
                                 </span>
-                                <span :class="`${ isExpanded ? 'ml-4' : ''}`">{{ isExpanded ? item.label : '' }}</span>
+                                <span :class="`${ sideBarStateStore.isExpanded ? 'ml-4' : ''}`">{{ sideBarStateStore.isExpanded ? item.label : '' }}</span>
                             </div>
                         </a>
                     </router-link> 
@@ -290,17 +288,17 @@ const ToggleMenu = () => {
                         <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
                             <span :class="item.icon" class="fa-lg text-surface-100" />
                         </span>
-                        <span :class="`${ isExpanded ? 'ml-4' : ''}`">{{ isExpanded ? item.label : '' }}</span>
-                        <i v-if="hasSubmenu && !active" :class="`${ isExpanded ? 'pi pi-angle-right ml-auto' : ''}`"></i>
-                        <i v-else :class="`${ isExpanded ? 'pi pi-angle-down ml-auto' : ''}`"></i>
+                        <span :class="`${ sideBarStateStore.isExpanded ? 'ml-4' : ''}`">{{ sideBarStateStore.isExpanded ? item.label : '' }}</span>
+                        <i v-if="hasSubmenu && !active" :class="`${ sideBarStateStore.isExpanded ? 'pi pi-angle-right ml-auto' : ''}`"></i>
+                        <i v-else :class="`${ sideBarStateStore.isExpanded ? 'pi pi-angle-down ml-auto' : ''}`"></i>
                     </a>   
                 </template>
             </PanelMenu>
             <div class="border-t mx-6 mr-8"></div>
-            <div class="px-6 pr-8 py-6 items-center text-surface-100 whitespace-nowrap" :class="`${isExpanded ? 'flex justify-between' : ''}`">
+            <div class="px-6 pr-8 py-6 items-center text-surface-100 whitespace-nowrap" :class="`${sideBarStateStore.isExpanded ? 'flex justify-between' : ''}`">
                 <div class="flex flex-col">
-                    <span>{{ isExpanded ? 'Account Name' : ''}}</span>
-                    <span class="text-sm">{{ isExpanded ? 'Role' : ''}}</span>
+                    <span>{{ sideBarStateStore.isExpanded ? 'Account Name' : ''}}</span>
+                    <span class="text-sm">{{ sideBarStateStore.isExpanded ? 'Role' : ''}}</span>
                 </div>
                 <Button type="button" icon="fa fa-right-from-bracket" :loading="loading" class="w-8 h-8"
                 :pt="{
