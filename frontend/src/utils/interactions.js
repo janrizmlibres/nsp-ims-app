@@ -19,7 +19,7 @@
   
     const inputValue = inputElement.value || '';
   
-    if (inputValue.trim() === '' || inputValue === null) {
+    if (inputValue.trim() === '') {
       inputElement.style.borderColor = 'red';
     } else {
       inputElement.style.borderColor = ''; // Reset border color when there is input
