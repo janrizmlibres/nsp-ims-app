@@ -1,12 +1,12 @@
 ﻿export function checkInputEmpty(input) {
-    /*
-    * This is designed to check if an input field is empty or not. 
-    * It takes one argument, input, which can be
-    * either a Vue ref object or a DOM element.
-    * 
-    * @param {VueRefObject | HTMLElement} input - The input field to check
-    * @returns {void}
+    /** 
+     * This is designed to check if an input field is empty or not. 
+     * It takes one argument, input, which can be
+     * either a Vue ref object or a DOM element.
+     * @param {VueRefObject | HTMLElement} input - The input field to check
+     * @returns {void}
     */
+
     let inputElement;
   
     // Check if the input is a Vue ref object
