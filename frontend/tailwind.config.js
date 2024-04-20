@@ -26,8 +26,16 @@ export default {
         'surface-700': 'rgb(var(--surface-700))',
         'surface-800': 'rgb(var(--surface-800))',
         'surface-900': 'rgb(var(--surface-900))',
-        'surface-950': 'rgb(var(--surface-950))'
-      }
+        'surface-950': 'rgb(var(--surface-950))',
+        'u-bg-pcolor': '#265492',
+      },
+      spacing: {
+        '30rem': '30rem',
+        '33rem': '33rem',
+      },
+      letterSpacing: {
+        'ultra': '0.3rem',
+      },
     }
   },
   plugins: []
