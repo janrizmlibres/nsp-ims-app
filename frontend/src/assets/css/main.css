@@ -38,12 +38,20 @@
     background-color: #265492;
   }
 
+  .u-bg-pcolor-2 {
+    background-color: #3569ac;
+  }
+
   .u-bg-pcolor-darker {
     background-color: #1c467e;
   }
 
   .u-bg-scolor {
     background-color: #BF9039;
+  }
+
+  .u-ring-scolor {
+    --tw-ring-color: #c39e5a;
   }
 
   .u-bg-green {
@@ -78,6 +86,28 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #adabab; 
+  border-radius: 50px; /* Round the corners */
+  scrollbar-width: thin; /* Adjust the width */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 
 #app {
