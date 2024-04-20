@@ -70,19 +70,29 @@
     color: #B1B7BB
   }
 
-  .u-bg-main {
-    background-color: #EEEEEE;
+  .u-txt-link {
+    color: #265492;
+  }
+
+  .u-sidebar-pl {
+    padding-left: 0.35rem;
+  }
+
+  .u-sidebar-max-w {
+    max-width: 20rem;
+  }
+
+  .u-sidebar-expanded {
+    width: 20rem;
+  }
+
+  .u-sidebar-collapsed {
+    width: 6rem;
   }
 }
 
 body {
-  display: flex;
-  transition:
-    color 0.5s,
-    background-color 0.5s;
-  line-height: 1.6;
-  font-family:
-    'DM Sans';
+  background-color: #EEEEEE;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -111,5 +121,7 @@ body {
 }
 
 #app {
-  display: flex;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
