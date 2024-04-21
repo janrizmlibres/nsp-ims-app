@@ -177,11 +177,11 @@ const sideBarStateStore = useSideBarStateStore()
 </script>
 
 <template>
-    <div class="left-0 shadow-xl fixed inset-y-0 w-full !u-sidebar-max-w z-50 transition-all duration-100 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none" :class="`${ sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'}`">
-        <div class="flex flex-col h-full text-surface-100 u-sidebar-pl">
-            <div class="px-6 py-6 block text-white whitespace-nowrap" :class="`${sideBarStateStore.isExpanded ? 'flex justify-between' : ''}`">
-                <span class="text-3xl">{{ sideBarStateStore.isExpanded ? 'Menu' : ''}}</span>
-                <Button type="button" icon="fa fa-bars" class="w-8 h-8" @click="sideBarStateStore.changeState()"
+    <div class="left-0 shadow-xl fixed inset-y-0 w-full !u-sidebar-max-w z-50 transition-all duration-500 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none" :class="`${ sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'}`">
+        <div class="flex flex-col h-full text-surface-100">
+            <div class="p-5 text-surface-100 whitespace-nowrap u-sidebar-header">
+                <span class="text-3xl u-sidebar-header-text">Menu</span>
+                <Button v-if="sideBarStateStore.isPinned" icon="fa fa-chevron-left" type="button" class="w-8 h-8" @click="collapseAll(); sideBarStateStore.changePinnedState(); sideBarStateStore.changeExpansionState()"
                 :pt="{
                     root: ({ props }) => ({
                         class: [
@@ -192,16 +192,34 @@ const sideBarStateStore = useSideBarStateStore()
                                 'border-none': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
                             },
                             // States
-                            { 'hover:u-bg-pcolor-darker dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
-                            { 'focus:u-ring-scolor dark:focus:ring-primary-300/50': props.severity === null },
+                            { 'hover:u-bg-pcolor-darker': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
+                            { 'focus:u-ring-scolor': props.severity === null },
+                        ]
+                    })
+                }"
+                :pt-options="{mergeProps:true, mergeSections:true}">
+                </Button>
+                <Button v-else icon="fa fa-bars" type="button" class="w-8 h-8" @click="collapseAll(); sideBarStateStore.changePinnedState(); sideBarStateStore.changeExpansionState()"
+                :pt="{
+                    root: ({ props }) => ({
+                        class: [
+                            // Colors
+                            {
+                                'text-surface-100': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                                'u-bg-scolor': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                                'border-none': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+                            },
+                            // States
+                            { 'hover:u-bg-pcolor-darker': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
+                            { 'focus:u-ring-scolor': props.severity === null },
                         ]
                     })
                 }"
                 :pt-options="{mergeProps:true, mergeSections:true}">
                 </Button>
             </div>
-            <div class="border-b mx-6 mr-8"></div>
-            <PanelMenu class="h-full overflow-y-auto mb-4"
+            <div class="border-b mx-6"></div>
+            <PanelMenu class="h-full overflow-y-auto overflow-x-hidden mb-4"
             v-model:expandedKeys="expandedKeys"
             :model="items"
             :pt="{
@@ -247,7 +265,7 @@ const sideBarStateStore = useSideBarStateStore()
                     // Flex & Alignments
                     'flex items-center',
                     // Spacing
-                    sideBarStateStore.isExpanded ? 'pl-10' : '',
+                    'u-sidebar-submenuitem-pl',
                     // Color
                     'text-surface-100',
                     // States
@@ -276,41 +294,42 @@ const sideBarStateStore = useSideBarStateStore()
                 <template #item="{ item, props, hasSubmenu, active }">
                     <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
                         <a v-ripple v-bind="props.action" :href="href" @click="navigate">
-                            <div class="px-6 py-3" @click="collapseAll" :class="`${sideBarStateStore.isExpanded ? 'flex items-center' : ''}`">
+                            <div class="flex items-center px-5 py-3" 
+                                @click="collapseAll()">
                                 <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
                                     <span :class="item.icon" class="fa-lg text-surface-100" />
                                 </span>
-                                <span :class="`${ sideBarStateStore.isExpanded ? 'ml-4' : ''}`">{{ sideBarStateStore.isExpanded ? item.label : '' }}</span>
+                                <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
                             </div>
                         </a>
                     </router-link> 
-                    <a v-else v-ripple class="flex items-center px-6 py-3" v-bind="props.action" :href="item.url" :target="item.target">
+                    <a v-else v-ripple class="flex items-center px-5 py-3" v-bind="props.action" :href="item.url" :target="item.target">
                         <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
                             <span :class="item.icon" class="fa-lg text-surface-100" />
                         </span>
-                        <span :class="`${ sideBarStateStore.isExpanded ? 'ml-4' : ''}`">{{ sideBarStateStore.isExpanded ? item.label : '' }}</span>
-                        <i v-if="hasSubmenu && !active" :class="`${ sideBarStateStore.isExpanded ? 'pi pi-angle-right ml-auto' : ''}`"></i>
-                        <i v-else :class="`${ sideBarStateStore.isExpanded ? 'pi pi-angle-down ml-auto' : ''}`"></i>
+                        <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
+                        <i v-if="hasSubmenu && !active" class="pi pi-angle-right ml-auto u-sidebar-menuitem-dropdown"></i>
+                        <i v-else class="pi pi-angle-down ml-auto u-sidebar-menuitem-dropdown"></i>
                     </a>   
                 </template>
             </PanelMenu>
-            <div class="border-t mx-6 mr-8"></div>
-            <div class="px-6 pr-8 py-6 items-center text-surface-100 whitespace-nowrap" :class="`${sideBarStateStore.isExpanded ? 'flex justify-between' : ''}`">
-                <div class="flex flex-col">
-                    <span>{{ sideBarStateStore.isExpanded ? 'Account Name' : ''}}</span>
-                    <span class="text-sm">{{ sideBarStateStore.isExpanded ? 'Role' : ''}}</span>
+            <div class="border-t mx-6"></div>
+            <div class="px-5 py-4 text-surface-100 whitespace-nowrap u-sidebar-footer">
+                <div class="flex flex-col u-sidebar-footer-text-group">
+                    <span>Account Name</span>
+                    <span class="text-sm">Role</span>
                 </div>
                 <Button type="button" icon="fa fa-right-from-bracket" :loading="loading" class="w-8 h-8"
                 :pt="{
                     root: ({ props, context, parent }) => ({
                         class: [
                             {
-                                'text-white dark:text-surface-900': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                                'u-bg-scolor dark:bg-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                                'border-none dark:border-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+                                'text-white': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                                'u-bg-scolor': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                                'border-none': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
                             },
-                            { 'hover:u-bg-red dark:hover:bg-primary-300 hover:border-primary-600 dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
-                            { 'focus:u-ring-scolor dark:focus:ring-primary-300/50': props.severity === null },
+                            { 'hover:u-bg-red': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
+                            { 'focus:u-ring-scolor': props.severity === null },
                         ]
                     })
                 }"
