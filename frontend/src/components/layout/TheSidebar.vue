@@ -140,6 +140,12 @@ const items = ref([
         label: 'Staff Permissions',
         icon: 'fa fa-shield-halved',
         route: '/staff-permissions'
+      },
+      {
+        key: '9-3',
+        label: 'Add Staff',
+        icon: 'fa fa-user-plus',
+        route: '/add-staff'
       }
     ]
   },
