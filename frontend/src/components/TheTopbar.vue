@@ -3,21 +3,17 @@
 import Breadcrumb from 'primevue/breadcrumb';
 
 import { ref } from "vue";
-import { useRouter } from 'vue-router';
 
 const home = ref({
     label: 'Dashboard',
     icon: 'fa fa-home',
     route: '/'
 });
-const router = useRouter()
-const current_route = router.currentRoute
-const route_name = current_route.meta
 
 </script>
 
 <template>
-    <div class="flex justify-content-center w-full mt-4">
+    <div class="flex justify-content-center w-full">
         <Breadcrumb :home="home" :model="items"
         :pt="{
             root: {
