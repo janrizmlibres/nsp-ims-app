@@ -7,6 +7,10 @@
     <div class="widget"></div>
   </div>
   <div class="middle-container">
+    <button class="year-button">
+    <font-awesome-icon :icon="['fas', 'filter']" />
+    Year
+    </button>
     <div class="middle-widget"></div>
     <div class="middle-widget"></div>
   </div>
@@ -14,7 +18,7 @@
 
 <script>
 export default {
-  name: 'DashboardView',
+  name: 'DashboardView'
 };
 </script>
 
@@ -24,7 +28,7 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    margin-top: 70px;
+    margin-top: 100px;
   }
 
   .dashboard-text {
@@ -33,27 +37,41 @@ export default {
   }
 
   .widget {
-    width: 290px;
-    height: 130px;
+    width: 350px;
+    height: 150px;
     background-color: white;
-    margin-top: 10px;
+    margin-top: 20px;
     border-radius: 10px;
+    border-bottom: 5px solid #265492;
   }
 
   .middle-container {
     position: absolute;
-    bottom: 25px;
-    left: 315px;
+    bottom: 55px;
+    left: 400px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
   .middle-widget {
-    width: 900px;
-    height: 269px;
+    width: 1000px;
+    height: 320px;
     background-color: white;
-    margin-top: 10px;
+    margin-top: 20px;
     border-radius: 10px;
+    border-bottom: 5px solid #265492;
+  }
+
+  .year-button {
+    align-self: flex-end;
+    display: block;
+    margin: 0 0 0 auto; /* Align the button to the right */
+    background-color: white;
+    color: black;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    width: 100px; /* Adjust this value to your needs */
   }
 </style>
