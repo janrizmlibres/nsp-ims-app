@@ -315,26 +315,13 @@ const sideBarStateStore = useSideBarStateStore()
             </PanelMenu>
             <div class="border-t mx-6"></div>
             <div class="px-5 py-4 text-surface-100 whitespace-nowrap u-sidebar-footer">
-                <div class="flex flex-col u-sidebar-footer-text-group">
+                <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
+                    <span class="fa fa-circle-user text-surface-100" />
+                </span>
+                <div class="flex flex-col u-sidebar-footer-text">
                     <span>Account Name</span>
                     <span class="text-sm">Role</span>
                 </div>
-                <Button type="button" icon="fa fa-right-from-bracket" :loading="loading" class="w-8 h-8"
-                :pt="{
-                    root: ({ props, context, parent }) => ({
-                        class: [
-                            {
-                                'text-white': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                                'u-bg-scolor': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                                'border-none': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
-                            },
-                            { 'hover:u-bg-red': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
-                            { 'focus:u-ring-scolor': props.severity === null },
-                        ]
-                    })
-                }"
-                :pt-options="{mergeProps:true}">
-                </Button>
             </div>
         </div>
     </div>
