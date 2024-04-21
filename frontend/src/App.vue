@@ -1,17 +1,15 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
+import { useSideBarStateStore } from '@/stores/sidebar_state';
 
 import Sidebar from './components/Sidebar.vue'
-import Navbar from './components/Navbar.vue'
+import Topbar from './components/Topbar.vue'
 
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faEnvelope } from '@fortawesome/free-regular-svg-icons'
+const sideBarStateStore = useSideBarStateStore()
 </script>
 
 <template>
   <RouterView class="h-full pt-4"/>
 </template>
 
-<style>
-
-</style>
+<style></style>
