@@ -1,46 +1,59 @@
 <template>
   <div class="container">
-    <span class="logout-text">
-      <font-awesome-icon :icon="['fass', 'right-from-bracket']" class="logo" /> Logout
-    </span>
+    <div class="dashboard-text">Dashboard</div>
+    <div class="widget"></div>
+    <div class="widget"></div>
+    <div class="widget"></div>
+    <div class="widget"></div>
+  </div>
+  <div class="middle-container">
+    <div class="middle-widget"></div>
+    <div class="middle-widget"></div>
   </div>
 </template>
 
 <script>
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faSignOutAlt as sharpSignOutAlt } from "@fortawesome/free-solid-svg-icons";
-
-library.add(sharpSignOutAlt); // Add the sharp sign-out icon to the library
-
 export default {
-  name: 'App',
-  components: {
-    FontAwesomeIcon, // Register the Vue component
-  },
+  name: 'DashboardView',
 };
 </script>
 
 <style scoped>
   .container {
-    /* Optional styles for the entire container */
+    display: flex-start;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 70px;
   }
 
-  .logout-text {
-    position: fixed;
-    top: 15px;
-    right: 50px;
-    padding: 10px;
-    font-size: 15px;
-    display: flex; /* Make logout text a flex container */
-    align-items: center; /* Align logo and text vertically */
-    cursor: pointer; /* Indicate clickable behavior (optional) */
+  .dashboard-text {
+    font-weight: bold;
+    font-size: 30px;
   }
 
-  .logo {
-    margin-right: 10px; /* Add some margin between logo and text */
-    width: 1.5rem; /* Example width adjustment */
-    height: 1.5rem; /* Example height adjustment */
-    color: inherit; /* Inherit color from parent element */
+  .widget {
+    width: 290px;
+    height: 130px;
+    background-color: white;
+    margin-top: 10px;
+    border-radius: 10px;
+  }
+
+  .middle-container {
+    position: absolute;
+    bottom: 25px;
+    left: 315px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .middle-widget {
+    width: 900px;
+    height: 269px;
+    background-color: white;
+    margin-top: 10px;
+    border-radius: 10px;
   }
 </style>
