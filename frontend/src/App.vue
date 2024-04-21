@@ -10,10 +10,10 @@ const sideBarStateStore = useSideBarStateStore()
 
 <template>
   <TheSidebar />
+  <!-- class="ml-80 p-4 h-screen u-txt-active" -->
   <main
     class="transition-all duration-200 ease-in-out w-full max-h-full h-full fixed"
-    :class="`${sideBarStateStore.isExpanded ? 'ml-96' : 'ml-32'}`"
-    class="ml-80 p-4 h-screen u-txt-active"
+    :class="sideBarStateStore.isExpanded ? 'ml-96' : 'ml-32'"
   >
     <!-- <Topbar /> -->
     <RouterView class="w-full h-full pt-4" />

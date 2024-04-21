@@ -21,5 +21,5 @@
 <script setup>
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import TopHeader from './TopHeader.vue'
+import TopHeader from './UI/TopHeader.vue'
 </script>
