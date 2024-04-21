@@ -27,7 +27,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Card from 'primevue/card'
 
-import ContentPane from '@/components/ui/ContentPane.vue'
+import ContentPane from '@/components/UI/ContentPane.vue'
 import TheHeader from '@/components/staff_view/TheHeader.vue'
 import TheTable from '@/components/staff_view/TheTable.vue'
 import ThePermissions from '@/components/staff_view/ThePermissions.vue'
