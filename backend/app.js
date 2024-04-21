@@ -31,6 +31,7 @@ app.use((error, req, res, next) => {
 try {
   await sequelize.sync({ force: true });
   app.listen(port);
+  console.log("Listening on port " + port);
 } catch (error) {
-  (error) => console.log(error);
+  console.log(error);
 }
