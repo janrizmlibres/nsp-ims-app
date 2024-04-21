@@ -176,7 +176,7 @@ const sideBarStateStore = useSideBarStateStore()
 </script>
 
 <template>
-    <div class="left-0 shadow-xl inset-y-0 u-max-h-calc !u-sidebar-max-w z-50 transition-all duration-500 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none" :class="`${ sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'}`">
+    <div class="left-0 u-max-h h-screen shadow-xl inset-y-0 z-50 transition-all duration-500 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none" :class="`${ sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'}`">
         <div class="flex flex-col h-full text-surface-100">
             <div class="p-5 text-surface-100 whitespace-nowrap u-sidebar-header">
                 <span class="text-3xl u-sidebar-header-text">Menu</span>
@@ -327,5 +327,117 @@ const sideBarStateStore = useSideBarStateStore()
 </template>
 
 <style scoped>
+    /* max-height */
+    .u-max-h {
+        max-height: calc(100vh - 2rem);
+    }
 
+    /* sidebar expanded */
+    .u-sidebar-expanded .u-sidebar-header {
+        display: flex;
+        align-items: center;
+    }
+
+    .u-sidebar-expanded .u-sidebar-header-text {
+        width: 100%;
+    }
+
+    .u-sidebar-expanded .u-sidebar-menuitem-text {
+        margin-left: 1rem;
+    }
+
+    .u-sidebar-expanded .u-sidebar-submenuitem-pl {
+        padding-left: 2.5rem;
+    }
+
+    .u-sidebar-expanded .u-sidebar-footer {
+        display: flex;
+        align-items: center;
+    }
+
+    .u-sidebar-expanded .u-sidebar-footer-text {
+        margin-left: 1rem;
+    }
+
+    /* sidebar collapsed */
+    .u-sidebar-collapsed .u-sidebar-header {
+        display: flex;
+        align-items: center;
+    }
+
+    .u-sidebar-collapsed .u-sidebar-header-text {
+        opacity: 0%;
+        width: 0%;
+
+        transition: 0.5s ease-in-out;
+    }
+
+    .u-sidebar-collapsed:hover .u-sidebar-header-text {
+        opacity: 100%;
+        width: 100%;
+
+        transition: 0.3s ease-in-out;
+    }
+
+    .u-sidebar-collapsed .u-sidebar-menuitem-text {
+        margin-left: 0;
+        opacity: 0%;
+        width: 0;
+        height: 0;
+
+        transition: 0.1s ease-in-out;
+    }
+
+    .u-sidebar-collapsed:hover .u-sidebar-menuitem-text {
+        margin-left: 1rem;
+        opacity: 100%;
+        width: auto;
+        height: 100%;
+    }
+
+    .u-sidebar-collapsed .u-sidebar-menuitem-dropdown {
+        opacity: 0%;
+        width: 0;
+    }
+
+    .u-sidebar-collapsed:hover .u-sidebar-menuitem-dropdown {
+        margin-left: auto;
+        width: auto;
+        opacity: 100%;
+    }
+
+    .u-sidebar-collapsed .u-sidebar-submenuitem-pl {
+        padding-left: 0;
+
+        transition: 0.5s ease-in-out;
+    }
+
+    .u-sidebar-collapsed:hover .u-sidebar-submenuitem-pl {
+        padding-left: 2.5rem;
+
+        transition: 0.3s ease-in-out;
+    }
+
+    .u-sidebar-collapsed .u-sidebar-footer {
+        display: flex;
+        align-items: center;
+    }
+
+    .u-sidebar-collapsed .u-sidebar-footer-text {
+        margin-left: 0;
+        opacity: 0%;
+        width: 0;
+        height: 0;
+        white-space: nowrap;
+
+        transition: 0.1s ease-in-out;
+    }
+
+    .u-sidebar-collapsed:hover .u-sidebar-footer-text {
+        margin-left: 1rem;
+        opacity: 100%;
+        width: max-content;
+        height: 100%;
+        white-space: nowrap;
+    }
 </style>
