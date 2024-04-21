@@ -7,16 +7,23 @@ const usernameInput = ref(null);
 const passwordInput = ref(null);
 
 const submitEvent = async () => {
-  if (!checkInputEmpty(usernameInput) && !checkInputEmpty(passwordInput)) {
-    try {
-      const response = await axios.post('/login', user);
-      console.log(response.data);
-    } catch (error) {
-      console.error(error)
-    }
+  if (!checkInputEmpty(usernameInput) || !checkInputEmpty(passwordInput)) {
+    return;
+  }
+  const username = usernameInput.value;
+  const password = passwordInput.value;
+
+  try {
+    const response = await axios.post('http://localhost:3000/login', {username, password});
+    const token = response.data.token;
+    // Save the token in the local storage or in a cookie
+    localStorage.setItem('token', token);
+    // Redirect the user to the dashboard or another page
+  } catch (error) {
+    // Handle the error
+    console.error(error);
   }
 }
-
 </script>
 
 <template>
