@@ -8,6 +8,7 @@ defineProps(['students'])
 <template>
   <DataTable
     :value="students"
+    scrollable
     tableStyle="min-width: 50rem"
     :pt="{ column: { headercell: 'bg-white' } }"
     :pt-options="{ mergeProps: true }"

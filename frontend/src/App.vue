@@ -1,15 +1,15 @@
 <script setup>
 import { RouterView } from 'vue-router'
 
-import Sidebar from './components/Sidebar.vue'
-import Navbar from './components/Navbar.vue'
+import TheSidebar from './components/TheSidebar.vue'
+// import Navbar from './components/Navbar.vue'
 </script>
 
 <template>
-  <Sidebar />
-  <div class="w-full h-full fixed left-80 p-4">
-    <Navbar />
-    <RouterView class="h-full pt-4" />
+  <TheSidebar />
+  <div class="ml-80 p-4 h-screen">
+    <!-- <Navbar /> -->
+    <RouterView />
   </div>
 </template>
 

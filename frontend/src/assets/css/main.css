@@ -29,8 +29,8 @@
 }
 
 @font-face {
-  font-family: "DM Sans";
-  src: url("../fonts/DMSans.ttf");
+  font-family: 'DM Sans';
+  src: url('../fonts/DMSans.ttf');
 }
 
 @layer utilities {
@@ -47,7 +47,7 @@
   }
 
   .u-bg-scolor {
-    background-color: #BF9039;
+    background-color: #bf9039;
   }
 
   .u-ring-scolor {
@@ -55,34 +55,32 @@
   }
 
   .u-bg-green {
-    background-color: #49BB37;
+    background-color: #49bb37;
   }
 
   .u-bg-red {
-    background-color: #C94B24;
+    background-color: #c94b24;
   }
 
   .u-txt-active {
-    color: #3C4043
+    color: #3c4043;
   }
 
   .u-txt-inactive {
-    color: #B1B7BB
+    color: #b1b7bb;
   }
 
   .u-bg-main {
-    background-color: #EEEEEE;
+    background-color: #eeeeee;
   }
 }
 
 body {
-  display: flex;
   transition:
     color 0.5s,
     background-color 0.5s;
   line-height: 1.6;
-  font-family:
-    'DM Sans';
+  font-family: 'DM Sans';
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -95,21 +93,17 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: transparent; 
+  background: transparent;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #adabab; 
+  background: #adabab;
   border-radius: 50px; /* Round the corners */
   scrollbar-width: thin; /* Adjust the width */
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
-}
-
-#app {
-  display: flex;
+  background: #555;
 }

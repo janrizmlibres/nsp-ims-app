@@ -1,9 +1,6 @@
 <template>
-  <div class="h-screen p-12">
-    <div>
-      
-    </div>
-    <Card :pt="{ content: '' }" class="h-full rounded-[5px]">
+  <div class="flex flex-col h-full">
+    <Card :pt="{ content: '' }" class="flex-1 rounded-[5px]">
       <template #content>
         <TabView>
           <TabPanel header="Staffs">
