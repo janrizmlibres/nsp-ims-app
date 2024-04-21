@@ -11,6 +11,6 @@ EXPOSE $PORT
 COPY package*.json ./
 RUN npm ci
 
-COPY --chown=user:group . /app
+COPY --chown=app:app . /app
 
 CMD ["npm", "start"]
