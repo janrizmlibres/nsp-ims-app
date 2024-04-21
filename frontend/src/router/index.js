@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardPage from '../views/DashboardPage.vue'
-import ActiveClassesView from '../views/ActiveClassesPage.vue'
+import ActiveClassesView from '../views/ActiveClassesView.vue'
 import ClassHistoryView from '../views/ClassHistoryView.vue'
-import CreateClassesView from '../views/CreateClassesPage.vue'
+import CreateClassesView from '../views/CreateClassesView.vue'
 import StaffView from '@/views/staff_view/StaffView.vue'
 
 const router = createRouter({
@@ -10,22 +10,22 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'Dashboard',
+      name: 'dashboard',
       component: DashboardPage
     },
     {
       path: '/active-classes',
-      name: 'Active Classes',
+      name: 'active classes',
       component: ActiveClassesView
     },
     {
       path: '/class-history',
-      name: 'Class History',
+      name: 'class history',
       component: ClassHistoryView
     },
     {
       path: '/create-classes',
-      name: 'Create Classes',
+      name: 'create classes',
       component: CreateClassesView
     },
     {
