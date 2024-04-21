@@ -1,8 +1,24 @@
 <template>
-  <TheSidebar />
-  <main class="w-full ml-4 py-4 pr-4">
+  <ContentPane>
     <div class="flex flex-col h-full">
-      <TheHeader />
+      <div class="flex flex-col h-1/4">
+        <TopHeader class="grow" header="Staff Management" />
+
+        <div class="mb-2">
+          <div class="float-right">
+            <span class="relative">
+              <font-awesome-icon
+                icon="fa-solid fa-magnifying-glass"
+                class="absolute top-2/4 -mt-2 left-3"
+              />
+              <InputText v-model="value1" placeholder="Search Staff" size="small" class="pl-10" />
+            </span>
+            <Button icon="fa-solid fa-user-plus" aria-label="Submit" class="ml-2 h-10" />
+            <Button label="Export Data" icon="fa-solid fa-file-export" class="ml-2 h-10" />
+          </div>
+        </div>
+      </div>
+
       <Card :pt="{ content: '' }" class="flex-1 rounded-[5px]">
         <template #content>
           <TabView>
@@ -19,7 +35,7 @@
         <p>Record(s) count: {{ staffs.length }}</p>
       </div>
     </div>
-  </main>
+  </ContentPane>
 </template>
 
 <script setup>
@@ -27,10 +43,12 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Card from 'primevue/card'
 
-import TheSidebar from '@/components/TheSidebar.vue'
+import ContentPane from '@/components/ui/ContentPane.vue'
+import TopHeader from '@/components/ui/TopHeader.vue'
 import TheTable from '@/components/TheTable.vue'
 import ThePermissions from '@/components/ThePermissions.vue'
-import TheHeader from '@/components/TheHeader.vue'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
 
 import { ref } from 'vue'
 

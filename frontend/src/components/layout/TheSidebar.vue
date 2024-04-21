@@ -181,7 +181,7 @@ const sideBarStateStore = useSideBarStateStore()
 <template>
   <div
     class="left-0 u-max-h h-screen shadow-xl inset-y-0 z-50 transition-all duration-500 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none"
-    :class="`${sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'}`"
+    :class="sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'"
   >
     <div class="flex flex-col h-full text-surface-100">
       <div class="p-5 text-surface-100 whitespace-nowrap u-sidebar-header">
