@@ -1,13 +1,20 @@
 ﻿<script setup>
 import {ref} from "vue";
 import { checkInputEmpty } from "@/utils/interactions.js";
+import axios from 'axios';
 
 const usernameInput = ref(null);
 const passwordInput = ref(null);
 
-const submitEvent = () => {
-  checkInputEmpty(usernameInput)
-  checkInputEmpty(passwordInput)
+const submitEvent = async () => {
+  if (!checkInputEmpty(usernameInput) && !checkInputEmpty(passwordInput)) {
+    try {
+      const response = await axios.post('/login', user);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error)
+    }
+  }
 }
 
 </script>
