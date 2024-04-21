@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col h-full">
+    <TheHeader />
     <Card :pt="{ content: '' }" class="flex-1 rounded-[5px]">
       <template #content>
         <TabView>
@@ -25,6 +26,7 @@ import Card from 'primevue/card'
 
 import TheTable from '@/components/TheTable.vue'
 import ThePermissions from '@/components/ThePermissions.vue'
+import TheHeader from '@/components/TheHeader.vue'
 
 import { ref } from 'vue'
 

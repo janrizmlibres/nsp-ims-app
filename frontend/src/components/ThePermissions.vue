@@ -1,13 +1,19 @@
 <template>
-  <div class="flex">
+  <div class="grid grid-cols-6">
     <DataTable
-      class="flex-1"
+      class="col-span-4"
       :value="students"
-      tableStyle="min-width: 50rem"
+      scrollable
       :pt="{ column: { headercell: 'bg-white' } }"
       :pt-options="{ mergeProps: true }"
     >
-      <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
+      <Column
+        v-for="col of columns"
+        :key="col.field"
+        :field="col.field"
+        :header="col.header"
+        :sortable="['userId', 'fullName'].includes(col.field)"
+      >
         <template #body="slotProps" v-if="!['userId', 'fullName'].includes(col.field)">
           <Checkbox
             v-if="col.field === 'canAddStuds'"
@@ -33,12 +39,12 @@
         </template>
       </Column>
     </DataTable>
-    <div class="px-14 py-2">
-      <div class="text-3xl mb-4">
-        <h1>LEGEND</h1>
+    <div class="pl-10 py-2 col-span-2">
+      <div class="text-3xl mb-4 u-legend-txt-color">
+        <h2>LEGEND</h2>
       </div>
       <div class="pl-4">
-        <ul class="list-disc list-inside">
+        <ul class="list-disc list-inside u-txt-pcolor">
           <li>A - Add Students</li>
           <li>B - Enroll Students</li>
           <li>C - Update Student Information</li>

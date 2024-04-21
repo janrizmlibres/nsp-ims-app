@@ -7,7 +7,7 @@ import TheSidebar from './components/TheSidebar.vue'
 
 <template>
   <TheSidebar />
-  <div class="ml-80 p-4 h-screen">
+  <div class="ml-80 p-4 h-screen u-txt-active">
     <!-- <Navbar /> -->
     <RouterView />
   </div>

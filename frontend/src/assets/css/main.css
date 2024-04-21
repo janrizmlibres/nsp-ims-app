@@ -46,8 +46,16 @@
     background-color: #1c467e;
   }
 
+  .u-txt-pcolor {
+    color: #265492;
+  }
+
   .u-bg-scolor {
     background-color: #bf9039;
+  }
+
+  .u-legend-txt-color {
+    color: #bf9039;
   }
 
   .u-ring-scolor {
