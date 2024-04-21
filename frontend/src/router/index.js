@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import DashboardPage from '../views/DashboardPage.vue'
-import ActiveClassesPage from '../views/ActiveClassesPage.vue'
-import ClassHistoryPage from '../views/ClassHistoryPage.vue'
-import CreateClassesPage from '../views/CreateClassesPage.vue'
+import ActiveClassesView from '../views/ActiveClassesPage.vue'
+import ClassHistoryView from '../views/ClassHistoryView.vue'
+import CreateClassesView from '../views/CreateClassesPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,17 +21,17 @@ const router = createRouter({
     {
       path: '/active-classes',
       name: 'Active Classes',
-      component: ActiveClassesPage
+      component: ActiveClassesView
     },
     {
       path: '/class-history',
       name: 'Class History',
-      component: ClassHistoryPage
+      component: ClassHistoryView
     },
     {
       path: '/create-classes',
       name: 'Create Classes',
-      component: CreateClassesPage
+      component: CreateClassesView
     },
   ]
 })
