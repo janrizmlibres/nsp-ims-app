@@ -8,10 +8,11 @@ import Topbar from './components/TheTopbar.vue'
 
 <template>
   <Sidebar />
-  <main class="transition-all duration-200 ease-in-out w-full u-max-h-calc relative ml-8 my-4">
+  <main class="transition-all duration-200 ease-in-out w-screen relative ml-8 my-4 mr-4">
     <Topbar />
-    <RouterView class="pt-4"/>
+    <RouterView/>
   </main>
 </template>
 
-<style></style>
+<style>
+</style>
