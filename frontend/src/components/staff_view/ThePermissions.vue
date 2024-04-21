@@ -1,3 +1,21 @@
+<script setup>
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Checkbox from 'primevue/checkbox'
+
+defineProps(['staffs'])
+
+const columns = [
+  { field: 'userId', header: 'User ID' },
+  { field: 'fullName', header: 'Full Name' },
+  { field: 'canAddStuds', header: 'A' },
+  { field: 'canEnroll', header: 'B' },
+  { field: 'canUpdateStuds', header: 'C' },
+  { field: 'canGrade', header: 'D' },
+  { field: 'canAttendance', header: 'E' }
+]
+</script>
+
 <template>
   <div class="grid grid-cols-6">
     <DataTable
@@ -55,21 +73,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Checkbox from 'primevue/checkbox'
-
-defineProps(['staffs'])
-
-const columns = [
-  { field: 'userId', header: 'User ID' },
-  { field: 'fullName', header: 'Full Name' },
-  { field: 'canAddStuds', header: 'A' },
-  { field: 'canEnroll', header: 'B' },
-  { field: 'canUpdateStuds', header: 'C' },
-  { field: 'canGrade', header: 'D' },
-  { field: 'canAttendance', header: 'E' }
-]
-</script>
