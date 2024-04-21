@@ -8,8 +8,6 @@ const router = createRouter({
       path: '/',
       name: 'dashboard', // Adjust the name if needed
       component: DashboardView
-    },
-    {
     }
   ]
 })
