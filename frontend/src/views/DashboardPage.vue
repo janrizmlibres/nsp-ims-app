@@ -2,7 +2,7 @@
 </script>
 
 <template>
-    <div class="marg">
-        <h1>RouterView</h1>
+    <div class="">
+        <h1>Dashboard Page</h1>
     </div>
 </template>
