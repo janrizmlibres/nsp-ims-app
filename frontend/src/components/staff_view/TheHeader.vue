@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-1/4">
+  <div class="flex h-1/4">
     <TopHeader class="grow" header="Staff Management" />
 
     <div class="mb-2">
@@ -21,5 +21,5 @@
 <script setup>
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import TopHeader from './UI/TopHeader.vue'
+import TopHeader from '../ui/TopHeader.vue'
 </script>
