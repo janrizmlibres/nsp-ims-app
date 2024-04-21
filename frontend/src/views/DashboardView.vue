@@ -1,14 +1,23 @@
 <template>
   <div class="container">
     <span class="logout-text">
-      <img class="logo" src="../views/LogoutIco.png" alt="Logout Logo"> Logout
+      <font-awesome-icon :icon="['fass', 'right-from-bracket']" class="logo" /> Logout
     </span>
   </div>
 </template>
 
 <script>
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faSignOutAlt as sharpSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+
+library.add(sharpSignOutAlt); // Add the sharp sign-out icon to the library
+
 export default {
   name: 'App',
+  components: {
+    FontAwesomeIcon, // Register the Vue component
+  },
 };
 </script>
 
@@ -29,7 +38,9 @@ export default {
   }
 
   .logo {
-    margin-right: 5px; /* Add some margin between logo and text */
-    @apply w-2 h-2; /* Apply larger size using Tailwind utility classes */
+    margin-right: 10px; /* Add some margin between logo and text */
+    width: 1.5rem; /* Example width adjustment */
+    height: 1.5rem; /* Example height adjustment */
+    color: inherit; /* Inherit color from parent element */
   }
 </style>
