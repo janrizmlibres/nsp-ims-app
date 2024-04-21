@@ -16,7 +16,7 @@ dom.watch()
 import App from './App.vue'
 import router from './router'
 
-config.styleDefault = "solid";
+config.styleDefault = 'solid'
 
 const app = createApp(App)
 
