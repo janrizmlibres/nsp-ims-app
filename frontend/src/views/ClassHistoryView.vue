@@ -3,6 +3,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import ContentPane from '@/components/UI/ContentPane.vue'
 
 
 const state = reactive({
@@ -71,45 +72,41 @@ const years = ref([
 </script>
 
 <template>
-    <div class="card u-max-height bg-surface-100 shadow-xl">
-        <DataTable v-model:expandedRows="state.expandedRows" :value="state.yearList" dataKey="id"
-                @rowExpand="onRowExpand" @rowCollapse="onRowCollapse" tableStyle="min-width: 60rem">
-            <Column expander style="width: 5rem" />
-            <Column field="batchnumber" header="Batch Number" sortable></Column>
-            <Column field="academicyear" header="Academic Year" sortable></Column>
-            <Column field="startdate" header="Start Date" sortable></Column>
-            <Column field="enddate" header="End Date" sortable></Column>
-            <template #expansion="slotProps">
-                <div class="p-3">
-                    <h5>Classes of Academic Year {{ slotProps.data.academicyear }}</h5>
-                    <DataTable :value="slotProps.data.schoollevels">
-                        <Column field="id" header="Id" sortable></Column>
-                        <Column field="schoollevel" header="School Level" sortable></Column>
-                        <Column field="active" header="Active" sortable>
-                        </Column>
-                        <Column field="inactive" header="Inactive" sortable>
-                        </Column>
-                        <Column field="drop" header="Drop" sortable>
-                        </Column>
-                        <Column field="totalstudents" header="Total Students" sortable></Column>
-                        <Column headerStyle="width:4rem">
-                            <template #body>
-                                <Button icon="pi pi-search" />
-                            </template>
-                        </Column>
-                    </DataTable>
-                </div>
-            </template>
-        </DataTable>
-        <Toast />
-    </div>
+    <ContentPane>
+        <div class="card u-max-height bg-surface-100 shadow-xl">
+            <DataTable v-model:expandedRows="state.expandedRows" :value="state.yearList" dataKey="id"
+                    @rowExpand="onRowExpand" @rowCollapse="onRowCollapse" tableStyle="min-width: 60rem">
+                <Column expander style="width: 5rem" />
+                <Column field="batchnumber" header="Batch Number" sortable></Column>
+                <Column field="academicyear" header="Academic Year" sortable></Column>
+                <Column field="startdate" header="Start Date" sortable></Column>
+                <Column field="enddate" header="End Date" sortable></Column>
+                <template #expansion="slotProps">
+                    <div class="p-3">
+                        <h5>Classes of Academic Year {{ slotProps.data.academicyear }}</h5>
+                        <DataTable :value="slotProps.data.schoollevels">
+                            <Column field="id" header="Id" sortable></Column>
+                            <Column field="schoollevel" header="School Level" sortable></Column>
+                            <Column field="active" header="Active" sortable>
+                            </Column>
+                            <Column field="inactive" header="Inactive" sortable>
+                            </Column>
+                            <Column field="drop" header="Drop" sortable>
+                            </Column>
+                            <Column field="totalstudents" header="Total Students" sortable></Column>
+                            <Column headerStyle="width:4rem">
+                                <template #body>
+                                    <Button icon="pi pi-search" />
+                                </template>
+                            </Column>
+                        </DataTable>
+                    </div>
+                </template>
+            </DataTable>
+            <Toast />
+        </div>
+    </ContentPane>
 </template>
-
-<!-- <template>
-    <div class="u-max-height bg-surface-100 shadow-lg">
-        <h1>Class History Page</h1>
-    </div>
-</template> -->
 
 <style scoped>
     .u-max-height {
