@@ -1,3 +1,7 @@
+<script setup>
+defineProps(['header'])
+</script>
+
 <template>
   <div class="flex">
     <div class="flex grow text-4xl">
@@ -18,7 +22,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-defineProps(['header'])
-</script>

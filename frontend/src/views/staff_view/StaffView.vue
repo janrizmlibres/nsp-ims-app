@@ -1,27 +1,3 @@
-<template>
-  <ContentPane>
-    <div class="flex flex-col h-full">
-      <TheHeader class="flex-col" />
-
-      <Card :pt="{ content: '' }" class="flex-1 rounded-[5px]">
-        <template #content>
-          <TabView>
-            <TabPanel header="Staffs">
-              <TheTable :staffs="staffs" />
-            </TabPanel>
-            <TabPanel header="Permissions">
-              <ThePermissions :staffs="staffs" />
-            </TabPanel>
-          </TabView>
-        </template>
-      </Card>
-      <div class="pl-8 pt-2">
-        <p>Record(s) count: {{ staffs.length }}</p>
-      </div>
-    </div>
-  </ContentPane>
-</template>
-
 <script setup>
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
@@ -57,3 +33,27 @@ const staffs = ref([
   }
 ])
 </script>
+
+<template>
+  <ContentPane>
+    <div class="flex flex-col h-full">
+      <TheHeader class="flex-col" />
+
+      <Card :pt="{ content: '' }" class="flex-1 rounded-[5px]">
+        <template #content>
+          <TabView>
+            <TabPanel header="Staffs">
+              <TheTable :staffs="staffs" />
+            </TabPanel>
+            <TabPanel header="Permissions">
+              <ThePermissions :staffs="staffs" />
+            </TabPanel>
+          </TabView>
+        </template>
+      </Card>
+      <div class="pl-8 pt-2">
+        <p>Record(s) count: {{ staffs.length }}</p>
+      </div>
+    </div>
+  </ContentPane>
+</template>
