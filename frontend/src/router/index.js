@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import ClassPage from '../views/ClassPage.vue'
 import LoginView from '../views/LoginView.vue'
 import DashboardPage from '../views/DashboardPage.vue'
 import ActiveClassesPage from '../views/ActiveClassesPage.vue'
@@ -15,12 +14,7 @@ const router = createRouter({
       component: LoginView
     },
     {
-      path: '/', 
-      name: 'class management',
-      component: ClassPage
-    },
-    {
-    
+      path: '/dashboard',
       name: 'Dashboard',
       component: DashboardPage
     },
