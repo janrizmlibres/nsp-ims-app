@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import { useSideBarStateStore } from '@/stores/sidebar_state';
 
 import Sidebar from './components/Sidebar.vue'
@@ -16,6 +16,4 @@ const sideBarStateStore = useSideBarStateStore()
   </main>
 </template>
 
-<style>
-
-</style>
+<style></style>
