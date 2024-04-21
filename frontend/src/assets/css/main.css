@@ -74,44 +74,9 @@
     color: #265492;
   }
 
-  .u-max-h-calc {
-    max-height: calc(100vh - 2rem);
-  }
-  
-  /* sidebar */
-  .u-sidebar-max-w {
-    max-width: 20rem;
-  }
-
   /* expanded sidebar */
   .u-sidebar-expanded {
     width: 20rem;
-  }
-
-  .u-sidebar-expanded .u-sidebar-header {
-    display: flex;
-    align-items: center;
-  }
-
-  .u-sidebar-expanded .u-sidebar-header-text {
-    width: 100%;
-  }
-
-  .u-sidebar-expanded .u-sidebar-menuitem-text {
-    margin-left: 1rem;
-  }
-
-  .u-sidebar-expanded .u-sidebar-submenuitem-pl {
-    padding-left: 2.5rem;
-  }
-
-  .u-sidebar-expanded .u-sidebar-footer {
-    display: flex;
-    align-items: center;
-  }
-
-  .u-sidebar-expanded .u-sidebar-footer-text {
-    margin-left: 1rem;
   }
 
   /* collapsed sidebar */
@@ -122,94 +87,13 @@
   .u-sidebar-collapsed:hover {
     width: 20rem;
   }
-
-  .u-sidebar-collapsed .u-sidebar-header {
-    display: flex;
-    align-items: center;
-  }
-
-  .u-sidebar-collapsed .u-sidebar-header-text {
-    opacity: 0%;
-    width: 0%;
-
-    transition: 0.5s ease-in-out;
-  }
-
-  .u-sidebar-collapsed:hover .u-sidebar-header-text {
-    opacity: 100%;
-    width: 100%;
-
-    transition: 0.3s ease-in-out;
-  }
-
-  .u-sidebar-collapsed .u-sidebar-menuitem-text {
-    margin-left: 0;
-    opacity: 0%;
-    width: 0;
-    height: 0;
-
-    transition: 0.1s ease-in-out;
-  }
-
-  .u-sidebar-collapsed:hover .u-sidebar-menuitem-text {
-    margin-left: 1rem;
-    opacity: 100%;
-    width: auto;
-    height: 100%;
-  }
-
-  .u-sidebar-collapsed .u-sidebar-menuitem-dropdown {
-    opacity: 0%;
-    width: 0;
-  }
-
-  .u-sidebar-collapsed:hover .u-sidebar-menuitem-dropdown {
-    margin-left: auto;
-    width: auto;
-    opacity: 100%;
-  }
-
-  .u-sidebar-collapsed .u-sidebar-submenuitem-pl {
-    padding-left: 0;
-
-    transition: 0.5s ease-in-out;
-  }
-
-  .u-sidebar-collapsed:hover .u-sidebar-submenuitem-pl {
-    padding-left: 2.5rem;
-
-    transition: 0.3s ease-in-out;
-  }
-
-  .u-sidebar-collapsed .u-sidebar-footer {
-    display: flex;
-    align-items: center;
-  }
-
-  .u-sidebar-collapsed .u-sidebar-footer-text {
-    margin-left: 0;
-    opacity: 0%;
-    width: 0;
-    height: 0;
-    white-space: nowrap;
-
-    transition: 0.1s ease-in-out;
-  }
-
-  .u-sidebar-collapsed:hover .u-sidebar-footer-text {
-    margin-left: 1rem;
-    opacity: 100%;
-    width: max-content;
-    height: 100%;
-    white-space: nowrap;
-  }
 }
 
 html {
   background-color: #EEEEEE;
 
   max-height: 100vh;
-  max-width: 100vh;
+  max-width: 100vw;
 }
 
 body {
