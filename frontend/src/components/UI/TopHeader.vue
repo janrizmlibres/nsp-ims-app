@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <div class="flex grow text-4xl">
-      <img src="@/assets/logo.png" alt="Girl in a jacket" class="size-24" />
+      <img src="@/assets/logo.png" alt="XU-NSP Logo" class="size-24" />
       <h1 class="mt-2">{{ header }}</h1>
     </div>
 
