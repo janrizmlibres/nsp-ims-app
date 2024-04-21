@@ -61,7 +61,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
 
-defineProps(['students'])
+defineProps(['staffs'])
 
 const columns = [
   { field: 'userId', header: 'User ID' },

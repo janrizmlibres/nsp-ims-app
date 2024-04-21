@@ -165,8 +165,14 @@ const items = ref([
 ])
 
 const expandedKeys = ref({})
-const collapseAll = () => {
+function collapseAll() {
   expandedKeys.value = {}
+}
+
+function changeState() {
+  collapseAll()
+  sideBarStateStore.changePinnedState()
+  sideBarStateStore.changeExpansionState()
 }
 
 const sideBarStateStore = useSideBarStateStore()
@@ -185,11 +191,7 @@ const sideBarStateStore = useSideBarStateStore()
           icon="fa fa-chevron-left"
           type="button"
           class="min-w-8 h-8"
-          @click="
-            collapseAll()
-            sideBarStateStore.changePinnedState()
-            sideBarStateStore.changeExpansionState()
-          "
+          @click="changeState"
           :pt="{
             root: ({ props }) => ({
               class: [
@@ -235,11 +237,7 @@ const sideBarStateStore = useSideBarStateStore()
           icon="fa fa-bars"
           type="button"
           class="min-w-8 h-8"
-          @click="
-            collapseAll()
-            sideBarStateStore.changePinnedState()
-            sideBarStateStore.changeExpansionState()
-          "
+          @click="changeState"
           :pt="{
             root: ({ props }) => ({
               class: [
@@ -366,7 +364,7 @@ const sideBarStateStore = useSideBarStateStore()
         <template #item="{ item, props, hasSubmenu, active }">
           <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
             <a v-ripple v-bind="props.action" :href="href" @click="navigate">
-              <div class="flex items-center px-5 py-3" @click="collapseAll()">
+              <div class="flex items-center px-5 py-3" @click="collapseAll">
                 <span
                   class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
                 >

@@ -2,12 +2,12 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
-defineProps(['students'])
+defineProps(['staffs'])
 </script>
 
 <template>
   <DataTable
-    :value="students"
+    :value="staffs"
     scrollable
     tableStyle="min-width: 50rem"
     :pt="{ column: { headercell: 'bg-white' } }"

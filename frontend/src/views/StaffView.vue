@@ -1,22 +1,25 @@
 <template>
-  <div class="flex flex-col h-full">
-    <TheHeader />
-    <Card :pt="{ content: '' }" class="flex-1 rounded-[5px]">
-      <template #content>
-        <TabView>
-          <TabPanel header="Staffs">
-            <TheTable :students="students" />
-          </TabPanel>
-          <TabPanel header="Permissions">
-            <ThePermissions :students="students" />
-          </TabPanel>
-        </TabView>
-      </template>
-    </Card>
-    <div class="pl-8 pt-2">
-      <p>Record(s) count: {{ students.length }}</p>
+  <TheSidebar />
+  <main class="w-full ml-4 py-4 pr-4">
+    <div class="flex flex-col h-full">
+      <TheHeader />
+      <Card :pt="{ content: '' }" class="flex-1 rounded-[5px]">
+        <template #content>
+          <TabView>
+            <TabPanel header="Staffs">
+              <TheTable :staffs="staffs" />
+            </TabPanel>
+            <TabPanel header="Permissions">
+              <ThePermissions :staffs="staffs" />
+            </TabPanel>
+          </TabView>
+        </template>
+      </Card>
+      <div class="pl-8 pt-2">
+        <p>Record(s) count: {{ staffs.length }}</p>
+      </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script setup>
@@ -24,13 +27,14 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Card from 'primevue/card'
 
+import TheSidebar from '@/components/TheSidebar.vue'
 import TheTable from '@/components/TheTable.vue'
 import ThePermissions from '@/components/ThePermissions.vue'
 import TheHeader from '@/components/TheHeader.vue'
 
 import { ref } from 'vue'
 
-const students = ref([
+const staffs = ref([
   {
     userId: '52513',
     fullName: 'Janriz Libres',
