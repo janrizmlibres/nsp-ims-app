@@ -11,7 +11,7 @@ const home = ref({
 </script>
 
 <template>
-  <div class="flex justify-content-center w-full mt-4">
+  <div class="flex justify-content-center w-full">
     <Breadcrumb
       :home="home"
       :model="items"

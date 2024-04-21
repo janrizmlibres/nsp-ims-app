@@ -167,8 +167,6 @@ const items = ref([
 const expandedKeys = ref({})
 const collapseAll = () => {
   expandedKeys.value = {}
-  sideBarStateStore.changePinnedState()
-  sideBarStateStore.changeExpansionState()
 }
 
 const sideBarStateStore = useSideBarStateStore()
@@ -176,8 +174,8 @@ const sideBarStateStore = useSideBarStateStore()
 
 <template>
   <div
-    class="left-0 shadow-xl fixed inset-y-0 w-full !u-sidebar-max-w z-50 transition-all duration-500 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none"
-    :class="sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'"
+    class="left-0 u-max-h h-screen shadow-xl inset-y-0 z-50 transition-all duration-500 ease-in-out rounded-xl u-bg-pcolor ml-4 my-4 border-none"
+    :class="`${sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'}`"
   >
     <div class="flex flex-col h-full text-surface-100">
       <div class="p-5 text-surface-100 whitespace-nowrap u-sidebar-header">
@@ -186,8 +184,12 @@ const sideBarStateStore = useSideBarStateStore()
           v-if="sideBarStateStore.isPinned"
           icon="fa fa-chevron-left"
           type="button"
-          class="w-8 h-8"
-          @click="collapseAll"
+          class="min-w-8 h-8"
+          @click="
+            collapseAll()
+            sideBarStateStore.changePinnedState()
+            sideBarStateStore.changeExpansionState()
+          "
           :pt="{
             root: ({ props }) => ({
               class: [
@@ -199,7 +201,7 @@ const sideBarStateStore = useSideBarStateStore()
                     !props.text &&
                     !props.outlined &&
                     !props.plain,
-                  'u-bg-scolor':
+                  'bg-transparent':
                     !props.link &&
                     props.severity === null &&
                     !props.text &&
@@ -232,8 +234,12 @@ const sideBarStateStore = useSideBarStateStore()
           v-else
           icon="fa fa-bars"
           type="button"
-          class="w-8 h-8"
-          @click="collapseAll"
+          class="min-w-8 h-8"
+          @click="
+            collapseAll()
+            sideBarStateStore.changePinnedState()
+            sideBarStateStore.changeExpansionState()
+          "
           :pt="{
             root: ({ props }) => ({
               class: [
@@ -245,7 +251,7 @@ const sideBarStateStore = useSideBarStateStore()
                     !props.text &&
                     !props.outlined &&
                     !props.plain,
-                  'u-bg-scolor':
+                  'bg-transparent':
                     !props.link &&
                     props.severity === null &&
                     !props.text &&
@@ -362,7 +368,7 @@ const sideBarStateStore = useSideBarStateStore()
             <a v-ripple v-bind="props.action" :href="href" @click="navigate">
               <div class="flex items-center px-5 py-3" @click="collapseAll()">
                 <span
-                  class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md"
+                  class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
                 >
                   <span :class="item.icon" class="fa-lg text-surface-100" />
                 </span>
@@ -378,7 +384,9 @@ const sideBarStateStore = useSideBarStateStore()
             :href="item.url"
             :target="item.target"
           >
-            <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
+            <span
+              class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
+            >
               <span :class="item.icon" class="fa-lg text-surface-100" />
             </span>
             <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
@@ -392,7 +400,7 @@ const sideBarStateStore = useSideBarStateStore()
       </PanelMenu>
       <div class="border-t mx-6"></div>
       <div class="px-5 py-4 text-surface-100 whitespace-nowrap u-sidebar-footer">
-        <span class="flex justify-center items-center w-8 h-8 rounded-md u-bg-scolor shadow-md">
+        <span class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md">
           <span class="fa fa-circle-user text-surface-100" />
         </span>
         <div class="flex flex-col u-sidebar-footer-text">
@@ -404,4 +412,118 @@ const sideBarStateStore = useSideBarStateStore()
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* max-height */
+.u-max-h {
+  max-height: calc(100vh - 2rem);
+}
+
+/* sidebar expanded */
+.u-sidebar-expanded .u-sidebar-header {
+  display: flex;
+  align-items: center;
+}
+
+.u-sidebar-expanded .u-sidebar-header-text {
+  width: 100%;
+}
+
+.u-sidebar-expanded .u-sidebar-menuitem-text {
+  margin-left: 1rem;
+}
+
+.u-sidebar-expanded .u-sidebar-submenuitem-pl {
+  padding-left: 2.5rem;
+}
+
+.u-sidebar-expanded .u-sidebar-footer {
+  display: flex;
+  align-items: center;
+}
+
+.u-sidebar-expanded .u-sidebar-footer-text {
+  margin-left: 1rem;
+}
+
+/* sidebar collapsed */
+.u-sidebar-collapsed .u-sidebar-header {
+  display: flex;
+  align-items: center;
+}
+
+.u-sidebar-collapsed .u-sidebar-header-text {
+  opacity: 0%;
+  width: 0%;
+
+  transition: 0.5s ease-in-out;
+}
+
+.u-sidebar-collapsed:hover .u-sidebar-header-text {
+  opacity: 100%;
+  width: 100%;
+
+  transition: 0.3s ease-in-out;
+}
+
+.u-sidebar-collapsed .u-sidebar-menuitem-text {
+  margin-left: 0;
+  opacity: 0%;
+  width: 0;
+  height: 0;
+
+  transition: 0.1s ease-in-out;
+}
+
+.u-sidebar-collapsed:hover .u-sidebar-menuitem-text {
+  margin-left: 1rem;
+  opacity: 100%;
+  width: auto;
+  height: 100%;
+}
+
+.u-sidebar-collapsed .u-sidebar-menuitem-dropdown {
+  opacity: 0%;
+  width: 0;
+}
+
+.u-sidebar-collapsed:hover .u-sidebar-menuitem-dropdown {
+  margin-left: auto;
+  width: auto;
+  opacity: 100%;
+}
+
+.u-sidebar-collapsed .u-sidebar-submenuitem-pl {
+  padding-left: 0;
+
+  transition: 0.5s ease-in-out;
+}
+
+.u-sidebar-collapsed:hover .u-sidebar-submenuitem-pl {
+  padding-left: 2.5rem;
+
+  transition: 0.3s ease-in-out;
+}
+
+.u-sidebar-collapsed .u-sidebar-footer {
+  display: flex;
+  align-items: center;
+}
+
+.u-sidebar-collapsed .u-sidebar-footer-text {
+  margin-left: 0;
+  opacity: 0%;
+  width: 0;
+  height: 0;
+  white-space: nowrap;
+
+  transition: 0.1s ease-in-out;
+}
+
+.u-sidebar-collapsed:hover .u-sidebar-footer-text {
+  margin-left: 1rem;
+  opacity: 100%;
+  width: max-content;
+  height: 100%;
+  white-space: nowrap;
+}
+</style>
