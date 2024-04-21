@@ -3,7 +3,6 @@
 import { ref, onMounted, reactive } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-// import { ProductService } from '@/service/ProductService';
 
 
 const state = reactive({
