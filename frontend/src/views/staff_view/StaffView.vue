@@ -42,13 +42,13 @@
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Card from 'primevue/card'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
 
 import ContentPane from '@/components/ui/ContentPane.vue'
 import TopHeader from '@/components/ui/TopHeader.vue'
-import TheTable from '@/components/TheTable.vue'
-import ThePermissions from '@/components/ThePermissions.vue'
-import InputText from 'primevue/inputtext'
-import Button from 'primevue/button'
+import TheTable from '@/components/staff_view/TheTable.vue'
+import ThePermissions from '@/components/staff_view/ThePermissions.vue'
 
 import { ref } from 'vue'
 
