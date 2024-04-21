@@ -1,37 +1,25 @@
 <template>
-  <div>
-    <div class="flex">
-      <div class="grow text-4xl">
-        <h1>Staff Management</h1>
-      </div>
+  <div class="flex flex-col h-1/4">
+    <TopHeader class="grow" header="Staff Management" />
 
-      <div class="flex gap-6">
-        <div>
-          <font-awesome-icon icon="fa-solid fa-gear" />
-          <span class="ml-1.5">Settings</span>
-        </div>
-
-        <div>
-          <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
-          <span class="ml-1.5">Logout</span>
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <div>
+    <div class="mb-2">
+      <div class="float-right">
         <span class="relative">
-          <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
-          <InputText v-model="temp" placeholder="Search" class="pl-10" />
+          <font-awesome-icon
+            icon="fa-solid fa-magnifying-glass"
+            class="absolute top-2/4 -mt-2 left-3"
+          />
+          <InputText v-model="value1" placeholder="Search Staff" size="small" class="pl-10" />
         </span>
-        <Button icon="pi pi-check" aria-label="Submit" />
-        <Button label="Submit" icon="pi pi-check" />
+        <Button icon="fa-solid fa-user-plus" aria-label="Submit" class="ml-2 h-10" />
+        <Button label="Export Data" icon="fa-solid fa-file-export" class="ml-2 h-10" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const temp = ref('')
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import TopHeader from './TopHeader.vue'
 </script>

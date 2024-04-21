@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ClassPage from '../views/ClassPage.vue'
 import StaffView from '@/views/StaffView.vue'
+// import AddStaff from '@/components/AddStaff.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
