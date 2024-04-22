@@ -21,7 +21,7 @@ const submitEvent = async () => {
   const password = passwordInput.value.value;
 
   try {
-    const response = await axios.post('http://localhost:8080/admin/login', {username, password});
+    const response = await axios.post('http://localhost:8080/auth/login', {username, password});
 
     if (response.status === 200) {
       const token = response.data.token;
