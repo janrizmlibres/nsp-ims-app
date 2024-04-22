@@ -1,8 +1,11 @@
 <script setup>
+import ContentPane from '@/components/UI/ContentPane.vue'
 </script>
 
 <template>
-    <div class="">
-        <h1>Dashboard Page</h1>
-    </div>
+    <ContentPane>
+        <div class="w-full ml-4 py-4 pr-4">
+            <h1>Dashboard Page</h1>
+        </div>
+    </ContentPane>
 </template>

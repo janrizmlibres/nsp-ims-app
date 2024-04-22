@@ -1,38 +1,44 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import DashboardPage from '../views/DashboardPage.vue'
-import ActiveClassesView from '../views/ActiveClassesPage.vue'
+import ActiveClassesView from '../views/ActiveClassesView.vue'
 import ClassHistoryView from '../views/ClassHistoryView.vue'
-import CreateClassesView from '../views/CreateClassesPage.vue'
+import CreateClassesView from '../views/CreateClassesView.vue'
+import StaffView from '@/views/staff_view/StaffView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'login-page',
+      name: 'login page',
       component: LoginView
     },
     {
       path: '/dashboard',
-      name: 'Dashboard',
+      name: 'dashboard',
       component: DashboardPage
     },
     {
       path: '/active-classes',
-      name: 'Active Classes',
+      name: 'active classes',
       component: ActiveClassesView
     },
     {
       path: '/class-history',
-      name: 'Class History',
+      name: 'class history',
       component: ClassHistoryView
     },
     {
       path: '/create-classes',
-      name: 'Create Classes',
+      name: 'create classes',
       component: CreateClassesView
     },
+    {
+      path: '/staff-records',
+      name: 'staff management',
+      component: StaffView
+    }
   ]
 })
 
