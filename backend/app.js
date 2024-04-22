@@ -1,6 +1,7 @@
 import express from "express";
 import sequelize from "./util/database.js";
 import adminRoutes from "./routes/admin.js";
+import authRoutes from "./routes/auth.js";
 import bcrypt from "bcryptjs";
 
 import Staff from "./models/staff.js";
@@ -18,7 +19,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.json());
+
 app.use("/admin", adminRoutes);
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Please enter a valid endpoint.");
@@ -29,6 +33,11 @@ app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
   const message = error.message;
   res.status(status).json({ message: message });
+});
+
+app.options('*', (req, res) => {
+  // Pre-flight request. Reply successfully:
+  res.status(200).send();
 });
 
 try {
