@@ -72,6 +72,10 @@
     background-color: #c94b24;
   }
 
+  .u-txt-red {
+    color: #c94b24;
+  }
+
   .u-txt-active {
     color: #3c4043;
   }
@@ -101,7 +105,6 @@
 
 html {
   background-color: #eeeeee;
-
   max-height: 100vh;
   max-width: 100vw;
 }

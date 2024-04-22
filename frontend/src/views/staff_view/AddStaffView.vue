@@ -1,11 +1,22 @@
 <script setup>
-import Card from 'primevue/card'
-import TopHeader from './TopHeader.vue'
+import ContentPane from '@/components/UI/ContentPane.vue'
+import BaseCard from '@/components/UI/BaseCard.vue'
+import Button from 'primevue/button'
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
-    <TopHeader header="Staff Management / Add Record" />
-    <Card :pt="{ content: '' }" class="flex-1 rounded-[5px]"> </Card>
-  </div>
+  <ContentPane header="Staff Records">
+    <div class="flex flex-col gap-2 h-full">
+      <BaseCard class="grow">
+        <h1>Hello sa!</h1>
+      </BaseCard>
+
+      <div class="flex-none text-right">
+        <div class="inline-block">
+          <Button label="Submit" icon="fa-solid fa-circle-check" />
+          <Button class="ml-2" label="Cancel" icon="fa-solid fa-circle-xmark" />
+        </div>
+      </div>
+    </div>
+  </ContentPane>
 </template>
