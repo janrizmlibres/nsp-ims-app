@@ -15,17 +15,17 @@ const router = createRouter({
     },
     {
       path: '/active-classes',
-      name: 'Active Classes',
+      name: 'active classes',
       component: ActiveClassesView
     },
     {
       path: '/class-history',
-      name: 'Class History',
+      name: 'class history',
       component: ClassHistoryView
     },
     {
       path: '/create-classes',
-      name: 'Create Classes',
+      name: 'create classes',
       component: CreateClassesView
     },
     {
