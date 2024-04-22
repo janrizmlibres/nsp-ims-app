@@ -8,14 +8,14 @@ export async function signup(req, res, next) {
 
   try {
     const hashedPw = await bcrypt.hash(password, 12);
-    const staff = await Staff.create({
+    const user = await Staff.create({
       last_name: last_name,
       first_name: first_name,
       username: username,
       hashed_pw: hashedPw,
     });
 
-    res.status(201).json({ message: "Staff created!", userId: staff.id });
+    res.status(201).json({ message: "User created!", userId: user.id });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
