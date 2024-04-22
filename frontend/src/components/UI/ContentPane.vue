@@ -5,14 +5,20 @@ import TopHeader from './TopHeader.vue';
 
 <template>
   <TheSidebar name="User" role="Admin" />
-  <main class="u-max-width w-screen u-sidemain-max-height h-screen m-4 flex flex-col">
-    <TopHeader class="grow mb-12" header="Page Name" />
-    <slot></slot>
+  <main class="u-main-max-width w-screen u-sidemain-max-height h-screen m-4">
+    <TopHeader header="Page Name" />
+    <div class="u-max-height h-screen">
+      <slot></slot>
+    </div>
   </main>
 </template>
 
 <style scoped>
-.u-max-width {
+.u-main-max-width {
   max-width: calc(100vw - 6rem)
+}
+
+.u-max-height {
+  max-height: calc(100vh - 11rem)
 }
 </style>
