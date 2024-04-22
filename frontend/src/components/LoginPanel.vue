@@ -10,7 +10,6 @@ const usernameInput = ref(null);
 const passwordInput = ref(null);
 
 const submitEvent = async () => {
-  console.log("Checking if the inputs are empty...")
   if (checkInputEmpty(usernameInput) || checkInputEmpty(passwordInput)) {
     return;
   }
