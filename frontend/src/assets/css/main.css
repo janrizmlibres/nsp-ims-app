@@ -56,12 +56,16 @@
     background-color: #bf9039;
   }
 
+  .u-bg-scolor-2 {
+    background-color: #c39e5a;
+  }
+
   .u-legend-txt-color {
     color: #bf9039;
   }
 
   .u-ring-scolor {
-    --tw-ring-color: #c39e5a;
+    --tw-ring-color: #d2bb90;
   }
 
   .u-bg-green {
