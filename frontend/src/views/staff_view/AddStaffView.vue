@@ -1,14 +1,16 @@
 <script setup>
+import Button from 'primevue/button'
+
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
-import Button from 'primevue/button'
+import AddForm from '@/components/staff_view/AddForm.vue'
 </script>
 
 <template>
-  <ContentPane header="Staff Records">
-    <div class="flex flex-col gap-2 h-full">
+  <ContentPane header="Staff Management / Add Record">
+    <div class="flex flex-col gap-4 h-full mr-1">
       <BaseCard class="grow">
-        <h1>Hello sa!</h1>
+        <AddForm />
       </BaseCard>
 
       <div class="flex-none text-right">
