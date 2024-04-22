@@ -1,6 +1,6 @@
 ﻿<script setup>
-import LoginLogo from "@/components/LoginLogo.vue";
-import LoginPanel from "@/components/LoginPanel.vue";
+import LoginLogo from "@/components/login_view/LoginLogo.vue";
+import LoginPanel from "@/components/login_view/LoginPanel.vue";
 </script>
 
 <template>
