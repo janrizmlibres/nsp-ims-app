@@ -1,6 +1,7 @@
 import express from "express";
 import sequelize from "./util/database.js";
 import adminRoutes from "./routes/admin.js";
+import authRoutes from "./routes/auth.js";
 import bcrypt from "bcryptjs";
 
 import Staff from "./models/staff.js";
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 app.use("/admin", adminRoutes);
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Please enter a valid endpoint.");
