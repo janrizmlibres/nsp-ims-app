@@ -23,6 +23,6 @@ export default function (req, res, next) {
     throw error;
   }
 
-  req.userId = decodedToken.id;
+  req.userId = decodedToken.userId;
   next();
 }

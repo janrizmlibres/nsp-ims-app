@@ -3,6 +3,27 @@ import jwt from "jsonwebtoken";
 
 import Staff from "../models/staff.js";
 
+export async function signup(req, res, next) {
+  const { last_name, first_name, username, password } = req.body;
+
+  try {
+    const hashedPw = await bcrypt.hash(password, 12);
+    const staff = await Staff.create({
+      last_name: last_name,
+      first_name: first_name,
+      username: username,
+      hashed_pw: hashedPw,
+    });
+
+    res.status(201).json({ message: "Staff created!", userId: staff.id });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
 export async function login(req, res, next) {
   /**
    * The login function is used to authenticate a user.
@@ -22,15 +43,15 @@ export async function login(req, res, next) {
   const { username, password } = req.body;
 
   try {
-    const staff = await Staff.findOne({ where: { username: username } });
+    const user = await Staff.findOne({ where: { username: username } });
 
-    if (!staff) {
+    if (!user) {
       const error = new Error("Authentication failed. User not found.");
       error.statusCode = 401; // Code for not authenticated
       throw error;
     }
 
-    const isEqual = bcrypt.compare(password, staff.hashed_pw);
+    const isEqual = bcrypt.compare(password, user.hashed_pw);
 
     if (!isEqual) {
       const error = new Error("Authentication failed. Wrong password.");
@@ -40,8 +61,8 @@ export async function login(req, res, next) {
 
     const token = jwt.sign(
       {
-        username: staff.username,
-        id: staff.id.toString(),
+        username: user.username,
+        userId: user.id.toString(),
       },
       "HEHESECRET",
       { expiresIn: "1h" }
