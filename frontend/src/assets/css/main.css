@@ -27,7 +27,7 @@
   --surface-900: 15 23 42;
   --surface-950: 3 6 23;
 
-  --topbar-max-height: 4.875rem;
+  --topbar-max-height: 6rem;
 }
 
 @font-face {
@@ -84,9 +84,13 @@
     color: #265492;
   }
 
+  .u-sidemain-max-height {
+    max-height: calc(100vh - 2rem);
+  }
+
   /* expanded sidebar */
   .u-sidebar-expanded {
-    width: 20rem;
+    width: 17rem;
   }
 
   /* collapsed sidebar */
@@ -95,7 +99,7 @@
   }
 
   .u-sidebar-collapsed:hover {
-    width: 20rem;
+    width: 17rem;
   }
 }
 
@@ -104,6 +108,8 @@ html {
 
   max-height: 100vh;
   max-width: 100vw;
+
+  overflow: hidden;
 }
 
 body {
