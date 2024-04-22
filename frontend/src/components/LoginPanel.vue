@@ -2,6 +2,9 @@
 import {ref} from "vue";
 import { checkInputEmpty } from "@/utils/interactions.js";
 import axios from 'axios';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast();
 
 const usernameInput = ref(null);
 const passwordInput = ref(null);
@@ -17,14 +20,16 @@ const submitEvent = async () => {
 
   try {
     const response = await axios.post('http://localhost:8080/admin/login', {username, password});
-    const token = response.data.token;
-    // Save the token in the local storage or in a cookie
-    localStorage.setItem('token', token);
-    console.log("Successfully logged in!")
-    // Redirect the user to the dashboard or another page
+
+    if (response.status === 200) {
+      const token = response.data.token;
+      // Save the token in the local storage or in a cookie
+      localStorage.setItem('token', token);
+      // Redirect the user to the dashboard or another page
+      // Add your code here for future additions
+    }
   } catch (error) {
-    // Handle the error
-    console.error(error);
+    toast.add({severity:'error', summary: 'Error Logging In', detail: error.response.data.message, life: 3000});
   }
 }
 </script>
