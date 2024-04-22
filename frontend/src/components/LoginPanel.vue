@@ -38,11 +38,11 @@ const submitEvent = async () => {
     <div class="block justify-left">
       <p class="text-4xl font-bold text-u-bg-pcolor tracking-ultra mb-12">WELCOME!</p>
       <p class="text-base font-bold text-u-bg-pcolor">User ID</p>
-      <input class="mt-2 w-80 h-7 rounded-sm border-2 border-slate-400" ref="usernameInput" @blur="checkInputEmpty($event.target)"/>
+      <input class="mt-2 w-80 h-7 rounded-sm border-2 border-slate-400" ref="usernameInput" @blur="checkInputEmpty($event.target)" @keyup.enter="submitEvent"/>
       <p class="text-base font-bold text-u-bg-pcolor mt-6">Password</p>
-      <input class="mt-2 w-80 h-7 rounded-sm border-2 border-slate-400" ref="passwordInput" @blur="checkInputEmpty($event.target)"/>
+      <input class="mt-2 w-80 h-7 rounded-sm border-2 border-slate-400" ref="passwordInput" @blur="checkInputEmpty($event.target)" @keyup.enter="submitEvent"/>
       <br /><button class="mt-10 w-40 h-12 rounded-sm bg-u-bg-pcolor text-white font-bold text-base cursor-pointer" @click="submitEvent">SIGN IN</button>
-      <p class="text-base font-bold text-u-bg-pcolor  mt-16">www.nsp.xu.edu.ph</p>
+      <p class="text-base font-bold text-u-bg-pcolor mt-16">www.nsp.xu.edu.ph</p>
     </div>
   </div>
 </template>
