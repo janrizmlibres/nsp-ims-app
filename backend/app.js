@@ -18,6 +18,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.json());
+
 app.use("/admin", adminRoutes);
 
 app.get("/", (req, res) => {
@@ -29,6 +31,11 @@ app.use((error, req, res, next) => {
   const status = error.statusCode || 500;
   const message = error.message;
   res.status(status).json({ message: message });
+});
+
+app.options('*', (req, res) => {
+  // Pre-flight request. Reply successfully:
+  res.status(200).send();
 });
 
 try {
