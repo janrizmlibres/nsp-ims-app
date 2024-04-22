@@ -6,6 +6,7 @@ import CreateClassesView from '../views/CreateClassesView.vue'
 
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
+import AddStaffView from '@/views/staff_view/AddStaffView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,6 +40,11 @@ const router = createRouter({
       path: '/staff-permissions',
       name: 'staff permissions',
       component: PermissionsView
+    },
+    {
+      path: '/add-staff',
+      name: 'add staff',
+      component: AddStaffView
     }
   ]
 })

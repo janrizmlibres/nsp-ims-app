@@ -3,6 +3,7 @@ import BaseCard from '@/components/UI/BaseCard.vue'
 import ContentPane from '@/components/UI/ContentPane.vue'
 import PermissionsTable from '@/components/staff_view/PermissionsTable.vue'
 import TheHeader from '@/components/staff_view/TheHeader.vue'
+import TheFooter from '@/components/staff_view/TheFooter.vue'
 
 import { ref } from 'vue'
 
@@ -38,10 +39,6 @@ const staffs = ref([
       <PermissionsTable :staffs="staffs" />
     </BaseCard>
 
-    <div class="pl-8 pt-2 font-medium">
-      <p>
-        Record(s) count: <span class="u-txt-red"> {{ staffs.length }} </span>
-      </p>
-    </div>
+    <TheFooter :staffCount="staffs.length" />
   </ContentPane>
 </template>

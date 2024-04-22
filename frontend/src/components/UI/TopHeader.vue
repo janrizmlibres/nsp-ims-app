@@ -3,7 +3,7 @@ defineProps(['header'])
 </script>
 
 <template>
-  <div class="flex u-txt-active">
+  <div class="flex u-txt-active mb-5">
     <div class="flex grow text-4xl font-medium">
       <img src="@/assets/logo.png" class="size-24" />
       <h1 class="mt-2 ml-2">{{ header }}</h1>

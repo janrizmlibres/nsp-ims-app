@@ -7,7 +7,7 @@ defineProps(['header'])
 
 <template>
   <TheSidebar name="User" role="Admin" />
-  <main class="w-full ml-4 py-4 pr-4">
+  <main class="w-full ml-4 py-4 pr-4 items-stretch flex flex-col">
     <TopHeader :header="header" />
     <slot></slot>
   </main>

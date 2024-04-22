@@ -39,6 +39,6 @@ const staffs = ref([
       <RecordsTable :staffs="staffs" />
     </BaseCard>
 
-    <TheFooter :staffs="staffs" />
+    <TheFooter :staffCount="staffs.length" />
   </ContentPane>
 </template>
