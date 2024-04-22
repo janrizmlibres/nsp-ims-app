@@ -51,7 +51,7 @@ const items = ref([
       },
       {
         key: '3-2',
-        label: 'Enrollment History',
+        label: 'Enrollment Records',
         icon: 'fa fa-scroll',
         route: '/enrollment-history'
       },
@@ -95,7 +95,7 @@ const items = ref([
       },
       {
         key: '5-2',
-        label: 'Class History',
+        label: 'Class Records',
         icon: 'fa fa-scroll',
         route: '/class-history'
       },
