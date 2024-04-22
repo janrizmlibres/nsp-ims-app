@@ -5,6 +5,7 @@ import PanelMenu from 'primevue/panelmenu'
 import { useSideBarStateStore } from '@/stores/sidebar_state'
 import { ref } from 'vue'
 
+defineProps(['name', 'role'])
 const items = ref([
   {
     key: '1',
@@ -140,6 +141,12 @@ const items = ref([
         label: 'Staff Permissions',
         icon: 'fa fa-shield-halved',
         route: '/staff-permissions'
+      },
+      {
+        key: '9-3',
+        label: 'Add Staff',
+        icon: 'fa fa-user-plus',
+        route: '/add-staff'
       }
     ]
   },
@@ -291,21 +298,19 @@ const sideBarStateStore = useSideBarStateStore()
           panel: {
             class: 'text-sm'
           },
-          headercontent: ({ context, item }) => {
-            return {
-              class: [
-                // Color
-                'border-none',
-                'u-bg-pcolor',
-                'text-surface-100',
-                // States
-                'hover:bg-surface-100',
-                'hover:u-txt-active',
-                // Transition
-                'transition duration-200 ease-in-out',
-                'transition-shadow duration-200'
-              ]
-            }
+          headercontent: {
+            class: [
+              // Color
+              'border-none',
+              'u-bg-pcolor',
+              'text-surface-100',
+              // States
+              'hover:bg-surface-100',
+              'hover:u-txt-active',
+              // Transition
+              'transition duration-200 ease-in-out',
+              'transition-shadow duration-200'
+            ]
           },
           headeraction: {
             class: [
@@ -325,7 +330,7 @@ const sideBarStateStore = useSideBarStateStore()
           content: {
             class: ['border-none rounded-none', 'transition-shadow duration-200']
           },
-          action: ({ context }) => ({
+          action: {
             class: [
               'relative',
               // Font
@@ -342,7 +347,7 @@ const sideBarStateStore = useSideBarStateStore()
               'cursor-pointer no-underline',
               'select-none overflow-hidden'
             ]
-          }),
+          },
           icon: {
             class: ['mr-2']
           },
@@ -402,8 +407,8 @@ const sideBarStateStore = useSideBarStateStore()
           <span class="fa fa-circle-user text-surface-100" />
         </span>
         <div class="flex flex-col u-sidebar-footer-text">
-          <span>Account Name</span>
-          <span class="text-sm">Role</span>
+          <span>{{ name }}</span>
+          <span class="text-sm">{{ role }}</span>
         </div>
       </div>
     </div>
