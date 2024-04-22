@@ -1,6 +1,8 @@
 <script setup>
 import TheSidebar from '../layout/TheSidebar.vue'
-import TopHeader from './TopHeader.vue';
+import TopHeader from './TopHeader.vue'
+
+defineProps(['header'])
 </script>
 
 <template>
