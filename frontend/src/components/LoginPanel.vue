@@ -7,17 +7,25 @@ const usernameInput = ref(null);
 const passwordInput = ref(null);
 
 const submitEvent = async () => {
-  if (!checkInputEmpty(usernameInput) || !checkInputEmpty(passwordInput)) {
+  console.log("Checking if the inputs are empty...")
+  if (checkInputEmpty(usernameInput) || checkInputEmpty(passwordInput)) {
     return;
   }
-  const username = usernameInput.value;
-  const password = passwordInput.value;
+  
+  console.log("Submitting the form...")
+  
+  const username = usernameInput.value.value;
+  const password = passwordInput.value.value;
+  
+  console.log("Username: ", username);
+  console.log("Password: ", password);
 
   try {
-    const response = await axios.post('http://localhost:3000/login', {username, password});
+    const response = await axios.post('http://localhost:8080/admin/login', {username, password});
     const token = response.data.token;
     // Save the token in the local storage or in a cookie
     localStorage.setItem('token', token);
+    console.log("Successfully logged in!")
     // Redirect the user to the dashboard or another page
   } catch (error) {
     // Handle the error
