@@ -12,13 +12,8 @@ const submitEvent = async () => {
     return;
   }
   
-  console.log("Submitting the form...")
-  
   const username = usernameInput.value.value;
   const password = passwordInput.value.value;
-  
-  console.log("Username: ", username);
-  console.log("Password: ", password);
 
   try {
     const response = await axios.post('http://localhost:8080/admin/login', {username, password});
