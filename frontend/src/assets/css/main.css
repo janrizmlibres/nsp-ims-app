@@ -76,6 +76,10 @@
     color: #c94b24;
   }
 
+  .u-bg-active {
+    background-color: #3c4043;
+  }
+
   .u-txt-active {
     color: #3c4043;
   }

@@ -1,5 +1,6 @@
 <script setup>
 import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
@@ -8,15 +9,26 @@ import AddForm from '@/components/staff_view/AddForm.vue'
 
 <template>
   <ContentPane header="Staff Management / Add Record">
-    <div class="flex flex-col gap-4 h-full mr-1">
+    <div class="flex flex-col gap-3 h-full mr-1">
+      <div>
+        <BaseCard :isNotPadded="true" class="py-2 px-6">
+          <div class="flex gap-6 items-center">
+            <div class="font-medium text-right">
+              <span>Position</span>
+            </div>
+            <InputText class="h-10" type="text" v-model="value" />
+          </div>
+        </BaseCard>
+      </div>
+
       <BaseCard class="grow">
         <AddForm />
       </BaseCard>
 
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Button label="Submit" icon="fa-solid fa-circle-check" />
-          <Button class="ml-2" label="Cancel" icon="fa-solid fa-circle-xmark" />
+          <Button class="h-10 u-bg-green" label="Submit" icon="fa-solid fa-circle-check" />
+          <Button class="h-10 ml-2 u-bg-red" label="Cancel" icon="fa-solid fa-circle-xmark" />
         </div>
       </div>
     </div>
