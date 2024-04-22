@@ -1,6 +1,10 @@
 import express from "express";
 import sequelize from "./util/database.js";
 import adminRoutes from "./routes/admin.js";
+import authRoutes from "./routes/auth.js";
+import bcrypt from "bcryptjs";
+
+import Staff from "./models/staff.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,7 +19,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.json());
+
 app.use("/admin", adminRoutes);
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.send("Please enter a valid endpoint.");
@@ -28,9 +35,32 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message });
 });
 
+app.options('*', (req, res) => {
+  // Pre-flight request. Reply successfully:
+  res.status(200).send();
+});
+
 try {
   await sequelize.sync({ force: true });
+
+  const janpass = await bcrypt.hash("janrizpass", 12);
+  await Staff.create({
+    last_name: "Libres",
+    first_name: "Janriz",
+    username: "janrizlibs",
+    hashed_pw: janpass,
+  });
+
+  const joypass = await bcrypt.hash("joypass", 12);
+  await Staff.create({
+    last_name: "Etom",
+    first_name: "Joy",
+    username: "joyetom",
+    hashed_pw: joypass,
+  });
+
   app.listen(port);
+  console.log("Listening on port " + port);
 } catch (error) {
-  (error) => console.log(error);
+  console.log(error);
 }

@@ -1,16 +1,9 @@
 <script setup>
 import { RouterView } from 'vue-router'
-
-import Sidebar from './components/Sidebar.vue'
-import Navbar from './components/Navbar.vue'
+import Toast from 'primevue/toast';
 </script>
 
 <template>
-  <Sidebar />
-  <div class="w-full h-full fixed left-80 p-4">
-    <Navbar />
-    <RouterView class="h-full pt-4" />
-  </div>
+  <Toast />
+  <RouterView />
 </template>
-
-<style></style>

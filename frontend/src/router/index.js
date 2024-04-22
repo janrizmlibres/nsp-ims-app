@@ -12,7 +12,20 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
-});
+  routes: [
+    {
+      path: '/',
+<<<<<<<<< Temporary merge branch 1
+      name: 'login',
+      component: LoginView
+    },
+    {
+=========
+      name: 'class management',
+      component: ClassPage
+>>>>>>>>> Temporary merge branch 2
+    }
+  ]
+})
 
 export default router;

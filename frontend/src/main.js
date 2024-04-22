@@ -9,6 +9,8 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import ToastService from 'primevue/toastservice';
+
 
 library.add(fas)
 dom.watch()
@@ -16,13 +18,15 @@ dom.watch()
 import App from './App.vue'
 import router from './router'
 
-config.styleDefault = "solid";
+config.styleDefault = 'solid'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
 app.use(PrimeVue, { unstyled: true, pt: Lara })
+app.use(ToastService);
+
 app.component('font-awesome-icon', FontAwesomeIcon)
 
 app.mount('#app')
