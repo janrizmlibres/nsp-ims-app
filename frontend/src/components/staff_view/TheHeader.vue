@@ -1,3 +1,9 @@
+<script setup>
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import TopHeader from '../UI/TopHeader.vue'
+</script>
+
 <template>
   <div class="flex h-1/4">
     <TopHeader class="grow" header="Staff Management" />
@@ -17,9 +23,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import InputText from 'primevue/inputtext'
-import Button from 'primevue/button'
-import TopHeader from '../ui/TopHeader.vue'
-</script>
