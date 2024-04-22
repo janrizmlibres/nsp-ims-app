@@ -3,8 +3,11 @@ import {ref} from "vue";
 import { checkInputEmpty } from "@/utils/interactions.js";
 import axios from 'axios';
 import { useToast } from 'primevue/usetoast';
+import { useRouter } from 'vue-router';
 
 const toast = useToast();
+
+const router = useRouter();
 
 const usernameInput = ref(null);
 const passwordInput = ref(null);
@@ -24,8 +27,7 @@ const submitEvent = async () => {
       const token = response.data.token;
       // Save the token in the local storage or in a cookie
       localStorage.setItem('token', token);
-      // Redirect the user to the dashboard or another page
-      // Add your code here for future additions
+      await router.push('/dashboard'); // navigate to dashboard
     }
   } catch (error) {
     toast.add({severity:'error', summary: 'Error Logging In', detail: error.response.data.message, life: 3000});
