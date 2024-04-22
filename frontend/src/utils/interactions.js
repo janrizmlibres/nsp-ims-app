@@ -4,7 +4,7 @@
      * It takes one argument, input, which can be
      * either a Vue ref object or a DOM element.
      * @param {VueRefObject | HTMLElement} input - The input field to check
-     * @returns {void}
+     * @returns {Boolean} - True if the input is empty, false otherwise
     */
 
     let inputElement;
@@ -20,8 +20,10 @@
     const inputValue = inputElement.value || '';
   
     if (inputValue.trim() === '') {
-      inputElement.style.borderColor = 'red';
+        inputElement.style.borderColor = 'red';
+        return true;
     } else {
-      inputElement.style.borderColor = ''; // Reset border color when there is input
+        inputElement.style.borderColor = ''; // Reset border color when there is input
+        return false;
     }
 }
