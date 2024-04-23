@@ -7,9 +7,12 @@ import Button from 'primevue/button'
   <div class="mb-2 text-right mt-10">
     <div class="inline-block ml-auto mr-0">
       <span class="relative">
-        <font-awesome-icon
+        <!-- <font-awesome-icon
           icon="fa-solid fa-magnifying-glass"
           class="absolute top-2/4 -mt-2 left-3"
+        /> -->
+        <i
+          class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600"
         />
         <InputText v-model="value1" placeholder="Search Staff" size="small" class="pl-10" />
       </span>
