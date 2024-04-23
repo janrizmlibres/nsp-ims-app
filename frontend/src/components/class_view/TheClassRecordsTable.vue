@@ -3,7 +3,6 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import Paginator from 'primevue/paginator';
 
 import { ref, onMounted, reactive } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
@@ -496,7 +495,8 @@ const filters = ref({
     enddate: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
-const selectedItem = ref();
+const primarySelection = ref()
+const secondarySelection = ref();
 
 const dt = ref();
 const exportCSV = () => {
@@ -518,6 +518,18 @@ const expansionColumns = [
     { field: 'drop', header: 'End Date' },
     { field: 'total', header: 'End Date' }
 ];
+
+function onExpandRow(id) {
+    state.expandedRows = {}
+    const checkProp = id in state.expandedRows
+    if (checkProp) delete state.expandedRows[id]
+    else state.expandedRows[id] = true
+    state.expandedRows = { ...state.expandedRows }
+}
+
+function onCollapseRow() {
+    state.expandedRows = {}
+}
 </script>
 
 <template>
@@ -534,7 +546,8 @@ const expansionColumns = [
                 sortField="batchnumber" :sortOrder="-1" removableSort resizableColumns columnResizeMode="fit"
                 v-model:filters="filters" :globalFilterFields="['academicyear', 'startdate', 'enddate']"
                 paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-                ref="dt"
+                ref="dt" v-model:selection="primarySelection" selectionMode="single" 
+                @rowSelect="onExpandRow(primarySelection.id)" @rowUnselect="onCollapseRow()"
                 :ptOptions="{mergeProps:true}"
                 :pt="{
                     root: {
@@ -544,7 +557,7 @@ const expansionColumns = [
                         class: 'flex flex-col grow'
                     },
                     table: {
-                        class: 'bg-white ',
+                        class: 'bg-white border-spacing-0 border-separate',
                     },
                     thead: {
                         class: 'bg-surface-0 top-0 z-40 sticky'
@@ -555,22 +568,35 @@ const expansionColumns = [
                     column: {
                         headercell: ({ context, props }) => ({
                             class: [
-                                'font-medium bg-white',
+                                'font-medium',
                                 {
-                                'overflow-hidden space-nowrap border-y bg-clip-padding': context.resizable
+                                'space-nowrap border-y bg-clip-padding': context.resizable
                                 // Resizable
                                 },
                                 // Color
-                                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-surface-0 u-txt-active' : 'bg-surface-0 u-txt-active',
+                                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
                                 {'hover:bg-surface-50': context.sorted}
                             ]
+                        }),
+                            sorticon: ({ context }) => ({
+                                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
+                        }),
+                            bodycell: {class: 'py-3 '}
+                    },
+                    bodyrow: ({ context, props }) => ({
+                        class: [
+                            { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
+                            { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
+                            { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
+                            // State
+                            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
+                            { 'hover:bg-surface-100 hover:u-txt-active': props.selectionMode && !context.selected },
+                            // Misc
+                            { 'cursor-pointer': props.selectionMode }
+                        ]
                     }),
-                        sorticon: ({ context }) => ({
-                            class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-                    }),
-                        columnresizer: {
-                            class: ['block', 'absolute top-0 right-0', 'w-2 h-full', 'm-0 p-0', 'border border-transparent', 'cursor-col-resize']
-                        },
+                    rowexpansion: {
+                        class: 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-white/80'
                     },
                     paginator: {
                         root: {
@@ -606,8 +632,8 @@ const expansionColumns = [
                 <Column expander style="width: 5rem" />
                 <Column v-for="col of dataColumns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
                 <template #expansion="slotProps">
-                    <div class="p-1 u-bg-pcolor-2 rounded-md">
-                        <DataTable :value="slotProps.data.schoollevels" v-model:selection="selectedItem" selectionMode="single"
+                    <div class="p-1 rounded-md">
+                        <DataTable :value="slotProps.data.schoollevels" v-model:selection="secondarySelection" selectionMode="single"
                         :ptOptions="{mergeProps:true}"
                         :pt="{
                             column: {
@@ -619,19 +645,22 @@ const expansionColumns = [
                                         // Resizable
                                         },
                                         // Color
-                                        (props.sortable === '' || props.sortable) && context.sorted ? 'u-bg-scolor-2 text-white' : 'bg-surface-50 text-surface-700'
+                                        (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white text-white' : 'bg-white text-surface-700'
                                     ]
                                 })
+                            },
+                            thead: {
+                                class: 'bg-surface-0'
                             },
                             bodyrow: ({ context, props }) => ({
                                 class: [
                                 'gap-y-4 ',
-                                { 'u-bg-scolor text-white dark:bg-primary-400/30': context.selected },
+                                { 'bg-surface-100 u-txt-active dark:bg-primary-400/30': context.selected },
                                 { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
                                 { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
                                 // State
-                                { 'focus:outline-none focus:outline-offset-0 focus:ring focus:u-ring-scolor ring-inset dark:focus:ring-primary-300/50': context.selectable },
-                                { 'hover:u-bg-scolor hover:text-white': props.selectionMode && !context.selected },
+                                { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent ring-inset dark:focus:ring-primary-300/50': context.selectable },
+                                { 'hover:bg-surface-100 hover:u-txt-active': props.selectionMode && !context.selected },
                                 // Misc
                                 { 'cursor-pointer': props.selectionMode }
                                 ]
