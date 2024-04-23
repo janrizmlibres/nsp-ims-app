@@ -35,7 +35,7 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message });
 });
 
-app.options('*', (req, res) => {
+app.options("*", (req, res) => {
   // Pre-flight request. Reply successfully:
   res.status(200).send();
 });
