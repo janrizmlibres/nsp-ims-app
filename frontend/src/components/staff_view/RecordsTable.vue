@@ -19,8 +19,8 @@ defineProps(['staffs'])
         </a>
       </template>
     </Column>
-    <Column field="userId" header="User ID" sortable></Column>
-    <Column field="fullName" header="Full Name" sortable></Column>
+    <Column field="id" header="User ID" sortable></Column>
+    <Column field="full_name" header="Full Name" sortable></Column>
     <Column field="position" header="Position" sortable></Column>
   </DataTable>
 </template>

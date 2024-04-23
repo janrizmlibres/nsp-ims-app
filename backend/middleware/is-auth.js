@@ -9,7 +9,6 @@ export default function (req, res, next) {
   }
 
   const token = authHeader.split(" ")[1];
-  console.log(authHeader);
 
   try {
     const decodedToken = jwt.verify(token, "HEHESECRET");
@@ -19,11 +18,11 @@ export default function (req, res, next) {
       error.statusCode = 401;
       throw error;
     }
+
+    req.userId = decodedToken.userId;
+    next();
   } catch (error) {
     error.statusCode = 500;
     throw error;
   }
-
-  req.userId = decodedToken.userId;
-  next();
 }

@@ -7,20 +7,25 @@ import RecordsTable from '@/components/staff_view/RecordsTable.vue'
 
 import { onBeforeMount, ref } from 'vue'
 import axios from 'axios'
-import { useStaffsStore } from '@/stores/staffs'
 
-const store = useStaffsStore()
+import { useStaffsStore } from '@/stores/staffs'
+import { useAuthStore } from '@/stores/auth'
+
+const staffsStore = useStaffsStore()
+const authStore = useAuthStore()
+
 const isLoading = ref(false)
 
 onBeforeMount(async () => {
-  if (store.staffs.length == 0) {
+  if (staffsStore.staffs.length == 0) {
     isLoading.value = true
 
     try {
       const result = await axios.get('http://localhost:8080/admin/staffs', {
-        headers: { Authorization: 'Bearer ' + localStorage.getItem('token') }
+        headers: { Authorization: 'Bearer ' + authStore.token }
       })
-      store.staffs = result.data.staffs
+      console.log(result.data.staffs)
+      staffsStore.staffs = result.data.staffs
     } catch (error) {
       console.log(error.data.message)
     }
@@ -35,9 +40,9 @@ onBeforeMount(async () => {
     <TheHeader />
 
     <BaseCard>
-      <RecordsTable :staffs="store.staffs" />
+      <RecordsTable :staffs="staffsStore.staffs" />
     </BaseCard>
 
-    <TheFooter :staffCount="store.staffs.length" />
+    <TheFooter :staffCount="staffsStore.staffs.length" />
   </ContentPane>
 </template>
