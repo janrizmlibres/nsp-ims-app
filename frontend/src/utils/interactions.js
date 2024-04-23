@@ -3,7 +3,8 @@
      * This is designed to check if an input field is empty or not. 
      * It takes one argument, input, which can be
      * either a Vue ref object or a DOM element.
-     * @param {VueRefObject | HTMLElement} input - The input field to check
+     * @param {ref} input - the v-model of the input to check
+     * @param {ref} isInvalid - the ref variable that will be set to true or false if the input is empty
      * @returns {Boolean} - True if the input is empty, false otherwise
     */
   
