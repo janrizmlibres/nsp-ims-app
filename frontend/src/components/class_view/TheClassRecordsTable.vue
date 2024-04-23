@@ -521,7 +521,7 @@ const expansionColumns = [
 </script>
 
 <template>
-    <div class="relative flex flex-col h-screen">
+    <div class="flex flex-col h-full">
         <div class="bg-transparent border-none flex justify-end p-4">
             <span class="relative mr-2">
                 <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
@@ -529,10 +529,11 @@ const expansionColumns = [
             </span>
             <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
         </div>
-        <div class="p-4 bg-surface-0 shadow-xl rounded-md">
+        <div class="bg-surface-0 p-4 h-full rounded-md shadow-xl overflow-auto">
             <DataTable v-model:expandedRows="state.expandedRows" :value="state.yearList" dataKey="id" 
                 sortField="batchnumber" :sortOrder="-1" removableSort resizableColumns columnResizeMode="fit"
                 v-model:filters="filters" :globalFilterFields="['academicyear', 'startdate', 'enddate']"
+                paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
                 ref="dt"
                 :ptOptions="{mergeProps:true}"
                 :pt="{
@@ -542,14 +543,11 @@ const expansionColumns = [
                     wrapper: {
                         class: 'flex flex-col grow'
                     },
-                    header: {
-                        class: ''
-                    },
                     table: {
-                        class: 'bg-white',
+                        class: 'bg-white ',
                     },
                     thead: {
-                        class: 'bg-surface-50 top-0 z-40 sticky'
+                        class: 'bg-surface-0 top-0 z-40 sticky'
                     },
                     tbody: {
                         class: 'sticky z-20'
@@ -557,21 +555,49 @@ const expansionColumns = [
                     column: {
                         headercell: ({ context, props }) => ({
                             class: [
-                                'font-medium',
+                                'font-medium bg-white',
                                 {
                                 'overflow-hidden space-nowrap border-y bg-clip-padding': context.resizable
                                 // Resizable
                                 },
                                 // Color
-                                (props.sortable === '' || props.sortable) && context.sorted ? 'u-bg-scolor-2 text-white' : 'bg-surface-50 text-surface-700'
+                                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-surface-0 u-txt-active' : 'bg-surface-0 u-txt-active',
+                                {'hover:bg-surface-50': context.sorted}
                             ]
                     }),
                         sorticon: ({ context }) => ({
-                            class: ['ml-2', context.sorted ? 'text-white dark:text-white/80' : 'text-surface-700 dark:text-white/70']
+                            class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
                     }),
                         columnresizer: {
                             class: ['block', 'absolute top-0 right-0', 'w-2 h-full', 'm-0 p-0', 'border border-transparent', 'cursor-col-resize']
                         },
+                    },
+                    paginator: {
+                        root: {
+                            class: ['flex items-center justify-center flex-wrap object-bottom', 'px-4 pt-4 pb-2', 'border-0 rounded-bl-xl rounded-br-xl', 'bg-transparent dark:bg-surface-800', 'text-surface-500 dark:text-white/60']
+                        },
+                        pagebutton: ({ context }) => ({
+                            class: [
+                            'relative',
+                            // Flex & Alignment
+                            'inline-flex items-center justify-center',
+                            // Shape
+                            'border-0 rounded-full dark:rounded-md',
+                            // Size
+                            'min-w-[3rem] h-12 m-[0.143rem]',
+                            'leading-none',
+                            // Color
+                            'text-surface-500 dark:text-white/80',
+                            {
+                                'u-bg-scolor-2 border-primary-50 text-white font-semibold': context.active
+                            },
+                            // State
+                            {
+                                'hover:bg-surface-50': !context.disabled && !context.active,
+                                'focus:u-ring-scolor': !context.disabled
+                            },
+                            ]
+                        }),
                     }
                 }"
             >
@@ -617,34 +643,5 @@ const expansionColumns = [
                 </template>
             </DataTable>
         </div>
-        <Paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-            :pt="{
-                root: {
-                    class: ['flex items-center justify-center flex-wrap object-bottom', 'px-4 pt-4 pb-2', 'border-0 rounded-bl-xl rounded-br-xl', 'bg-transparent dark:bg-surface-800', 'text-surface-500 dark:text-white/60']
-                },
-                pagebutton: ({ context }) => ({
-                    class: [
-                    'relative',
-                    // Flex & Alignment
-                    'inline-flex items-center justify-center',
-                    // Shape
-                    'border-0 rounded-full dark:rounded-md',
-                    // Size
-                    'min-w-[3rem] h-12 m-[0.143rem]',
-                    'leading-none',
-                    // Color
-                    'text-surface-500 dark:text-white/80',
-                    {
-                        'u-bg-scolor-2 border-primary-50 text-white font-semibold': context.active
-                    },
-                    // State
-                    {
-                        'hover:bg-surface-50': !context.disabled && !context.active,
-                        'focus:u-ring-scolor': !context.disabled
-                    },
-                    ]
-                }),
-            }"
-            :ptOptions="{mergeProps:true}"></Paginator>
     </div>
 </template>
