@@ -6,24 +6,14 @@
      * @param {VueRefObject | HTMLElement} input - The input field to check
      * @returns {Boolean} - True if the input is empty, false otherwise
     */
-
-    let inputElement;
   
-    // Check if the input is a Vue ref object
-    if (typeof input.value === 'object' && input.value !== null) {
-      inputElement = input.value.$el || input.value;
-    } else {
-      // Assume it's a DOM element
-      inputElement = input;
-    }
-  
-    const inputValue = inputElement.value || '';
-  
+    const inputValue = input.value || '';
+    
     if (inputValue.trim() === '') {
-        inputElement.style.borderColor = 'red';
+        isInvalid.value = true;
         return true;
     } else {
-        inputElement.style.borderColor = ''; // Reset border color when there is input
+        isInvalid.value = false
         return false;
     }
 }
