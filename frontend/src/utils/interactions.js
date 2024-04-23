@@ -1,4 +1,4 @@
-﻿export function checkInputEmpty(input) {
+﻿export function checkInputEmpty(input, isInvalid) {
     /** 
      * This is designed to check if an input field is empty or not. 
      * It takes one argument, input, which can be
