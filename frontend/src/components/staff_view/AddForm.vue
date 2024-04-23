@@ -66,7 +66,7 @@ const formData = ref(props.formDataProp)
           />
         </div>
 
-        <div class="flex gap-10 items-center">
+        <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
             <span>Last Name</span>
           </div>
@@ -74,6 +74,18 @@ const formData = ref(props.formDataProp)
             class="grow h-10"
             type="text"
             v-model="formData.lastName"
+            @update:modelValue="$emit('dataChanged', formData)"
+          />
+        </div>
+
+        <div class="flex gap-10 items-center">
+          <div class="basis-32 text-right">
+            <span>Suffix</span>
+          </div>
+          <InputText
+            class="w-20 h-10"
+            type="text"
+            v-model="formData.suffixName"
             @update:modelValue="$emit('dataChanged', formData)"
           />
         </div>

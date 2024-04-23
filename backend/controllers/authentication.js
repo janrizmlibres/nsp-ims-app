@@ -1,50 +1,94 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import Staff from "../models/staff.js";
 
-export async function login(req, res) {
-    /**
-     * The login function is used to authenticate a user.
-     * It takes the username and password from the request body.
-     * It then searches for the user in the database.
-     * If the user is found, it compares the password with the hashed password in the database.
-     * If the password matches, it generates a token using the user's username and id.
-     * The token is then sent back to the client.
-     * If the password does not match, it returns an error message.
-     * If the user is not found, it returns an error message.
-     * If there is an error while searching for the user, it returns an error message.
-     * @param {Object} req - The request object
-     * @param {Object} res - The response object
-     * @returns {Object} - The response object
-     */
-    const { username, password } = req.body;
+export async function signup(req, res, next) {
+  const {
+    username,
+    password,
+    first_name,
+    middle_name,
+    last_name,
+    suffix_name,
+    position,
+    email,
+    contact_num,
+  } = req.body;
 
-    try {
-        const staff = await Staff.findOne({ where: { username: username } });
+  try {
+    const hashedPw = await bcrypt.hash(password, 12);
+    const user = await Staff.create({
+      username: username,
+      hashed_pw: hashedPw,
+      first_name: first_name,
+      middle_name: middle_name.length == 0 ? null : middle_name,
+      last_name: last_name,
+      suffix_name: suffix_name.length == 0 ? null : suffix_name,
+      position: position.length == 0 ? null : position,
+      email: email.length == 0 ? null : email,
+      contact_num: contact_num.length == 0 ? null : contact_num,
+    });
 
-        if (!staff) {
-            return res.status(401).json({ message: 'Authentication failed. User not found.' });
-        }
-
-        bcrypt.compare(password, staff.hashed_pw, (err, result) => {
-            if (err) {
-                return res.status(401).json({ message: 'Authentication failed. Wrong password.' });
-            }
-
-            if (result) {
-                const token = jwt.sign(
-                    { username: staff.username, id: staff.id },
-                    "HEHESECRET", // replace with your secret key
-                    { expiresIn: '1h' }
-                );
-
-                return res.status(200).json({ message: 'Authentication successful', token: token });
-            }
-
-            return res.status(401).json({ message: 'Authentication failed. Wrong password.' });
-        });
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: error });
+    res.status(201).json({ message: "User created!", userId: user.id });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
     }
+    next(error);
+  }
+}
+
+export async function login(req, res) {
+  /**
+   * The login function is used to authenticate a user.
+   * It takes the username and password from the request body.
+   * It then searches for the user in the database.
+   * If the user is found, it compares the password with the hashed password in the database.
+   * If the password matches, it generates a token using the user's username and id.
+   * The token is then sent back to the client.
+   * If the password does not match, it returns an error message.
+   * If the user is not found, it returns an error message.
+   * If there is an error while searching for the user, it returns an error message.
+   * @param {Object} req - The request object
+   * @param {Object} res - The response object
+   * @returns {Object} - The response object
+   */
+  const { username, password } = req.body;
+
+  try {
+    const staff = await Staff.findOne({ where: { username: username } });
+
+    if (!staff) {
+      return res
+        .status(401)
+        .json({ message: "Authentication failed. User not found." });
+    }
+
+    bcrypt.compare(password, staff.hashed_pw, (err, result) => {
+      if (err) {
+        return res
+          .status(401)
+          .json({ message: "Authentication failed. Wrong password." });
+      }
+
+      if (result) {
+        const token = jwt.sign(
+          { username: staff.username, id: staff.id },
+          "HEHESECRET", // replace with your secret key
+          { expiresIn: "1h" }
+        );
+
+        return res
+          .status(200)
+          .json({ message: "Authentication successful", token: token });
+      }
+
+      return res
+        .status(401)
+        .json({ message: "Authentication failed. Wrong password." });
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: error });
+  }
 }
