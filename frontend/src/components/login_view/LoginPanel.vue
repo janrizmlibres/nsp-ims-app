@@ -12,6 +12,17 @@ const router = useRouter()
 const usernameInput = ref(null)
 const passwordInput = ref(null)
 
+const isUsernameInvalid = ref(false);
+const isPasswordInvalid = ref(false);
+
+function checkInputEmptyForUsername() {
+  checkInputEmpty(usernameInput, isUsernameInvalid)
+}
+
+function checkInputEmptyForPassword() {
+  checkInputEmpty(passwordInput, isPasswordInvalid)
+}
+
 const submitEvent = async () => {
   if (checkInputEmpty(usernameInput) || checkInputEmpty(passwordInput)) {
     return
