@@ -50,7 +50,7 @@ const CustomPreset = usePassThrough(
 
 app.use(createPinia())
 app.use(router)
-app.use(PrimeVue, { unstyled: true, pt: Lara })
+app.use(PrimeVue, { unstyled: true, pt: CustomPreset })
 app.use(ToastService);
 
 app.component('font-awesome-icon', FontAwesomeIcon)
