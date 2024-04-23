@@ -25,8 +25,8 @@ function checkInputEmptyForPassword() {
 }
 
 const submitEvent = async () => {
-  if (checkInputEmpty(usernameInput) || checkInputEmpty(passwordInput)) {
-    return
+  if (checkInputEmpty(usernameInput, isUsernameInvalid) || checkInputEmpty(passwordInput, isPasswordInvalid)) {
+    return;
   }
   
   const username = usernameInput.value;
