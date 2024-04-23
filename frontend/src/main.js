@@ -27,7 +27,7 @@ const CustomPreset = usePassThrough(
     Lara,
     {
         inputtext: {
-            root: ({ props, context, parent }) => {
+            root: ({ props, context }) => {
                 return {
                     class: [
                         { 'u-input-text-hover dark:u-input-text-hover': !props.invalid },

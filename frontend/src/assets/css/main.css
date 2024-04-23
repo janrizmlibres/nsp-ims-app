@@ -27,7 +27,7 @@
   --surface-900: 15 23 42;
   --surface-950: 3 6 23;
 
-  --topbar-max-height: 4.875rem;
+  --topbar-max-height: 6rem;
 }
 
 @font-face {
@@ -56,12 +56,16 @@
     background-color: #bf9039;
   }
 
+  .u-bg-scolor-2 {
+    background-color: #c39e5a;
+  }
+
   .u-legend-txt-color {
     color: #bf9039;
   }
 
   .u-ring-scolor {
-    --tw-ring-color: #c39e5a;
+    --tw-ring-color: #d2bb90;
   }
 
   .u-bg-green {
@@ -88,9 +92,13 @@
     color: #265492;
   }
 
+  .u-sidemain-max-height {
+    max-height: calc(100vh - 2rem);
+  }
+
   /* expanded sidebar */
   .u-sidebar-expanded {
-    width: 20rem;
+    width: 17rem;
   }
 
   /* collapsed sidebar */
@@ -99,7 +107,7 @@
   }
 
   .u-sidebar-collapsed:hover {
-    width: 20rem;
+    width: 17rem;
   }
   
   .u-login-panel-width {
@@ -131,6 +139,8 @@ html {
   background-color: #eeeeee;
   max-height: 100vh;
   max-width: 100vw;
+
+  overflow: hidden;
 }
 
 body {

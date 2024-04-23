@@ -4,8 +4,9 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 
 <template>
     <ContentPane>
-        <div class="w-full ml-4 py-4 pr-4">
-            <h1>Dashboard Page</h1>
+        <div class="">
+            <h1>Create Classes Page</h1>
         </div>
     </ContentPane>
+    
 </template>
