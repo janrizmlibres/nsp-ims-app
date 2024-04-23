@@ -5,6 +5,28 @@ import InputText from 'primevue/inputtext'
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
 import AddForm from '@/components/staff_view/AddForm.vue'
+
+import { ref } from 'vue'
+
+const position = ref('')
+const formData = ref({
+  username: '',
+  password: '',
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  email: '',
+  contactNum: ''
+})
+
+function updateData(data) {
+  formData.value = data
+}
+
+function submitData() {
+  console.log(position)
+  console.log(formData)
+}
 </script>
 
 <template>
@@ -16,18 +38,23 @@ import AddForm from '@/components/staff_view/AddForm.vue'
             <div class="font-medium text-right">
               <span>Position</span>
             </div>
-            <InputText class="h-10" type="text" v-model="value" />
+            <InputText class="h-10" type="text" v-model="position" />
           </div>
         </BaseCard>
       </div>
 
       <BaseCard class="grow">
-        <AddForm />
+        <AddForm :formDataProp="formData" @dataChanged="updateData" />
       </BaseCard>
 
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Button class="h-10 u-bg-green" label="Submit" icon="fa-solid fa-circle-check" />
+          <Button
+            class="h-10 u-bg-green"
+            label="Submit"
+            icon="fa-solid fa-circle-check"
+            @click="submitData"
+          />
           <Button class="h-10 ml-2 u-bg-red" label="Cancel" icon="fa-solid fa-circle-xmark" />
         </div>
       </div>

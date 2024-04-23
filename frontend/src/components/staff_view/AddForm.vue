@@ -1,6 +1,9 @@
 <script setup>
 import InputText from 'primevue/inputtext'
-import Dropdown from 'primevue/dropdown'
+import { ref } from 'vue'
+
+const props = defineProps({ formDataProp: Object })
+const formData = ref(props.formDataProp)
 </script>
 
 <template>
@@ -17,64 +20,87 @@ import Dropdown from 'primevue/dropdown'
       <div class="basis-1/2 pr-16 pl-2">
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Last Name</span>
+            <span>Username</span>
           </div>
-          <InputText class="grow h-10" type="text" v-model="value" />
+          <InputText
+            class="grow h-10"
+            type="text"
+            v-model="formData.username"
+            @update:modelValue="$emit('dataChanged', formData)"
+          />
+        </div>
+
+        <div class="flex gap-10 mb-14 items-center">
+          <div class="basis-32 text-right">
+            <span>Password</span>
+          </div>
+          <InputText
+            class="grow h-10"
+            type="text"
+            v-model="formData.password"
+            @update:modelValue="$emit('dataChanged', formData)"
+          />
         </div>
 
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
             <span>First Name</span>
           </div>
-          <InputText class="grow h-10" type="text" v-model="value" />
+          <InputText
+            class="grow h-10"
+            type="text"
+            v-model="formData.firstName"
+            @update:modelValue="$emit('dataChanged', formData)"
+          />
         </div>
 
-        <div class="flex gap-10 mb-14 items-center">
+        <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
             <span>Middle Name</span>
           </div>
-          <InputText class="grow h-10" type="text" v-model="value" />
+          <InputText
+            class="grow h-10"
+            type="text"
+            v-model="formData.middleName"
+            @update:modelValue="$emit('dataChanged', formData)"
+          />
         </div>
 
-        <div class="flex gap-10 mb-2 items-center">
+        <div class="flex gap-10 items-center">
           <div class="basis-32 text-right">
-            <span>Contact Number</span>
+            <span>Last Name</span>
           </div>
-          <InputText class="grow h-10" type="text" v-model="value" />
-        </div>
-
-        <div class="flex gap-10 mb-2 items-center">
-          <div class="basis-32 text-right">
-            <span>Email Address</span>
-          </div>
-          <InputText class="grow h-10" type="text" v-model="value" />
+          <InputText
+            class="grow h-10"
+            type="text"
+            v-model="formData.lastName"
+            @update:modelValue="$emit('dataChanged', formData)"
+          />
         </div>
       </div>
 
       <div class="basis-1/2 pr-16 pl-2">
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Year Graduated</span>
+            <span>Contact Number</span>
           </div>
-          <Dropdown
-            v-model="selectedCity"
-            editable
-            :options="cities"
-            optionLabel="name"
+          <InputText
             class="grow h-10"
+            type="text"
+            v-model="formData.contactNum"
+            @update:modelValue="$emit('dataChanged', formData)"
           />
         </div>
 
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Course</span>
+            <span>Email Address</span>
           </div>
-          <Dropdown
-            v-model="selectedCity"
-            editable
-            :options="cities"
-            optionLabel="name"
+          <InputText
             class="grow h-10"
+            type="text"
+            v-model="formData.email"
+            @update:modelValue="$emit('dataChanged', formData)"
           />
         </div>
       </div>

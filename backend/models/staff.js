@@ -21,6 +21,7 @@ const Staff = sequelize.define("staff", {
   suffix_name: STRING,
   email: STRING,
   contact_num: STRING,
+  position: STRING,
   username: {
     type: STRING,
     allowNull: false,
