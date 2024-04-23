@@ -495,14 +495,6 @@ const filters = ref({
     enddate: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
-const primarySelection = ref()
-const secondarySelection = ref();
-
-const dt = ref();
-const exportCSV = () => {
-    dt.value.exportCSV();
-};
-
 const dataColumns = [
     { field: 'batchnumber', header: 'Batch no.' },
     { field: 'academicyear', header: 'Academic Year' },
@@ -511,13 +503,21 @@ const dataColumns = [
 ];
 
 const expansionColumns = [
-    { field: 'id', header: 'Batch no.' },
-    { field: 'schoollevel', header: 'Academic Year' },
-    { field: 'active', header: 'Start Date' },
-    { field: 'inactive', header: 'End Date' },
-    { field: 'drop', header: 'End Date' },
-    { field: 'total', header: 'End Date' }
+    { field: 'id', header: 'Id' },
+    { field: 'schoollevel', header: 'School Level' },
+    { field: 'active', header: 'Active' },
+    { field: 'inactive', header: 'Inactive' },
+    { field: 'drop', header: 'Drop' },
+    { field: 'totalstudents', header: 'Total Students' }
 ];
+
+const primarySelection = ref()
+const secondarySelection = ref();
+const dt = ref();
+
+function exportCSV() {
+    dt.value.exportCSV();
+};
 
 function onExpandRow(id) {
     state.expandedRows = {}
@@ -534,12 +534,15 @@ function onCollapseRow() {
 
 <template>
     <div class="flex flex-col h-full">
-        <div class="bg-transparent border-none flex justify-end p-4">
-            <span class="relative mr-2">
-                <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
-                <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal"/>
-            </span>
-            <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
+        <div class="bg-transparent border-none flex justify-between p-4">
+            <div class="pt-4 text-surface-600">Select a class in an academic year</div>
+            <div>
+                <span class="relative mr-2">
+                    <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                    <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal"/>
+                </span>
+                <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
+            </div>
         </div>
         <div class="bg-surface-0 p-4 pt-6 h-full rounded-md shadow-xl overflow-auto">
             <DataTable v-model:expandedRows="state.expandedRows" :value="state.yearList" dataKey="id" 
