@@ -7,7 +7,7 @@ import BaseCard from '@/components/UI/BaseCard.vue'
 import AddForm from '@/components/staff_view/AddForm.vue'
 
 import { ref } from 'vue'
-// import axios from 'axios'
+import axios from 'axios'
 
 const position = ref('')
 const formData = ref({
@@ -25,30 +25,16 @@ function updateData(data) {
   formData.value = data
 }
 
-function submitData() {
-  // fetch('https://vue-http-demo-85e9e.firebaseio.com/surveys.json')
-  //       .then((response) => {
-  //         if (response.ok) {
-  //           return response.json();
-  //         }
-  //       })
-  //       .then((data) => {
-  //         this.isLoading = false;
-  //         const results = [];
-  //         for (const id in data) {
-  //           results.push({
-  //             id: id,
-  //             name: data[id].name,
-  //             rating: data[id].rating,
-  //           });
-  //         }
-  //         this.results = results;
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //         this.isLoading = false;
-  //         this.error = 'Failed to fetch data - please try again later.';
-  //       });
+async function submitData() {
+  try {
+    const result = await axios.post('http://localhost:8080/auth/signup', {
+      position: position.value,
+      ...formData.value
+    })
+    console.log(result.data.message)
+  } catch (error) {
+    console.log(error.data.message)
+  }
 }
 </script>
 

@@ -3,30 +3,19 @@ import jwt from "jsonwebtoken";
 import Staff from "../models/staff.js";
 
 export async function signup(req, res, next) {
-  const {
-    username,
-    password,
-    first_name,
-    middle_name,
-    last_name,
-    suffix_name,
-    position,
-    email,
-    contact_num,
-  } = req.body;
-
   try {
-    const hashedPw = await bcrypt.hash(password, 12);
+    const hashedPw = await bcrypt.hash(req.body.password, 12);
+
     const user = await Staff.create({
-      username: username,
+      username: req.body.username,
       hashed_pw: hashedPw,
-      first_name: first_name,
-      middle_name: middle_name.length == 0 ? null : middle_name,
-      last_name: last_name,
-      suffix_name: suffix_name.length == 0 ? null : suffix_name,
-      position: position.length == 0 ? null : position,
-      email: email.length == 0 ? null : email,
-      contact_num: contact_num.length == 0 ? null : contact_num,
+      first_name: req.body.firstName,
+      middle_name: req.body.middleName.length == 0 ? null : req.body.middleName,
+      last_name: req.body.lastName,
+      suffix_name: req.body.suffixName.length == 0 ? null : req.body.suffixName,
+      position: req.body.position.length == 0 ? null : req.body.position,
+      email: req.body.email.length == 0 ? null : req.body.email,
+      contact_num: req.body.contactNum.length == 0 ? null : req.body.contactNum,
     });
 
     res.status(201).json({ message: "User created!", userId: user.id });
