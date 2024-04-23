@@ -529,7 +529,7 @@ const expansionColumns = [
             </span>
             <Button icon="pi pi-external-link" label="Export" @click="exportCSV($event)" />
         </div>
-        <div class="bg-surface-0 p-4 h-full rounded-md shadow-xl overflow-auto">
+        <div class="bg-surface-0 p-4 pt-6 h-full rounded-md shadow-xl overflow-auto">
             <DataTable v-model:expandedRows="state.expandedRows" :value="state.yearList" dataKey="id" 
                 sortField="batchnumber" :sortOrder="-1" removableSort resizableColumns columnResizeMode="fit"
                 v-model:filters="filters" :globalFilterFields="['academicyear', 'startdate', 'enddate']"
@@ -606,7 +606,7 @@ const expansionColumns = [
                 <Column expander style="width: 5rem" />
                 <Column v-for="col of dataColumns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
                 <template #expansion="slotProps">
-                    <div class="p-3 u-bg-pcolor-2">
+                    <div class="p-1 u-bg-pcolor-2 rounded-md">
                         <DataTable :value="slotProps.data.schoollevels" v-model:selection="selectedItem" selectionMode="single"
                         :ptOptions="{mergeProps:true}"
                         :pt="{
