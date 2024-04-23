@@ -1,24 +1,40 @@
 <template>
-  <div class="container">
-    <div class="dashboard-text">Dashboard</div>
-    <div class="widget"></div>
-    <div class="widget"></div>
-    <div class="widget"></div>
-    <div class="widget"></div>
-  </div>
-  <div class="middle-container">
-    <button class="year-button">
-    <font-awesome-icon :icon="['fas', 'filter']" />
-    Year
-    </button>
-    <div class="middle-widget"></div>
-    <div class="middle-widget"></div>
-  </div>
+  <ContentPane>
+    <div class="container">
+      <div class="dashboard-text">Dashboard</div>
+      <div class="widget"></div>
+      <div class="widget"></div>
+      <div class="widget"></div>
+      <div class="widget"></div>
+    </div>
+    <div class="middle-container">
+      <button class="year-button" @click="showDatePicker = !showDatePicker">
+        <font-awesome-icon :icon="['fas', 'filter']" />
+        Year
+      </button>
+      <vue3-datepicker v-if="showDatePicker" v-model="selectedDate"></vue3-datepicker>
+      <div class="middle-widget"></div>
+      <div class="middle-widget"></div>
+    </div>
+  </ContentPane>
 </template>
 
 <script>
+import ContentPane from '@/components/UI/ContentPane.vue';
+import Vue3Datepicker from 'vue3-datepicker';
+
 export default {
-  name: 'DashboardView'
+  name: 'DashboardView',
+  components: {
+    Vue3Datepicker,
+    ContentPane
+  },
+  data() {
+    return {
+      showDatePicker: false,
+      selectedDate: null
+    };
+  }
 };
 </script>
 
@@ -28,7 +44,9 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    margin-top: 100px;
+    margin-top: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .dashboard-text {
@@ -47,11 +65,12 @@ export default {
 
   .middle-container {
     position: absolute;
-    bottom: 55px;
-    left: 400px;
+    top: 184px;
+    left: 680px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-left: 10px;
   }
 
   .middle-widget {
