@@ -123,7 +123,7 @@ const filters = ref({
     enddate: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
-const globalFilters = ref(['academicyear', 'startdate', 'enddate'])
+const globalFilters = ref(['batchnumber', 'academicyear', 'startdate', 'enddate'])
 
 const dataColumns = ref([
     { field: 'batchnumber', header: 'Batch no.' },
@@ -143,7 +143,7 @@ const expansionColumns = ref([
 </script>
 
 <template>
-    <ContentPane>
+    <ContentPane header="Class Records">
         <ClassRecordsTable 
         :data="years" 
         :rowExpansion="selectedRow" 
