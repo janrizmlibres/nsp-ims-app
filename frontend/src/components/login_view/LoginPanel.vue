@@ -1,5 +1,6 @@
 ﻿<script setup>
 import { ref } from 'vue'
+import InputText from 'primevue/inputtext';
 import { checkInputEmpty } from '@/utils/interactions.js'
 import axios from 'axios'
 import { useToast } from 'primevue/usetoast'
@@ -27,9 +28,9 @@ const submitEvent = async () => {
   if (checkInputEmpty(usernameInput) || checkInputEmpty(passwordInput)) {
     return
   }
-
-  const username = usernameInput.value.value
-  const password = passwordInput.value.value
+  
+  const username = usernameInput.value;
+  const password = passwordInput.value;
 
   try {
     const response = await axios.post('http://localhost:8080/auth/login', { username, password })
