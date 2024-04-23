@@ -9,6 +9,7 @@ export default function (req, res, next) {
   }
 
   const token = authHeader.split(" ")[1];
+  console.log(authHeader);
 
   try {
     const decodedToken = jwt.verify(token, "HEHESECRET");

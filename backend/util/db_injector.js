@@ -60,7 +60,8 @@ export async function injectStaff() {
   ];
 
   const createStaff = async (staff) => {
-    staff.password = await bcrypt.hash(staff.password, 12);
+    staff.hashed_pw = await bcrypt.hash(staff.password, 12);
+    delete staff.password;
     await Staff.create(staff);
   };
 
