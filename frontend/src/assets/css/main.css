@@ -105,6 +105,30 @@
   .u-sidebar-collapsed:hover {
     width: 20rem;
   }
+  
+  .u-login-panel-width {
+    width: 30rem;
+  }
+  
+  .u-login-panel-height {
+    height: 33rem;
+  }
+  
+  .u-letter-spacing {
+    letter-spacing: 0.3rem;
+  }
+
+  .u-input-text-hover:hover {
+    border-color: #1c467e;
+  }
+  
+  .u-input-text-focus {
+    --tw-ring-color: #3569ac;
+  }
+  
+  .u-input-text-error {
+    border-color: #c94b24;
+  }
 }
 
 html {
