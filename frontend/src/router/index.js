@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/login_view/LoginView.vue'
-import ActiveClassesView from '../views/ActiveClassesView.vue'
-import ClassHistoryView from '../views/ClassRecordsView.vue'
-import CreateClassesView from '../views/CreateClassesView.vue'
+import ActiveClassesView from '../views/class_view/ActiveClassesView.vue'
+import ClassRecordsView from '../views/class_view/ClassRecordsView.vue'
+import CreateClassesView from '../views/class_view/CreateClassesView.vue'
 
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
@@ -19,37 +19,37 @@ const router = createRouter({
     },
     {
       path: '/dashboard',
-      name: 'dashboard',
+      name: 'Dashboard',
       component: DashboardView
     },
     {
       path: '/active-classes',
-      name: 'active classes',
+      name: 'Active Classes',
       component: ActiveClassesView
     },
     {
       path: '/class-history',
-      name: 'class history',
-      component: ClassHistoryView
+      name: 'Class Records',
+      component: ClassRecordsView
     },
     {
       path: '/create-classes',
-      name: 'create classes',
+      name: 'Create Classes',
       component: CreateClassesView
     },
     {
       path: '/staff-records',
-      name: 'staff records',
+      name: 'Staff Records',
       component: RecordsView
     },
     {
       path: '/staff-permissions',
-      name: 'staff permissions',
+      name: 'Staff Permissions',
       component: PermissionsView
     },
     {
       path: '/add-staff',
-      name: 'add staff',
+      name: 'Add Staff',
       component: AddStaffView
     }
   ]
