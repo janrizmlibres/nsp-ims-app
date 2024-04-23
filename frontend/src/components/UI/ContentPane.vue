@@ -1,15 +1,14 @@
 <script setup>
 import TheSidebar from '../layout/TheSidebar.vue'
 import TopHeader from './TopHeader.vue'
-import { useRoute } from 'vue-router'
 
-const route = useRoute()
+const props = defineProps(['header'])
 </script>
 
 <template>
   <TheSidebar name="User" role="Admin" />
   <main class="u-main-max-width w-screen u-sidemain-max-height h-screen m-4">
-    <TopHeader :header="`${route.name}`" />
+    <TopHeader :header="props.header" />
     <div class="u-max-height h-screen">
       <slot></slot>
     </div>
