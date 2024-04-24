@@ -22,7 +22,8 @@ defineProps(['staffs'])
     <Column field="id" header="User ID" sortable></Column>
     <Column header="Full Name" sortable>
       <template #body="slotProps">
-        {{ slotProps.data.first_name }} {{ slotProps.data.last_name }}
+        {{ slotProps.data.first_name }} {{ slotProps.data.middle_name || ' ' }}
+        {{ slotProps.data.last_name }}
       </template>
     </Column>
     <Column field="position" header="Position" sortable></Column>
