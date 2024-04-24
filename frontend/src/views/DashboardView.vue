@@ -4,15 +4,35 @@
       <div class="dashboard-text">Dashboard</div>
       <div class="widget">
         <div class="widget-title">LEARNERS</div>
+        <div class="gender-container">
+          <div class="male-text">Male</div>
+          <div class="female-text">Female</div>
+        </div>
+        <div class="total-container">
+          <div class="total-text">0</div>
+          <button class="total-button">View List</button>
+        </div>
       </div>
       <div class="widget">
         <div class="widget-title">ELEMENTARY</div>
+        <div class="gender-container">
+          <div class="male-text">Male</div>
+          <div class="female-text">Female</div>
+        </div>
       </div>
       <div class="widget">
         <div class="widget-title">JUNIOR HIGH</div>
+        <div class="gender-container">
+          <div class="male-text">Male</div>
+          <div class="female-text">Female</div>
+        </div>
       </div>
       <div class="widget">
         <div class="widget-title">ACTIVE LEARNERS</div>
+        <div class="gender-container">
+          <div class="male-text">Male</div>
+          <div class="female-text">Female</div>
+        </div>
       </div>
     </div>
     <div class="middle-container">
@@ -60,6 +80,30 @@ export default {
   .dashboard-text {
     font-weight: bold;
     font-size: 30px;
+  }
+
+  .gender-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .male-text{
+    font-size: 15px;
+    color: #3C4043;
+    margin-left: 120px;
+  }
+
+  .female-text{
+    font-size: 15px;
+    color: #3C4043;
+    margin-left: 50px;
+  }
+
+  .total-text{
+    font-weight: bold;
+    font-size: 40px;
+    color: #233255B2;
+    margin-left: 120px;
   }
 
   .widget-title {
@@ -113,5 +157,20 @@ export default {
     cursor: pointer;
     border-radius: 10px;
     width: 100px; /* Adjust this value to your needs */
+  }
+
+  .total-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .total-button {
+    margin-top: 30px;
+    margin-left: 90px;
+    background-color: #265492;
+    padding: 8px;
+    color: white;
+    border-radius: 10px;
+    font-size: 12px;
   }
 </style>
