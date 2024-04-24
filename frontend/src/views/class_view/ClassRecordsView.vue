@@ -1,7 +1,7 @@
 
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue'
-import ClassRecordsTable from '@/components/class_view/ClassRecordsTable.vue'; 
+import ClassRecordsTable from '@/components/class_records_view/ClassRecordsTable.vue'; 
 
 import { ref } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
@@ -126,6 +126,7 @@ const filters = ref({
 const globalFilters = ref(['batchnumber', 'academicyear', 'startdate', 'enddate'])
 
 const dataColumns = ref([
+    { field: 'id', header: 'Id'},
     { field: 'batchnumber', header: 'Batch no.' },
     { field: 'academicyear', header: 'Academic Year' },
     { field: 'startdate', header: 'Start Date' },
@@ -151,7 +152,8 @@ const expansionColumns = ref([
         :globalFilters="globalFilters"
         :dataCol="dataColumns" 
         :expCol="expansionColumns"
-        expData="schoollevels"/>
+        expData="schoollevels"
+        />
     </ContentPane>
 </template>
 
