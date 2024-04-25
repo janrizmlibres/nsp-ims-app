@@ -70,38 +70,34 @@ export async function login(req, res) {
     const staff = await Staff.findOne({ where: { username: username } });
 
     if (!staff) {
-      return res
-        .status(401)
-        .json({ message: "Authentication failed. User not found." });
+      const error = new Error("Authentication failed. User not found.");
+      error.statusCode = 401;
+      throw error;
     }
 
-    bcrypt.compare(password, staff.hashed_pw, (err, result) => {
-      if (err) {
-        return res
-          .status(401)
-          .json({ message: "Authentication failed. Wrong password." });
-      }
+    const result = bcrypt.compare(password, staff.hashed_pw);
 
-      if (result) {
-        const token = jwt.sign(
-          { username: staff.username, id: staff.id },
-          "HEHESECRET", // replace with your secret key
-          { expiresIn: "1h" }
-        );
+    if (!result) {
+      const error = new Error("Authentication failed. Wrong password.");
+      error.statusCode = 401;
+      throw error;
+    }
 
-        return res.status(200).json({
-          message: "Authentication successful",
-          token: token,
-          userId: staff.id,
-        });
-      }
+    const token = jwt.sign(
+      { username: staff.username, id: staff.id },
+      "HEHESECRET", // replace with your secret key
+      { expiresIn: "1h" }
+    );
 
-      return res
-        .status(401)
-        .json({ message: "Authentication failed. Wrong password." });
+    return res.status(200).json({
+      message: "Authentication successful",
+      token: token,
+      userId: staff.id,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: error });
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 }

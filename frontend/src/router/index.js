@@ -85,7 +85,7 @@ const router = createRouter({
       component: PermissionsView
     },
     {
-      path: '/staffs/add-staff',
+      path: '/staffs/add',
       name: 'add-staff',
       component: AddStaffView
     },

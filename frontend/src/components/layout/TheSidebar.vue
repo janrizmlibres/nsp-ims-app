@@ -34,7 +34,6 @@ const items = ref([
         key: '2-3',
         label: 'Admit Students',
         icon: 'fa fa-user-plus',
-        route: '/admitStudents'
         route: { name: 'dashboard' }
       }
     ]
