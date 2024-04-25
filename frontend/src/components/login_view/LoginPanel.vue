@@ -1,7 +1,7 @@
 ﻿<script setup>
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
-import { checkInputEmpty } from '@/utils/interactions.js'
+import { checkInputEmpty } from '@/util/interactions.js'
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'

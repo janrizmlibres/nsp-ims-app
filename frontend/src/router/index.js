@@ -9,50 +9,63 @@ import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
 import AddStaffView from '@/views/staff_view/AddStaffView.vue'
 
+import { useAuthStore } from '@/stores/auth'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'login page',
+      path: '/login',
+      name: 'login',
       component: LoginView
     },
     {
       path: '/dashboard',
-      name: 'Dashboard',
+      name: 'dashboard',
       component: DashboardView
     },
     {
       path: '/active-classes',
-      name: 'Active Classes',
+      name: 'active-classes',
       component: ActiveClassesView
     },
     {
       path: '/class-history',
-      name: 'Class Records',
+      name: 'class-records',
       component: ClassRecordsView
     },
     {
       path: '/create-classes',
-      name: 'Create Classes',
+      name: 'create-classes',
       component: CreateClassesView
     },
     {
-      path: '/staff-records',
-      name: 'Staff Records',
+      path: '/staffs',
+      name: 'staff-records',
       component: RecordsView
     },
     {
-      path: '/staff-permissions',
-      name: 'Staff Permissions',
+      path: '/staffs/permissions',
+      name: 'staff-permissions',
       component: PermissionsView
     },
     {
-      path: '/add-staff',
-      name: 'Add Staff',
+      path: '/staffs/add-staff',
+      name: 'add-staff',
       component: AddStaffView
-    }
+    },
+    { path: '/:misc(.*)', redirect: { name: 'login' } }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  if (to.name !== 'login' && !authStore.isAuthenticated) {
+    next({ name: 'login' })
+  } else {
+    next()
+  }
 })
 
 export default router
