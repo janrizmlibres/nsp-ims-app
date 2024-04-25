@@ -6,6 +6,13 @@ export const useAuthStore = defineStore('auth', () => {
   const userId = ref(sessionStorage.getItem('userId') || null)
   const isAuthenticated = computed(() => token.value !== null)
 
+  function login(token, userId) {
+    sessionStorage.setItem('token', token)
+    sessionStorage.setItem('userId', userId)
+    token.value = token
+    userId.value = userId
+  }
+
   function logout() {
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('userId')
@@ -13,5 +20,5 @@ export const useAuthStore = defineStore('auth', () => {
     userId.value = null
   }
 
-  return { token, userId, isAuthenticated, logout }
+  return { token, userId, isAuthenticated, login, logout }
 })

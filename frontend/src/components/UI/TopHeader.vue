@@ -6,9 +6,9 @@ defineProps(['header'])
 
 const authStore = useAuthStore()
 
-function logout() {
+async function logout() {
   authStore.logout()
-  router.replace({ name: 'login' })
+  await router.replace({ name: 'login' })
 }
 </script>
 
