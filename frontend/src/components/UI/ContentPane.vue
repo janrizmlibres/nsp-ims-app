@@ -9,7 +9,7 @@ const route = useRoute()
 <template>
   <TheSidebar name="User" role="Admin" />
   <main class="u-main-max-width w-screen u-sidemain-max-height h-screen m-4">
-    <TopHeader :header="`${route.name}`" />
+    <TopHeader :header="route.name" />
     <div class="u-max-height h-screen">
       <slot></slot>
     </div>
@@ -18,10 +18,10 @@ const route = useRoute()
 
 <style scoped>
 .u-main-max-width {
-  max-width: calc(100vw - 6rem)
+  max-width: calc(100vw - 6rem);
 }
 
 .u-max-height {
-  max-height: calc(100vh - 11rem)
+  max-height: calc(100vh - 11rem);
 }
 </style>

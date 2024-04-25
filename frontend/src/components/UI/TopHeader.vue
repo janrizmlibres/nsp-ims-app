@@ -1,5 +1,15 @@
 <script setup>
+import { useAuthStore } from '@/stores/auth'
+import router from '@/router'
+
 defineProps(['header'])
+
+const authStore = useAuthStore()
+
+function logout() {
+  authStore.logout()
+  router.replace({ name: 'login' })
+}
 </script>
 
 <template>
@@ -15,7 +25,7 @@ defineProps(['header'])
         <span class="ml-1.5">Settings</span>
       </a>
 
-      <a href="#">
+      <a href="#" @click="logout">
         <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
         <span class="ml-1.5">Logout</span>
       </a>
