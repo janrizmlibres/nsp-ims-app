@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.send("Please enter a valid endpoint.");
 });
 

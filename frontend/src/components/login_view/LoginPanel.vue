@@ -6,13 +6,10 @@ import { checkInputEmpty } from '@/util/interactions.js'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { storeToRefs } from 'pinia'
 
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
-const { token, userId } = storeToRefs(authStore)
-
 const toast = useToast()
 const router = useRouter()
 
@@ -45,9 +42,14 @@ async function submitEvent() {
     const result = await axios.post('http://localhost:8080/auth/login', { username, password })
 
     if (result.status === 200) {
+      const { token, userId } = result.data
+
       // Save the token and user id to global store
-      token.value = result.data.token
-      userId.value = result.data.userId
+      sessionStorage.setItem('token', token)
+      sessionStorage.setItem('userId', userId)
+      authStore.token = token
+      authStore.userId = userId
+
       await router.push('/dashboard') // navigate to dashboard
     }
   } catch (error) {
