@@ -5,7 +5,9 @@
       <div class="widget">
         <div class="widget-title">LEARNERS</div>
         <div class="gender-container">
+          <div class="male-icon"></div>
           <div class="male-text">Male</div>
+          <div class="female-icon"></div>
           <div class="female-text">Female</div>
         </div>
         <div class="total-container">
@@ -16,22 +18,40 @@
       <div class="widget">
         <div class="widget-title">ELEMENTARY</div>
         <div class="gender-container">
+          <div class="male-icon"></div>
           <div class="male-text">Male</div>
+          <div class="female-icon"></div>
           <div class="female-text">Female</div>
+        </div>
+        <div class="total-container">
+          <div class="total-text">0</div>
+          <button class="total-button">View List</button>
         </div>
       </div>
       <div class="widget">
         <div class="widget-title">JUNIOR HIGH</div>
         <div class="gender-container">
+          <div class="male-icon"></div>
           <div class="male-text">Male</div>
+          <div class="female-icon"></div>
           <div class="female-text">Female</div>
+        </div>
+        <div class="total-container">
+          <div class="total-text">0</div>
+          <button class="total-button">View List</button>
         </div>
       </div>
       <div class="widget">
         <div class="widget-title">ACTIVE LEARNERS</div>
         <div class="gender-container">
+          <div class="male-icon"></div>
           <div class="male-text">Male</div>
+          <div class="female-icon"></div>
           <div class="female-text">Female</div>
+        </div>
+        <div class="total-container">
+          <div class="total-text">0</div>
+          <button class="total-button">View List</button>
         </div>
       </div>
     </div>
@@ -89,14 +109,14 @@ export default {
 
   .male-text{
     font-size: 15px;
-    color: #3C4043;
-    margin-left: 120px;
+    color: #265492;
+    margin-left: 10px;
   }
 
   .female-text{
     font-size: 15px;
-    color: #3C4043;
-    margin-left: 50px;
+    color: #265492;
+    margin-left: 10px;
   }
 
   .total-text{
@@ -172,5 +192,21 @@ export default {
     color: white;
     border-radius: 10px;
     font-size: 12px;
+  }
+
+  .male-icon {
+    margin-top: 7px;
+    margin-left: 120px;
+    width: 10px;
+    height: 10px;
+    background-color: #265492;
+  }
+
+  .female-icon {
+    margin-top: 7px;
+    margin-left: 40px;
+    width: 10px;
+    height: 10px;
+    background-color: #BF9039;
   }
 </style>
