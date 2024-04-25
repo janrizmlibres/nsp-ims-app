@@ -4,20 +4,21 @@ import * as authController from "../controllers/auth.js";
 
 const router = express.Router();
 
+router.post("/login", authController.login);
+
 router.post(
-  "/login",
+  "/signup",
   [
     body("username").trim().not().isEmpty(),
-    body("password").trim().isLength({ min: 4 }),
-    body("first_name").trim().not().isEmpty(),
-    body("last_name").trim().not().isEmpty(),
-    body("email")
-      .if((value) => value.length !== 0)
-      .isEmail(),
+    body("password").isStrongPassword({ minLength: 8 }),
+    body("firstName").isAlpha("en-US"),
+    body("middleName").optional({ values: "null" }).isAlpha("en-US"),
+    body("lastName").isAlpha("en-US"),
+    body("suffixName").optional({ values: "null" }).isAlpha("en-US"),
+    body("email").optional({ values: "null" }).isEmail(),
+    body("contactNum").optional({ values: "null" }).isMobilePhone("en-PH"),
   ],
-  authController.login
+  authController.signup
 );
-
-router.post("/signup", authController.signup);
 
 export default router;
