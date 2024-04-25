@@ -49,7 +49,7 @@ export async function signup(req, res, next) {
   }
 }
 
-export async function login(req, res) {
+export async function login(req, res, next) {
   /**
    * The login function is used to authenticate a user.
    * It takes the username and password from the request body.
@@ -75,7 +75,7 @@ export async function login(req, res) {
       throw error;
     }
 
-    const result = bcrypt.compare(password, staff.hashed_pw);
+    const result = await bcrypt.compare(password, staff.hashed_pw);
 
     if (!result) {
       const error = new Error("Authentication failed. Wrong password.");
@@ -89,12 +89,15 @@ export async function login(req, res) {
       { expiresIn: "1h" }
     );
 
+    console.log("SUCCESS");
+
     return res.status(200).json({
       message: "Authentication successful",
       token: token,
       userId: staff.id,
     });
   } catch (error) {
+    console.log(error);
     if (!error.statusCode) {
       error.statusCode = 500;
     }

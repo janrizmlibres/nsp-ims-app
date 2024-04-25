@@ -97,7 +97,7 @@ const items = ref([
         key: '5-2',
         label: 'Class Records',
         icon: 'fa fa-scroll',
-        route: { name: 'class-history' }
+        route: { name: 'class-records' }
       },
       {
         key: '5-3',

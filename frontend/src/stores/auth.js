@@ -6,11 +6,11 @@ export const useAuthStore = defineStore('auth', () => {
   const userId = ref(sessionStorage.getItem('userId') || null)
   const isAuthenticated = computed(() => token.value !== null)
 
-  function login(token, userId) {
-    sessionStorage.setItem('token', token)
-    sessionStorage.setItem('userId', userId)
-    token.value = token
-    userId.value = userId
+  function login(thatToken, thatUserId) {
+    sessionStorage.setItem('token', thatToken)
+    sessionStorage.setItem('userId', thatUserId)
+    token.value = thatToken
+    userId.value = thatUserId
   }
 
   function logout() {

@@ -34,23 +34,23 @@ const router = createRouter({
       component: ActiveClassesView
     },
     {
-      path: '/classRecords',
+      path: '/class-records',
       name: 'class-records',
       component: ClassesView,
       children: [
         {
-          path: 'classInformation',
-          name: 'Class Information',
+          path: 'class-information',
+          name: 'class-info',
           component: ClassView,
           children: [
             {
-              path: 'strandInformation',
-              name: 'Strand Information',
+              path: 'strand-information',
+              name: 'strand-info',
               component: StrandView,
               children: [
                 {
-                  path: 'moduleInformation',
-                  name: 'Module Information',
+                  path: 'module-information',
+                  name: 'module-info',
                   component: ModuleView
                 }
               ]
@@ -70,7 +70,7 @@ const router = createRouter({
       component: StrandView
     },
     {
-      path: '/createClasses',
+      path: '/create-classes',
       name: 'create-classes',
       component: CreateClassesView
     },
