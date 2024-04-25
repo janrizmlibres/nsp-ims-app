@@ -24,10 +24,10 @@ onBeforeMount(async () => {
       const result = await axios.get('http://localhost:8080/admin/staffs', {
         headers: { Authorization: 'Bearer ' + authStore.token }
       })
-      console.log(result.data.staffs)
+
       staffsStore.staffs = result.data.staffs
     } catch (error) {
-      console.log(error.data.message)
+      console.log(error.response.data.message)
     }
 
     isLoading.value = false

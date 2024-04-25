@@ -8,7 +8,9 @@ defineProps(['staffs'])
 <template>
   <DataTable
     :value="staffs"
+    lazy
     scrollable
+    :totalRecords="staffs.length"
     :pt="{ column: { headercell: 'bg-white' } }"
     :pt-options="{ mergeProps: true }"
   >
@@ -20,12 +22,12 @@ defineProps(['staffs'])
       </template>
     </Column>
     <Column field="id" header="User ID" sortable></Column>
+    <Column field="username" header="Username" sortable></Column>
     <Column header="Full Name" sortable>
       <template #body="slotProps">
         {{ slotProps.data.first_name }} {{ slotProps.data.middle_name || ' ' }}
         {{ slotProps.data.last_name }}
       </template>
     </Column>
-    <Column field="position" header="Position" sortable></Column>
   </DataTable>
 </template>

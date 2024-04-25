@@ -9,7 +9,6 @@ import AddForm from '@/components/staff_view/AddForm.vue'
 import { ref } from 'vue'
 import axios from 'axios'
 
-const position = ref('')
 const formData = ref({
   username: '',
   password: '',
@@ -18,7 +17,8 @@ const formData = ref({
   lastName: '',
   suffixName: '',
   email: '',
-  contactNum: ''
+  contactNum: '',
+  position: ''
 })
 
 function updateData(data) {
@@ -27,10 +27,7 @@ function updateData(data) {
 
 async function submitData() {
   try {
-    const result = await axios.post('http://localhost:8080/auth/signup', {
-      position: position.value,
-      ...formData.value
-    })
+    const result = await axios.post('http://localhost:8080/auth/signup', formData.value)
     console.log(result.data.message)
   } catch (error) {
     console.log(error.data.message)
@@ -47,7 +44,7 @@ async function submitData() {
             <div class="font-medium text-right">
               <span>Position</span>
             </div>
-            <InputText class="h-10" type="text" v-model="position" />
+            <InputText class="h-10" type="text" v-model="formData.position" />
           </div>
         </BaseCard>
       </div>

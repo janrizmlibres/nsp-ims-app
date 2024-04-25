@@ -33,30 +33,30 @@ export async function injectStaff() {
       username: "aceumel",
       password: "acepass",
     },
-    {
-      last_name: "Galendez",
-      first_name: "Clint",
-      username: "clintgalendez",
-      password: "clintpass",
-    },
-    {
-      last_name: "Perez",
-      first_name: "Carlos",
-      username: "carlosperez",
-      password: "carlospass",
-    },
-    {
-      last_name: "Dusk",
-      first_name: "Husker",
-      username: "huskerdusk",
-      password: "huskpass",
-    },
-    {
-      last_name: "Dust",
-      first_name: "Angel",
-      username: "angeldust",
-      password: "angelpass",
-    },
+    // {
+    //   last_name: "Galendez",
+    //   first_name: "Clint",
+    //   username: "clintgalendez",
+    //   password: "clintpass",
+    // },
+    // {
+    //   last_name: "Perez",
+    //   first_name: "Carlos",
+    //   username: "carlosperez",
+    //   password: "carlospass",
+    // },
+    // {
+    //   last_name: "Dusk",
+    //   first_name: "Husker",
+    //   username: "huskerdusk",
+    //   password: "huskpass",
+    // },
+    // {
+    //   last_name: "Dust",
+    //   first_name: "Angel",
+    //   username: "angeldust",
+    //   password: "angelpass",
+    // },
   ];
 
   const createStaff = async (staff) => {
