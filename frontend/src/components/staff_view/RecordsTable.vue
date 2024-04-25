@@ -8,9 +8,7 @@ defineProps(['staffs'])
 <template>
   <DataTable
     :value="staffs"
-    lazy
     scrollable
-    :totalRecords="staffs.length"
     :pt="{ column: { headercell: 'bg-white' } }"
     :pt-options="{ mergeProps: true }"
   >

@@ -19,6 +19,7 @@ const isLoading = ref(false)
 onBeforeMount(async () => {
   if (staffsStore.staffs.length == 0) {
     isLoading.value = true
+    // await new Promise((resolve) => setTimeout(resolve, 3000))
 
     try {
       const result = await axios.get('http://localhost:8080/admin/staffs', {

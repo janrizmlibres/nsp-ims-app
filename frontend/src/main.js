@@ -7,7 +7,7 @@ import Lara from './presets/lara'
 import { library, config, dom } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { createApp } from 'vue'
+import { createApp, watch } from 'vue'
 import { createPinia } from 'pinia'
 import ToastService from 'primevue/toastservice'
 import { usePassThrough } from 'primevue/passthrough'
@@ -17,6 +17,7 @@ dom.watch()
 
 import App from './App.vue'
 import router from './router'
+import { useAuthStore } from './stores/auth'
 
 config.styleDefault = 'solid'
 
@@ -52,6 +53,13 @@ app.use(createPinia())
 app.use(router)
 app.use(PrimeVue, { unstyled: true, pt: CustomPreset })
 app.use(ToastService)
+
+const authStore = useAuthStore()
+
+watch(authStore.$state, (state) => {
+  sessionStorage.setItem('token', state.token)
+  sessionStorage.setItem('userId', state.userId)
+})
 
 app.component('font-awesome-icon', FontAwesomeIcon)
 

@@ -30,7 +30,7 @@ async function submitData() {
     const result = await axios.post('http://localhost:8080/auth/signup', formData.value)
     console.log(result.data.message)
   } catch (error) {
-    console.log(error.data.message)
+    console.log(error.response.data.message)
   }
 }
 </script>
