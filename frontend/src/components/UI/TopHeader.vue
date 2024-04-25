@@ -34,7 +34,4 @@ async function logout() {
 </template>
 
 <style scoped>
-.u-max-height {
-  max-height: var(--topbar-max-height);
-}
 </style>

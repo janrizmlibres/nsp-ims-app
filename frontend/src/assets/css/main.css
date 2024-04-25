@@ -96,13 +96,25 @@
     color: #265492;
   }
 
+  .u-router-view-max-h {
+    max-height: calc(100vh - 11rem);
+  }
+
+  .u-router-view-max-w-expanded {
+    max-width: calc(100vw - 19rem)
+  }
+
+  .u-router-view-max-w-collapsed {
+    max-width: calc(100vw - 7.5rem)
+  }
+
   .u-sidemain-max-height {
     max-height: calc(100vh - 2rem);
   }
 
   /* expanded sidebar */
   .u-sidebar-expanded {
-    width: 17rem;
+    width: 16rem;
   }
 
   /* collapsed sidebar */
@@ -111,7 +123,7 @@
   }
 
   .u-sidebar-collapsed:hover {
-    width: 17rem;
+    width: 16rem;
   }
   
   .u-login-panel-width {
@@ -156,6 +168,7 @@ body {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 /* Track */
@@ -177,6 +190,7 @@ body {
 
 #app {
   display: flex;
+  flex-direction: row;
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;

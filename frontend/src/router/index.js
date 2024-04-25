@@ -1,9 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/login_view/LoginView.vue'
-import ActiveClassesView from '../views/class_view/ActiveClassesView.vue'
-import ClassRecordsView from '../views/class_view/ClassRecordsView.vue'
-import CreateClassesView from '../views/class_view/CreateClassesView.vue'
+
+import ActiveClassesView from '../views/class_mgmt/ActiveClassesView.vue'
+import ClassesView from '../views/class_mgmt/ClassesView.vue'
+import ClassView from '../views/class_mgmt/ClassView.vue'
+import StrandView from '../views/class_mgmt/StrandView.vue'
+import ModuleView from '../views/class_mgmt/ModuleView.vue'
+import CreateClassesView from '../views/class_mgmt/CreateClassesView.vue'
 
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
@@ -30,12 +34,43 @@ const router = createRouter({
       component: ActiveClassesView
     },
     {
-      path: '/class-history',
-      name: 'class-history',
-      component: ClassRecordsView
+      path: '/classRecords',
+      name: 'class-records',
+      component: ClassesView,
+      children: [
+        {
+          path: 'classInformation',
+          name: 'Class Information',
+          component: ClassView,
+          children: [
+            {
+              path: 'strandInformation',
+              name: 'Strand Information',
+              component: StrandView,
+              children: [
+                {
+                  path: 'moduleInformation',
+                  name: 'Module Information',
+                  component: ModuleView
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     {
-      path: '/create-classes',
+      path: '/classInformation',
+      name: 'class-info',
+      component: ClassView
+    },
+    {
+      path: '/strandInformation',
+      name: 'strand-info',
+      component: StrandView
+    },
+    {
+      path: '/createClasses',
       name: 'create-classes',
       component: CreateClassesView
     },
