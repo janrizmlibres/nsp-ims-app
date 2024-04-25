@@ -1,6 +1,7 @@
 ﻿import express from "express";
 import { body } from "express-validator";
 import * as authController from "../controllers/auth.js";
+import isAuth from "../middleware/is-auth.js";
 
 const router = express.Router();
 
@@ -8,6 +9,7 @@ router.post("/login", authController.login);
 
 router.post(
   "/signup",
+  isAuth,
   [
     body("username").trim().not().isEmpty(),
     body("password").isStrongPassword({ minLength: 8 }),

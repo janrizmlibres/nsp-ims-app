@@ -6,9 +6,11 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
 import AddForm from '@/components/staff_view/AddForm.vue'
 
+import { useAuthStore } from '@/stores/auth'
 import { ref } from 'vue'
 import axios from 'axios'
 
+const authStore = useAuthStore()
 const formData = ref({
   username: '',
   password: '',
@@ -27,10 +29,16 @@ function updateData(data) {
 
 async function submitData() {
   try {
-    const result = await axios.post('http://localhost:8080/auth/signup', formData.value)
+    const result = await axios.post(
+      'http://localhost:8080/auth/signup',
+      { ...formData.value },
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
     console.log(result.data.message)
   } catch (error) {
-    console.log(error.response.data.message)
+    console.log(error)
   }
 }
 </script>

@@ -20,12 +20,12 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-app.use("/admin", adminRoutes);
-app.use("/auth", authRoutes);
-
 app.get("/", (req, res) => {
   res.send("Please enter a valid endpoint.");
 });
+
+app.use("/admin", adminRoutes);
+app.use("/auth", authRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);

@@ -1,8 +1,18 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { validationResult } from "express-validator";
+
 import Staff from "../models/staff.js";
 
 export async function signup(req, res, next) {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error("Validation failed, entered data is incorrect.");
+    error.statusCode = 422;
+    next(error);
+  }
+
   const {
     username,
     password,
@@ -79,13 +89,11 @@ export async function login(req, res) {
           { expiresIn: "1h" }
         );
 
-        return res
-          .status(200)
-          .json({
-            message: "Authentication successful",
-            token: token,
-            userId: staff.id,
-          });
+        return res.status(200).json({
+          message: "Authentication successful",
+          token: token,
+          userId: staff.id,
+        });
       }
 
       return res
