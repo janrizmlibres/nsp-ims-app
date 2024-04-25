@@ -2,7 +2,7 @@
 import Button from 'primevue/button'
 import PanelMenu from 'primevue/panelmenu'
 
-import { useSideBarStore } from '@/stores/sidebar_state';
+import { useSideBarStore } from '@/stores/sidebar';
 const sideBarStore = useSideBarStore()
 </script>
 
