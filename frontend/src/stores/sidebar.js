@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useSideBarStateStore = defineStore('sidebar-state', {
+export const useSideBarStore = defineStore('sidebar', {
   state: () => ({
     isPinned: true,
     isExpanded: true
