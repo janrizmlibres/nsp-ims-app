@@ -186,230 +186,226 @@ const sideBarStateStore = useSideBarStateStore()
 </script>
 
 <template>
-  <div
-    class="left-0 u-sidemain-max-height h-screen shadow-xl inset-y-0 z-50 transition-all duration-500 ease-in-out rounded-md u-bg-pcolor ml-4 my-4 border-none"
-    :class="sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'"
-  >
-    <div class="flex flex-col h-full text-surface-100">
-      <div class="p-5 text-surface-100 whitespace-nowrap u-sidebar-header">
-        <span class="text-3xl u-sidebar-header-text">Menu</span>
-        <Button
-          v-if="sideBarStateStore.isPinned"
-          icon="fa fa-chevron-left"
-          type="button"
-          class="min-w-8 h-8"
-          @click="changeState"
-          :pt="{
-            root: ({ props }) => ({
-              class: [
-                // Colors
-                {
-                  'text-surface-100':
-                    !props.link &&
-                    props.severity === null &&
-                    !props.text &&
-                    !props.outlined &&
-                    !props.plain,
-                  'bg-transparent':
-                    !props.link &&
-                    props.severity === null &&
-                    !props.text &&
-                    !props.outlined &&
-                    !props.plain,
-                  'border-none':
-                    !props.link &&
-                    props.severity === null &&
-                    !props.text &&
-                    !props.outlined &&
-                    !props.plain
-                },
-                // States
-                {
-                  'hover:u-bg-pcolor-darker':
-                    !props.link &&
-                    props.severity === null &&
-                    !props.text &&
-                    !props.outlined &&
-                    !props.plain
-                },
-                { 'focus:u-ring-scolor': props.severity === null }
-              ]
-            })
-          }"
-          :pt-options="{ mergeProps: true, mergeSections: true }"
-        >
-        </Button>
-        <Button
-          v-else
-          icon="fa fa-bars"
-          type="button"
-          class="min-w-8 h-8"
-          @click="changeState"
-          :pt="{
-            root: ({ props }) => ({
-              class: [
-                // Colors
-                {
-                  'text-surface-100':
-                    !props.link &&
-                    props.severity === null &&
-                    !props.text &&
-                    !props.outlined &&
-                    !props.plain,
-                  'bg-transparent':
-                    !props.link &&
-                    props.severity === null &&
-                    !props.text &&
-                    !props.outlined &&
-                    !props.plain,
-                  'border-none':
-                    !props.link &&
-                    props.severity === null &&
-                    !props.text &&
-                    !props.outlined &&
-                    !props.plain
-                },
-                // States
-                {
-                  'hover:u-bg-pcolor-darker':
-                    !props.link &&
-                    props.severity === null &&
-                    !props.text &&
-                    !props.outlined &&
-                    !props.plain
-                },
-                { 'focus:u-ring-scolor': props.severity === null }
-              ]
-            })
-          }"
-          :pt-options="{ mergeProps: true, mergeSections: true }"
-        >
-        </Button>
-      </div>
-      <div class="border-b mx-6"></div>
-      <PanelMenu
-        class="h-full overflow-y-auto overflow-x-hidden mb-4"
-        v-model:expandedKeys="expandedKeys"
-        :model="items"
+  <div class="flex flex-col u-sidemain-max-height h-screen text-surface-100 rounded-md u-bg-pcolor ml-4 my-4 border-none shadow-xl z-50 transition-all duration-500 ease-in-out"
+  :class="sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'">
+    <div class="p-5 text-surface-100 whitespace-nowrap u-sidebar-header">
+      <span class="text-3xl u-sidebar-header-text">Menu</span>
+      <Button
+        v-if="sideBarStateStore.isPinned"
+        icon="fa fa-chevron-left"
+        type="button"
+        class="min-w-8 h-8"
+        @click="changeState"
         :pt="{
-          root: {
-            class: 'my-4'
-          },
-          panel: {
-            class: 'text-sm'
-          },
-          headercontent: {
+          root: ({ props }) => ({
             class: [
-              // Color
-              'border-none',
-              'u-bg-pcolor',
-              'text-surface-100',
+              // Colors
+              {
+                'text-surface-100':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain,
+                'bg-transparent':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain,
+                'border-none':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain
+              },
               // States
-              'hover:bg-surface-100',
-              'hover:u-txt-active',
-              // Transition
-              'transition duration-200 ease-in-out',
-              'transition-shadow duration-200'
+              {
+                'hover:u-bg-pcolor-darker':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain
+              },
+              { 'focus:u-ring-scolor': props.severity === null }
             ]
-          },
-          headeraction: {
-            class: [
-              'relative',
-              'leading-none',
-              'flex items-center',
-              'p-5',
-              'select-none cursor-pointer no-underline'
-            ]
-          },
-          menucontent: {
-            class: ['border-none', 'rounded-t-none', 'u-bg-pcolor-2']
-          },
-          menu: {
-            class: ['outline-none', 'm-0 p-0 list-none']
-          },
-          content: {
-            class: ['border-none rounded-none', 'transition-shadow duration-200']
-          },
-          action: {
-            class: [
-              'relative',
-              // Font
-              'leading-none',
-              // Flex & Alignments
-              'flex items-center',
-              // Spacing
-              'u-sidebar-submenuitem-pl',
-              // Color
-              'text-surface-100',
-              // States
-              'hover:bg-surface-100 hover:u-txt-active',
-              // Misc
-              'cursor-pointer no-underline',
-              'select-none overflow-hidden'
-            ]
-          },
-          icon: {
-            class: ['mr-2']
-          },
-          submenu: {
-            class: 'p-0 pl-4 m-0 list-none'
-          },
-          transition: {
-            enterFromClass: 'max-h-0',
-            enterActiveClass:
-              'overflow-hidden transition-[max-height] duration-1000 ease-[cubic-bezier(0.42,0,0.58,1)]',
-            enterToClass: 'max-h-[1000px]',
-            leaveFromClass: 'max-h-[1000px]',
-            leaveActiveClass:
-              'overflow-hidden transition-[max-height] duration-[450ms] ease-[cubic-bezier(0,1,0,1)]',
-            leaveToClass: 'max-h-0'
-          }
+          })
         }"
+        :pt-options="{ mergeProps: true, mergeSections: true }"
       >
-        <template #item="{ item, props, hasSubmenu, active }">
-          <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-            <a v-ripple v-bind="props.action" :href="href" @click="navigate">
-              <div class="flex items-center px-5 py-3" @click="collapseAll">
-                <span
-                  class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
-                >
-                  <span :class="item.icon" class="fa-lg text-surface-100" />
-                </span>
-                <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
-              </div>
-            </a>
-          </router-link>
-          <a
-            v-else
-            v-ripple
-            class="flex items-center px-5 py-3"
-            v-bind="props.action"
-            :href="item.url"
-            :target="item.target"
-          >
-            <span
-              class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
-            >
-              <span :class="item.icon" class="fa-lg text-surface-100" />
-            </span>
-            <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
-            <i
-              v-if="hasSubmenu && !active"
-              class="pi pi-angle-right ml-auto u-sidebar-menuitem-dropdown"
-            ></i>
-            <i v-else class="pi pi-angle-down ml-auto u-sidebar-menuitem-dropdown"></i>
+      </Button>
+      <Button
+        v-else
+        icon="fa fa-bars"
+        type="button"
+        class="min-w-8 h-8"
+        @click="changeState"
+        :pt="{
+          root: ({ props }) => ({
+            class: [
+              // Colors
+              {
+                'text-surface-100':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain,
+                'bg-transparent':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain,
+                'border-none':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain
+              },
+              // States
+              {
+                'hover:u-bg-pcolor-darker':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain
+              },
+              { 'focus:u-ring-scolor': props.severity === null }
+            ]
+          })
+        }"
+        :pt-options="{ mergeProps: true, mergeSections: true }"
+      >
+      </Button>
+    </div>
+    <div class="border-b mx-6"></div>
+    <PanelMenu
+      class="h-full overflow-y-auto overflow-x-hidden mb-4"
+      v-model:expandedKeys="expandedKeys"
+      :model="items"
+      :pt="{
+        root: {
+          class: 'my-4'
+        },
+        panel: {
+          class: 'text-sm'
+        },
+        headercontent: {
+          class: [
+            // Color
+            'border-none',
+            'u-bg-pcolor',
+            'text-surface-100',
+            // States
+            'hover:bg-surface-100',
+            'hover:u-txt-active',
+            // Transition
+            'transition duration-200 ease-in-out',
+            'transition-shadow duration-200'
+          ]
+        },
+        headeraction: {
+          class: [
+            'relative',
+            'leading-none',
+            'flex items-center',
+            'p-5',
+            'select-none cursor-pointer no-underline'
+          ]
+        },
+        menucontent: {
+          class: ['border-none', 'rounded-t-none', 'u-bg-pcolor-2']
+        },
+        menu: {
+          class: ['outline-none', 'm-0 p-0 list-none']
+        },
+        content: {
+          class: ['border-none rounded-none', 'transition-shadow duration-200']
+        },
+        action: {
+          class: [
+            'relative',
+            // Font
+            'leading-none',
+            // Flex & Alignments
+            'flex items-center',
+            // Spacing
+            'u-sidebar-submenuitem-pl',
+            // Color
+            'text-surface-100',
+            // States
+            'hover:bg-surface-100 hover:u-txt-active',
+            // Misc
+            'cursor-pointer no-underline',
+            'select-none overflow-hidden'
+          ]
+        },
+        icon: {
+          class: ['mr-2']
+        },
+        submenu: {
+          class: 'p-0 pl-4 m-0 list-none'
+        },
+        transition: {
+          enterFromClass: 'max-h-0',
+          enterActiveClass:
+            'overflow-hidden transition-[max-height] duration-1000 ease-[cubic-bezier(0.42,0,0.58,1)]',
+          enterToClass: 'max-h-[1000px]',
+          leaveFromClass: 'max-h-[1000px]',
+          leaveActiveClass:
+            'overflow-hidden transition-[max-height] duration-[450ms] ease-[cubic-bezier(0,1,0,1)]',
+          leaveToClass: 'max-h-0'
+        }
+      }"
+    >
+      <template #item="{ item, props, hasSubmenu, active }">
+        <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+          <a v-ripple v-bind="props.action" :href="href" @click="navigate">
+            <div class="flex items-center px-5 py-3" @click="collapseAll">
+              <span
+                class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
+              >
+                <span :class="item.icon" class="fa-lg text-surface-100" />
+              </span>
+              <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
+            </div>
           </a>
-        </template>
-      </PanelMenu>
-      <div class="border-t mx-6"></div>
-      <div class="px-5 py-4 text-surface-100 whitespace-nowrap u-sidebar-footer">
-        <span class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md">
-          <span class="fa fa-circle-user text-surface-100" />
-        </span>
-        <div class="flex flex-col u-sidebar-footer-text">
-          <span>{{ name }}</span>
-          <span class="text-sm">{{ role }}</span>
-        </div>
+        </router-link>
+        <a
+          v-else
+          v-ripple
+          class="flex items-center px-5 py-3"
+          v-bind="props.action"
+          :href="item.url"
+          :target="item.target"
+        >
+          <span
+            class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
+          >
+            <span :class="item.icon" class="fa-lg text-surface-100" />
+          </span>
+          <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
+          <i
+            v-if="hasSubmenu && !active"
+            class="pi pi-angle-right ml-auto u-sidebar-menuitem-dropdown"
+          ></i>
+          <i v-else class="pi pi-angle-down ml-auto u-sidebar-menuitem-dropdown"></i>
+        </a>
+      </template>
+    </PanelMenu>
+    <div class="border-t mx-6"></div>
+    <div class="px-5 py-4 text-surface-100 whitespace-nowrap u-sidebar-footer">
+      <span class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md">
+        <span class="fa fa-circle-user text-surface-100" />
+      </span>
+      <div class="flex flex-col u-sidebar-footer-text">
+        <span>{{ name }}</span>
+        <span class="text-sm">{{ role }}</span>
       </div>
     </div>
   </div>
