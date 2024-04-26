@@ -57,8 +57,8 @@ const router = createRouter({
               ]
             },
             {
-              path: 'classRoster',
-              name: 'Class Roster',
+              path: 'class-roster',
+              name: 'class-roster',
               component: ClassRosterView,
             }
           ]
@@ -66,12 +66,12 @@ const router = createRouter({
       ]
     },
     {
-      path: '/classInformation',
+      path: '/class-information',
       name: 'class-info',
       component: ClassView
     },
     {
-      path: '/strandInformation',
+      path: '/strand-information',
       name: 'strand-info',
       component: StrandView
     },
@@ -81,13 +81,13 @@ const router = createRouter({
       component: CreateClassesView
     },
     {
-      path: '/classRoster',
-      name: 'Class Roster',
+      path: '/class-roster',
+      name: 'class-roster',
       component: ClassRosterView,
     },
     {
-      path: '/staffRecords',
-      name: 'Staff Records',
+      path: '/staff-records',
+      name: 'staff-records',
       component: RecordsView
     },
     {
