@@ -2,10 +2,13 @@
 import Button from 'primevue/button'
 import PanelMenu from 'primevue/panelmenu'
 
-import { useSideBarStateStore } from '@/stores/sidebar_state'
+import { useSideBarStore } from '@/stores/sidebar'
 import { ref } from 'vue'
 
 defineProps(['name', 'role'])
+
+const sideBarStateStore = useSideBarStore()
+
 const items = ref([
   {
     key: '1',
@@ -111,19 +114,19 @@ const items = ref([
     key: '6',
     label: 'Term Management',
     icon: 'fa fa-calendar-days',
-    route: { name: 'dashboard' }
+    route: { name: 'term-management' }
   },
   {
     key: '7',
     label: 'Learning Strand Management',
     icon: 'fa fa-book',
-    route: { name: 'dashboard' }
+    route: { name: 'learning-strand-management' }
   },
   {
     key: '8',
     label: 'Student Requirements Management',
     icon: 'fa fa-list',
-    route: { name: 'dashboard' }
+    route: { name: 'student-requirements-management' }
   },
   {
     key: '9',
@@ -181,8 +184,6 @@ function changeState() {
   sideBarStateStore.changePinnedState()
   sideBarStateStore.changeExpansionState()
 }
-
-const sideBarStateStore = useSideBarStateStore()
 </script>
 
 <template>
@@ -413,6 +414,10 @@ const sideBarStateStore = useSideBarStateStore()
 
 <style scoped>
 /* sidebar expanded */
+.u-sidebar-expanded {
+  width: 11.5%;
+}
+
 .u-sidebar-expanded .u-sidebar-header {
   display: flex;
   align-items: center;
@@ -440,6 +445,14 @@ const sideBarStateStore = useSideBarStateStore()
 }
 
 /* sidebar collapsed */
+.u-sidebar-collapsed {
+  width: 4%;
+}
+
+.u-sidebar-collapsed:hover {
+  width: 11.5%;
+}
+
 .u-sidebar-collapsed .u-sidebar-header {
   display: flex;
   align-items: center;
