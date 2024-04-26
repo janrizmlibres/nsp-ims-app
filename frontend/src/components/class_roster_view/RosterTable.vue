@@ -24,13 +24,13 @@ rosterStore.exportRef = exportRef
         :ptOptions="{mergeProps:true}" scrollable
         :pt="{
             root: {
-                class: ['flex flex-col pt-2 h-full justify-between overflow-auto']
+                class: ['flex flex-col pt-2 h-full justify-between']
             },
             wrapper: {
                 class: 'flex flex-col'
             },
             table: {
-                class: 'bg-white border-spacing-0 border-separate',
+                class: 'bg-white border-spacing-0 border-separate w-screen',
             },
             thead: {
                 class: 'bg-surface-0 top-0 z-40 sticky'

@@ -21,7 +21,7 @@ const classesStore = useClassesStore()
         :ptOptions="{mergeProps:true}" scrollable
         :pt="{
             root: {
-                class: ['flex flex-col pt-2 h-full justify-between overflow-auto']
+                class: ['flex flex-col h-full pt-2 justify-between overflow-auto']
             },
             wrapper: {
                 class: 'flex flex-col'
