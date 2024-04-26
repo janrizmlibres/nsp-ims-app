@@ -8,7 +8,7 @@ export default {
         animationEnabled: true,
         exportEnabled: true,
         title:{
-          text: "Primary Plastic Production by Industry Section - 2015"
+          text: "STUDENTS ENROLLED"
         },
         axisX: {
           labelTextAlign: "right"
