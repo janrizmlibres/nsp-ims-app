@@ -13,12 +13,12 @@
 </template>
 
 <script>
-import ContentPane from '@/components/UI/ContentPane.vue';
-import YearButton from '@/components/dashboard_view/YearButton.vue'; // import the YearButton component
-import StudentDashboardPanels from '@/components/dashboard_view/StudentDashboardPanels.vue'; // import the StudentDashboardPanels component
+import ContentPane from "@/components/UI/ContentPane.vue";
+import YearButton from "@/components/dashboard_view/YearButton.vue"; // import the YearButton component
+import StudentDashboardPanels from "@/components/dashboard_view/StudentDashboardPanels.vue"; // import the StudentDashboardPanels component
 
 export default {
-  name: 'DashboardView',
+  name: "DashboardView",
   components: {
     ContentPane,
     YearButton, // register the YearButton component
@@ -38,19 +38,19 @@ export default {
   .middle-container {
     position: absolute;
     top: 184px;
-    left: 680px;
+    left: 720px;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-left: 10px;
   }
   .middle-widget {
-  width: 1000px;
-  height: 320px;
-  background-color: white;
-  margin-top: 20px;
-  border-radius: 10px;
-  border-bottom: 5px solid #265492;
-  position: relative; /* Add this line */
-}
+    width: 1000px;
+    height: 320px;
+    background-color: white;
+    margin-top: 20px;
+    border-radius: 10px;
+    border-bottom: 5px solid #265492;
+    position: relative; /* Add this line */
+  }
 </style>
