@@ -5,6 +5,7 @@ import ActiveClassesView from '../views/class_view/ActiveClassesView.vue'
 import ClassRecordsView from '../views/class_view/ClassRecordsView.vue'
 import CreateClassesView from '../views/class_view/CreateClassesView.vue'
 
+import StudentRequirementView from '../views/requirement_view/StudentRequirementView.vue'
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
 import AddStaffView from '@/views/staff_view/AddStaffView.vue'
@@ -14,12 +15,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'login page',
+      name: 'login',
       component: LoginView
     },
     {
       path: '/dashboard',
-      name: 'Dashboard',
+      name: 'dashboard',
       component: DashboardView
     },
     {
@@ -36,6 +37,11 @@ const router = createRouter({
       path: '/create-classes',
       name: 'Create Classes',
       component: CreateClassesView
+    },
+    {
+      path: '/student-requirements-management',
+      name: 'Student Requirements Management',
+      component: StudentRequirementView
     },
     {
       path: '/staff-records',
