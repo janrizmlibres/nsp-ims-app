@@ -18,11 +18,11 @@ export default function (req, res, next) {
       error.statusCode = 401;
       throw error;
     }
+
+    req.userId = decodedToken.userId;
+    next();
   } catch (error) {
     error.statusCode = 500;
     throw error;
   }
-
-  req.userId = decodedToken.userId;
-  next();
 }
