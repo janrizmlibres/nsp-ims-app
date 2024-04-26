@@ -6,7 +6,7 @@ import ProgressBar from 'primevue/progressbar';
 const router = useRouter()
 
 function showStrand() {
-    router.push('/strandInformation')
+    router.push('/strand-information')
 }
 </script>
 
