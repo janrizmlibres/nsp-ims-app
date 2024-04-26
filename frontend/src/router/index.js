@@ -5,6 +5,7 @@ import ActiveClassesView from '../views/class_view/ActiveClassesView.vue'
 import ClassRecordsView from '../views/class_view/ClassRecordsView.vue'
 import CreateClassesView from '../views/class_view/CreateClassesView.vue'
 
+import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
 import AddStaffView from '@/views/staff_view/AddStaffView.vue'
@@ -36,6 +37,11 @@ const router = createRouter({
       path: '/create-classes',
       name: 'Create Classes',
       component: CreateClassesView
+    },
+        {
+      path: '/learning-strand-management',
+      name: 'Learning Strand Management',
+      component: LearningStrandView
     },
     {
       path: '/staff-records',
