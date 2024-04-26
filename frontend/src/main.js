@@ -11,6 +11,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ToastService from 'primevue/toastservice';
 
+import CanvasJSChart from '@canvasjs/vue-charts';
+
 
 library.add(fas)
 dom.watch()
@@ -21,6 +23,8 @@ import router from './router'
 config.styleDefault = 'solid'
 
 const app = createApp(App)
+
+app.use(CanvasJSChart); // install the CanvasJS Vuejs Chart Plugin
 
 app.use(createPinia())
 app.use(router)

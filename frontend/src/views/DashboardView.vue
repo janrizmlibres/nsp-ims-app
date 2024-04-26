@@ -7,7 +7,7 @@
     <div class="middle-container">
         <YearButton />
       <div class="middle-widget"></div>
-      <div class="middle-widget"></div>
+      <div class="middle-widget"><CanvasJSChart :options="options"/></div>
     </div>
   </ContentPane>
 </template>
@@ -25,6 +25,39 @@ export default {
     StudentDashboardPanels, // register the StudentDashboardPanels component
   },
   // ... other options ...
+   data() {
+    return {
+      chart: null,
+      options: {
+        animationEnabled: true,
+        exportEnabled: true,
+        title:{
+          text: "Primary Plastic Production by Industry Section - 2015"
+        },
+        axisX: {
+          labelTextAlign: "right"
+        },
+        axisY: {
+          title: "in Million Tonnes per Year",
+          suffix: "M"
+        },
+        data: [{
+          type: "bar",
+          yValueFormatString: "#,###M tonnes",
+          dataPoints: [
+            { label: "Industrial Machinery", y: 3 },
+            { label: "Electrical/Electronic", y: 18 },
+            { label: "Transportation", y: 27 },
+            { label: "Consumer & Institutional Products", y: 42 },
+            { label: "Other sectors", y: 47 },
+            { label: "Textiles", y: 59 },
+            { label: "Building and Construction", y: 65 },
+            { label: "Packaging", y: 146 }
+          ]
+        }]
+      }
+    }
+  } 
 };
 </script>
 
@@ -45,8 +78,9 @@ export default {
     margin-left: 10px;
   }
   .middle-widget {
-    width: 1000px;
-    height: 320px;
+    padding: 5px;
+    width: 1005px;
+    height: 380px;
     background-color: white;
     margin-top: 20px;
     border-radius: 10px;
