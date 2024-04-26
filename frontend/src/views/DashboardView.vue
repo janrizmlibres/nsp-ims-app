@@ -7,7 +7,7 @@
     <div class="middle-container">
         <YearButton />
       <div class="middle-widget"></div>
-      <div class="middle-widget"><CanvasJSChart :options="options"/></div>
+      <BarChart />
     </div>
   </ContentPane>
 </template>
@@ -16,6 +16,7 @@
 import ContentPane from "@/components/UI/ContentPane.vue";
 import YearButton from "@/components/dashboard_view/YearButton.vue"; // import the YearButton component
 import StudentDashboardPanels from "@/components/dashboard_view/StudentDashboardPanels.vue"; // import the StudentDashboardPanels component
+import BarChart from "@/components/dashboard_view/BarChart.vue"; // import the StudentDashboardPanels component
 
 export default {
   name: "DashboardView",
@@ -23,41 +24,10 @@ export default {
     ContentPane,
     YearButton, // register the YearButton component
     StudentDashboardPanels, // register the StudentDashboardPanels component
+    BarChart
   },
   // ... other options ...
-   data() {
-    return {
-      chart: null,
-      options: {
-        animationEnabled: true,
-        exportEnabled: true,
-        title:{
-          text: "Primary Plastic Production by Industry Section - 2015"
-        },
-        axisX: {
-          labelTextAlign: "right"
-        },
-        axisY: {
-          title: "in Million Tonnes per Year",
-          suffix: "M"
-        },
-        data: [{
-          type: "bar",
-          yValueFormatString: "#,###M tonnes",
-          dataPoints: [
-            { label: "Industrial Machinery", y: 3 },
-            { label: "Electrical/Electronic", y: 18 },
-            { label: "Transportation", y: 27 },
-            { label: "Consumer & Institutional Products", y: 42 },
-            { label: "Other sectors", y: 47 },
-            { label: "Textiles", y: 59 },
-            { label: "Building and Construction", y: 65 },
-            { label: "Packaging", y: 146 }
-          ]
-        }]
-      }
-    }
-  } 
+ 
 };
 </script>
 
