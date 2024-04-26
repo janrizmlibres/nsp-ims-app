@@ -2,6 +2,8 @@
 import ContentPane from '@/components/UI/ContentPane.vue';
 import StrandCard from '@/components/class_view/StrandCard.vue';
 import Divider from 'primevue/divider';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
 import TimelineTable from '@/components/class_view/TimelineTable.vue';
 import RosterTableHeader from '@/components/class_roster_view/RosterTableHeader.vue';
 import RosterTable from '@/components/class_roster_view/RosterTable.vue';
@@ -28,7 +30,17 @@ import RosterTable from '@/components/class_roster_view/RosterTable.vue';
         </div>
         <Divider class="before:border-t before:border-surface-400"/>
 
-        <RosterTable />
+        <TabView class="p-2 bg-white shadow-xl rounded-md">
+            <TabPanel header="Active">
+                <RosterTable />
+            </TabPanel>
+            <TabPanel header="Inactive">
+                <RosterTable />
+            </TabPanel>
+            <TabPanel header="Dropped">
+                <RosterTable />
+            </TabPanel>
+        </TabView>
     </ContentPane>
 </template>
 
