@@ -18,13 +18,13 @@ import AddStaffView from '../views/staff_view/AddStaffView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // {
-    //   path: '/auth/login',
-    //   name: 'Dashboard',
-    //   component: LoginView
-    // },
     {
       path: '/',
+      name: 'Login',
+      component: LoginView
+    },
+    {
+      path: '/dashboard',
       name: 'Dashboard',
       component: DashboardView
     },
