@@ -4,12 +4,9 @@ import Column from 'primevue/column';
 
 import { useClassesStore } from '@/stores/classes';
 import { useRouter } from 'vue-router';
-import { ref } from 'vue';
 
 const router = useRouter()
 const classesStore = useClassesStore()
-const exportRef = ref()
-classesStore.exportRef = exportRef
 </script>
 
 <template>
@@ -19,7 +16,6 @@ classesStore.exportRef = exportRef
         resizableColumns columnResizeMode="fit"
         v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        ref="exportRef" 
         v-model:selection="classesStore.primarySelection" selectionMode="single" 
         @rowSelect="classesStore.onExpandRow(classesStore.primarySelection.id)" @rowUnselect="classesStore.onCollapseRow()"
         :ptOptions="{mergeProps:true}" scrollable
@@ -111,7 +107,7 @@ classesStore.exportRef = exportRef
             <div class="p-1 rounded-md">
                 <DataTable 
                 :value="slotProps.data.schoollevels" 
-                v-model:selection="secondarySelection" selectionMode="single"
+                v-model:selection="classesStore.secondarySelection" selectionMode="single"
                 @rowSelect="classesStore.showClass(router)"
                 :ptOptions="{mergeProps:true}"
                 :pt="{
