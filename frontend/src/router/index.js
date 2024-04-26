@@ -84,23 +84,18 @@ const router = createRouter({
       component: CreateClassesView
     },
     {
-      path: '/class-roster',
-      name: 'class-roster',
-      component: ClassRosterView,
-    },
-    {
       path: '/term-management',
-      name: 'Term Management',
+      name: 'term-management',
       component: TermView
     },
     {
       path: '/student-requirements-management',
-      name: 'Student Requirements Management',
+      name: 'student-requirements-management',
       component: StudentRequirementView
     },
     {
       path: '/learning-strand-management',
-      name: 'Learning Strand Management',
+      name: 'learning-strand-management',
       component: LearningStrandView
     },
     {
