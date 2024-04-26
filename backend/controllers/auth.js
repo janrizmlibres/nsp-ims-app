@@ -1,18 +1,43 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { validationResult } from "express-validator";
 
 import Staff from "../models/staff.js";
 
 export async function signup(req, res, next) {
-  const { last_name, first_name, username, password } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const error = new Error("Validation failed, entered data is incorrect.");
+    error.statusCode = 422;
+    next(error);
+  }
+
+  const {
+    username,
+    password,
+    firstName,
+    middleName,
+    lastName,
+    suffixName,
+    position,
+    email,
+    contactNum,
+  } = req.body;
 
   try {
     const hashedPw = await bcrypt.hash(password, 12);
+
     const user = await Staff.create({
-      last_name: last_name,
-      first_name: first_name,
       username: username,
       hashed_pw: hashedPw,
+      first_name: firstName,
+      middle_name: middleName.length == 0 ? null : middleName,
+      last_name: lastName,
+      suffix_name: suffixName.length == 0 ? null : suffixName,
+      position: position.length == 0 ? null : position,
+      email: email.length == 0 ? null : email,
+      contact_num: contactNum.length == 0 ? null : contactNum,
     });
 
     res.status(201).json({ message: "User created!", userId: user.id });
@@ -37,43 +62,42 @@ export async function login(req, res, next) {
    * If there is an error while searching for the user, it returns an error message.
    * @param {Object} req - The request object
    * @param {Object} res - The response object
-   * @param {Object} next - The next delegator object
    * @returns {Object} - The response object
    */
   const { username, password } = req.body;
 
   try {
-    const user = await Staff.findOne({ where: { username: username } });
+    const staff = await Staff.findOne({ where: { username: username } });
 
-    if (!user) {
+    if (!staff) {
       const error = new Error("Authentication failed. User not found.");
-      error.statusCode = 401; // Code for not authenticated
+      error.statusCode = 401;
       throw error;
     }
 
-    const isEqual = bcrypt.compare(password, user.hashed_pw);
+    const result = await bcrypt.compare(password, staff.hashed_pw);
 
-    if (!isEqual) {
+    if (!result) {
       const error = new Error("Authentication failed. Wrong password.");
       error.statusCode = 401;
       throw error;
     }
 
     const token = jwt.sign(
-      {
-        username: user.username,
-        userId: user.id.toString(),
-      },
-      "HEHESECRET",
+      { username: staff.username, id: staff.id },
+      "HEHESECRET", // replace with your secret key
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({
+    console.log("SUCCESS");
+
+    return res.status(200).json({
       message: "Authentication successful",
       token: token,
-      userId: user.id.toString(),
+      userId: staff.id,
     });
   } catch (error) {
+    console.log(error);
     if (!error.statusCode) {
       error.statusCode = 500;
     }
