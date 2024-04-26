@@ -10,6 +10,7 @@ import ModuleView from '../views/class_mgmt/ModuleView.vue'
 import CreateClassesView from '../views/class_mgmt/CreateClassesView.vue'
 
 import StudentRequirementView from '../views/requirement_view/StudentRequirementView.vue'
+import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
 import AddStaffView from '@/views/staff_view/AddStaffView.vue'
@@ -79,6 +80,11 @@ const router = createRouter({
       path: '/student-requirements-management',
       name: 'Student Requirements Management',
       component: StudentRequirementView
+    },
+    {
+      path: '/learning-strand-management',
+      name: 'Learning Strand Management',
+      component: LearningStrandView
     },
     {
       path: '/staffs',
