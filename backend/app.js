@@ -1,10 +1,9 @@
 import express from "express";
+
 import sequelize from "./util/database.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
-import bcrypt from "bcryptjs";
-
-import Staff from "./models/staff.js";
+import * as dbInjector from "./util/db_injector.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,12 +20,12 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
-app.use("/admin", adminRoutes);
-app.use("/auth", authRoutes);
-
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   res.send("Please enter a valid endpoint.");
 });
+
+app.use("/admin", adminRoutes);
+app.use("/auth", authRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -42,23 +41,7 @@ app.options("*", (req, res) => {
 
 try {
   await sequelize.sync({ force: true });
-
-  const janpass = await bcrypt.hash("janrizpass", 12);
-  await Staff.create({
-    last_name: "Libres",
-    first_name: "Janriz",
-    username: "janrizlibs",
-    hashed_pw: janpass,
-  });
-
-  const joypass = await bcrypt.hash("joypass", 12);
-  await Staff.create({
-    last_name: "Etom",
-    first_name: "Joy",
-    username: "joyetom",
-    hashed_pw: joypass,
-  });
-
+  await dbInjector.injectStaff();
   app.listen(port);
   console.log("Listening on port " + port);
 } catch (error) {

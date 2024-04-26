@@ -5,30 +5,35 @@ import BaseCard from '@/components/UI/BaseCard.vue'
 import TheFooter from '@/components/staff_view/TheFooter.vue'
 import RecordsTable from '@/components/staff_view/RecordsTable.vue'
 
-import { ref } from 'vue'
+import { onBeforeMount, ref } from 'vue'
+import axios from 'axios'
 
-const staffs = ref([
-  {
-    userId: '52513',
-    fullName: 'Janriz Libres',
-    position: 'Social Media Manager',
-    canAddStuds: false,
-    canEnroll: false,
-    canUpdateStuds: false,
-    canGrade: false,
-    canAttendance: false
-  },
-  {
-    userId: '52514',
-    fullName: 'Nazib Dimal',
-    position: 'Lead Engineer',
-    canAddStuds: false,
-    canEnroll: false,
-    canUpdateStuds: false,
-    canGrade: false,
-    canAttendance: false
+import { useStaffsStore } from '@/stores/staffs'
+import { useAuthStore } from '@/stores/auth'
+
+const staffsStore = useStaffsStore()
+const authStore = useAuthStore()
+
+const isLoading = ref(false)
+
+onBeforeMount(async () => {
+  if (staffsStore.staffs.length == 0) {
+    isLoading.value = true
+    // await new Promise((resolve) => setTimeout(resolve, 3000))
+
+    try {
+      const result = await axios.get('http://localhost:8080/admin/staffs', {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      })
+
+      staffsStore.staffs = result.data.staffs
+    } catch (error) {
+      console.log(error.response.data.message)
+    }
+
+    isLoading.value = false
   }
-])
+})
 </script>
 
 <template>
@@ -36,9 +41,9 @@ const staffs = ref([
     <TheHeader />
 
     <BaseCard>
-      <RecordsTable :staffs="staffs" />
+      <RecordsTable :staffs="staffsStore.staffs" />
     </BaseCard>
 
-    <TheFooter :staffCount="staffs.length" />
+    <TheFooter :staffCount="staffsStore.staffs.length" />
   </ContentPane>
 </template>
