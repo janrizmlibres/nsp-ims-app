@@ -5,6 +5,7 @@ import ActiveClassesView from '../views/class_view/ActiveClassesView.vue'
 import ClassRecordsView from '../views/class_view/ClassRecordsView.vue'
 import CreateClassesView from '../views/class_view/CreateClassesView.vue'
 
+import TermView from '../views/term_view/TermView.vue'
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
 import AddStaffView from '@/views/staff_view/AddStaffView.vue'
@@ -36,6 +37,11 @@ const router = createRouter({
       path: '/create-classes',
       name: 'Create Classes',
       component: CreateClassesView
+    },
+    {
+      path: '/term-management',
+      name: 'Term Management',
+      component: TermView
     },
     {
       path: '/staff-records',
