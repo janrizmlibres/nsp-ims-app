@@ -3,10 +3,8 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
 import { useRosterStore } from '@/stores/roster';
-import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 
-const router = useRouter()
 const rosterStore = useRosterStore()
 const exportRef = ref()
 rosterStore.exportRef = exportRef
@@ -21,13 +19,10 @@ rosterStore.exportRef = exportRef
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
         ref="exportRef" 
         @rowSelect="{}" @rowUnselect="{}"
-        :ptOptions="{mergeProps:true}" scrollable
+        :ptOptions="{mergeProps:true}"
         :pt="{
             root: {
-                class: ['flex flex-col pt-2 h-full justify-between']
-            },
-            wrapper: {
-                class: 'flex flex-col'
+                class: ['flex flex-col h-full pt-2 justify-between']
             },
             table: {
                 class: 'bg-white border-spacing-0 border-separate w-screen',
