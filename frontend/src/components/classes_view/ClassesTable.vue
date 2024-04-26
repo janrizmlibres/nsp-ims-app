@@ -18,13 +18,10 @@ const classesStore = useClassesStore()
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
         v-model:selection="classesStore.primarySelection" selectionMode="single" 
         @rowSelect="classesStore.onExpandRow(classesStore.primarySelection.id)" @rowUnselect="classesStore.onCollapseRow()"
-        :ptOptions="{mergeProps:true}" scrollable
+        :ptOptions="{mergeProps:true}"
         :pt="{
             root: {
                 class: ['flex flex-col h-full pt-2 justify-between overflow-auto']
-            },
-            wrapper: {
-                class: 'flex flex-col'
             },
             table: {
                 class: 'bg-white border-spacing-0 border-separate',
