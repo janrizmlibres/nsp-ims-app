@@ -56,11 +56,7 @@
       </div>
     </div>
     <div class="middle-container">
-      <button class="year-button" @click="showDatePicker = !showDatePicker">
-        <font-awesome-icon :icon="['fas', 'filter']" />
-        Year
-      </button>
-      <vue3-datepicker v-if="showDatePicker" v-model="selectedDate"></vue3-datepicker>
+        <YearButton />
       <div class="middle-widget"></div>
       <div class="middle-widget"></div>
     </div>
@@ -68,23 +64,17 @@
 </template>
 
 <script>
-import Vue3Datepicker from 'vue3-datepicker';
 import ContentPane from '@/components/UI/ContentPane.vue';
+import YearButton from '@/components/dashboard_view/YearButton.vue'; // import the YearButton component
 
 export default {
   name: 'DashboardView',
   components: {
-    Vue3Datepicker,
-    ContentPane
+    ContentPane,
+    YearButton, // register the YearButton component
   },
-  data() {
-    return {
-      showDatePicker: false,
-      selectedDate: null,
-    };
-  }
+  // ... other options ...
 };
-
 </script>
 
 <style scoped>
