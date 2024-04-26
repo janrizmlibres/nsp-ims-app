@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router';
 
 const route = useRouter()
 function viewRoster() {
-    route.push('/classRoster')
+    route.push('/class-roster')
 }
 </script>
 
