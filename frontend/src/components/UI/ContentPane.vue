@@ -10,14 +10,31 @@ const sideBarStateStore = useSideBarStateStore()
 <template>
   <TheSidebar name="User" role="Admin" />
   <main
-    class="u-sidemain-max-height h-screen w-screen m-4"
+    class="flex flex-col u-sidemain-max-height flex-1 m-4"
     :class="
       sideBarStateStore.isExpanded
-        ? 'u-router-view-max-d-expanded'
-        : 'u-router-view-max-d-collapsed'
+        ? 'u-router-view-max-w-expanded'
+        : 'u-router-view-max-w-collapsed'
     "
   >
     <TopHeader :header="props.header" />
-    <slot></slot>
+    <div class="flex flex-col u-router-view-max-h h-full w-full overflow-auto px-4">
+      <slot></slot>
+    </div>
+   
   </main>
 </template>
+
+<style scoped>
+.u-router-view-max-h {
+  max-height: calc(100vh - 11rem);
+}
+
+.u-router-view-max-w-expanded {
+  max-width: calc(100vw - 19rem)
+}
+
+.u-router-view-max-w-collapsed {
+  max-width: calc(100vw - 7.5rem)
+}
+</style>

@@ -6,9 +6,7 @@ import ClassesTableHeader from '@/components/classes_view/ClassesTableHeader.vue
 
 <template>
     <ContentPane header="Class Records">
-        <div class="flex flex-col u-router-view-max-h h-screen px-4">
-            <ClassesTableHeader />
-            <ClassesTable />
-        </div>
+        <ClassesTableHeader />
+        <ClassesTable />
     </ContentPane>
 </template>

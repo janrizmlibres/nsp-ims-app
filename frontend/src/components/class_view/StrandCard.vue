@@ -1,6 +1,5 @@
 <script setup>
 import Card from 'primevue/card';
-import Button from 'primevue/button';
 import { useRouter } from 'vue-router';
 import ProgressBar from 'primevue/progressbar';
 
@@ -13,10 +12,11 @@ function showStrand() {
 
 <template>
     <Card
+    @click="showStrand"
     :pt-options="{mergeProps:true}"
     :pt="{
         root: {
-            class: ['rounded-t-3xl rounded-b-3xl', 'shadow-md', 'bg-surface-0', 'u-txt-active']
+            class: ['rounded-t-3xl rounded-b-3xl', 'shadow-md', 'bg-surface-0', 'u-txt-active', 'hover: hover:bg-surface-100 hover:cursor-pointer transition-all duration-200']
         },
         body: {
             class: '!p-0'
@@ -44,7 +44,7 @@ function showStrand() {
             
         </template>
         <template #footer>
-            <Button label="View" class="w-full rounded-t-none u-bg-pcolor" @click="showStrand" />
+            <div class="u-bg-pcolor flex justify-center py-2 text-white font-semibold">View</div>
         </template>
     </Card>
 </template>

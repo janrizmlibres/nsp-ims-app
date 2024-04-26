@@ -108,6 +108,136 @@ export const useClassesStore = defineStore('classes', {
                         drop: 3
                     }
                 ]
+        },
+        {
+            id: 9,
+            batchnumber: '8',
+            academicyear: '2023-2024',
+            startdate: 'August 01, 2023',
+            enddate: 'May 31, 2024',
+            schoollevels: 
+                [
+                    {
+                        id: '1008-1',
+                        schoollevel: 'Grade School',
+                        totalstudents: 13,
+                        active: 10,
+                        inactive: 2,
+                        drop: 1
+                    },
+                    {
+                        id: '1008-2',
+                        schoollevel: 'Junior High School',
+                        totalstudents: 20,
+                        active: 13,
+                        inactive: 4,
+                        drop: 3
+                    }
+                ]
+        },
+        {
+            id: 10,
+            batchnumber: '8',
+            academicyear: '2023-2024',
+            startdate: 'August 01, 2023',
+            enddate: 'May 31, 2024',
+            schoollevels: 
+                [
+                    {
+                        id: '1008-1',
+                        schoollevel: 'Grade School',
+                        totalstudents: 13,
+                        active: 10,
+                        inactive: 2,
+                        drop: 1
+                    },
+                    {
+                        id: '1008-2',
+                        schoollevel: 'Junior High School',
+                        totalstudents: 20,
+                        active: 13,
+                        inactive: 4,
+                        drop: 3
+                    }
+                ]
+        },
+        {
+            id: 11,
+            batchnumber: '8',
+            academicyear: '2023-2024',
+            startdate: 'August 01, 2023',
+            enddate: 'May 31, 2024',
+            schoollevels: 
+                [
+                    {
+                        id: '1008-1',
+                        schoollevel: 'Grade School',
+                        totalstudents: 13,
+                        active: 10,
+                        inactive: 2,
+                        drop: 1
+                    },
+                    {
+                        id: '1008-2',
+                        schoollevel: 'Junior High School',
+                        totalstudents: 20,
+                        active: 13,
+                        inactive: 4,
+                        drop: 3
+                    }
+                ]
+        },
+        {
+            id: 12,
+            batchnumber: '8',
+            academicyear: '2023-2024',
+            startdate: 'August 01, 2023',
+            enddate: 'May 31, 2024',
+            schoollevels: 
+                [
+                    {
+                        id: '1008-1',
+                        schoollevel: 'Grade School',
+                        totalstudents: 13,
+                        active: 10,
+                        inactive: 2,
+                        drop: 1
+                    },
+                    {
+                        id: '1008-2',
+                        schoollevel: 'Junior High School',
+                        totalstudents: 20,
+                        active: 13,
+                        inactive: 4,
+                        drop: 3
+                    }
+                ]
+        },
+        {
+            id: 13,
+            batchnumber: '8',
+            academicyear: '2023-2024',
+            startdate: 'August 01, 2023',
+            enddate: 'May 31, 2024',
+            schoollevels: 
+                [
+                    {
+                        id: '1008-1',
+                        schoollevel: 'Grade School',
+                        totalstudents: 13,
+                        active: 10,
+                        inactive: 2,
+                        drop: 1
+                    },
+                    {
+                        id: '1008-2',
+                        schoollevel: 'Junior High School',
+                        totalstudents: 20,
+                        active: 13,
+                        inactive: 4,
+                        drop: 3
+                    }
+                ]
         }
     ],
 
@@ -165,7 +295,7 @@ export const useClassesStore = defineStore('classes', {
         this.onCollapseRow()
         this.primarySelection = {}
         this.secondarySelection = {}
-        router.push('/classInformation')
+        router.push('/class-information')
     }
   }
 })
