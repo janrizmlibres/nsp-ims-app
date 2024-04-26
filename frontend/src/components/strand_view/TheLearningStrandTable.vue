@@ -4,8 +4,8 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 
 <template>
     <ContentPane>
-        <div class="bg-blue-100 shadow-xl ">
-            <h1>Class History Page</h1>
+        <div class="">
+            <h1>Create Learning Strand</h1>
         </div>
     </ContentPane>
 </template>

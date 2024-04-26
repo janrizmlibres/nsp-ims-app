@@ -19,8 +19,13 @@ defineProps(['staffs'])
         </a>
       </template>
     </Column>
-    <Column field="userId" header="User ID" sortable></Column>
-    <Column field="fullName" header="Full Name" sortable></Column>
-    <Column field="position" header="Position" sortable></Column>
+    <Column field="id" header="User ID" sortable></Column>
+    <Column field="username" header="Username" sortable></Column>
+    <Column header="Full Name" sortable>
+      <template #body="slotProps">
+        {{ slotProps.data.first_name }} {{ slotProps.data.middle_name || ' ' }}
+        {{ slotProps.data.last_name }}
+      </template>
+    </Column>
   </DataTable>
 </template>
