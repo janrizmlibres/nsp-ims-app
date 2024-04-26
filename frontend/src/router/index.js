@@ -10,47 +10,48 @@ import ModuleView from '../views/class_mgmt/ModuleView.vue'
 import CreateClassesView from '../views/class_mgmt/CreateClassesView.vue'
 import ClassRosterView from '@/views/class_mgmt/ClassRosterView.vue'
 
-import RecordsView from '../views/staff_view/RecordsView.vue'
-import PermissionsView from '../views/staff_view/PermissionsView.vue'
-import AddStaffView from '../views/staff_view/AddStaffView.vue'
+import RecordsView from '@/views/staff_view/RecordsView.vue'
+import PermissionsView from '@/views/staff_view/PermissionsView.vue'
+import AddStaffView from '@/views/staff_view/AddStaffView.vue'
 
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'Login',
+      path: '/login',
+      name: 'login',
       component: LoginView
     },
     {
       path: '/dashboard',
-      name: 'Dashboard',
+      name: 'dashboard',
       component: DashboardView
     },
     {
-      path: '/activeClasses',
-      name: 'Active Classes',
+      path: '/active-classes',
+      name: 'active-classes',
       component: ActiveClassesView
     },
     {
-      path: '/classRecords',
-      name: 'Class Records',
+      path: '/class-records',
+      name: 'class-records',
       component: ClassesView,
       children: [
         {
-          path: 'classInformation',
-          name: 'Class Information',
+          path: 'class-information',
+          name: 'class-info',
           component: ClassView,
           children: [
             {
-              path: 'strandInformation',
-              name: 'Strand Information',
+              path: 'strand-information',
+              name: 'strand-info',
               component: StrandView,
               children: [
                 {
-                  path: 'moduleInformation',
-                  name: 'Module Information',
+                  path: 'module-information',
+                  name: 'module-info',
                   component: ModuleView
                 }
               ]
@@ -66,17 +67,17 @@ const router = createRouter({
     },
     {
       path: '/classInformation',
-      name: 'Class Information',
-      component: ClassView,
+      name: 'class-info',
+      component: ClassView
     },
     {
       path: '/strandInformation',
-      name: 'Strand Information',
-      component: StrandView,
+      name: 'strand-info',
+      component: StrandView
     },
     {
-      path: '/createClasses',
-      name: 'Create Classes',
+      path: '/create-classes',
+      name: 'create-classes',
       component: CreateClassesView
     },
     {
@@ -90,16 +91,29 @@ const router = createRouter({
       component: RecordsView
     },
     {
-      path: '/staffPermissions',
-      name: 'Staff Permissions',
+      path: '/staffs/permissions',
+      name: 'staff-permissions',
       component: PermissionsView
     },
     {
-      path: '/addStaff',
-      name: 'Add Staff',
+      path: '/staffs/add',
+      name: 'add-staff',
       component: AddStaffView
-    }
+    },
+    { path: '/:misc(.*)', redirect: { name: 'login' } }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+
+  if (to.name !== 'login' && !authStore.isAuthenticated) {
+    next({ name: 'login' })
+  } else if (to.name === 'login' && authStore.isAuthenticated) {
+    next({ name: 'dashboard' })
+  } else {
+    next()
+  }
 })
 
 export default router
