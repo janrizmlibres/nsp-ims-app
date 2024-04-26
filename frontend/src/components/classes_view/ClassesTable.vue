@@ -141,6 +141,11 @@ const classesStore = useClassesStore()
                         ]
                     })
                 }">
+                    <Column header="" style="width: 1rem; padding-left: 2rem">
+                        <template #body>
+                            <i class="fa fa-eye" />
+                        </template>
+                    </Column>
                     <Column v-for="col of classesStore.expansionColumns" :key="col.field" :field="col.field" :header="col.header"></Column>
                 </DataTable>
             </div>
