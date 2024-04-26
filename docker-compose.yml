@@ -25,6 +25,7 @@ services:
       - db
   db:
     image: "mariadb:10.11"
+    command: '--default-authentication-plugin=mysql_native_password'
     restart: always
     container_name: db
     environment:
@@ -36,6 +37,8 @@ services:
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     networks:
       - private
+    ports:
+      - "3307:3306"
   frontend:
     build: frontend
     develop:
