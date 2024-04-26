@@ -16,7 +16,9 @@ function showStrand() {
     :pt-options="{mergeProps:true}"
     :pt="{
         root: {
-            class: ['rounded-t-3xl rounded-b-3xl', 'shadow-md', 'bg-surface-0', 'u-txt-active', 'hover: hover:bg-surface-100 hover:cursor-pointer transition-all duration-200']
+            class: ['rounded-t-3xl rounded-b-3xl', 'shadow-md', 'bg-surface-0', 'u-txt-active', 
+                'hover: hover:bg-surface-100 hover:cursor-pointer transition-all duration-200 hover:transform hover:scale-105' 
+            ]
         },
         body: {
             class: '!p-0'
