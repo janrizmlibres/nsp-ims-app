@@ -25,6 +25,7 @@ const formData = ref({
 })
 
 const isLoading = ref(false)
+const toast = useToast()
 
 function updateData(data) {
   formData.value = data
@@ -34,18 +35,15 @@ async function submitData() {
   try {
     isLoading.value = true
 
-    const result = await axios.post(
-      'http://localhost:8080/auth/signup',
-      { ...formData.value },
-      {
-        headers: { Authorization: 'Bearer ' + authStore.token }
-      }
-    )
+    console.log(formData.value)
+
+    const result = await axios.post('http://localhost:8080/auth/signup', formData.value, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
 
     console.log(result.data.message)
-    isLoading.value = false
   } catch (error) {
-    const toast = useToast()
+    console.log('Error occured')
     toast.add({
       severity: 'error',
       summary: 'Error',
@@ -53,6 +51,8 @@ async function submitData() {
       life: 3000
     })
   }
+
+  isLoading.value = false
 }
 </script>
 
@@ -76,20 +76,23 @@ async function submitData() {
 
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Button
-            class="h-10 u-bg-green"
-            :label="!isLoading ? 'Submit' : ''"
-            :icon="!isLoading ? 'fa-solid fa-circle-check' : ''"
-            @click="submitData"
-          >
+          <Button class="h-10 u-bg-green" @click="submitData">
             <ProgressSpinner
-              v-show="isLoading"
+              v-if="isLoading"
               style="width: 50px; height: 50px"
               strokeWidth="8"
               class="fill-surface-0 dark:fill-surface-800"
               animationDuration=".5s"
               aria-label="Custom ProgressSpinner"
             />
+
+            <div v-else>
+              <font-awesome-icon
+                icon="fa-solid fa-circle-check"
+                class="absolute top-2/4 -mt-2 left-3"
+              />
+              <h2 class="pl-5 font-bold">Submit</h2>
+            </div>
           </Button>
           <Button class="h-10 ml-2 u-bg-red" label="Cancel" icon="fa-solid fa-circle-xmark" />
         </div>

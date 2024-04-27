@@ -12,13 +12,13 @@ router.post(
   isAuth,
   [
     body("username").trim().not().isEmpty(),
-    body("password").isStrongPassword({ minLength: 8 }),
+    body("password").trim().isLength({ min: 8 }),
     body("firstName").isAlpha("en-US"),
-    body("middleName").optional({ values: "null" }).isAlpha("en-US"),
+    body("middleName").optional({ values: "falsy" }).isAlpha("en-US"),
     body("lastName").isAlpha("en-US"),
-    body("suffixName").optional({ values: "null" }).isAlpha("en-US"),
-    body("email").optional({ values: "null" }).isEmail(),
-    body("contactNum").optional({ values: "null" }).isMobilePhone("en-PH"),
+    body("suffixName").optional({ values: "falsy" }).isAlpha("en-US"),
+    body("email").optional({ values: "falsy" }).isEmail(),
+    body("contactNum").optional({ values: "falsy" }).isMobilePhone("en-PH"),
   ],
   authController.signup
 );

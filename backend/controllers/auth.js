@@ -7,6 +7,8 @@ import Staff from "../models/staff.js";
 export async function signup(req, res, next) {
   const errors = validationResult(req);
 
+  console.log(errors);
+
   if (!errors.isEmpty()) {
     const error = new Error("Validation failed, entered data is incorrect.");
     error.statusCode = 422;
