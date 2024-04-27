@@ -63,14 +63,19 @@ const router = createRouter({
       ]
     },
     {
-      path: '/classInformation',
+      path: '/class-information',
       name: 'class-info',
       component: ClassView
     },
     {
-      path: '/strandInformation',
+      path: '/strand-information',
       name: 'strand-info',
       component: StrandView
+    },
+    {
+      path: '/module-information',
+      name: 'module-info',
+      component: ModuleView
     },
     {
       path: '/create-classes',
@@ -79,17 +84,17 @@ const router = createRouter({
     },
     {
       path: '/term-management',
-      name: 'Term Management',
+      name: 'term-management',
       component: TermView
     },
     {
       path: '/student-requirements-management',
-      name: 'Student Requirements Management',
+      name: 'student-requirements-management',
       component: StudentRequirementView
     },
     {
       path: '/learning-strand-management',
-      name: 'Learning Strand Management',
+      name: 'learning-strand-management',
       component: LearningStrandView
     },
     {

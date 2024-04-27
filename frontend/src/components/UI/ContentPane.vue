@@ -1,23 +1,19 @@
 <script setup>
 import TheSidebar from '../layout/TheSidebar.vue'
 import TopHeader from './TopHeader.vue'
-import { useSideBarStateStore } from '@/stores/sidebar_state'
 
 const props = defineProps(['header'])
-const sideBarStateStore = useSideBarStateStore()
 </script>
 
 <template>
   <TheSidebar name="User" role="Admin" />
   <main
-    class="u-sidemain-max-height h-screen w-screen m-4"
-    :class="
-      sideBarStateStore.isExpanded
-        ? 'u-router-view-max-d-expanded'
-        : 'u-router-view-max-d-collapsed'
-    "
+    class="flex flex-col u-sidemain-max-height flex-grow overflow-x-hidden w-[88.5%] m-4"
   >
     <TopHeader :header="props.header" />
-    <slot></slot>
+    <div class="flex flex-col flex-grow overflow-auto px-4">
+      <slot></slot>
+    </div>
+   
   </main>
 </template>
