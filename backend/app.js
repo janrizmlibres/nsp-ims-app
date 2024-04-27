@@ -8,6 +8,8 @@ import * as dbInjector from "./util/db_injector.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -17,8 +19,6 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
-
-app.use(express.json());
 
 app.get("/", (_, res) => {
   res.send("Please enter a valid endpoint.");
@@ -34,10 +34,10 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message });
 });
 
-app.options("*", (req, res) => {
-  // Pre-flight request. Reply successfully:
-  res.status(200).send();
-});
+// app.options("*", (req, res) => {
+//   // Pre-flight request. Reply successfully:
+//   res.status(200).send();
+// });
 
 try {
   await sequelize.sync({ force: true });

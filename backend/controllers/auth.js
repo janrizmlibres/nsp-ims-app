@@ -5,29 +5,27 @@ import { validationResult } from "express-validator";
 import Staff from "../models/staff.js";
 
 export async function signup(req, res, next) {
-  const errors = validationResult(req);
-
-  console.log(errors);
-
-  if (!errors.isEmpty()) {
-    const error = new Error("Validation failed, entered data is incorrect.");
-    error.statusCode = 422;
-    next(error);
-  }
-
-  const {
-    username,
-    password,
-    firstName,
-    middleName,
-    lastName,
-    suffixName,
-    position,
-    email,
-    contactNum,
-  } = req.body;
-
   try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
+      error.statusCode = 422;
+      throw error;
+    }
+
+    const {
+      username,
+      password,
+      firstName,
+      middleName,
+      lastName,
+      suffixName,
+      position,
+      email,
+      contactNum,
+    } = req.body;
+
     const hashedPw = await bcrypt.hash(password, 12);
 
     const user = await Staff.create({

@@ -2,14 +2,18 @@
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
 import AddForm from '@/components/staff_view/AddForm.vue'
 
 import { useAuthStore } from '@/stores/auth'
+import router from '@/router'
+
 import { ref } from 'vue'
 import axios from 'axios'
+import { onBeforeRouteLeave } from 'vue-router'
 
 const authStore = useAuthStore()
 const formData = ref({
@@ -25,7 +29,10 @@ const formData = ref({
 })
 
 const isLoading = ref(false)
+const okToLeave = ref(false)
+
 const toast = useToast()
+const confirm = useConfirm()
 
 function updateData(data) {
   formData.value = data
@@ -35,25 +42,39 @@ async function submitData() {
   try {
     isLoading.value = true
 
-    console.log(formData.value)
-
     const result = await axios.post('http://localhost:8080/auth/signup', formData.value, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
     console.log(result.data.message)
   } catch (error) {
-    console.log('Error occured')
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: error.response.data.message,
       life: 3000
     })
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onBeforeRouteLeave((to) => {
+  if (okToLeave.value) {
+    return true
   }
 
-  isLoading.value = false
-}
+  confirm.require({
+    message: 'Do you really want to leave? you have unsaved changes!',
+    header: 'Redirect Confirmation',
+    accept: async () => {
+      okToLeave.value = true
+      await router.push(to)
+    }
+  })
+
+  return false
+})
 </script>
 
 <template>
@@ -76,7 +97,7 @@ async function submitData() {
 
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Button class="h-10 u-bg-green" @click="submitData">
+          <Button class="h-10 u-bg-green w-18" @click="submitData">
             <ProgressSpinner
               v-if="isLoading"
               style="width: 50px; height: 50px"
