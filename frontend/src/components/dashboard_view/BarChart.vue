@@ -14,11 +14,9 @@ export default {
           labelTextAlign: "right"
         },
         axisY: {
-          suffix: "M"
         },
         data: [{
           type: "bar",
-          yValueFormatString: "#,###M tonnes",
           dataPoints: [
             { label: "LEARNERS", y: 3 },
             { label: "ELEMENTARY", y: 18 },

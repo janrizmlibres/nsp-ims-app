@@ -2,6 +2,7 @@
     <div class="student-dashboard-panels">
         <div class="widget">
             <div class="widget-wrapper">
+                <DoughnutChart class="my-chart"/>
                 <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
                 <div class="widget-container">
                     <div class="widget-title">LEARNERS</div>
@@ -77,26 +78,38 @@
   
   <script>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+  import DoughnutChart from "@/components/dashboard_view/DoughnutChart.vue";
   export default {
     name: "StudentDashboardPanels",
     components: {
-    'font-awesome-icon': FontAwesomeIcon
+    'font-awesome-icon': FontAwesomeIcon,
+    DoughnutChart,
   }
     // Add any props, data, computed properties, methods, etc. that are needed
   };
   </script>
   
   <style scoped>
-    .graduate-icon {
-        font-size: 55px; /* adjust as needed */
-        margin-left: 50px;
-        color: #11285E
-    }
+  .my-chart {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* place the chart behind other elements */
+}
+  .graduate-icon {
+    font-size: 55px; /* adjust as needed */
+    margin-left: 50px;
+    color: #11285E;
+    position: relative;
+  }
 
-    .widget-wrapper {
-        display: flex;
-        align-items: center;
-    }
+  .widget-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
 
     .widget-container {
         margin-left: 0px; /* adjust as needed */
