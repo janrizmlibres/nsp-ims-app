@@ -3,6 +3,12 @@ import express from "express";
 import sequelize from "./util/database.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
+import bcrypt from "bcryptjs";
+
+import AcademicYear from "./models/academic_year.js";
+import LearningStrand from "./models/learning_strand.js";
+import StudentRequirement from "./models/student_requirement.js";
+import Staff from "./models/staff.js";
 import * as dbInjector from "./util/db_injector.js";
 
 const app = express();
