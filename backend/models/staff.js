@@ -4,7 +4,6 @@ import sequelize from "../util/database.js";
 const Staff = sequelize.define("staff", {
   id: {
     type: INTEGER,
-    autoIncrement: true,
     allowNull: false,
     primaryKey: true,
   },
@@ -22,10 +21,6 @@ const Staff = sequelize.define("staff", {
   email: STRING,
   contact_num: STRING,
   position: STRING,
-  username: {
-    type: STRING,
-    allowNull: false,
-  },
   hashed_pw: {
     type: STRING,
     allowNull: false,

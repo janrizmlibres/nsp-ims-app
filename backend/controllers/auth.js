@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
+import prand from "pure-rand";
 
 import Staff from "../models/staff.js";
 
@@ -15,7 +16,6 @@ export async function signup(req, res, next) {
     }
 
     const {
-      username,
       password,
       firstName,
       middleName,
@@ -26,10 +26,22 @@ export async function signup(req, res, next) {
       contactNum,
     } = req.body;
 
+    const seed = Date.now() ^ (Math.random() * 0x100000000);
+    const rng = prand.xoroshiro128plus(seed);
+    const min = 10000;
+    const max = 99999;
+
     const hashedPw = await bcrypt.hash(password, 12);
+    let userId = prand.unsafeUniformIntDistribution(min, max, rng);
+    let staff = await Staff.findByPk(userId);
+
+    while (staff !== null) {
+      userId = prand.unsafeUniformIntDistribution(min, max, rng);
+      staff = await Staff.findByPk(userId);
+    }
 
     const user = await Staff.create({
-      username: username,
+      id: userId,
       hashed_pw: hashedPw,
       first_name: firstName,
       middle_name: middleName.length == 0 ? null : middleName,
@@ -40,7 +52,7 @@ export async function signup(req, res, next) {
       contact_num: contactNum.length == 0 ? null : contactNum,
     });
 
-    res.status(201).json({ message: "User created!", userId: user.id });
+    res.status(201).json({ message: "User created!", user });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -64,10 +76,10 @@ export async function login(req, res, next) {
    * @param {Object} res - The response object
    * @returns {Object} - The response object
    */
-  const { username, password } = req.body;
+  const { id, password } = req.body;
 
   try {
-    const staff = await Staff.findOne({ where: { username: username } });
+    const staff = await Staff.findByPk(id);
 
     if (!staff) {
       const error = new Error("Authentication failed. User not found.");

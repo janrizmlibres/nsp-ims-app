@@ -6,31 +6,31 @@ export async function injectStaff() {
     {
       last_name: "Libres",
       first_name: "Janriz",
-      username: "janrizlibs",
+      id: "52673",
       password: "janrizpass",
     },
     {
       last_name: "Etom",
       first_name: "Joy",
-      username: "joyetom",
+      id: "52698",
       password: "joypass",
     },
     {
       last_name: "Dimal",
       first_name: "Nazib",
-      username: "nazibdimal",
+      id: "53697",
       password: "nazpass",
     },
     {
       last_name: "Rola",
       first_name: "Xander",
-      username: "xandrola",
+      id: "55166",
       password: "xandpass",
     },
     {
       last_name: "Umel",
       first_name: "Ace",
-      username: "aceumel",
+      id: "57381",
       password: "acepass",
     },
   ];
