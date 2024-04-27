@@ -5,8 +5,8 @@ import Divider from 'primevue/divider';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import TimelineTable from '@/components/class_view/TimelineTable.vue';
-import RosterTableHeader from '@/components/class_roster_view/RosterTableHeader.vue';
-import RosterTable from '@/components/class_roster_view/RosterTable.vue';
+import RosterTableHeader from '@/components/class_view/RosterTableHeader.vue';
+import RosterTable from '@/components/class_view/RosterTable.vue';
 </script>
 
 <template>

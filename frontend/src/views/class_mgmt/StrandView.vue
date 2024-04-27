@@ -1,6 +1,5 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue';
-import Divider from 'primevue/divider';
 import Card from 'primevue/card';
 </script>
 
