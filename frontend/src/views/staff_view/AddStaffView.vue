@@ -1,6 +1,5 @@
 <script setup>
 import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
 import ProgressSpinner from 'primevue/progressspinner'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
@@ -10,6 +9,7 @@ import BaseCard from '@/components/UI/BaseCard.vue'
 import AddForm from '@/components/staff_view/AddForm.vue'
 
 import { useAuthStore } from '@/stores/auth'
+import { useStaffsStore } from '@/stores/staffs'
 import router from '@/router'
 
 import { ref } from 'vue'
@@ -17,8 +17,9 @@ import axios from 'axios'
 import { onBeforeRouteLeave } from 'vue-router'
 
 const authStore = useAuthStore()
+const staffsStore = useStaffsStore()
+
 const formData = ref({
-  username: '',
   password: '',
   firstName: '',
   middleName: '',
@@ -47,7 +48,14 @@ async function submitData() {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    console.log(result.data.message)
+    staffsStore.addStaff(result.data.user)
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: result.data.message,
+      life: 5000
+    })
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -81,17 +89,6 @@ onBeforeRouteLeave((to) => {
 <template>
   <ContentPane header="Staff Management / Add Record">
     <div class="flex flex-col gap-3 h-full mr-1">
-      <div>
-        <BaseCard :isNotPadded="true" class="py-2 px-6">
-          <div class="flex gap-6 items-center">
-            <div class="font-medium text-right">
-              <span>Position</span>
-            </div>
-            <InputText class="h-10" type="text" v-model="formData.position" />
-          </div>
-        </BaseCard>
-      </div>
-
       <BaseCard class="grow">
         <AddForm :formDataProp="formData" @dataChanged="updateData" />
       </BaseCard>

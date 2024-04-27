@@ -17,7 +17,7 @@ const authStore = useAuthStore()
 const isLoading = ref(false)
 
 onBeforeMount(async () => {
-  if (staffsStore.staffs.length == 0) {
+  if (staffsStore.isFirstLoad) {
     isLoading.value = true
 
     try {
@@ -31,6 +31,7 @@ onBeforeMount(async () => {
     }
 
     isLoading.value = false
+    staffsStore.isFirstLoad = false
   }
 })
 </script>
