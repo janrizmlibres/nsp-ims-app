@@ -73,6 +73,11 @@ const router = createRouter({
       component: StrandView
     },
     {
+      path: '/module-information',
+      name: 'module-info',
+      component: ModuleView
+    },
+    {
       path: '/create-classes',
       name: 'create-classes',
       component: CreateClassesView
