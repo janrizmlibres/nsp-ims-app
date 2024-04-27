@@ -98,21 +98,6 @@
   .u-sidemain-max-height {
     max-height: calc(100vh - 2rem);
   }
-
-  /* expanded sidebar */
-  .u-sidebar-expanded {
-    width: 16rem;
-  }
-
-  /* collapsed sidebar */
-  .u-sidebar-collapsed {
-    width: 4.5rem;
-  }
-
-  .u-sidebar-collapsed:hover {
-    width: 16rem;
-  }
-  
   .u-login-panel-width {
     width: 30rem;
   }
@@ -174,8 +159,8 @@ body {
 #app {
   display: flex;
   flex-direction: row;
-
-  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;

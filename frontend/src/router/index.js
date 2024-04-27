@@ -8,7 +8,6 @@ import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
 import CreateClassesView from '../views/class_mgmt/CreateClassesView.vue'
-import ClassRosterView from '@/views/class_mgmt/ClassRosterView.vue'
 
 import StudentRequirementView from '../views/requirement_view/StudentRequirementView.vue'
 import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
@@ -58,11 +57,6 @@ const router = createRouter({
                   component: ModuleView
                 }
               ]
-            },
-            {
-              path: 'class-roster',
-              name: 'class-roster',
-              component: ClassRosterView,
             }
           ]
         }
@@ -79,28 +73,28 @@ const router = createRouter({
       component: StrandView
     },
     {
+      path: '/module-information',
+      name: 'module-info',
+      component: ModuleView
+    },
+    {
       path: '/create-classes',
       name: 'create-classes',
       component: CreateClassesView
     },
     {
-      path: '/class-roster',
-      name: 'class-roster',
-      component: ClassRosterView,
-    },
-    {
       path: '/term-management',
-      name: 'Term Management',
+      name: 'term-management',
       component: TermView
     },
     {
       path: '/student-requirements-management',
-      name: 'Student Requirements Management',
+      name: 'student-requirements-management',
       component: StudentRequirementView
     },
     {
       path: '/learning-strand-management',
-      name: 'Learning Strand Management',
+      name: 'learning-strand-management',
       component: LearningStrandView
     },
     {

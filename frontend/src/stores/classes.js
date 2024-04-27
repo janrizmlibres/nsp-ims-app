@@ -268,9 +268,6 @@ export const useClassesStore = defineStore('classes', {
         { field: 'totalstudents', header: 'Total Students' }
     ],
 
-    selectedRow: {},
-    primarySelection: {},
-    secondarySelection: {},
     exportRef: ref()
   }),
 
@@ -278,24 +275,5 @@ export const useClassesStore = defineStore('classes', {
     exportCSV() {
         this.exportRef.exportCSV();
     },
-
-    onExpandRow(id) {
-        this.selectedRow = {}
-        const checkProp = id in this.selectedRow
-        if (checkProp) delete this.selectedRow[id]
-        else this.selectedRow[id] = true
-        this.selectedRow = { ...this.selectedRow }
-    },
-    
-    onCollapseRow() {
-        this.selectedRow = {}
-    },
-    
-    showClass(router) {
-        this.onCollapseRow()
-        this.primarySelection = {}
-        this.secondarySelection = {}
-        router.push('/class-information')
-    }
   }
 })

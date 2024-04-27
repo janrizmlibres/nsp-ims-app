@@ -1,12 +1,11 @@
 <script setup>
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Button from 'primevue/button';
 
 import { useRosterStore } from '@/stores/roster';
-import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 
-const router = useRouter()
 const rosterStore = useRosterStore()
 const exportRef = ref()
 rosterStore.exportRef = exportRef
@@ -19,18 +18,15 @@ rosterStore.exportRef = exportRef
         resizableColumns columnResizeMode="fit"
         v-model:filters="rosterStore.filters" :globalFilterFields="rosterStore.globalFilters"
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        ref="exportRef" 
+        ref="exportRef"  scrollable
         @rowSelect="{}" @rowUnselect="{}"
-        :ptOptions="{mergeProps:true}" scrollable
+        :ptOptions="{mergeProps:true}"
         :pt="{
             root: {
-                class: ['flex flex-col pt-2 h-full justify-between']
-            },
-            wrapper: {
-                class: 'flex flex-col'
+                class: ['flex flex-col pt-2 justify-between']
             },
             table: {
-                class: 'bg-white border-spacing-0 border-separate w-screen',
+                class: 'bg-white border-spacing-0 border-separate',
             },
             thead: {
                 class: 'bg-surface-0 top-0 z-40 sticky'
@@ -103,7 +99,22 @@ rosterStore.exportRef = exportRef
         <template #empty> <div class="text-center">No records found.</div> </template>
         <template #loading> <div class="text-center">Loading class roster. Please wait.</div> </template>
 
-        <Column expander style="width: 5rem" />
+        <Column header="">
+            <template #body>
+                <Button label="change status" link />
+            </template>
+        </Column>
+        <Column header="">
+            <template #body>
+                <Button label="drop" link />
+            </template>
+        </Column>
         <Column v-for="col of rosterStore.dataColumns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
     </DataTable>
 </template>
+
+<style scoped>
+.u-table-width {
+    width: calc(100vw - 24rem)
+}
+</style>
