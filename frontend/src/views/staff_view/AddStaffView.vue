@@ -1,6 +1,7 @@
 <script setup>
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+import ProgressSpinner from 'primevue/progressspinner'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 
@@ -97,7 +98,7 @@ onBeforeRouteLeave((to) => {
 
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Button class="h-10 u-bg-green w-18" @click="submitData">
+          <Button class="h-10 u-bg-green" @click="submitData">
             <ProgressSpinner
               v-if="isLoading"
               style="width: 50px; height: 50px"
