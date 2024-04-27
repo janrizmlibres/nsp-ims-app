@@ -1,6 +1,7 @@
 <script setup>
 import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
+import { useToast } from 'primevue/usetoast'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
@@ -23,12 +24,16 @@ const formData = ref({
   position: ''
 })
 
+const isLoading = ref(false)
+
 function updateData(data) {
   formData.value = data
 }
 
 async function submitData() {
   try {
+    isLoading.value = true
+
     const result = await axios.post(
       'http://localhost:8080/auth/signup',
       { ...formData.value },
@@ -36,9 +41,17 @@ async function submitData() {
         headers: { Authorization: 'Bearer ' + authStore.token }
       }
     )
+
     console.log(result.data.message)
+    isLoading.value = false
   } catch (error) {
-    console.log(error)
+    const toast = useToast()
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
   }
 }
 </script>
@@ -65,10 +78,19 @@ async function submitData() {
         <div class="inline-block">
           <Button
             class="h-10 u-bg-green"
-            label="Submit"
-            icon="fa-solid fa-circle-check"
+            :label="!isLoading ? 'Submit' : ''"
+            :icon="!isLoading ? 'fa-solid fa-circle-check' : ''"
             @click="submitData"
-          />
+          >
+            <ProgressSpinner
+              v-show="isLoading"
+              style="width: 50px; height: 50px"
+              strokeWidth="8"
+              class="fill-surface-0 dark:fill-surface-800"
+              animationDuration=".5s"
+              aria-label="Custom ProgressSpinner"
+            />
+          </Button>
           <Button class="h-10 ml-2 u-bg-red" label="Cancel" icon="fa-solid fa-circle-xmark" />
         </div>
       </div>
