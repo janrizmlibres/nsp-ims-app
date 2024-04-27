@@ -1,4 +1,4 @@
-import { INTEGER, STRING, DATE } from "sequelize";
+import { INTEGER, STRING } from "sequelize";
 import sequelize from "../util/database.js";
 
 const StudentRequirement = sequelize.define("student-requirement", {

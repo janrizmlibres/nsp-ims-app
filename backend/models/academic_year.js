@@ -1,4 +1,4 @@
-import { INTEGER, STRING, DATE } from "sequelize";
+import { INTEGER, DATE } from "sequelize";
 import sequelize from "../util/database.js";
 
 const AcademicYear = sequelize.define("academic-year", {
@@ -16,8 +16,4 @@ const AcademicYear = sequelize.define("academic-year", {
   end_date: DATE
 });
 
-AcademicYear.hasMany(Class, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'RESTRICT',
-})
 export default AcademicYear;
