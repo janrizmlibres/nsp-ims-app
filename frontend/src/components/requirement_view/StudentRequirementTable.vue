@@ -1,11 +1,7 @@
 <script setup>
-import ContentPane from '@/components/UI/ContentPane.vue'
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 </script>
 
 <template>
-    <ContentPane>
-        <div class="">
-            <h1>Create Student Requirement</h1>
-        </div>
-    </ContentPane>
 </template>
