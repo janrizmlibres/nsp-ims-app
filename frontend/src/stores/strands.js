@@ -5,13 +5,11 @@ export const useStrandStore = defineStore('strands', {
         data: [
             {
                 id: 1,
-                batchnumber: '1',
                 strandcode: 'LS1E',
                 strandname: 'Communication Skills - English'
             },
             {
                 id: 2,
-                batchnumber: '2',
                 strandcode: 'LS1F',
                 strandname: 'Communication Skills - Filipino'
             },
