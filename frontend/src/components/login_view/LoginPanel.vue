@@ -2,6 +2,7 @@
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
 import { checkInputEmpty } from '@/util/interactions.js'
+import Button from 'primevue/button';
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -29,7 +30,7 @@ function checkInputEmptyForPassword() {
 
 async function submitEvent() {
   if (
-    checkInputEmpty(usernameInput, isUsernameInvalid) ||
+    checkInputEmpty(usernameInput, isUsernameInvalid) |
     checkInputEmpty(passwordInput, isPasswordInvalid)
   ) {
     return
@@ -79,12 +80,30 @@ async function submitEvent() {
         @keyup.enter="submitEvent"
         :invalid="isPasswordInvalid"
       />
-      <br /><button
-        class="mt-10 w-40 h-12 rounded-sm u-bg-pcolor-darker text-white font-bold text-base cursor-pointer"
+      <br /><Button
+        class="mt-10 w-40 h-12 rounded-sm text-white font-bold text-base cursor-pointer"
         @click="submitEvent"
+        :pt="{
+          root: ({ props, context, parent }) => ({
+            class: [
+              {
+                'u-bg-pcolor-darker dark:bg-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+                'border u-bc-button dark:border-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+              },
+              
+              // Primary Outlined Button
+              { 'border u-bc-button hover:u-bc-button': props.outlined && props.severity === null && !props.plain },
+              
+              // Primary
+              { 'hover:u-bg-button-hover dark:hover:bg-primary-300 hover:u-bg-border-button-hover dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
+              { 'focus:u-bg-border-button-focus dark:focus:ring-primary-300/50': props.severity === null },
+            ]
+          })
+        }"
+        :pt-options="{mergeProps: true}"
       >
         SIGN IN
-      </button>
+      </Button>
       <p class="text-base font-bold u-txt-pcolor mt-16">www.nsp.xu.edu.ph</p>
     </div>
   </div>

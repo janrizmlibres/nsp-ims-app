@@ -1,6 +1,5 @@
 <script setup>
 import InputText from 'primevue/inputtext';
-import Button from 'primevue/button';
 
 import { useClassesStore } from '@/stores/classes';
 const classesStore = useClassesStore()
@@ -14,7 +13,6 @@ const classesStore = useClassesStore()
                 <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
                 <InputText v-model="classesStore.filters['global'].value" placeholder="Search"  size="small" class="pl-10 font-normal"/>
             </span>
-            <Button icon="fa-solid fa-file-export" label="Export" class="ml-2 h-10" @click="classesStore.exportCSV($event)" />
         </div>
     </div>
 </template>

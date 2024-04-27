@@ -8,36 +8,45 @@ import { ref } from 'vue';
 
 const router = useRouter()
 const classesStore = useClassesStore()
-const exportRef = ref()
-classesStore.exportRef = exportRef
+
+const selectedRow = ref({})
+const primarySelection = ref({})
+const secondarySelection= ref({})
+
+function onExpandRow(id) {
+    selectedRow.value = {}
+    const checkProp = id in selectedRow.value
+    if (checkProp) delete selectedRow.value[id]
+    else selectedRow.value[id] = true
+    selectedRow.value = { ...selectedRow.value }
+}
+
+function onCollapseRow() {
+    selectedRow.value = {}
+}
+
+function showClass() {
+    onCollapseRow()
+    primarySelection.value = {}
+    secondarySelection.value = {}
+    router.push('/class-information')
+}
 </script>
 
 <template>
     <DataTable 
-        v-model:expandedRows="classesStore.selectedRow" :value="classesStore.data" dataKey="id" 
+        v-model:expandedRows="selectedRow" 
+        :value="classesStore.data" dataKey="id" 
         :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
         resizableColumns columnResizeMode="fit"
         v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        ref="exportRef" 
-        v-model:selection="classesStore.primarySelection" selectionMode="single" 
-        @rowSelect="classesStore.onExpandRow(classesStore.primarySelection.id)" @rowUnselect="classesStore.onCollapseRow()"
-        :ptOptions="{mergeProps:true}" scrollable
+        v-model:selection="primarySelection" selectionMode="single" 
+        @rowSelect="onExpandRow(primarySelection.id)" @rowUnselect="onCollapseRow()"
+        :ptOptions="{mergeProps:true}"
         :pt="{
             root: {
-                class: ['flex flex-col pt-2 h-full justify-between overflow-auto']
-            },
-            wrapper: {
-                class: 'flex flex-col'
-            },
-            table: {
-                class: 'bg-white border-spacing-0 border-separate',
-            },
-            thead: {
-                class: 'bg-surface-0 top-0 z-40 sticky'
-            },
-            tbody: {
-                class: 'sticky z-20'
+                class: ['flex flex-col h-full pt-2 justify-between overflow-auto']
             },
             column: {
                 headercell: ({ context, props }) => ({
@@ -112,7 +121,7 @@ classesStore.exportRef = exportRef
                 <DataTable 
                 :value="slotProps.data.schoollevels" 
                 v-model:selection="secondarySelection" selectionMode="single"
-                @rowSelect="classesStore.showClass(router)"
+                @rowSelect="showClass()"
                 :ptOptions="{mergeProps:true}"
                 :pt="{
                     column: {
@@ -128,9 +137,6 @@ classesStore.exportRef = exportRef
                             ]
                         })
                     },
-                    thead: {
-                        class: 'bg-surface-0'
-                    },
                     bodyrow: ({ context, props }) => ({
                         class: [
                         'gap-y-4 ',
@@ -145,6 +151,11 @@ classesStore.exportRef = exportRef
                         ]
                     })
                 }">
+                    <Column header="" style="width: 1rem; padding-left: 2rem">
+                        <template #body>
+                            <i class="fa fa-eye" />
+                        </template>
+                    </Column>
                     <Column v-for="col of classesStore.expansionColumns" :key="col.field" :field="col.field" :header="col.header"></Column>
                 </DataTable>
             </div>

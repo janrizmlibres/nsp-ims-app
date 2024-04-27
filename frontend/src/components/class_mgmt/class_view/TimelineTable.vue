@@ -1,6 +1,6 @@
 <script setup>
 import Divider from 'primevue/divider';
-import Card from 'primevue/card';
+import TimelineCard from './TimelineCard.vue';
 </script>
 
 <template>
@@ -8,10 +8,10 @@ import Card from 'primevue/card';
         <div class="bg-white shadow-xl p-4 rounded-md">
             <span class="font-semibold text-xl u-txt-active">Timeline</span>
             <Divider />
-            <div class="flex flex-col gap-8 px-8 pb-4 overflow-auto">
-                <Card><template #title> Activity </template></Card>
-                <Card><template #title> Activity </template></Card>
-                <Card><template #title> Activity </template></Card>
+            <div class="flex flex-col gap-2 px-8 pb-4 overflow-auto">
+                <TimelineCard />
+                <TimelineCard />
+                <TimelineCard />
             </div>
         </div>
     </div>
