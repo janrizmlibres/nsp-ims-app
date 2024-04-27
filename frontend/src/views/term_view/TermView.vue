@@ -1,11 +1,10 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue'
+import TermTable from '@/components/term_view/TermTable.vue'; 
 </script>
 
 <template>
-  <ContentPane>
-    <div class="w-full ml-4 py-4 pr-4">
-      <h1>Term Management</h1>
-    </div>
-  </ContentPane>
+    <ContentPane header="Term Management">
+        <TermTable />
+    </ContentPane>
 </template>
