@@ -1,26 +1,16 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue';
-import Card from 'primevue/card';
+import OptionCard from '@/components/class_mgmt/strand_view/OptionCard.vue';
+import ModuleTable from '@/components/class_mgmt/strand_view/ModuleTable.vue';
 </script>
 
 <template>
     <ContentPane header="Strand Information">
-        <div class="u-router-view-max-h h-screen overflow-auto">
-            <div class="grid grid-cols-3 gap-8">
-                <Card>
-                    <template #title> Modules </template>
-                    <template #content> View Modules </template>
-                </Card>
-                <Card>
-                    <template #title> Grades </template>
-                    <template #content> View Grades </template>
-                </Card>
-                <Card>
-                    <template #title> Attendance </template>
-                    <template #content> View Attendance </template>
-                </Card>
-            </div>
+        <div class="grid grid-cols-2 gap-12 p-2 mb-12">
+            <OptionCard title="Grades " content="View Grades" />
+            <OptionCard title="Attendance " content="View Attendance" />
         </div>
+        <ModuleTable />
     </ContentPane>
 </template>
 
