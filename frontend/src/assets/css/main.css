@@ -92,6 +92,26 @@
     background-color: #c94b24;
   }
 
+  .u-bg-logout-border {
+    border-color: #c94b24;
+  }
+
+  .u-bg-logout-hover:hover {
+    background-color: #cc6e55;
+  }
+
+  .u-bg-logout-border-hover:hover {
+    border-color: #cc6e55;
+  }
+
+  .u-bg-logout-border-focus {
+    --tw-ring-color: #cc6e55;
+  }
+
+  .u-bg-cancel-border-hover {
+    background-color: rgba(204, 110, 85, 0.2);
+  }
+
   .u-txt-red {
     color: #c94b24;
   }
