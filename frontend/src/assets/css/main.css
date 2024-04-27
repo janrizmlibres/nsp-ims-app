@@ -47,6 +47,22 @@
   .u-bg-pcolor-darker {
     background-color: #1c467e;
   }
+  
+  .u-bc-button {
+    border-color: #1c467e;
+  }
+  
+  .u-bg-button-hover:hover {
+    background-color: #265492;
+  }
+
+  .u-bg-border-button-hover:hover {
+    border-color: #265492;
+  }
+  
+  .u-bg-border-button-focus {
+    --tw-ring-color: #265492;
+  }
 
   .u-txt-pcolor {
     color: #265492;
