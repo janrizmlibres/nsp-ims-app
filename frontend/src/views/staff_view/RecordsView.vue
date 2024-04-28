@@ -1,44 +1,25 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue'
 import TheHeader from '@/components/staff_view/TheHeader.vue'
-import BaseCard from '@/components/UI/BaseCard.vue'
 import TheFooter from '@/components/staff_view/TheFooter.vue'
 import RecordsTable from '@/components/staff_view/RecordsTable.vue'
 
+import { FilterMatchMode } from 'primevue/api'
 import { ref } from 'vue'
 
-const staffs = ref([
-  {
-    userId: '52513',
-    fullName: 'Janriz Libres',
-    position: 'Social Media Manager',
-    canAddStuds: false,
-    canEnroll: false,
-    canUpdateStuds: false,
-    canGrade: false,
-    canAttendance: false
-  },
-  {
-    userId: '52514',
-    fullName: 'Nazib Dimal',
-    position: 'Lead Engineer',
-    canAddStuds: false,
-    canEnroll: false,
-    canUpdateStuds: false,
-    canGrade: false,
-    canAttendance: false
-  }
-])
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+})
+
+function updateGlobalFilter(newValue) {
+  filters.value.global.value = newValue
+}
 </script>
 
 <template>
   <ContentPane header="Staff Records">
-    <TheHeader />
-
-    <BaseCard>
-      <RecordsTable :staffs="staffs" />
-    </BaseCard>
-
-    <TheFooter :staffCount="staffs.length" />
+    <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+    <RecordsTable :filters="filters" />
+    <TheFooter />
   </ContentPane>
 </template>

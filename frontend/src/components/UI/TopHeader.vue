@@ -1,9 +1,19 @@
 <script setup>
+import { useAuthStore } from '@/stores/auth'
+import router from '@/router'
+
 defineProps(['header'])
+
+const authStore = useAuthStore()
+
+async function logout() {
+  authStore.logout()
+  await router.replace({ name: 'login' })
+}
 </script>
 
 <template>
-  <div class="flex u-txt-active mb-5">
+  <div class="flex h-auto u-txt-active mb-12">
     <div class="flex grow text-4xl font-medium">
       <img src="@/assets/logo.png" class="size-24" />
       <h1 class="mt-2 ml-2">{{ header }}</h1>
@@ -15,10 +25,13 @@ defineProps(['header'])
         <span class="ml-1.5">Settings</span>
       </a>
 
-      <a href="#">
+      <a href="#" @click="logout">
         <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
         <span class="ml-1.5">Logout</span>
       </a>
     </div>
   </div>
 </template>
+
+<style scoped>
+</style>
