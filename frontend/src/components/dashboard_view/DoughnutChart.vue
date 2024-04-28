@@ -39,6 +39,7 @@ export default {
                 legend: {
                     show: false
                 },
+                labels: ['Female', 'Male'],
             }
         }
     }
