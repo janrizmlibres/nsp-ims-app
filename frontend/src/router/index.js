@@ -1,137 +1,17 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import DashboardView from '../views/DashboardView.vue'
-import LoginView from '../views/login_view/LoginView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import DashboardView from '../views/DashboardView.vue';
 
-import ActiveClassesView from '../views/class_mgmt/ActiveClassesView.vue'
-import ClassesView from '../views/class_mgmt/ClassesView.vue'
-import ClassView from '../views/class_mgmt/ClassView.vue'
-import StrandView from '../views/class_mgmt/StrandView.vue'
-import ModuleView from '../views/class_mgmt/ModuleView.vue'
-import CreateClassesView from '../views/class_mgmt/CreateClassesView.vue'
-
-import StudentRequirementView from '../views/requirement_view/StudentRequirementView.vue'
-import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
-import TermView from '../views/term_view/TermView.vue'
-import RecordsView from '@/views/staff_view/RecordsView.vue'
-import PermissionsView from '@/views/staff_view/PermissionsView.vue'
-import StaffFormView from '@/views/staff_view/StaffFormView.vue'
-
-import { useAuthStore } from '@/stores/auth'
+const routes = [
+  {
+    path: '/',
+    name: 'Dashboard',
+    component: DashboardView,
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/login',
-      name: 'login',
-      component: LoginView
-    },
-    {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: DashboardView
-    },
-    {
-      path: '/active-classes',
-      name: 'active-classes',
-      component: ActiveClassesView
-    },
-    {
-      path: '/class-records',
-      name: 'class-records',
-      component: ClassesView,
-      children: [
-        {
-          path: 'class-information',
-          name: 'class-info',
-          component: ClassView,
-          children: [
-            {
-              path: 'strand-information',
-              name: 'strand-info',
-              component: StrandView,
-              children: [
-                {
-                  path: 'module-information',
-                  name: 'module-info',
-                  component: ModuleView
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      path: '/class-information',
-      name: 'class-info',
-      component: ClassView
-    },
-    {
-      path: '/strand-information',
-      name: 'strand-info',
-      component: StrandView
-    },
-    {
-      path: '/module-information',
-      name: 'module-info',
-      component: ModuleView
-    },
-    {
-      path: '/create-classes',
-      name: 'create-classes',
-      component: CreateClassesView
-    },
-    {
-      path: '/term-management',
-      name: 'term-management',
-      component: TermView
-    },
-    {
-      path: '/student-requirements-management',
-      name: 'student-requirements-management',
-      component: StudentRequirementView
-    },
-    {
-      path: '/learning-strand-management',
-      name: 'learning-strand-management',
-      component: LearningStrandView
-    },
-    {
-      path: '/staffs',
-      name: 'staff-records',
-      component: RecordsView
-    },
-    {
-      path: '/staffs/permissions',
-      name: 'staff-permissions',
-      component: PermissionsView
-    },
-    {
-      path: '/staffs/add',
-      name: 'add-staff',
-      component: StaffFormView
-    },
-    {
-      path: '/staffs/:userId',
-      name: 'edit-staff',
-      component: StaffFormView,
-      props: true
-    },
-    { path: '/:misc(.*)', redirect: { name: 'login' } }
-  ]
+  routes
 })
 
-router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore()
-
-  if (to.name !== 'login' && !authStore.isAuthenticated) {
-    next({ name: 'login' })
-  } else if (to.name === 'login' && authStore.isAuthenticated) {
-    next({ name: 'dashboard' })
-  } else {
-    next()
-  }
-})
-
-export default router
+export default router;
