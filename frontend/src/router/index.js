@@ -78,9 +78,10 @@ const router = createRouter({
       component: ModuleView
     },
     {
-      path: '/create-classes',
-      name: 'create-classes',
-      component: CreateClassesView
+      path: '/Create Class/:level',
+      name: 'create-class',
+      component: CreateClassesView,
+      props: true
     },
     {
       path: '/term-management',
