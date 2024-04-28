@@ -1,4 +1,4 @@
-import AcademicYear from "../models/academic_year.js";
+import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import Staff from "../models/staff.js";
 import bcrypt from "bcryptjs";
@@ -108,7 +108,7 @@ export async function injectAcademicYear() {
 
 
   await Promise.all(staffData.map(async (academic_year) => {
-    await AcademicYear.create(academic_year);
+    await Term.create(academic_year);
   }));
 }
 
