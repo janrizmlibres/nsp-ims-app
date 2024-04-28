@@ -32,7 +32,7 @@ describe("Auth Middleware", () => {
   it("should yield a userId after decoding the token", () => {
     const req = {
       get: (_headerName) => {
-        return "Bearer djfkalsdjfaslfjdlas";
+        return "Bearer randomTokenBlahBlah";
       },
     };
 
@@ -40,7 +40,6 @@ describe("Auth Middleware", () => {
     jwt.verify.returns({ userId: "abc" });
 
     authMiddleware(req, {}, () => {});
-    expect(req).to.have.property("userId");
     expect(req).to.have.property("userId", "abc");
     expect(jwt.verify.called).to.be.true;
 
@@ -50,7 +49,7 @@ describe("Auth Middleware", () => {
   it("should throw an error if the token cannot be verified", () => {
     const req = {
       get: (_headerName) => {
-        return "Bearer xyz";
+        return "Bearer foobar";
       },
     };
 

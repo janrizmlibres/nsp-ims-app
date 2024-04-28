@@ -34,6 +34,7 @@ export async function getStaff(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
 
@@ -42,8 +43,6 @@ export async function updateStaff(req, res, next) {
 
   try {
     const errors = validationResult(req);
-
-    console.log(errors);
 
     if (!errors.isEmpty()) {
       const error = new Error("Validation failed, entered data is incorrect.");
