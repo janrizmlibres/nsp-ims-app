@@ -1,12 +1,15 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
+import { useTermStore } from '@/stores/term';
 import router from '@/router'
 
 defineProps(['header'])
 
 const authStore = useAuthStore()
+const termStore = useTermStore()
 
 async function logout() {
+  termStore.removeItem()
   authStore.logout()
   await router.replace({ name: 'login' })
 }
