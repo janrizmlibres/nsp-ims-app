@@ -47,63 +47,63 @@ export default {
 </script>
 
 <style scoped>
-.my-chart {
-  position: absolute;
-  top: 2px;
-  left: -11px;
-  width: 50%;
-  height: 50%;
-  z-index: 1; /* place the chart behind other elements */
-}
-.graduate-icon {
-  font-size: 55px; /* adjust as needed */
-  margin-left: 50px;
-  color: #11285E;
-  position: relative;
-}
+    .my-chart {
+        position: absolute;
+        top: 2px;
+        left: -11px;
+        width: 50%;
+        height: 50%;
+        z-index: 1; /* place the chart behind other elements */
+    }
+    .graduate-icon {
+        font-size: 55px; /* adjust as needed */
+        margin-left: 50px;
+        color: #11285E;
+        position: relative;
+    }
 
-.widget-wrapper {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
+    .widget-wrapper {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
 
-  .widget-container {
+    .widget-container {
       margin-left: 0px; /* adjust as needed */
-  }
+    }
   
-  .gender-container {
+    .gender-container {
       display: flex;
       justify-content: space-between;
-  }
+    }
 
-  .male-text{
+    .male-text{
       font-size: 15px;
       color: #265492;
-  }
+    }
 
-  .female-text{
+    .female-text{
       font-size: 15px;
       color: #265492;
-  }
+    }
 
-  .total-text{
+    .total-text{
       font-weight: bold;
       font-size: 40px;
       width: 24px;
       color: #233255B2;
       margin-left: 60px;
-  }
+    }
 
-  .widget-title {
+    .widget-title {
       font-weight: bold;
       font-size: 22px;
       margin-top: 0px; /* Adjust this value to move the title up/down */
       margin-left: 60px; /* Adjust this value to move the title left/right */
       color: #3C4043;
-  }
+    }
 
-  .widget {
+    .widget {
       display: flex;
       flex-direction: column;
       justify-content: flex-start; /* Aligns children to the start on the main axis */
