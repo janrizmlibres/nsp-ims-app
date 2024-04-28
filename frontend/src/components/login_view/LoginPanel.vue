@@ -9,8 +9,10 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 import { useAuthStore } from '@/stores/auth'
+import { useTermStore } from '@/stores/term';
 
 const authStore = useAuthStore()
+const termStore = useTermStore()
 const toast = useToast()
 const router = useRouter()
 
@@ -46,6 +48,16 @@ async function submitEvent() {
     const { token, userId } = result.data
     authStore.login(token, userId)
     await router.replace({ name: 'dashboard' }) // navigate to dashboard
+
+    try {
+        const result = await axios.get('http://localhost:8080/term/active-year', {
+            headers: { Authorization: 'Bearer ' + authStore.token }
+        })
+
+        termStore.setActiveYear(result.data.active_year)
+    } catch (error) {
+        console.log(error.response.data.message)
+    }
   } catch (error) {
     console.log(error)
     toast.add({
