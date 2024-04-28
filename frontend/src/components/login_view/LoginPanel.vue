@@ -50,13 +50,19 @@ async function submitEvent() {
     await router.replace({ name: 'dashboard' }) // navigate to dashboard
 
     try {
-        const result = await axios.get('http://localhost:8080/term/active-year', {
+        const result = await axios.get('http://localhost:8080/term/active_year', {
             headers: { Authorization: 'Bearer ' + authStore.token }
         })
-
-        termStore.setActiveYear(result.data.active_year)
+        console.log(result.data.data)
+        termStore.setActiveYear(result.data.data)
     } catch (error) {
         console.log(error.response.data.message)
+        toast.add({
+          severity: 'error',
+          summary: 'Error Parsing Active Year',
+          detail: error.response.data.message,
+          life: 3000
+        })
     }
   } catch (error) {
     console.log(error)
