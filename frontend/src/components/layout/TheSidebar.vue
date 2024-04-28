@@ -415,7 +415,7 @@ function changeState() {
 <style scoped>
 /* sidebar expanded */
 .u-sidebar-expanded {
-  width: 11.5%;
+  width: 15rem;
 }
 
 .u-sidebar-expanded .u-sidebar-header {
@@ -446,11 +446,11 @@ function changeState() {
 
 /* sidebar collapsed */
 .u-sidebar-collapsed {
-  width: 4%;
+  width: 4.5rem;
 }
 
 .u-sidebar-collapsed:hover {
-  width: 11.5%;
+  width: 15rem;
 }
 
 .u-sidebar-collapsed .u-sidebar-header {

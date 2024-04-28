@@ -1,3 +1,4 @@
+import AcademicYear from "../models/academic_year.js";
 import Staff from "../models/staff.js";
 import bcrypt from "bcryptjs";
 
@@ -42,4 +43,54 @@ export async function injectStaff() {
   };
 
   await Promise.all(staffData.map(createStaff));
+}
+
+export async function injectAcademicYear() {
+  const staffData = [
+    {
+      batch_number: 1,
+      start_date: new Date("2015-06-01"),
+      end_date: new Date("2016-03-31")
+    },
+    {
+      batch_number: 2,
+      start_date: new Date("2015-06-01"),
+      end_date: new Date("2016-03-31")
+    },
+    {
+      batch_number: 3,
+      start_date: new Date("2015-06-01"),
+      end_date: new Date("2016-03-31")
+    },
+    {
+      batch_number: 4,
+      start_date: new Date("2015-06-01"),
+      end_date: new Date("2016-03-31")
+    },
+    {
+      batch_number: 5,
+      start_date: new Date("2015-06-01"),
+      end_date: new Date("2016-03-31")
+    },
+    {
+      batch_number: 6,
+      start_date: new Date("2015-06-01"),
+      end_date: new Date("2016-03-31")
+    },
+    {
+      batch_number: 7,
+      start_date: new Date("2015-06-01"),
+      end_date: new Date("2016-03-31")
+    },
+    {
+      batch_number: 8,
+      start_date: new Date("2015-06-01"),
+      end_date: new Date("2016-03-31")
+    },
+  ];
+
+
+  await Promise.all(staffData.map(async (academic_year) => {
+    await AcademicYear.create(academic_year);
+  }));
 }
