@@ -36,7 +36,6 @@ export default {
             opacity: 0.5
           },
         },
-        colors: ['#265492'],
       },
     };
   },

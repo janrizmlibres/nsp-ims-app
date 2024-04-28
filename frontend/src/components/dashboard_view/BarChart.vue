@@ -32,7 +32,6 @@ export default {
           categories: ['Learners', 'Elementary', 'Junior High', 'Active Learners'
           ],
         },
-        colors: ['#265492'],
       },
     };
   },
