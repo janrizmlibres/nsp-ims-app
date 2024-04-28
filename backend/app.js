@@ -3,6 +3,8 @@ import express from "express";
 import sequelize from "./util/database.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
+import termRoutes from "./routes/term.js";
+import classMgmtRoutes from "./routes/class_mgmt.js";
 import bcrypt from "bcryptjs";
 
 import AcademicYear from "./models/academic_year.js";
@@ -32,6 +34,8 @@ app.get("/", (_, res) => {
 
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
+app.use("/term", termRoutes);
+app.use("/class_mgmt", classMgmtRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
