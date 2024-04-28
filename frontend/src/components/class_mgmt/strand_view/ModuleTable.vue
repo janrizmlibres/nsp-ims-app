@@ -106,6 +106,11 @@ function showModule() {
             <template #empty> <div class="text-center">No records found.</div> </template>
             <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
+            <Column header="" style="width: 1rem; padding-left: 2rem">
+                <template #body>
+                    <i class="fa fa-eye" />
+                </template>
+            </Column>
             <Column v-for="col of classesStore.dataColumns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
         </DataTable>
         </div>
