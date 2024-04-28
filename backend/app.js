@@ -48,6 +48,7 @@ app.options("*", (req, res) => {
 try {
   await sequelize.sync({ force: true });
   await dbInjector.injectStaff();
+  await dbInjector.injectAcademicYear();
   app.listen(port);
   console.log("Listening on port " + port);
 } catch (error) {
