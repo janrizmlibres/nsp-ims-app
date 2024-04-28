@@ -9,13 +9,32 @@ export default {
     components: {
         apexchart: VueApexCharts,
     },
+    props: {
+        seriesData: {
+            type: Array,
+            required: true
+        }
+    },
     data() {
         return {
-            series: [44, 55, 41, 17, 15],
+            series: this.seriesData,
             chartOptions: {
                 chart: {
                     type: 'donut',
                     background: 'transparent',
+                    width: '50px', // adjust as needed
+                    height: '50px' // adjust as needed
+                },
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            size: '87%', // adjust as needed
+                        },
+                    },
+                },
+                colors: ['#BB9837', '#265492'],
+                dataLabels: {
+                    enabled: false, // disable data labels
                 },
                 legend: {
                     show: false

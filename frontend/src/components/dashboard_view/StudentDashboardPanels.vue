@@ -2,7 +2,7 @@
     <div class="student-dashboard-panels">
         <div class="widget">
             <div class="widget-wrapper">
-                <DoughnutChart class="my-chart"/>
+                <DoughnutChart  class="my-chart" :seriesData="[50, 50]" />
                 <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
                 <div class="widget-container">
                     <div class="widget-title">LEARNERS</div>
@@ -21,6 +21,7 @@
         </div>
         <div class="widget">
             <div class="widget-wrapper">
+                <DoughnutChart  class="my-chart" :seriesData="[30, 70]" />
                 <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
                 <div class="widget-container">
                     <div class="widget-title">ELEMENTARY</div>
@@ -39,6 +40,7 @@
         </div>
         <div class="widget">
             <div class="widget-wrapper">
+                <DoughnutChart  class="my-chart" :seriesData="[80, 20]" />
                 <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
                 <div class="widget-container">
                     <div class="widget-title">JUNIOR HIGH</div>
@@ -57,6 +59,7 @@
         </div>
         <div class="widget">
             <div class="widget-wrapper">
+                <DoughnutChart  class="my-chart" :seriesData="[60, 40]" />
                 <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
                 <div class="widget-container">
                     <div class="widget-title">ACTIVE LEARNERS</div>
@@ -92,10 +95,10 @@
   <style scoped>
   .my-chart {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 2px;
+    left: -11px;
+    width: 50%;
+    height: 50%;
     z-index: 1; /* place the chart behind other elements */
 }
   .graduate-icon {
