@@ -13,12 +13,18 @@ router.put(
   "/staff/:userId",
   isAuth,
   [
-    body("firstName").isAlpha("en-US"),
-    body("middleName").optional({ values: "falsy" }).isAlpha("en-US"),
-    body("lastName").isAlpha("en-US"),
-    body("suffixName").optional({ values: "falsy" }).isAlpha("en-US"),
-    body("email").optional({ values: "falsy" }).isEmail(),
-    body("contactNum").optional({ values: "falsy" }).isMobilePhone("en-PH"),
+    body("firstName").trim().isAlpha("en-US"),
+    body("middleName").optional({ values: "falsy" }).trim().isAlpha("en-US"),
+    body("lastName").trim().isAlpha("en-US"),
+    body("suffixName")
+      .optional({ values: "falsy" })
+      .trim()
+      .matches("^[A-Za-z]+.$"),
+    body("email").optional({ values: "falsy" }).trim().isEmail(),
+    body("contactNum")
+      .optional({ values: "falsy" })
+      .trim()
+      .isMobilePhone("en-PH"),
   ],
   adminController.updateStaff
 );
