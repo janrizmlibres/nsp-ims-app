@@ -11,7 +11,7 @@ import AddForm from '@/components/staff_view/AddForm.vue'
 import { useStaffsStore } from '@/stores/staffs'
 import router from '@/router'
 
-import { computed, ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 
 const props = defineProps({
@@ -23,45 +23,30 @@ const props = defineProps({
 
 const staffsStore = useStaffsStore()
 
-const formData = computed(() => {
-  if (props.userId === null) {
-    return {
-      password: '',
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      suffixName: '',
-      email: '',
-      contactNum: '',
-      position: ''
-    }
-  }
-
-  const staff = staffsStore.findStaff(props.userId)
-  console.log(staff)
-
-  return {
-    password: '',
-    firstName: staff.first_name,
-    middleName: staff.middle_name,
-    lastName: staff.last_name,
-    suffixName: staff.suffix_name,
-    email: staff.email,
-    contactNum: staff.contact_num,
-    position: staff.position
-  }
+const formData = ref({
+  password: '',
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  suffixName: '',
+  email: '',
+  contactNum: '',
+  position: ''
 })
 
 const headerName = ref(props.userId === null ? 'Add Record' : 'Edit Record')
 const submitLabel = ref(props.userId === null ? 'Submit' : 'Save')
 
 const isLoading = ref(false)
-const okToLeave = ref(false)
+const okToLeave = ref(true)
+const updateKey = ref(0)
+const isEditView = ref(props.userId === null)
 
 const toast = useToast()
 const confirm = useConfirm()
 
 function updateData(data) {
+  okToLeave.value = false
   formData.value = data
 }
 
@@ -69,7 +54,12 @@ async function submitData() {
   try {
     isLoading.value = true
 
-    const result = await staffsStore.addStaff(formData)
+    console.log(formData)
+
+    const result =
+      props.userId !== null
+        ? await staffsStore.updateStaff(props.userId, formData.value)
+        : await staffsStore.addStaff(formData.value)
 
     toast.add({
       severity: 'success',
@@ -77,6 +67,10 @@ async function submitData() {
       detail: result.data.message,
       life: 5000
     })
+
+    isLoading.value = false
+    okToLeave.value = true
+    await router.replace({ name: 'staff-records' })
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -84,7 +78,6 @@ async function submitData() {
       detail: error.response.data.message,
       life: 3000
     })
-  } finally {
     isLoading.value = false
   }
 }
@@ -109,13 +102,45 @@ onBeforeRouteLeave((to) => {
 
   return false
 })
+
+onMounted(async () => {
+  if (props.userId === null) {
+    return
+  }
+
+  try {
+    const result = await staffsStore.getStaff(props.userId)
+    const staff = result.data.staff
+
+    formData.value = {
+      password: '',
+      firstName: staff.first_name,
+      middleName: staff.middle_name,
+      lastName: staff.last_name,
+      suffixName: staff.suffix_name,
+      email: staff.email,
+      contactNum: staff.contact_num,
+      position: staff.position
+    }
+
+    updateKey.value += 1
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+    router.back()
+  }
+})
 </script>
 
 <template>
   <ContentPane :header="`Staff Management / ${headerName}`">
-    <div class="flex flex-col gap-3 h-full mr-1">
+    <div class="flex flex-col gap-3 h-full mr-1" :key="updateKey">
       <BaseCard class="grow">
-        <AddForm :formDataProp="formData" @dataChanged="updateData" />
+        <AddForm :formDataProp="formData" :isEditView="isEditView" @dataChanged="updateData" />
       </BaseCard>
 
       <div class="flex-none text-right">

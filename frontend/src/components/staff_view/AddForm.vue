@@ -2,7 +2,7 @@
 import InputText from 'primevue/inputtext'
 import { ref } from 'vue'
 
-const props = defineProps({ formDataProp: Object })
+const props = defineProps({ formDataProp: Object, isEditView: Boolean })
 const formData = ref(props.formDataProp)
 </script>
 
@@ -66,7 +66,7 @@ const formData = ref(props.formDataProp)
           />
         </div>
 
-        <div class="flex gap-10 items-center">
+        <div v-show="isEditView" class="flex gap-10 items-center">
           <div class="basis-32 text-right">
             <span>Password</span>
           </div>
