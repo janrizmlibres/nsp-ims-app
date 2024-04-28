@@ -1,6 +1,7 @@
 import { INTEGER, STRING, DATE, TEXT } from "sequelize";
 import sequelize from "../util/database.js";
 import ClassSchedule from "./class_learning_strand.js";
+import Student from "./nsp_student.js";
 
 const Attendance = sequelize.define('attendance', {
     id: {

@@ -1,6 +1,7 @@
 import { INTEGER, STRING, DATE } from "sequelize";
 import sequelize from "../util/database.js";
 import Module from "./module.js";
+import Student from "./nsp_student.js";
 
 const ModuleSubmission = sequelize.define('module_submission', {
     id: {
