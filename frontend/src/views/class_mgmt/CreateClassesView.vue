@@ -44,7 +44,7 @@ function addForm(data) {
     console.log(scheduleData.value)
 }
 
-function submitData() {
+async function submitData() {
     try {
         const result = await axios.post(
         'http://localhost:8080/class_mgmt/createClass',
@@ -57,8 +57,6 @@ function submitData() {
     } catch (error) {
         console.log(error)
     }
-
-    
 }
 </script>
 
