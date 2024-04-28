@@ -11,6 +11,7 @@ const Class = sequelize.define("class", {
   school_level: {
     type: STRING,
     allowNull: false,
+    unique: true
   }
 });
 
