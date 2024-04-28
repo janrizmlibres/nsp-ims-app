@@ -1,7 +1,7 @@
 import { INTEGER, DATE, BOOLEAN, STRING } from "sequelize";
 import sequelize from "../util/database.js";
 
-const AcademicYear = sequelize.define("academic_year", {
+const Term = sequelize.define("term", {
   id: {
     type: INTEGER,
     autoIncrement: true,
@@ -30,4 +30,4 @@ const AcademicYear = sequelize.define("academic_year", {
   }
 });
 
-export default AcademicYear;
+export default Term;
