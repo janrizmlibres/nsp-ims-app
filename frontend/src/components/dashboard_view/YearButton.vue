@@ -3,29 +3,9 @@
       <font-awesome-icon :icon="['fas', 'filter']" />
       Year
     </button>
-    <vue3-datepicker v-if="showDatePicker" v-model="selectedDate"></vue3-datepicker>
   </template>
   
   <script>
-  import Vue3Datepicker from 'vue3-datepicker';
-  
-  export default {
-    name: 'YearButton',
-    components: {
-      Vue3Datepicker,
-    },
-    data() {
-      return {
-        showDatePicker: false,
-        selectedDate: null,
-      };
-    },
-    methods: {
-      toggleDatePicker() {
-        this.showDatePicker = !this.showDatePicker;
-      },
-    },
-  };
   </script>
   
   <style scoped>

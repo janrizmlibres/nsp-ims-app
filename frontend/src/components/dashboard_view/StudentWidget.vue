@@ -51,8 +51,8 @@ export default {
         position: absolute;
         top: 2px;
         left: -11px;
-        width: 50%;
-        height: 50%;
+        width: 169px;
+        height: 169px;
         z-index: 1; /* place the chart behind other elements */
     }
     .graduate-icon {
