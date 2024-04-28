@@ -1,20 +1,44 @@
-import AcademicYear from "../models/academic_year.js";
+import Term from "../models/term.js";
+import ClassLevel from "../models/class_level.js";
 
-export async function getActiveYear(req, res, next) {
+export async function active_year(req, res, next) {
     try {
-        const active_year = await AcademicYear.findOne(
+        const active_year = await Term.findOne(
+            {   where: { status: true },
+                include: [{
+                    model: ClassLevel
+                }] 
+            }
+        );
+        
+        res.status(200).json({
+            message: "Fetched active academic year successfully.",
+            data: active_year,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+export async function add_class(req, res, next) {
+    const {
+        school_level,
+    } = req.body;
+
+    try {
+        const active_year = await Term.findOne(
             { where: { status: true } }
         );
         
-        console.log(active_year)
-        res.status(200).json({
-            message: "Fetched active academic year successfully.",
-            active_year: {
-                batch_number: active_year.batch_number,
-                academic_year: active_year.academic_year,
-                start_date: active_year.start_date,
-                end_date: active_year.end_date
-            },
+        await active_year.createClass_level({
+            school_level: school_level
+        });
+
+        res.status(201).json({ 
+            message: "Class created!"
         });
     } catch (error) {
         if (!error.statusCode) {
