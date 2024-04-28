@@ -8,27 +8,52 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
 import AddForm from '@/components/staff_view/AddForm.vue'
 
-import { useAuthStore } from '@/stores/auth'
 import { useStaffsStore } from '@/stores/staffs'
 import router from '@/router'
 
-import { ref } from 'vue'
-import axios from 'axios'
+import { computed, ref } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 
-const authStore = useAuthStore()
+const props = defineProps({
+  userId: {
+    type: String,
+    default: null
+  }
+})
+
 const staffsStore = useStaffsStore()
 
-const formData = ref({
-  password: '',
-  firstName: '',
-  middleName: '',
-  lastName: '',
-  suffixName: '',
-  email: '',
-  contactNum: '',
-  position: ''
+const formData = computed(() => {
+  if (props.userId === null) {
+    return {
+      password: '',
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      suffixName: '',
+      email: '',
+      contactNum: '',
+      position: ''
+    }
+  }
+
+  const staff = staffsStore.findStaff(props.userId)
+  console.log(staff)
+
+  return {
+    password: '',
+    firstName: staff.first_name,
+    middleName: staff.middle_name,
+    lastName: staff.last_name,
+    suffixName: staff.suffix_name,
+    email: staff.email,
+    contactNum: staff.contact_num,
+    position: staff.position
+  }
 })
+
+const headerName = ref(props.userId === null ? 'Add Record' : 'Edit Record')
+const submitLabel = ref(props.userId === null ? 'Submit' : 'Save')
 
 const isLoading = ref(false)
 const okToLeave = ref(false)
@@ -44,11 +69,7 @@ async function submitData() {
   try {
     isLoading.value = true
 
-    const result = await axios.post('http://localhost:8080/auth/signup', formData.value, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
-
-    staffsStore.addStaff(result.data.user)
+    const result = await staffsStore.addStaff(formData)
 
     toast.add({
       severity: 'success',
@@ -66,6 +87,10 @@ async function submitData() {
   } finally {
     isLoading.value = false
   }
+}
+
+async function goToStaffRecordsView() {
+  await router.push({ name: 'staff-records' })
 }
 
 onBeforeRouteLeave((to) => {
@@ -87,7 +112,7 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-  <ContentPane header="Staff Management / Add Record">
+  <ContentPane :header="`Staff Management / ${headerName}`">
     <div class="flex flex-col gap-3 h-full mr-1">
       <BaseCard class="grow">
         <AddForm :formDataProp="formData" @dataChanged="updateData" />
@@ -110,10 +135,15 @@ onBeforeRouteLeave((to) => {
                 icon="fa-solid fa-circle-check"
                 class="absolute top-2/4 -mt-2 left-3"
               />
-              <h2 class="pl-5 font-bold">Submit</h2>
+              <h2 class="pl-5 font-bold">{{ submitLabel }}</h2>
             </div>
           </Button>
-          <Button class="h-10 ml-2 u-bg-red" label="Cancel" icon="fa-solid fa-circle-xmark" />
+          <Button
+            class="h-10 ml-2 u-bg-red"
+            label="Cancel"
+            icon="fa-solid fa-circle-xmark"
+            @click="goToStaffRecordsView"
+          />
         </div>
       </div>
     </div>

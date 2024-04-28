@@ -4,10 +4,8 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 
 import { useStaffsStore } from '@/stores/staffs'
-import { useAuthStore } from '@/stores/auth'
-
 import { onBeforeMount, ref } from 'vue'
-import axios from 'axios'
+import { RouterLink } from 'vue-router'
 
 const custom_pt = {
   root: {
@@ -92,28 +90,18 @@ const custom_pt = {
 const props = defineProps(['filters'])
 
 const staffsStore = useStaffsStore()
-const authStore = useAuthStore()
 
-const isLoading = ref(false)
+const isLoading = ref(true)
 const mutFilters = ref(props.filters)
 
 onBeforeMount(async () => {
-  if (staffsStore.isFirstLoad) {
-    isLoading.value = true
-
-    try {
-      const result = await axios.get('http://localhost:8080/admin/staffs', {
-        headers: { Authorization: 'Bearer ' + authStore.token }
-      })
-
-      staffsStore.staffs = result.data.staffs
-    } catch (error) {
-      console.log(error.response.data.message)
-    }
-
-    isLoading.value = false
-    staffsStore.isFirstLoad = false
+  try {
+    await staffsStore.getAllStaff()
+  } catch (error) {
+    console.log(error.response.data.message)
   }
+
+  isLoading.value = false
 })
 </script>
 
@@ -132,8 +120,10 @@ onBeforeMount(async () => {
     <template #loading> Loading staffs data. Please wait. </template>
 
     <Column header="">
-      <template #body>
-        <Button class="h-10" label="Edit" icon="fa-solid fa-user-pen" outlined />
+      <template #body="slotProps">
+        <RouterLink :to="{ name: 'edit-staff', params: { userId: slotProps.data.id } }">
+          <Button class="h-10" label="Edit" icon="fa-solid fa-user-pen" outlined />
+        </RouterLink>
       </template>
     </Column>
     <Column field="id" header="User ID" sortable></Column>
