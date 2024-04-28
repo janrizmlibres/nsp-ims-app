@@ -4,17 +4,14 @@ import sequelize from "./util/database.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
 import termRoutes from "./routes/term.js";
-import classesRoutes from "./routes/classes.js";
+import setAssociations from "./util/relations.js";
 import bcrypt from "bcryptjs";
 
-import AcademicYear from "./models/academic_year.js";
-import LearningStrand from "./models/learning_strand.js";
-import StudentRequirement from "./models/student_requirement.js";
-import Staff from "./models/staff.js";
 import * as dbInjector from "./util/db_injector.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
+setAssociations();
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -35,7 +32,6 @@ app.get("/", (_, res) => {
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
 app.use("/term", termRoutes);
-app.use("/classes", classesRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -53,6 +49,7 @@ try {
   await sequelize.sync({ force: true });
   await dbInjector.injectStaff();
   await dbInjector.injectAcademicYear();
+  await dbInjector.injectLearningStrand();
   app.listen(port);
   console.log("Listening on port " + port);
 } catch (error) {
