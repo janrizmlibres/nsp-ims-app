@@ -5,19 +5,29 @@ import Column from 'primevue/column';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 
+const props = defineProps(['data'])
 const router = useRouter()
 
-const primarySelection = ref({})
+const data = ref(props.data)
+const cols = ref([
+    {field: 'school_level', header: 'School Level'},
+    {field: 'active', header: 'Active'},
+    {field: 'inactive', header: 'Inactive'},
+    {field: 'drop', header: 'Drop'},
+    {field: 'total', header: 'Total Students'},
+])
 
+const primarySelection = ref({})
 function showClass() {
     primarySelection.value = {}
     router.push('/class-information')
 }
+
 </script>
 
 <template>
     <DataTable 
-        :value="{}" dataKey="id" 
+        :value="data" dataKey="id" 
         v-model:selection="primarySelection" selectionMode="single"
         @rowSelect="showClass()"
         :ptOptions="{mergeProps:true}"
@@ -90,7 +100,6 @@ function showClass() {
         <template #empty> <div class="text-center">No records found.</div> </template>
         <template #loading> <div class="text-center">Loading active classes. Please wait.</div> </template>
 
-        <Column expander style="width: 5rem" />
-        <!-- <Column v-for="col of classesStore.dataColumns" :key="col.field" :field="col.field" :header="col.header" sortable></Column> -->
+        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
     </DataTable>
 </template>
