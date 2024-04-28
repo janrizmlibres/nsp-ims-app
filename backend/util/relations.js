@@ -1,17 +1,22 @@
+import Staff from "../models/staff";
+import Permission from "../models/permission";
 import AcademicYear from "../models/academic_year.js";
-import Class from "../models/class.js"
+import Class from "../models/class.js";
 import LearningStrand from "../models/learning_strand.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Module from "../models/module.js";
 import Attendance from "../models/attendance.js";
 import ModuleSubmission from "../models/module_submission.js";
 
+Staff.hasOne(Permission);
+Permission.belongsTo(Staff);
+
 // Year-Class Relationship
 AcademicYear.hasMany(Class, {
-    onDelete: 'RESTRICT',
-    onUpdate: 'RESTRICT',
-})
-Class.belongsTo(AcademicYear)
+  onDelete: "RESTRICT",
+  onUpdate: "RESTRICT",
+});
+Class.belongsTo(AcademicYear);
 
 // Class-LearningStrand Relationship
 Class.belongsToMany(LearningStrand, { through: ClassSchedule });
@@ -27,7 +32,3 @@ ClassSchedule.belongsToMany(Student, { through: Attendance });
 // Student-Module Relationship
 Student.belongsToMany(Module, { through: ModuleSubmission });
 Module.belongsToMany(Module, { through: ModuleSubmission });
-
-
-
-
