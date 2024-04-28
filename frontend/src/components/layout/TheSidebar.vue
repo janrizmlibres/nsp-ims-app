@@ -102,12 +102,6 @@ const items = ref([
         icon: 'fa fa-scroll',
         route: { name: 'class-records' }
       },
-      {
-        key: '5-3',
-        label: 'Create Classes',
-        icon: 'fa fa-book-medical',
-        route: { name: 'create-classes' }
-      }
     ]
   },
   {
