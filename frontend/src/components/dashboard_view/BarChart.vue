@@ -1,37 +1,47 @@
 /* app.vue */
+/* app.vue */
 <script>
+import VueApexCharts from "vue3-apexcharts";
+
 export default {
+  components: {
+    apexchart: VueApexCharts,
+  },
+
   data() {
     return {
-      chart: null,
-      options: {
-        animationEnabled: true,
-        exportEnabled: true,
-        title:{
-          text: "STUDENTS ENROLLED"
+      series: [{
+        data: [100, 130, 148, 170]
+      }],
+      chartOptions: {
+        chart: {
+          type: 'bar',
+          height: 350
         },
-        axisX: {
-          labelTextAlign: "right"
+        plotOptions: {
+          bar: {
+            borderRadius: 4,
+            borderRadiusApplication: 'end',
+            horizontal: true,
+          }
         },
-        axisY: {
+        dataLabels: {
+          enabled: false
         },
-        data: [{
-          type: "bar",
-          dataPoints: [
-            { label: "LEARNERS", y: 3 },
-            { label: "ELEMENTARY", y: 18 },
-            { label: "JUNIOR HIGH", y: 27 },
-            { label: "ACTIVE LEARNERS", y: 42 }
-          ]
-        }]
-      }
-    }
-  }
-}
+        xaxis: {
+          categories: ['Learners', 'Elementary', 'Junior High', 'Active Learners'
+          ],
+        },
+        colors: ['#265492'],
+      },
+    };
+  },
+};
 </script>
+
 <template>
     <div class="BarChart-widget">
-        <CanvasJSChart :options="options"/>
+      <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
     </div>
 </template>
 

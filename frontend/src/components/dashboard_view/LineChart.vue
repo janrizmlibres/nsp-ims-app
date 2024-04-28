@@ -1,53 +1,52 @@
 /* App.vue */
 <script>
+import VueApexCharts from "vue3-apexcharts";
+
 export default {
+  components: {
+    apexchart: VueApexCharts,
+  },
   data() {
     return {
-      chart: null,
-      options: {
-        animationEnabled: true,
-        exportEnabled: true,
-        theme: "light2",
-        title:{
-          text: "ENROLLMENT TREND"
+      series: [{
+        name: "Students",
+        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+      }],
+      chartOptions: {
+        chart: {
+          height: 350,
+          type: 'line',
+          zoom: {
+            enabled: false
+          }
         },
-        axisX:{
-          valueFormatString: "YYYY",
-          labelTextAlign: "center",
-          labelAngle: 0
+        dataLabels: {
+          enabled: false
         },
-        axisY: {
-          title: "Students Enrolled",
+        stroke: {
+          curve: 'straight'
         },
-        data: [{
-          type: "line",
-          yValueFormatString: "₹##,##,##0.## crores",
-          dataPoints: [
-            { label: "2016", y: 130},
-            { label: "2017", y: 233 },
-            { label: "2018", y: 102 },
-            { label: "2019", y: 60 },
-            { label: "2020", y: 80},
-            { label: "2021", y: 90 }
-          ]
-        }]
+        title: {
+          text: 'ENROLLMENT TREND',
+          align: 'center'
+        },
+        grid: {
+          row: {
+            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            opacity: 0.5
+          },
+        },
+        colors: ['#265492'],
       },
-      styleOptions: {
-        width: "100%",
-        height: "360px"
-      }
-    }
+    };
   },
-  methods: {
-    chartInstance(chart) {
-      this.chart = chart;
-    }
-  }
-}
+};
 </script>
+
+
 <template>
     <div class="LineChart-widget">
-        <CanvasJSChart :options="options" :style="styleOptions" @chart-ref="chartInstance"/>
+        <apexchart type="line" height="350" :options="chartOptions" :series="series"></apexchart>
     </div>
 </template>
 
