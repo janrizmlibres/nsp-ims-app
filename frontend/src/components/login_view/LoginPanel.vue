@@ -9,7 +9,7 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 import { useAuthStore } from '@/stores/auth'
-import { useTermStore } from '@/stores/term';
+import { useTermStore } from '@/stores/term'
 
 const authStore = useAuthStore()
 const termStore = useTermStore()
@@ -47,23 +47,10 @@ async function submitEvent() {
     // Save the token and user id to global store
     const { token, userId } = result.data
     authStore.login(token, userId)
-    await router.replace({ name: 'dashboard' }) // navigate to dashboard
 
-    try {
-        const result = await axios.get('http://localhost:8080/term/active_year', {
-            headers: { Authorization: 'Bearer ' + authStore.token }
-        })
-        console.log(result.data.data)
-        termStore.setActiveYear(result.data.data)
-    } catch (error) {
-        console.log(error.response.data.message)
-        toast.add({
-          severity: 'error',
-          summary: 'Error Parsing Active Year',
-          detail: error.response.data.message,
-          life: 3000
-        })
-    }
+    await termStore.getActiveTerm()
+
+    await router.replace({ name: 'dashboard' }) // navigate to dashboard
   } catch (error) {
     console.log(error)
     toast.add({
