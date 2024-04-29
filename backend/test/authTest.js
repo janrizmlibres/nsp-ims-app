@@ -1,13 +1,13 @@
-import sinon from 'sinon';
-import { describe, it } from 'mocha';
-import { expect } from 'chai';
+import sinon from "sinon";
+import { describe, it } from "mocha";
+import { expect } from "chai";
 
-import { login } from '../controllers/auth.js';
-import Staff from '../models/staff.js';
-import bcrypt from 'bcrypt'
-import { signup } from '../controllers/auth.js';
+import { login } from "../controllers/auth.js";
+import Staff from "../models/staff.js";
+import bcrypt from "bcrypt";
+import { signup } from "../controllers/auth.js";
 
-describe('Auth Controller', () => {
+describe("Auth Controller", () => {
   beforeEach(() => {
     sinon.stub(Staff, "findByPk");
   });
@@ -16,65 +16,68 @@ describe('Auth Controller', () => {
     Staff.findByPk.restore();
   });
 
-
-  it('should return an error if the user is not found', async () => {
+  it("should return an error if the user is not found", async () => {
     Staff.findByPk.returns(null);
-    
+
     const results = await login(
       {
         body: {
-          id: 'test',
-          password: 'test',
+          id: "test",
+          password: "test",
         },
       },
       res,
       () => {}
-    )
-    
+    );
+
     expect(results.statusCode).to.equal(401);
-    expect(results.message).to.equal('Authentication failed. User not found.');
+    expect(results.message).to.equal("Authentication failed. User not found.");
   });
-  
-  it('should return an error if the password is incorrect', async () => {
-    const expectedPassword = await bcrypt.hash('janrizlibs', 12);
-    Staff.findByPk.returns({hashed_pw: expectedPassword});
-    
+
+  it("should return an error if the password is incorrect", async () => {
+    const expectedPassword = await bcrypt.hash("janrizlibs", 12);
+    Staff.findByPk.returns({ hashed_pw: expectedPassword });
+
     const results = await login(
       {
         body: {
-          id: '52673',
-          password: 'test',
+          id: "52673",
+          password: "test",
         },
       },
       res,
       () => {}
-    )
+    );
     expect(results.statusCode).to.equal(401);
-    expect(results.message).to.equal('Authentication failed. Wrong password.');
+    expect(results.message).to.equal("Authentication failed. Wrong password.");
   });
-  
-  it('should be successful if the user is found and the password is correct', async () => {
-    const expectedPassword = await bcrypt.hash('janrizpass', 12);
-    Staff.findByPk.returns({hashed_pw: expectedPassword, id: 1, username: 'janrizlibs'});
+
+  it("should be successful if the user is found and the password is correct", async () => {
+    const expectedPassword = await bcrypt.hash("janrizpass", 12);
+    Staff.findByPk.returns({
+      hashed_pw: expectedPassword,
+      id: 1,
+      username: "janrizlibs",
+    });
 
     await login(
       {
         body: {
-          id: '52673',
-          password: 'janrizpass',
+          id: "52673",
+          password: "janrizpass",
         },
       },
       res,
       () => {}
-    )
-    
+    );
+
     expect(res.statusCode).to.equal(200);
-    expect(res.body.message).to.equal('Authentication successful');
-    expect(res.body.token).to.be.a('string');
+    expect(res.body.message).to.equal("Authentication successful");
+    expect(res.body.token).to.be.a("string");
   });
 });
 
-describe('Signup', () => {
+describe("Signup", () => {
   beforeEach(() => {
     sinon.stub(Staff, "create");
     sinon.stub(Staff, "findByPk");
@@ -85,29 +88,29 @@ describe('Signup', () => {
     Staff.findByPk.restore();
   });
 
-  it('should create a new user if the input is valid', async () => {
-    const hashedPassword = await bcrypt.hash('test', 12);
+  it("should create a new user if the input is valid", async () => {
+    const hashedPassword = await bcrypt.hash("test", 12);
     Staff.findByPk.returns(null);
     Staff.create.returns({ id: 1, hashed_pw: hashedPassword });
 
     const req = {
       body: {
-        password: 'test',
-        firstName: 'John',
-        middleName: '',
-        lastName: 'Doe',
-        suffixName: '',
-        position: '',
-        email: 'john.doe@example.com',
-        contactNum: '',
+        password: "testpass",
+        firstName: "Husker",
+        middleName: "Angel",
+        lastName: "Dusk",
+        suffixName: "Sr",
+        position: "Overlord",
+        email: "test@test.com",
+        contactNum: "09123456789",
       },
     };
 
     await signup(req, res, () => {});
-    console.log(res)
+    console.log(res);
     expect(res.statusCode).to.equal(201);
-    expect(res.body.message).to.equal('User created!');
-    expect(res.body.user).to.be.an('object');
+    expect(res.body.message).to.equal("User created!");
+    expect(res.body.user).to.be.an("object");
   });
 });
 
@@ -122,4 +125,3 @@ const res = {
     this.body = data;
   },
 };
-
