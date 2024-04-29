@@ -1,11 +1,12 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue'
+import LearningStrandTable from '@/components/strand_view/LearningStrandTable.vue'; 
+import LearningStrandTableHeader from '@/components/strand_view/LearningStrandTableHeader.vue';
 </script>
 
 <template>
-  <ContentPane>
-    <div class="w-full ml-4 py-4 pr-4">
-      <h1>Learning Strand Management</h1>
-    </div>
-  </ContentPane>
+    <ContentPane header="Learning Strand Management">
+        <LearningStrandTableHeader />
+        <LearningStrandTable />
+    </ContentPane>
 </template>
