@@ -36,6 +36,7 @@ import Button from 'primevue/button';
                 class: [
                   // Primary Outlined Button
                   { 'u-txt-red border u-bg-logout-border hover:u-bg-cancel-border-hover': props.outlined && props.severity === null && !props.plain },
+                  { 'focus:u-bg-logout-border-focus dark:focus:ring-primary-300/50': props.severity === null },
                 ]
               })
             }"
