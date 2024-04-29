@@ -1,41 +1,38 @@
 import { defineStore } from 'pinia'
 
 export const useRequirementStore = defineStore('requirements', {
-    state: () => ({
-        data: [
-            {
-                id: 1,
-                requirementname: 'Enrollment Form'
-            },
-            {
-                id: 2,
-                requirementname: 'CSWD Endorsement Letter'
-            },
-            {
-                id: 3,
-                requirementname: 'Birth Certificate'
-            },
-            {
-                id: 4,
-                requirementname: 'Barangay Clearance'
-            },
-            {
-                id: 5,
-                requirementname: 'Certificate of Residency'
-            },
-            {
-                id: 6,
-                requirementname: 'Health Records'
-            },
-            {
-                id: 7,
-                requirementname: 'Waiver for Photos'
-            },
-        ],
-
-        dataColumns: [
-            { field: 'id', header: 'ID'},
-            { field: 'requirementname', header: 'Student Requirement Name' }
+  state: () => ({
+    data: [
+      {
+        id: 1,
+        requirement_name: 'Enrollment Form'
+      },
+      {
+        id: 2,
+        requirement_name: 'CSWD Endorsement Letter'
+      },
+      {
+        id: 3,
+        requirement_name: 'Birth Certificate'
+      },
+      {
+        id: 4,
+        requirement_name: 'Barangay Clearance'
+      },
+      {
+        id: 5,
+        requirement_name: 'Certificate of Residency'
+      },
+      {
+        id: 6,
+        requirement_name: 'Health Records'
+      },
+      {
+        id: 7,
+        requirement_name: 'Waiver for Photos'
+      }
     ],
-  }),
+
+    dataColumns: [{ field: 'requirement_name', header: 'Student Requirement Name' }]
+  })
 })
