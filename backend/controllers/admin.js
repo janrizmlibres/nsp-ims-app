@@ -1,7 +1,7 @@
 import { validationResult } from "express-validator";
 import Staff from "../models/staff.js";
 
-export async function getStaffs(req, res, next) {
+export async function getStaffs(_req, res, next) {
   try {
     const staffs = await Staff.findAll();
     res.status(200).json({
@@ -79,5 +79,6 @@ export async function updateStaff(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
