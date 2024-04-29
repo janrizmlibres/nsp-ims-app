@@ -1,6 +1,7 @@
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import Staff from "../models/staff.js";
+import ClassLevel from "../models/class_level.js";
 import bcrypt from "bcryptjs";
 
 export async function injectStaff() {
@@ -47,7 +48,7 @@ export async function injectStaff() {
 }
 
 export async function injectAcademicYear() {
-  const staffData = [
+  const termData = [
     {
       batch_number: 1,
       academic_year: '2015-2016',
@@ -106,9 +107,29 @@ export async function injectAcademicYear() {
     },
   ];
 
+  const classLevelData = [
+    {
+      school_level: "Grade School"
+    },
+    {
+      school_level: "Junior High School"
+    },
+  ];
 
-  await Promise.all(staffData.map(async (academic_year) => {
+  await Promise.all(termData.map(async (academic_year) => {
     await Term.create(academic_year);
+  }));
+
+  const active_year = await Term.findOne(
+      { where: { status: true } }
+  );
+
+  await Promise.all(classLevelData.map(async (class_level) => {
+    await active_year.createClass_level(
+      {
+        school_level: class_level.school_level
+      }
+    )
   }));
 }
 
