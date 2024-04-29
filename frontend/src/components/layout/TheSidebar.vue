@@ -4,11 +4,19 @@ import PanelMenu from 'primevue/panelmenu'
 
 import { useSideBarStore } from '@/stores/sidebar'
 import { ref } from 'vue'
+import { useTermStore } from '@/stores/term';
 
 defineProps(['name', 'role'])
 
 const sideBarStateStore = useSideBarStore()
+const termStore = useTermStore()
+const grade_school = ref()
+const junior_high_school = ref()
 
+if (termStore.activeClasses.length != 0) {
+  grade_school.value =  termStore.activeClasses[0]
+  junior_high_school.value =  termStore.activeClasses[1]
+}
 const items = ref([
   {
     key: '1',
@@ -94,7 +102,34 @@ const items = ref([
         key: '5-1',
         label: 'Active Classes',
         icon: 'fa fa-book-bookmark',
-        route: { name: 'active-classes' }
+        items: [
+          {
+            key: '5-1-1',
+            label: 'Grade School',
+            icon: 'fa fa-user-plus',
+            route: {name: 'class-info', 
+                    params: {
+                      term: termStore.activeTerm.academic_year, 
+                      level: grade_school.value.school_level, 
+                    },
+                    query: {
+                      id: grade_school.value.id
+                    }}
+          },
+          {
+            key: '5-1-2',
+            label: 'Junior High School',
+            icon: 'fa fa-user-plus',
+            route: {name: 'class-info', 
+                    params: {
+                      term: termStore.activeTerm.academic_year, 
+                      level: junior_high_school.value.school_level
+                    },
+                    query: {
+                      id: junior_high_school.value.id
+                    }}
+          }
+        ]
       },
       {
         key: '5-2',
@@ -176,13 +211,12 @@ function collapseAll() {
 function changeState() {
   collapseAll()
   sideBarStateStore.changePinnedState()
-  sideBarStateStore.changeExpansionState()
 }
 </script>
 
 <template>
   <div class="flex flex-col u-sidemain-max-height h-screen text-surface-100 rounded-md u-bg-pcolor ml-4 my-4 border-none shadow-xl z-50 transition-all duration-500 ease-in-out"
-  :class="sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'">
+  :class="sideBarStateStore.isPinned ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'">
     <div class="p-5 text-surface-100 whitespace-nowrap u-sidebar-header">
       <span class="text-3xl u-sidebar-header-text">Menu</span>
       <Button
