@@ -29,4 +29,10 @@ router.put(
   adminController.updateStaff
 );
 
+router.patch(
+  "/staffs/update-permissions",
+  isAuth,
+  adminController.updatePermissions
+);
+
 export default router;

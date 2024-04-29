@@ -30,7 +30,8 @@ export const useStaffsStore = defineStore('staffs', () => {
   async function getStaff(userId) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(`http://localhost:8080/admin/staff/${userId}`, {
+    const result = await axios.get('http://localhost:8080/admin/staff', {
+      params: { userId: userId },
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -41,7 +42,8 @@ export const useStaffsStore = defineStore('staffs', () => {
     const authStore = useAuthStore()
 
     delete formData.password
-    const result = await axios.put(`http://localhost:8080/admin/staff/${userId}`, formData, {
+    const result = await axios.put('http://localhost:8080/admin/staff', formData, {
+      params: { userId: userId },
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 

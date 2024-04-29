@@ -5,6 +5,7 @@ import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
 
 import * as dbInjector from "./util/db_injector.js";
+import "./util/relations.js";
 
 const app = express();
 const port = process.env.PORT || 3000;

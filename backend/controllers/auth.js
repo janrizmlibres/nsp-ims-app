@@ -52,6 +52,8 @@ export async function signup(req, res, next) {
       contact_num: contactNum.length == 0 ? null : contactNum,
     });
 
+    await user.createPermission();
+
     res.status(201).json({ message: "User created!", user });
   } catch (error) {
     if (!error.statusCode) {

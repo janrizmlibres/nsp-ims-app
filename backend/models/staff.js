@@ -7,21 +7,21 @@ const Staff = sequelize.define("staff", {
     allowNull: false,
     primaryKey: true,
   },
-  last_login: DATE,
-  last_name: {
+  lastLogin: DATE,
+  lastName: {
     type: STRING,
     allowNull: false,
   },
-  first_name: {
+  firstName: {
     type: STRING,
     allowNull: false,
   },
-  middle_name: STRING,
-  suffix_name: STRING,
+  middleName: STRING,
+  suffixName: STRING,
   email: STRING,
-  contact_num: STRING,
+  contactNum: STRING,
   position: STRING,
-  hashed_pw: {
+  hashedPw: {
     type: STRING,
     allowNull: false,
   },

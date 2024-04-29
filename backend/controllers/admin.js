@@ -3,11 +3,11 @@ import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
 
 export async function getStaffs(req, res, next) {
-  const { includePerms } = req.params;
-
   try {
+    let { includePerms } = req.params;
+
     const staffs = await Staff.findAll(
-      includePerms ? { include: Permission } : {}
+      includePerms === "true" ? { include: Permission } : {}
     );
     res.status(200).json({
       message: "Fetched all staff successfully.",
@@ -63,22 +63,33 @@ export async function updateStaff(req, res, next) {
       throw error;
     }
 
-    staff.set({
-      first_name: req.body.firstName,
-      middle_name: req.body.middleName,
-      last_name: req.body.lastName,
-      suffix_name: req.body.suffixName,
-      position: req.body.position,
-      email: req.body.email,
-      contact_num: req.body.contact_num,
-    });
-
+    staff.set(req.body);
     const result = await staff.save();
 
     res.status(200).json({
       message: "Staff updated!",
       staff: result,
     });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
+export async function updatePermissions(req, res, next) {
+  try {
+    for (const staff of req.body) {
+      const staffInstance = Staff.findByPk(staff.userId, {
+        include: Permission,
+      });
+
+      await staffInstance.permission.update(staff.updatedPerms);
+    }
+
+    res.status(200).json({ message: "Permissions Updated!" });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
