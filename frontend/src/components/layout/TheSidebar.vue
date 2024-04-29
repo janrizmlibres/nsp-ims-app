@@ -190,12 +190,10 @@ const isHovering = ref(false);
 
 const handleMouseOver = () => {
   isHovering.value = true;
-  console.log('Mouse is hovering over TheSidebar');
 };
 
 const handleMouseLeave = () => {
   isHovering.value = false;
-  console.log('Mouse left TheSidebar');
 };
 </script>
 
