@@ -29,7 +29,7 @@ router.put(
   adminController.updateStaff
 );
 
-router.patch(
+router.put(
   "/staffs/update-permissions",
   isAuth,
   adminController.updatePermissions

@@ -112,16 +112,7 @@ onMounted(async () => {
     const result = await staffsStore.getStaff(props.userId)
     const staff = result.data.staff
 
-    formData.value = {
-      password: '',
-      firstName: staff.firstName,
-      middleName: staff.middleName,
-      lastName: staff.lastName,
-      suffixName: staff.suffixName,
-      email: staff.email,
-      contactNum: staff.contactNum,
-      position: staff.position
-    }
+    formData.value = { password: '', ...staff }
 
     updateKey.value += 1
   } catch (error) {

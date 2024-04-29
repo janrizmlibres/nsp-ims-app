@@ -81,12 +81,13 @@ export async function updateStaff(req, res, next) {
 
 export async function updatePermissions(req, res, next) {
   try {
-    for (const staff of req.body) {
-      const staffInstance = Staff.findByPk(staff.userId, {
+    for (const staff of req.body.updatedData) {
+      const staffInstance = await Staff.findByPk(staff.id, {
         include: Permission,
       });
 
-      await staffInstance.permission.update(staff.updatedPerms);
+      const { id, fullname, ...updatedPerms } = staff;
+      await staffInstance.permission.update(updatedPerms);
     }
 
     res.status(200).json({ message: "Permissions Updated!" });

@@ -2,13 +2,17 @@
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
+import Button from 'primevue/button'
+import { useToast } from 'primevue/usetoast'
 
 import { useStaffsStore } from '@/stores/staffs'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const staffsStore = useStaffsStore()
+const toast = useToast()
 
 const data = ref([])
+const updatedData = new Set([])
 
 const columns = [
   { field: 'canMgStuds', header: 'Manage Students' },
@@ -19,6 +23,26 @@ const columns = [
   { field: 'canMgEnrollment', header: 'Manage Enrollment' },
   { field: 'canMgVolunteer', header: 'Manage Volunteer' }
 ]
+
+async function updatePerms() {
+  try {
+    const result = await staffsStore.updatePermissions({ updatedData: Array.from(updatedData) })
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: result.data.message,
+      life: 5000
+    })
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
 
 onMounted(async () => {
   try {
@@ -36,7 +60,11 @@ onMounted(async () => {
         ...permissions
       }
 
-      data.value.push(staffData)
+      const len = data.value.push(staffData)
+
+      watch(data.value[len - 1], (newData) => {
+        updatedData.add(newData)
+      })
     }
   } catch (error) {
     console.log(error.response.data.message)
@@ -97,4 +125,12 @@ onMounted(async () => {
       </template>
     </Column>
   </DataTable>
+  <div class="flex justify-end mt-4">
+    <Button class="h-10 u-bg-green" @click="updatePerms">
+      <div>
+        <font-awesome-icon icon="fa-solid fa-circle-check" class="absolute top-2/4 -mt-2 left-3" />
+        <h2 class="pl-5 font-bold">Save</h2>
+      </div>
+    </Button>
+  </div>
 </template>

@@ -5,7 +5,6 @@ import PermissionsTable from '@/components/staff_view/PermissionsTable.vue'
 
 <template>
   <ContentPane header="Staff Permissions">
-    <!-- <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" /> -->
     <PermissionsTable :filters="filters" />
   </ContentPane>
 </template>

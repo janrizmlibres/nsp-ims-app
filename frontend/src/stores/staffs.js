@@ -49,5 +49,19 @@ export const useStaffsStore = defineStore('staffs', () => {
     return result
   }
 
-  return { staffs, getAllStaff, addStaff, getStaff, updateStaff }
+  async function updatePermissions(updatedData) {
+    const authStore = useAuthStore()
+
+    const result = await axios.put(
+      'http://localhost:8080/admin/staffs/update-permissions',
+      updatedData,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
+
+    return result
+  }
+
+  return { staffs, getAllStaff, addStaff, getStaff, updateStaff, updatePermissions }
 })
