@@ -9,18 +9,15 @@ const ClassSchedule = sequelize.define('class_schedule', {
         allowNull: false,
         primaryKey: true,
     },
-    classLearningStrandId: {
-        type: INTEGER,
-        references: {
-        model: ClassLearningStrand,
-        key: 'id',
-        },
-    },
     day: {
         type: STRING,
         allowNull: false
     },
-    time: {
+    start_time: {
+        type: TIME,
+        allowNull: false
+    },
+    end_time: {
         type: TIME,
         allowNull: false
     },
