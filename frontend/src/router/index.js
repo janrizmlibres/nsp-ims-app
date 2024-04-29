@@ -16,7 +16,7 @@ import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
 import StaffFormView from '@/views/staff_view/StaffFormView.vue'
 
-import StudentView from '@/views/student_view/StudentView.vue'
+import StudentRecordsView from '@/views/student_view/StudentRecordsView.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -123,7 +123,7 @@ const router = createRouter({
     {
       path: '/students',
       name: 'student-records',
-      component: StudentView
+      component: StudentRecordsView
     },
     { path: '/:misc(.*)', redirect: { name: 'login' } }
   ]
