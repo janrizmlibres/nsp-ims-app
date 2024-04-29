@@ -66,6 +66,9 @@ async function submitEvent() {
       <p class="text-4xl font-bold u-txt-pcolor u-letter-spacing mb-12">WELCOME!</p>
       <p class="text-base font-bold u-txt-pcolor">User ID</p>
       <InputText
+        aria-label="username"
+        name="username"
+        autocomplete="username"
         class="mt-2 w-80 h-7"
         v-model="userIdInput"
         @blur="checkInputEmptyForUsername"
@@ -74,6 +77,9 @@ async function submitEvent() {
       />
       <p class="text-base font-bold u-txt-pcolor mt-6">Password</p>
       <InputText
+        aria-label="password"
+        name="password"
+        autocomplete="password"
         class="mt-2 w-80 h-7"
         v-model="passwordInput"
         @blur="checkInputEmptyForPassword"
