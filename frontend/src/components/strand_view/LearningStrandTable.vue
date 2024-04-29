@@ -32,9 +32,6 @@ function showStrand() {
 
         :ptOptions="{mergeProps:true}"
         :pt="{
-            root: {
-                class: ['flex flex-col h-full pt-2 justify-between overflow-auto']
-            },
             table: {
                 class: 'bg-white border-spacing-0 border-separate',
             },
