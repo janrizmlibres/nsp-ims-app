@@ -5,6 +5,7 @@ import { expect } from 'chai';
 import { login } from '../controllers/auth.js';
 import Staff from '../models/staff.js';
 import bcrypt from 'bcrypt'
+import { signup } from '../controllers/auth.js';
 
 describe('Auth Controller', () => {
   beforeEach(() => {
@@ -70,6 +71,43 @@ describe('Auth Controller', () => {
     expect(res.statusCode).to.equal(200);
     expect(res.body.message).to.equal('Authentication successful');
     expect(res.body.token).to.be.a('string');
+  });
+});
+
+describe('Signup', () => {
+  beforeEach(() => {
+    sinon.stub(Staff, "create");
+    sinon.stub(Staff, "findByPk");
+  });
+
+  afterEach(() => {
+    Staff.create.restore();
+    Staff.findByPk.restore();
+  });
+
+  it('should create a new user if the input is valid', async () => {
+    const hashedPassword = await bcrypt.hash('test', 12);
+    Staff.findByPk.returns(null);
+    Staff.create.returns({ id: 1, hashed_pw: hashedPassword });
+
+    const req = {
+      body: {
+        password: 'test',
+        firstName: 'John',
+        middleName: '',
+        lastName: 'Doe',
+        suffixName: '',
+        position: '',
+        email: 'john.doe@example.com',
+        contactNum: '',
+      },
+    };
+
+    await signup(req, res, () => {});
+    console.log(res)
+    expect(res.statusCode).to.equal(201);
+    expect(res.body.message).to.equal('User created!');
+    expect(res.body.user).to.be.an('object');
   });
 });
 
