@@ -2,7 +2,7 @@
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
 import { checkInputEmpty } from '@/util/interactions.js'
-import Button from 'primevue/button';
+import Button from 'primevue/button'
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -14,14 +14,14 @@ const authStore = useAuthStore()
 const toast = useToast()
 const router = useRouter()
 
-const usernameInput = ref(null)
+const userIdInput = ref(null)
 const passwordInput = ref(null)
 
 const isUsernameInvalid = ref(false)
 const isPasswordInvalid = ref(false)
 
 function checkInputEmptyForUsername() {
-  checkInputEmpty(usernameInput, isUsernameInvalid)
+  checkInputEmpty(userIdInput, isUsernameInvalid)
 }
 
 function checkInputEmptyForPassword() {
@@ -30,17 +30,17 @@ function checkInputEmptyForPassword() {
 
 async function submitEvent() {
   if (
-    checkInputEmpty(usernameInput, isUsernameInvalid) |
+    checkInputEmpty(userIdInput, isUsernameInvalid) |
     checkInputEmpty(passwordInput, isPasswordInvalid)
   ) {
     return
   }
 
-  const username = usernameInput.value
+  const id = userIdInput.value
   const password = passwordInput.value
 
   try {
-    const result = await axios.post('http://localhost:8080/auth/login', { username, password })
+    const result = await axios.post('http://localhost:8080/auth/login', { id, password })
 
     // Save the token and user id to global store
     const { token, userId } = result.data
@@ -67,7 +67,7 @@ async function submitEvent() {
       <p class="text-base font-bold u-txt-pcolor">User ID</p>
       <InputText
         class="mt-2 w-80 h-7"
-        v-model="usernameInput"
+        v-model="userIdInput"
         @blur="checkInputEmptyForUsername"
         @keyup.enter="submitEvent"
         :invalid="isUsernameInvalid"
@@ -87,20 +87,43 @@ async function submitEvent() {
           root: ({ props, context, parent }) => ({
             class: [
               {
-                'u-bg-pcolor-darker dark:bg-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                'border u-bc-button dark:border-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+                'u-bg-pcolor-darker dark:bg-primary-400':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain,
+                'border u-bc-button dark:border-primary-400':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain
               },
-              
+
               // Primary Outlined Button
-              { 'border u-bc-button hover:u-bc-button': props.outlined && props.severity === null && !props.plain },
-              
+              {
+                'border u-bc-button hover:u-bc-button':
+                  props.outlined && props.severity === null && !props.plain
+              },
+
               // Primary
-              { 'hover:u-bg-button-hover dark:hover:bg-primary-300 hover:u-bg-border-button-hover dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
-              { 'focus:u-bg-border-button-focus dark:focus:ring-primary-300/50': props.severity === null },
+              {
+                'hover:u-bg-button-hover dark:hover:bg-primary-300 hover:u-bg-border-button-hover dark:hover:border-primary-300':
+                  !props.link &&
+                  props.severity === null &&
+                  !props.text &&
+                  !props.outlined &&
+                  !props.plain
+              },
+              {
+                'focus:u-bg-border-button-focus dark:focus:ring-primary-300/50':
+                  props.severity === null
+              }
             ]
           })
         }"
-        :pt-options="{mergeProps: true}"
+        :pt-options="{ mergeProps: true }"
       >
         SIGN IN
       </Button>

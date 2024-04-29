@@ -11,7 +11,7 @@ const StudentRequirement = sequelize.define("student_requirement", {
   requirement_name: {
     type: STRING,
     allowNull: false,
-  }
+  },
 });
 
 export default StudentRequirement;

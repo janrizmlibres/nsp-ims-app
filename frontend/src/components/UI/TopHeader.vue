@@ -1,6 +1,21 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
 import router from '@/router'
+import { useConfirm } from "primevue/useconfirm";
+
+const confirm = useConfirm();
+
+const confirmLogout = () => {
+  confirm.require({
+    group: 'logout',
+    message: ' Are you sure you want to logout?',
+    header: 'Confirmation',
+    accept: () => {
+      logout()
+    },
+    reject: () => {}
+  });
+};
 
 defineProps(['header'])
 
@@ -25,7 +40,7 @@ async function logout() {
         <span class="ml-1.5">Settings</span>
       </a>
 
-      <a href="#" @click="logout">
+      <a href="#" @click="confirmLogout">
         <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
         <span class="ml-1.5">Logout</span>
       </a>
