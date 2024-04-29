@@ -1,15 +1,12 @@
 <script setup>
-import { useAuthStore } from '@/stores/auth'
-import { useTermStore } from '@/stores/term';
+import { useAuthStore } from '@/stores/auth.js'
 import router from '@/router'
 
-defineProps(['header'])
+defineProps(['header', 'subheader'])
 
 const authStore = useAuthStore()
-const termStore = useTermStore()
 
 async function logout() {
-  termStore.removeItem()
   authStore.logout()
   await router.replace({ name: 'login' })
 }
@@ -17,9 +14,12 @@ async function logout() {
 
 <template>
   <div class="flex h-auto u-txt-active mb-12">
-    <div class="flex grow text-4xl font-medium">
+    <div class="flex flex-row grow font-medium">
       <img src="@/assets/logo.png" class="size-24" />
-      <h1 class="mt-2 ml-2">{{ header }}</h1>
+      <div class="flex flex-col text-4xl">
+        <h1 class="mt-2 ml-2">{{ header }}</h1>
+        <h4 class="mt-2 ml-2 text-2xl">{{ subheader }}</h4>
+      </div>
     </div>
 
     <div class="flex gap-6 mt-2 mr-2">
