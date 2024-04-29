@@ -77,20 +77,6 @@ export async function signup(req, res, next) {
  * @returns {Object} - The response object
  */
 export async function login(req, res, next) {
-  /**
-   * The login function is used to authenticate a user.
-   * It takes the username and password from the request body.
-   * It then searches for the user in the database.
-   * If the user is found, it compares the password with the hashed password in the database.
-   * If the password matches, it generates a token using the user's username and id.
-   * The token is then sent back to the client.
-   * If the password does not match, it returns an error message.
-   * If the user is not found, it returns an error message.
-   * If there is an error while searching for the user, it returns an error message.
-   * @param {Object} req - The request object
-   * @param {Object} res - The response object
-   * @returns {Object} - The response object
-   */
   const { id, password } = req.body;
 
   try {
