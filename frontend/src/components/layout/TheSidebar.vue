@@ -2,16 +2,19 @@
 import Button from 'primevue/button'
 import PanelMenu from 'primevue/panelmenu'
 
-import { useSideBarStateStore } from '@/stores/sidebar_state'
+import { useSideBarStore } from '@/stores/sidebar'
 import { ref } from 'vue'
 
 defineProps(['name', 'role'])
+
+const sideBarStateStore = useSideBarStore()
+
 const items = ref([
   {
     key: '1',
     label: 'Dashboard',
     icon: 'fa fa-home',
-    route: '/'
+    route: { name: 'dashboard' }
   },
   {
     key: '2',
@@ -22,19 +25,19 @@ const items = ref([
         key: '2-1',
         label: 'Student Records',
         icon: 'fa fa-address-book',
-        route: '/student-records'
+        route: { name: 'dashboard' }
       },
       {
         key: '2-2',
         label: 'Student Requirements',
         icon: 'fa fa-list-check',
-        route: '/student-requirements'
+        route: { name: 'dashboard' }
       },
       {
         key: '2-3',
         label: 'Admit Students',
         icon: 'fa fa-user-plus',
-        route: '/admit-students'
+        route: { name: 'dashboard' }
       }
     ]
   },
@@ -47,19 +50,19 @@ const items = ref([
         key: '3-1',
         label: 'Active Academic Year',
         icon: 'fa fa-calendar-week',
-        route: '/active-academic-year'
+        route: { name: 'dashboard' }
       },
       {
         key: '3-2',
-        label: 'Enrollment History',
+        label: 'Enrollment Records',
         icon: 'fa fa-scroll',
-        route: '/enrollment-history'
+        route: { name: 'dashboard' }
       },
       {
         key: '3-3',
         label: 'Enroll Students',
         icon: 'fa fa-school-flag',
-        route: '/enroll-students'
+        route: { name: 'dashboard' }
       }
     ]
   },
@@ -72,13 +75,13 @@ const items = ref([
         key: '4-1',
         label: 'Volunteer Records',
         icon: 'fa fa-address-book',
-        route: '/volunteer-records'
+        route: { name: 'dashboard' }
       },
       {
         key: '4-2',
         label: 'Admit Volunteers',
         icon: 'fa fa-user-plus',
-        route: '/admit-volunteers'
+        route: { name: 'dashboard' }
       }
     ]
   },
@@ -91,19 +94,19 @@ const items = ref([
         key: '5-1',
         label: 'Active Classes',
         icon: 'fa fa-book-bookmark',
-        route: '/active-classes'
+        route: { name: 'active-classes' }
       },
       {
         key: '5-2',
-        label: 'Class History',
+        label: 'Class Records',
         icon: 'fa fa-scroll',
-        route: '/class-history'
+        route: { name: 'class-records' }
       },
       {
         key: '5-3',
         label: 'Create Classes',
         icon: 'fa fa-book-medical',
-        route: '/create-classes'
+        route: { name: 'create-classes' }
       }
     ]
   },
@@ -111,19 +114,19 @@ const items = ref([
     key: '6',
     label: 'Term Management',
     icon: 'fa fa-calendar-days',
-    route: '/term-management'
+    route: { name: 'term-management' }
   },
   {
     key: '7',
     label: 'Learning Strand Management',
     icon: 'fa fa-book',
-    route: '/learning-strand-management'
+    route: { name: 'learning-strand-management' }
   },
   {
     key: '8',
     label: 'Student Requirements Management',
     icon: 'fa fa-list',
-    route: '/student-requirements-management'
+    route: { name: 'student-requirements-management' }
   },
   {
     key: '9',
@@ -134,19 +137,19 @@ const items = ref([
         key: '9-1',
         label: 'Staff Records',
         icon: 'fa fa-address-book',
-        route: '/staff-records'
+        route: { name: 'staff-records' }
       },
       {
         key: '9-2',
         label: 'Staff Permissions',
         icon: 'fa fa-shield-halved',
-        route: '/staff-permissions'
+        route: { name: 'staff-permissions' }
       },
       {
         key: '9-3',
         label: 'Add Staff',
         icon: 'fa fa-user-plus',
-        route: '/add-staff'
+        route: { name: 'add-staff' }
       }
     ]
   },
@@ -159,13 +162,13 @@ const items = ref([
         key: '10-1',
         label: 'Generate Reports',
         icon: 'fa fa-note-sticky',
-        route: '/generate-reports'
+        route: { name: 'dashboard' }
       },
       {
         key: '10-2',
         label: 'Audit Trails',
         icon: 'fa fa-clock-rotate-left',
-        route: '/audit-trails'
+        route: { name: 'dashboard' }
       }
     ]
   }
@@ -430,12 +433,11 @@ const handleMouseLeave = () => {
 </template>
 
 <style scoped>
-/* max-height */
-.u-max-h {
-  max-height: calc(100vh - 2rem);
+/* sidebar expanded */
+.u-sidebar-expanded {
+  width: 15rem;
 }
 
-/* sidebar expanded */
 .u-sidebar-expanded .u-sidebar-header {
   display: flex;
   align-items: center;
@@ -463,6 +465,14 @@ const handleMouseLeave = () => {
 }
 
 /* sidebar collapsed */
+.u-sidebar-collapsed {
+  width: 4.5rem;
+}
+
+.u-sidebar-collapsed:hover {
+  width: 15rem;
+}
+
 .u-sidebar-collapsed .u-sidebar-header {
   display: flex;
   align-items: center;
