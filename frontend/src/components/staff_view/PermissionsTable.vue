@@ -17,11 +17,11 @@ const updatedData = new Set([])
 const columns = [
   { field: 'canMgStuds', header: 'Manage Students' },
   { field: 'canMgStudReq', header: 'Manage Student Requirements' },
-  { field: 'canMgTerm', header: 'Manage Term' },
-  { field: 'canMgLs', header: 'Manage Learning Strand' },
-  { field: 'canMgClass', header: 'Manage Class' },
+  { field: 'canMgTerm', header: 'Manage Terms' },
+  { field: 'canMgLs', header: 'Manage Learning Strands' },
+  { field: 'canMgClass', header: 'Manage Classes' },
   { field: 'canMgEnrollment', header: 'Manage Enrollment' },
-  { field: 'canMgVolunteer', header: 'Manage Volunteer' }
+  { field: 'canMgVolunteer', header: 'Manage Volunteers' }
 ]
 
 async function updatePerms() {
