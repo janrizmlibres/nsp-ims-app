@@ -18,6 +18,13 @@ const Staff = sequelize.define("staff", {
   },
   middle_name: STRING,
   suffix_name: STRING,
+  email: STRING,
+  contact_num: STRING,
+  position: STRING,
+  hashed_pw: {
+    type: STRING,
+    allowNull: false,
+  },
   fullname: {
     type: VIRTUAL,
     get() {
@@ -30,13 +37,6 @@ const Staff = sequelize.define("staff", {
     set(_value) {
       throw new Error("Do not try to set the `fullname` value!");
     },
-  },
-  email: STRING,
-  contact_num: STRING,
-  position: STRING,
-  hashed_pw: {
-    type: STRING,
-    allowNull: false,
   },
 });
 

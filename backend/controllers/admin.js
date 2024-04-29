@@ -1,9 +1,14 @@
 import { validationResult } from "express-validator";
 import Staff from "../models/staff.js";
+import Permission from "../models/permission.js";
 
-export async function getStaffs(_req, res, next) {
+export async function getStaffs(req, res, next) {
+  const { includePerms } = req.params;
+
   try {
-    const staffs = await Staff.findAll();
+    const staffs = await Staff.findAll(
+      includePerms ? { include: Permission } : {}
+    );
     res.status(200).json({
       message: "Fetched all staff successfully.",
       staffs: staffs,

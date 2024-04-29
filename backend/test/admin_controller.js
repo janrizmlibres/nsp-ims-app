@@ -128,13 +128,13 @@ const res = {
 
 function expectError(result, message, code) {
   expect(result).to.be.an("error");
-  expect(result).to.have.property("message", message);
-  expect(result).to.have.property("statusCode", code);
+  expect(result.message).to.be.equal(message);
+  expect(result.statusCode).to.be.equal(code);
 }
 
 function expectStaffFound(res, message, code, id) {
-  expect(res).to.have.property("statusCode", code);
-  expect(res.body).to.have.property("message", message);
+  expect(res.statusCode).to.be.equal(code);
+  expect(res.body.message).to.be.equal(message);
   expect(res.body).to.have.property("staff");
-  expect(res.body.staff).to.have.property("id", id);
+  expect(res.body.staff.id).to.be.equal(id);
 }
