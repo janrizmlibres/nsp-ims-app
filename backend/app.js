@@ -4,6 +4,7 @@ import sequelize from "./util/database.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
 import termRoutes from "./routes/term.js";
+import classRoutes from "./routes/class.js"
 import setAssociations from "./util/relations.js";
 import bcrypt from "bcryptjs";
 
@@ -32,6 +33,7 @@ app.get("/", (_, res) => {
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
 app.use("/term", termRoutes);
+app.use("/class", classRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
