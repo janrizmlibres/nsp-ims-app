@@ -23,7 +23,7 @@ describe('Auth Controller', () => {
     const results = await login(
       {
         body: {
-          username: 'test',
+          id: 'test',
           password: 'test',
         },
       },
@@ -42,7 +42,7 @@ describe('Auth Controller', () => {
     const results = await login(
       {
         body: {
-          username: 'janrizlibs',
+          id: '52673',
           password: 'test',
         },
       },
@@ -60,7 +60,7 @@ describe('Auth Controller', () => {
     await login(
       {
         body: {
-          username: 'janrizlibs',
+          id: '52673',
           password: 'janrizpass',
         },
       },
