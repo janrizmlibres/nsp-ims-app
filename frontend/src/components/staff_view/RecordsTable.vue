@@ -4,7 +4,7 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 
 import { useStaffsStore } from '@/stores/staffs'
-import { onBeforeMount, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
 const custom_pt = {
@@ -94,9 +94,9 @@ const staffsStore = useStaffsStore()
 const isLoading = ref(true)
 const mutFilters = ref(props.filters)
 
-onBeforeMount(async () => {
+onMounted(async () => {
   try {
-    await staffsStore.getAllStaff()
+    await staffsStore.getAllStaff({ includePerms: false })
   } catch (error) {
     console.log(error.response.data.message)
   }

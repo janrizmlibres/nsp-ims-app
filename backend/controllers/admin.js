@@ -4,7 +4,7 @@ import Permission from "../models/permission.js";
 
 export async function getStaffs(req, res, next) {
   try {
-    let { includePerms } = req.params;
+    let { includePerms } = req.query;
 
     const staffs = await Staff.findAll(
       includePerms === "true" ? { include: Permission } : {}

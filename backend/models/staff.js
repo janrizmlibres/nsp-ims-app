@@ -29,9 +29,9 @@ const Staff = sequelize.define("staff", {
     type: VIRTUAL,
     get() {
       return (
-        this.first_name +
-        (this.middle_name === null ? " " : ` ${this.middle_name} `) +
-        this.last_name
+        this.firstName +
+        (this.middleName === null ? " " : ` ${this.middleName} `) +
+        this.lastName
       );
     },
     set(_value) {

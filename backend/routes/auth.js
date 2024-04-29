@@ -13,11 +13,27 @@ router.post(
   [
     body("password").trim().isLength({ min: 8 }),
     body("firstName").isAlpha("en-US"),
-    body("middleName").optional({ values: "falsy" }).isAlpha("en-US"),
+    body("middleName")
+      .trim()
+      .replace([""], null)
+      .optional({ values: "falsy" })
+      .isAlpha("en-US"),
     body("lastName").isAlpha("en-US"),
-    body("suffixName").optional({ values: "falsy" }).isAlpha("en-US"),
-    body("email").optional({ values: "falsy" }).isEmail(),
-    body("contactNum").optional({ values: "falsy" }).isMobilePhone("en-PH"),
+    body("suffixName")
+      .trim()
+      .replace([""], null)
+      .optional({ values: "falsy" })
+      .isAlpha("en-US"),
+    body("email")
+      .trim()
+      .replace([""], null)
+      .optional({ values: "falsy" })
+      .isEmail(),
+    body("contactNum")
+      .trim()
+      .replace([""], null)
+      .optional({ values: "falsy" })
+      .isMobilePhone("en-PH"),
   ],
   authController.signup
 );

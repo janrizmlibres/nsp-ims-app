@@ -6,44 +6,44 @@ export async function injectStaff() {
   const staffData = [
     [
       {
-        last_name: "Dimal",
-        first_name: "Nazib",
+        lastName: "Dimal",
+        firstName: "Nazib",
         id: "53697",
         password: "nazpass",
       },
       {
-        can_mg_studs: true,
-        can_mg_volunteer: true,
-        can_mg_class: true,
+        canMgStuds: true,
+        canMgVolunteer: true,
+        canMgClass: true,
       },
     ],
     [
       {
-        last_name: "Rola",
-        first_name: "Xander",
+        lastName: "Rola",
+        firstName: "Xander",
         id: "55166",
         password: "xandpass",
       },
       {
-        can_mg_studs: true,
-        can_mg_volunteer: true,
-        can_mg_class: true,
-        can_mg_ls: true,
-        can_mg_stud_req: true,
-        can_mg_staff: true,
+        canMgStuds: true,
+        canMgVolunteer: true,
+        canMgClass: true,
+        canMgLs: true,
+        canMgStudReq: true,
+        canMgStaff: true,
       },
     ],
     [
       {
-        last_name: "Umel",
-        first_name: "Ace",
+        lastName: "Umel",
+        firstName: "Ace",
         id: "57381",
         password: "acepass",
       },
       {
-        can_mg_volunteer: true,
-        can_mg_class: true,
-        can_mg_stud_req: true,
+        canMgVolunteer: true,
+        canMgClass: true,
+        canMgStudReq: true,
       },
     ],
   ];
@@ -51,7 +51,7 @@ export async function injectStaff() {
   const createStaff = async (staffData) => {
     const [staff, perms] = staffData;
 
-    staff.hashed_pw = await bcrypt.hash(staff.password, 12);
+    staff.hashedPw = await bcrypt.hash(staff.password, 12);
     delete staff.password;
 
     const createdStaff = await Staff.create(staff);

@@ -6,10 +6,11 @@ import { useAuthStore } from './auth'
 export const useStaffsStore = defineStore('staffs', () => {
   const staffs = ref([])
 
-  async function getAllStaff() {
+  async function getAllStaff(config) {
     const authStore = useAuthStore()
 
     const result = await axios.get('http://localhost:8080/admin/staffs', {
+      params: { includePerms: config.includePerms },
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -30,8 +31,7 @@ export const useStaffsStore = defineStore('staffs', () => {
   async function getStaff(userId) {
     const authStore = useAuthStore()
 
-    const result = await axios.get('http://localhost:8080/admin/staff', {
-      params: { userId: userId },
+    const result = await axios.get(`http://localhost:8080/admin/staff/${userId}`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -42,8 +42,7 @@ export const useStaffsStore = defineStore('staffs', () => {
     const authStore = useAuthStore()
 
     delete formData.password
-    const result = await axios.put('http://localhost:8080/admin/staff', formData, {
-      params: { userId: userId },
+    const result = await axios.put(`http://localhost:8080/admin/staff/${userId}`, formData, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
