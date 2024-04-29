@@ -5,37 +5,36 @@ export const useRequirementStore = defineStore('requirements', {
         data: [
             {
                 id: 1,
-                requirementname: 'Enrollment Form'
+                requirement_name: 'Enrollment Form'
             },
             {
                 id: 2,
-                requirementname: 'CSWD Endorsement Letter'
+                requirement_name: 'CSWD Endorsement Letter'
             },
             {
                 id: 3,
-                requirementname: 'Birth Certificate'
+                requirement_name: 'Birth Certificate'
             },
             {
                 id: 4,
-                requirementname: 'Barangay Clearance'
+                requirement_name: 'Barangay Clearance'
             },
             {
                 id: 5,
-                requirementname: 'Certificate of Residency'
+                requirement_name: 'Certificate of Residency'
             },
             {
                 id: 6,
-                requirementname: 'Health Records'
+                requirement_name: 'Health Records'
             },
             {
                 id: 7,
-                requirementname: 'Waiver for Photos'
+                requirement_name: 'Waiver for Photos'
             },
         ],
 
         dataColumns: [
-            { field: 'id', header: 'ID'},
-            { field: 'requirementname', header: 'Student Requirement Name' }
+            { field: 'requirement_name', header: 'Student Requirement Name' }
     ],
   }),
 })
