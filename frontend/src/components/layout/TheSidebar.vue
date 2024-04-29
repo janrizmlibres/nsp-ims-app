@@ -185,7 +185,6 @@ function changeState() {
   sideBarStateStore.changeExpansionState()
 }
 
-const sideBarStateStore = useSideBarStateStore()
 
 const isHovering = ref(false);
 
