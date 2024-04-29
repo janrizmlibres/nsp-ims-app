@@ -1,7 +1,7 @@
 import { INTEGER, STRING, DATE } from "sequelize";
 import sequelize from "../util/database.js";
 
-const LearningStrand = sequelize.define("learning-strand", {
+const LearningStrand = sequelize.define("learning_strand", {
   id: {
     type: INTEGER,
     autoIncrement: true,

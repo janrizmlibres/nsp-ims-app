@@ -3,7 +3,7 @@ import 'primeicons/primeicons.css'
 
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
-import ConfirmationService from 'primevue/confirmationservice';
+import ConfirmationService from 'primevue/confirmationservice'
 
 import { library, config, dom } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
