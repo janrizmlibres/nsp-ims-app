@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import sinon from "sinon";
-import { validationResult } from "express-validator";
 
 import * as adminController from "../controllers/admin.js";
 import Staff from "../models/staff.js";
@@ -39,7 +38,7 @@ describe("Admin Controller (Staffs)", () => {
     expectError(result, "Could not find staff.", 404);
   });
 
-  it("should respond with a staff if one is found", async () => {
+  it("should respond with a staff if one is found via get request", async () => {
     const test_id = 11111;
     const req = { params: { userId: test_id } };
 
