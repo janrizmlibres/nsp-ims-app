@@ -14,7 +14,7 @@ rosterStore.exportRef = exportRef
 <template>
     <DataTable 
         :value="rosterStore.data" dataKey="id" 
-        :sortField="Object.keys(rosterStore.data[0])[0]" :sortOrder="-1" removableSort 
+        :sortField="{}" :sortOrder="-1" removableSort 
         resizableColumns columnResizeMode="fit"
         v-model:filters="rosterStore.filters" :globalFilterFields="rosterStore.globalFilters"
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
