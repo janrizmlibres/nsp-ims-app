@@ -6,12 +6,28 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import { useTermStore } from '@/stores/term';
 
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
+import { useClassStore } from '@/stores/class';
 
-const props = defineProps(['level', 'formData'])
+const props = defineProps(['id', 'formData'])
 const emit = defineEmits(['addForm'])
 
+const instance = ref()
+const level_name = ref('')
+onBeforeMount(async () => {
+    try {
+        const result = await classStore.getClass({classId: props.id})
+        console.log(result);
+        instance.value = result.data.class
+        level_name.value = ref(instance.value.school_level)
+        console.log(level_name.value);
+    } catch (error) {
+        console.log(error.response.data.message)
+    }
+})
+
 const termStore = useTermStore()
+const classStore = useClassStore()
 const formData = ref(props.formData)
 
 const learningStrands = ref(['Mathematics', 'Science', 'Understanding the Self and Society']);
@@ -49,13 +65,13 @@ function addForm() {
         <div>
             <span class="mr-3 u-txt-active">School Year</span>
             <span class="relative">
-                <InputText disabled :placeholder="termStore.active_year.academic_year" />
+                <InputText disabled :placeholder="termStore.activeTerm.academic_year" />
             </span>
         </div>
         <div>
             <span class="mr-3 u-txt-active">School Level</span>
             <span class="relative">
-                <InputText disabled :placeholder="props.level" />
+                <InputText disabled :placeholder="level_name.value" />
             </span>
         </div>
     </div>
