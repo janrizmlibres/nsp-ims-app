@@ -112,5 +112,6 @@ export async function login(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
