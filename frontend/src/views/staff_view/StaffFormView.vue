@@ -54,8 +54,6 @@ async function submitData() {
   try {
     isLoading.value = true
 
-    console.log(formData)
-
     const result =
       props.userId !== null
         ? await staffsStore.updateStaff(props.userId, formData.value)
