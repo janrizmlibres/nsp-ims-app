@@ -54,12 +54,22 @@ export const useClassStore = defineStore('class', () => {
         const result = await axios.post('http://localhost:8080/class/allStrands', form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
-        console.log(result.data.learningStrands);
-        sessionStorage.setItem('allStrands', JSON.stringify(result.data.learningStrands))
-        allStrands.value = JSON.parse(sessionStorage.getItem('allStrands'))
+        
+        return result.data.data
     }
 
-    return { allStrands, count, getClass, addLearningStrand, addSchedule, getAllStrands }
+    async function getAllModules(form) {
+        const authStore = useAuthStore()
+
+        const result = await axios.post('http://localhost:8080/class/allModules', form, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+        console.log(result.data.data);
+        
+        return result.data.data
+    }
+
+    return { allStrands, count, getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules }
 })
 
 

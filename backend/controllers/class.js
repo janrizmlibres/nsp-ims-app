@@ -3,6 +3,7 @@ import ClassLevel from "../models/class_level.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Enrollment from "../models/enrollment.js";
 import LearningStrand from "../models/learning_strand.js";
+import Module from "../models/module.js";
 
 export async function count(req, res, next) {
     const data = req.get("data")
@@ -21,7 +22,7 @@ export async function count(req, res, next) {
         } else count = 0
         res.status(200).json({
         message: "Counted Students successfully.",
-        count: count,
+        data: count,
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -41,7 +42,7 @@ export async function getClass(req, res, next) {
         console.log(classLevel);
         res.status(200).json({
         message: "Fetched class successfully.",
-        class: classLevel,
+        data: classLevel,
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -72,7 +73,7 @@ export async function addLearningStrand(req, res, next) {
 
         res.status(201).json({ 
             message: "Learning strand added!",
-            classLearningStrand: classLearningStrand
+            data: classLearningStrand
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -103,11 +104,6 @@ export async function addSchedule(req, res, next) {
                 learningStrandId: learningStrand.id
             }
         })
-
-        console.log(class_learning_strand);
-        console.log(day);
-        console.log(start_time);
-        console.log(end_time);
         
         await class_learning_strand.createClass_schedule({
             day: day,
@@ -140,7 +136,35 @@ export async function getAllStrands(req, res, next) {
         console.log(learningStrands);
         res.status(201).json({ 
             message: "Learning strand added!",
-            learningStrands: learningStrands
+            data: learningStrands
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+export async function getAllModules(req, res, next) {
+    const {
+        classId
+    } = req.body
+    
+    try {
+        const classLevel = await ClassLevel.findByPk(classId, {
+            include: {model: ClassLearningStrand, include: [Module]}
+        })
+        
+        const modules = []
+        console.log(classLevel);
+        classLevel.class_learning_strands.forEach(learningStrand => {
+            modules.push(...learningStrand.modules)
+        });
+
+        res.status(201).json({ 
+            message: "Fetched all modules successfully!",
+            data: modules
         });
     } catch (error) {
         if (!error.statusCode) {
