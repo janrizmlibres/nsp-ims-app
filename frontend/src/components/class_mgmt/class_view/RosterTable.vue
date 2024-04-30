@@ -10,11 +10,11 @@ const rosterStore = useRosterStore()
 const exportRef = ref()
 rosterStore.exportRef = exportRef
 </script>
-
+<!-- :sortField="{}" :sortOrder="-1" removableSort  -->
 <template>
     <DataTable 
         :value="rosterStore.data" dataKey="id" 
-        :sortField="{}" :sortOrder="-1" removableSort 
+
         resizableColumns columnResizeMode="fit"
         v-model:filters="rosterStore.filters" :globalFilterFields="rosterStore.globalFilters"
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
