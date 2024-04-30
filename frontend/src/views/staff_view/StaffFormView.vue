@@ -54,8 +54,6 @@ async function submitData() {
   try {
     isLoading.value = true
 
-    console.log(formData)
-
     const result =
       props.userId !== null
         ? await staffsStore.updateStaff(props.userId, formData.value)
@@ -114,12 +112,12 @@ onMounted(async () => {
 
     formData.value = {
       password: '',
-      firstName: staff.first_name,
-      middleName: staff.middle_name,
-      lastName: staff.last_name,
-      suffixName: staff.suffix_name,
+      firstName: staff.firstName,
+      middleName: staff.middleName,
+      lastName: staff.lastName,
+      suffixName: staff.suffixName,
       email: staff.email,
-      contactNum: staff.contact_num,
+      contactNum: staff.contactNum,
       position: staff.position
     }
 

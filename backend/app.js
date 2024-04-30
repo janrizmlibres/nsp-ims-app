@@ -9,6 +9,7 @@ import setAssociations from "./util/relations.js";
 import bcrypt from "bcryptjs";
 
 import * as dbInjector from "./util/db_injector.js";
+import "./util/relations.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -20,10 +21,14 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE"
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
+});
+
+app.options("/*", (_, res) => {
+  res.sendStatus(200);
 });
 
 app.get("/", (_, res) => {
@@ -41,11 +46,6 @@ app.use((error, req, res, next) => {
   const message = error.message;
   res.status(status).json({ message: message });
 });
-
-// app.options("*", (req, res) => {
-//   // Pre-flight request. Reply successfully:
-//   res.status(200).send();
-// });
 
 try {
   await sequelize.sync({ force: true });

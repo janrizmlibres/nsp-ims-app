@@ -52,7 +52,6 @@ async function submitEvent() {
 
     await router.replace({ name: 'dashboard' }) // navigate to dashboard
   } catch (error) {
-    console.log(error)
     toast.add({
       severity: 'error',
       summary: 'Error Logging In',

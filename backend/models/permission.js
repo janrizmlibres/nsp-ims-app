@@ -8,27 +8,42 @@ const Permission = sequelize.define("permission", {
     allowNull: false,
     primaryKey: true,
   },
-  can_add_studs: {
+  canMgStuds: {
     type: BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
-  can_enroll_studs: {
+  canMgEnrollment: {
     type: BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
-  can_update_stud_info: {
+  canMgVolunteer: {
     type: BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
-  can_grade_studs: {
+  canMgClass: {
     type: BOOLEAN,
     allowNull: false,
     defaultValue: false,
   },
-  can_check_attendance: {
+  canMgTerm: {
+    type: BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  canMgLs: {
+    type: BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  canMgStudReq: {
+    type: BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  canMgStaff: {
     type: BOOLEAN,
     allowNull: false,
     defaultValue: false,
