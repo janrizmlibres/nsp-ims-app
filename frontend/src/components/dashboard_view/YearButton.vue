@@ -1,5 +1,5 @@
 <template>
-    <button class="year-button" @click="toggleDatePicker">
+    <button class="button" @click="toggleDatePicker">
       <font-awesome-icon :icon="['fas', 'filter']" />
       Year
     </button>
@@ -9,10 +9,7 @@
   </script>
   
   <style scoped>
-    .year-button {
-    align-self: flex-end;
-    display: block;
-    margin: 0 0 0 auto; /* Align the button to the right */
+    .button {
     background-color: white;
     color: black;
     padding: 10px;

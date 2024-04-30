@@ -185,15 +185,12 @@ function changeState() {
   sideBarStateStore.changeExpansionState()
 }
 
-
-const isHovering = ref(false);
-
 const handleMouseOver = () => {
-  isHovering.value = true;
+  sideBarStateStore.handleMouseOver();
 };
 
 const handleMouseLeave = () => {
-  isHovering.value = false;
+  sideBarStateStore.handleMouseLeave();
 };
 </script>
 

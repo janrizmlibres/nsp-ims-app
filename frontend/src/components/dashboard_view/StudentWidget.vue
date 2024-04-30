@@ -112,6 +112,7 @@ export default {
       height: 150px;
       background-color: white;
       margin-top: 20px;
+      margin-right: 20px;
       border-radius: 10px;
       border-bottom: 5px solid #265492;
       padding: 10px; /* Add padding to the widget for better control of inner elements */
