@@ -1,13 +1,12 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-export const useSideBarStore = defineStore('sidebar', {
-  state: () => ({
-    isPinned: true,
-  }),
+export const useSidebarStore = defineStore('sidebar', () => {
+  const isPinned = ref(true)
 
-  actions: {
-    changePinnedState() {
-      this.isPinned = !this.isPinned
-    },
+  function changePinnedState() {
+    isPinned.value = !isPinned.value
   }
+
+  return({ isPinned, changePinnedState })
 })
