@@ -43,7 +43,7 @@ import StudentWidget from "@/components/dashboard_view/StudentWidget.vue";
 import BarChart from "@/components/dashboard_view/BarChart.vue"; // import the StudentDashboardPanels component
 import LineChart from "@/components/dashboard_view/LineChart.vue";
 
-import { useSideBarStore } from '@/stores/sidebar'
+import { useSidebarStore } from '@/stores/sidebar.js'
 
 export default {
   name: "DashboardView",
@@ -57,11 +57,11 @@ export default {
   // ... other options ...
   computed: {
     isSidebarHovering() {
-      const sidebarStore = useSideBarStore()
+      const sidebarStore = useSidebarStore()
       return sidebarStore.isHovering
     },
     isSidebarPinned() {
-      const sidebarStore = useSideBarStore()
+      const sidebarStore = useSidebarStore()
       return sidebarStore.isPinned
     }
   }

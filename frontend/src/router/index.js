@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/login_view/LoginView.vue'
 
-import ActiveClassesView from '../views/class_mgmt/ActiveClassesView.vue'
 import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
@@ -32,65 +31,53 @@ const router = createRouter({
       component: DashboardView
     },
     {
-      path: '/class-records',
+      path: '/classes',
       name: 'class-records',
       component: ClassesView,
     },
     {
-      path: '/:term/:level',
+      path: '/:term/class',
+      name: 'class-info',
+      component: ClassView,
+      query: {
+        id: Number
+      },
       children: [
         {
-          path: 'Class Information',
+          path: 'add_learning_strand',
           name: 'class-info',
-          component: ClassView,
-          props: {
-            term: {
-              type: String
-            },
-            level: {
-              type: String
-            }
-          },
-          query: {
-            id: {
-              type: Number
-            }
-          },
+          component: CreateClassesView
         },
         {
-          path: 'Add Learning Strand',
-          name: 'add-learning-strand',
-          component: CreateClassesView,
-          query: {
-            id: {
-              type: Number
-            }
-          }
+          path: '',
+          name: 'strand-info',
+          component: StrandView,
+          query: Number,
+          children: [
+            {
+              path: '',
+              name: 'module-info',
+              component: ModuleView,
+              query: {
+                module: Number
+              }
+            },
+          ]
         },
       ]
     },
     {
-      path: '/strand-information',
-      name: 'strand-info',
-      component: StrandView
-    },
-    {
-      path: '/module-information',
-      name: 'module-info',
-      component: ModuleView
-    },
-    {
-      path: '/term-management',
+      path: '/management/terms',
       name: 'term-management',
       component: TermView
     },
     {
-      path: '/student-requirements-management',
+      path: '/management/student_requirements',
       name: 'student-requirements-management',
       component: StudentRequirementView
     },
     {
-      path: '/learning-strand-management',
+      path: '/management/learning_strands',
       name: 'learning-strand-management',
       component: LearningStrandView
     },

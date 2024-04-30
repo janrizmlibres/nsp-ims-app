@@ -1,13 +1,8 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from './auth'
 
 export const useTermStore = defineStore('term', () => {
-  const terms = ref([])
-  const activeTerm = ref(JSON.parse(sessionStorage.getItem('activeTerm')))
-  const activeClasses = ref(JSON.parse(sessionStorage.getItem('activeClasses')))
-
   async function getAllTerms() {
     const authStore = useAuthStore()
 
@@ -15,7 +10,7 @@ export const useTermStore = defineStore('term', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    terms.value = result.data.staffs
+    return result.data.data
   }
 
   async function addClass(formData) {
@@ -25,7 +20,7 @@ export const useTermStore = defineStore('term', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    return result
+    return result.data.data
   }
 
   async function getActiveTerm() {
@@ -34,11 +29,9 @@ export const useTermStore = defineStore('term', () => {
     const result = await axios.get(`http://localhost:8080/term/active`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
-    sessionStorage.setItem('activeTerm', JSON.stringify(result.data.activeTerm))
-    sessionStorage.setItem('activeClasses', JSON.stringify(result.data.activeTerm.class_levels))
-    activeTerm.value = JSON.parse(sessionStorage.getItem('activeTerm'))
-    activeClasses.value = JSON.parse(sessionStorage.getItem('activeClasses'))
+    
+    return result.data.data
   }
 
-  return { terms, activeTerm, activeClasses, getAllTerms, addClass, getActiveTerm }
+  return { getAllTerms, addClass, getActiveTerm }
 })
