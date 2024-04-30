@@ -1,27 +1,19 @@
 <script setup>
 import TheSidebar from '../layout/TheSidebar.vue'
 import TopHeader from './TopHeader.vue'
-import { useRoute } from 'vue-router'
 
-const route = useRoute()
+const props = defineProps(['header'])
 </script>
 
 <template>
   <TheSidebar name="User" role="Admin" />
-  <main class="u-main-max-width w-screen u-sidemain-max-height h-screen m-4">
-    <TopHeader :header="`${route.name}`" />
-    <div class="u-max-height h-screen">
+  <main
+    class="flex flex-col u-sidemain-max-height flex-grow overflow-x-hidden w-[88.5%] m-4"
+  >
+    <TopHeader :header="props.header" />
+    <div class="flex flex-col flex-grow overflow-auto px-4">
       <slot></slot>
     </div>
+   
   </main>
 </template>
-
-<style scoped>
-.u-main-max-width {
-  max-width: calc(100vw - 6rem)
-}
-
-.u-max-height {
-  max-height: calc(100vh - 11rem)
-}
-</style>

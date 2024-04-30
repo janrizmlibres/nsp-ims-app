@@ -1,10 +1,9 @@
-import { INTEGER, STRING, DATE } from "sequelize";
+import { INTEGER, STRING, DATE, VIRTUAL } from "sequelize";
 import sequelize from "../util/database.js";
 
 const Staff = sequelize.define("staff", {
   id: {
     type: INTEGER,
-    autoIncrement: true,
     allowNull: false,
     primaryKey: true,
   },
@@ -19,10 +18,22 @@ const Staff = sequelize.define("staff", {
   },
   middle_name: STRING,
   suffix_name: STRING,
-  username: {
-    type: STRING,
-    allowNull: false,
+  fullname: {
+    type: VIRTUAL,
+    get() {
+      return (
+        this.first_name +
+        (this.middle_name === null ? " " : ` ${this.middle_name} `) +
+        this.last_name
+      );
+    },
+    set(_value) {
+      throw new Error("Do not try to set the `fullname` value!");
+    },
   },
+  email: STRING,
+  contact_num: STRING,
+  position: STRING,
   hashed_pw: {
     type: STRING,
     allowNull: false,

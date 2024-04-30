@@ -47,6 +47,22 @@
   .u-bg-pcolor-darker {
     background-color: #1c467e;
   }
+  
+  .u-bc-button {
+    border-color: #1c467e;
+  }
+  
+  .u-bg-button-hover:hover {
+    background-color: #265492;
+  }
+
+  .u-bg-border-button-hover:hover {
+    border-color: #265492;
+  }
+  
+  .u-bg-border-button-focus {
+    --tw-ring-color: #265492;
+  }
 
   .u-txt-pcolor {
     color: #265492;
@@ -76,8 +92,32 @@
     background-color: #c94b24;
   }
 
+  .u-bg-logout-border {
+    border-color: #c94b24;
+  }
+
+  .u-bg-logout-hover:hover {
+    background-color: #cc6e55;
+  }
+
+  .u-bg-logout-border-hover:hover {
+    border-color: #cc6e55;
+  }
+
+  .u-bg-logout-border-focus {
+    --tw-ring-color: #cc6e55;
+  }
+
+  .u-bg-cancel-border-hover {
+    background-color: rgba(204, 110, 85, 0.2);
+  }
+
   .u-txt-red {
     color: #c94b24;
+  }
+
+  .u-bg-active {
+    background-color: #3c4043;
   }
 
   .u-txt-active {
@@ -91,25 +131,9 @@
   .u-txt-link {
     color: #265492;
   }
-
   .u-sidemain-max-height {
     max-height: calc(100vh - 2rem);
   }
-
-  /* expanded sidebar */
-  .u-sidebar-expanded {
-    width: 17rem;
-  }
-
-  /* collapsed sidebar */
-  .u-sidebar-collapsed {
-    width: 4.5rem;
-  }
-
-  .u-sidebar-collapsed:hover {
-    width: 17rem;
-  }
-  
   .u-login-panel-width {
     width: 30rem;
   }
@@ -137,10 +161,6 @@
 
 html {
   background-color: #eeeeee;
-  max-height: 100vh;
-  max-width: 100vw;
-
-  overflow: hidden;
 }
 
 body {
@@ -152,6 +172,7 @@ body {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 /* Track */
@@ -173,6 +194,9 @@ body {
 
 #app {
   display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
   background-size: cover;
   background-repeat: no-repeat;
   background-attachment: fixed;
