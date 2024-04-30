@@ -93,47 +93,47 @@ onMounted(async () => {
       ]
     },
     {
-      key: '6', label: 'Term Management', icon: 'fa fa-calendar-days',
-      route: { name: 'term-management' }
-    },
-    {
-      key: '7', label: 'Learning Strand Management', icon: 'fa fa-book',
-      route: { name: 'learning-strand-management' }
-    },
-    {
-      key: '8', label: 'Student Requirements Management', icon: 'fa fa-list',
-      route: { name: 'student-requirements-management' }
-    },
-    {
-      key: '9', label: 'Staff Management', icon: 'fa fa-user',
+      key: '6', label: 'Staff Management', icon: 'fa fa-user',
       items: [
         {
-          key: '9-1', label: 'Staff Records', icon: 'fa fa-address-book',
+          key: '6-1', label: 'Staff Records', icon: 'fa fa-address-book',
           route: { name: 'staff-records' }
         },
         {
-          key: '9-2', label: 'Staff Permissions', icon: 'fa fa-shield-halved',
+          key: '6-2', label: 'Staff Permissions', icon: 'fa fa-shield-halved',
           route: { name: 'staff-permissions' }
         },
         {
-          key: '9-3', label: 'Add Staff', icon: 'fa fa-user-plus',
+          key: '6-3', label: 'Add Staff', icon: 'fa fa-user-plus',
           route: { name: 'add-staff' }
         }
       ]
     },
     {
-      key: '10', label: 'Utilities', icon: 'fa fa-gear',
+      key: '7', label: 'Utilities', icon: 'fa fa-gear',
       items: [
         {
-          key: '10-1', label: 'Generate Reports', icon: 'fa fa-note-sticky',
-          route: { name: 'dashboard' }
+          key: '7-1', label: 'Term Management', icon: 'fa fa-calendar-days',
+          route: { name: 'term-management' }
         },
         {
-          key: '10-2', label: 'Audit Trails', icon: 'fa fa-clock-rotate-left',
+          key: '7-2', label: 'Learning Strand Management', icon: 'fa fa-book',
+          route: { name: 'learning-strand-management' }
+        },
+        {
+          key: '7-3', label: 'Student Requirements Management', icon: 'fa fa-list',
+          route: { name: 'student-requirements-management' }
+        },
+        {
+          key: '7-4', label: 'Generate Reports', icon: 'fa fa-note-sticky',
           route: { name: 'dashboard' }
-        }
+        },
       ]
-    }
+    },
+    {
+      key: '8', label: 'Audit Trails', icon: 'fa fa-clock-rotate-left',
+      route: { name: 'dashboard' }
+    },
   ]
 })
 
