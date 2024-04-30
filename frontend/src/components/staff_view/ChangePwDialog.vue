@@ -8,6 +8,7 @@ import { useStaffsStore } from '@/stores/staffs'
 import { computed, ref } from 'vue'
 
 const props = defineProps(['userId'])
+const emit = defineEmits(['closeDialog'])
 
 const staffsStore = useStaffsStore()
 const toast = useToast()
@@ -18,9 +19,9 @@ const pwSame = computed(
   () => newPw.value === confirmPw.value && newPw.value.length !== 0 && confirmPw.value.length !== 0
 )
 
-async function updatePassword(closeCallback) {
+async function updatePassword() {
   try {
-    const result = await staffsStore.updatePw(props.userId, newPw)
+    const result = await staffsStore.updatePw(props.userId, newPw.value)
 
     toast.add({
       severity: 'success',
@@ -29,8 +30,9 @@ async function updatePassword(closeCallback) {
       life: 5000
     })
 
-    closeCallback()
+    emit('closeDialog')
   } catch (error) {
+    console.log(error)
     toast.add({
       severity: 'error',
       summary: 'Error',

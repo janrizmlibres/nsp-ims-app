@@ -10,6 +10,7 @@ export async function getStaffs(req, res, next) {
     const staffs = await Staff.findAll(
       includePerms === "true" ? { include: Permission } : {}
     );
+
     res.status(200).json({
       message: "Fetched all staff successfully.",
       staffs: staffs,
@@ -112,9 +113,9 @@ export async function updatePassword(req, res, next) {
       throw error;
     }
 
-    const newHashedPw = await bcrypt.hash(req.body.newPw, 12);
+    const hashedPw = await bcrypt.hash(req.body.newPw, 12);
 
-    if (newHashedPw === staff.hashedPw) {
+    if (hashedPw === staff.hashedPw) {
       const error = Error("New password is the same as the old password.");
 
       // Code for Unprocessable Entity
@@ -124,7 +125,7 @@ export async function updatePassword(req, res, next) {
       throw error;
     }
 
-    await staff.update({ hashedPw: newHashedPw });
+    await staff.update({ hashedPw });
     res.status(200).json({ message: "Password updated!" });
   } catch (error) {
     if (!error.statusCode) {

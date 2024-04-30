@@ -86,6 +86,6 @@ onMounted(async () => {
   <ChangePwDialog
     v-model:visible="visible"
     :userId="pwUpdateUserId"
-    @close="visible = false"
+    @closeDialog="visible = false"
   ></ChangePwDialog>
 </template>

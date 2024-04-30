@@ -36,9 +36,9 @@ router.put(
 );
 
 router.patch(
-  "staff/:userId",
+  "/staff/:userId",
   isAuth,
-  [body("password").trim().isStrongPassword({ minLength: 8 })],
+  [body("newPw").isStrongPassword({ minLength: 8 })],
   adminController.updatePassword
 );
 

@@ -10,7 +10,7 @@ export const useStaffsStore = defineStore('staffs', () => {
     const authStore = useAuthStore()
 
     const result = await axios.get('http://localhost:8080/admin/staffs', {
-      params: { includePerms: config.includePerms },
+      params: config,
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
