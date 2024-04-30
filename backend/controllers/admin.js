@@ -1,6 +1,7 @@
 import { validationResult } from "express-validator";
 import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
+import bcrypt from "bcrypt";
 
 export async function getStaffs(req, res, next) {
   try {
@@ -91,6 +92,40 @@ export async function updatePermissions(req, res, next) {
     }
 
     res.status(200).json({ message: "Permissions Updated!" });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
+export async function updatePassword(req, res, next) {
+  try {
+    const userId = req.params.userId;
+    const staff = await Staff.findByPk(userId);
+
+    if (!staff) {
+      const error = Error("Staff not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const newHashedPw = await bcrypt.hash(req.body.newPw, 12);
+
+    if (newHashedPw === staff.hashedPw) {
+      const error = Error("New password is the same as the old password.");
+
+      // Code for Unprocessable Entity
+      // request was well-formed but could not be processed due to semantic errors
+      error.statusCode = 422;
+
+      throw error;
+    }
+
+    await staff.update({ hashedPw: newHashedPw });
+    res.status(200).json({ message: "Password updated!" });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;

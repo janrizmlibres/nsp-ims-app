@@ -35,4 +35,11 @@ router.put(
   adminController.updatePermissions
 );
 
+router.patch(
+  "staff/:userId",
+  isAuth,
+  [body("password").trim().isStrongPassword({ minLength: 8 })],
+  adminController.updatePassword
+);
+
 export default router;

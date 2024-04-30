@@ -63,5 +63,19 @@ export const useStaffsStore = defineStore('staffs', () => {
     return result
   }
 
-  return { staffs, getAllStaff, addStaff, getStaff, updateStaff, updatePermissions }
+  async function updatePw(userId, newPw) {
+    const authStore = useAuthStore()
+
+    const result = await axios.patch(
+      `http://localhost:8080/admin/staff/${userId}`,
+      { newPw },
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
+
+    return result
+  }
+
+  return { staffs, getAllStaff, addStaff, getStaff, updateStaff, updatePermissions, updatePw }
 })

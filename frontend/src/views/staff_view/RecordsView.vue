@@ -5,6 +5,7 @@ import Button from 'primevue/button'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import TheHeader from '@/components/staff_view/TheHeader.vue'
+import ChangePwDialog from '@/components/staff_view/ChangePwDialog.vue'
 
 import { useStaffsStore } from '@/stores/staffs'
 import { FilterMatchMode } from 'primevue/api'
@@ -18,9 +19,16 @@ const filters = ref({
 })
 
 const isLoading = ref(true)
+const visible = ref(false)
+const pwUpdateUserId = ref(null)
 
 function updateGlobalFilter(newValue) {
   filters.value.global.value = newValue
+}
+
+function openPwDialog(userId) {
+  pwUpdateUserId.value = userId
+  visible.value = true
 }
 
 onMounted(async () => {
@@ -49,13 +57,21 @@ onMounted(async () => {
       <template #empty> No staffs found. </template>
       <template #loading> Loading staffs data. Please wait. </template>
 
-      <Column header="">
+      <Column header="" class="max-w-28">
         <template #body="slotProps">
           <RouterLink :to="{ name: 'edit-staff', params: { userId: slotProps.data.id } }">
-            <Button class="h-10" label="Edit" icon="fa-solid fa-user-pen" outlined />
+            <Button class="h-8" label="Edit" icon="fa-solid fa-user-pen" outlined />
           </RouterLink>
+          <Button
+            class="h-8 ml-2"
+            label="Change Pasword"
+            icon="fa-solid fa-key"
+            outlined
+            @click="openPwDialog(slotProps.data.id)"
+          />
         </template>
       </Column>
+
       <Column field="id" header="User ID" sortable></Column>
       <Column field="fullname" header="Full Name" sortable></Column>
     </DataTable>
@@ -66,4 +82,10 @@ onMounted(async () => {
       </p>
     </div>
   </ContentPane>
+
+  <ChangePwDialog
+    v-model:visible="visible"
+    :userId="pwUpdateUserId"
+    @close="visible = false"
+  ></ChangePwDialog>
 </template>
