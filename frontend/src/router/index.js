@@ -32,40 +32,42 @@ const router = createRouter({
       component: DashboardView
     },
     {
-      path: '/active-classes',
-      name: 'active-classes',
-      component: ActiveClassesView
-    },
-    {
       path: '/class-records',
       name: 'class-records',
       component: ClassesView,
-      children: [
-        {
-          path: 'class-information',
-          name: 'class-info',
-          component: ClassView,
-          children: [
-            {
-              path: 'strand-information',
-              name: 'strand-info',
-              component: StrandView,
-              children: [
-                {
-                  path: 'module-information',
-                  name: 'module-info',
-                  component: ModuleView
-                }
-              ]
-            }
-          ]
-        }
-      ]
     },
     {
-      path: '/class-information',
-      name: 'class-info',
-      component: ClassView
+      path: '/:term/:level',
+      children: [
+        {
+          path: 'Class Information',
+          name: 'class-info',
+          component: ClassView,
+          props: {
+            term: {
+              type: String
+            },
+            level: {
+              type: String
+            }
+          },
+          query: {
+            id: {
+              type: Number
+            }
+          },
+        },
+        {
+          path: 'Add Learning Strand',
+          name: 'add-learning-strand',
+          component: CreateClassesView,
+          query: {
+            id: {
+              type: Number
+            }
+          }
+        },
+      ]
     },
     {
       path: '/strand-information',
@@ -76,11 +78,6 @@ const router = createRouter({
       path: '/module-information',
       name: 'module-info',
       component: ModuleView
-    },
-    {
-      path: '/create-classes',
-      name: 'create-classes',
-      component: CreateClassesView
     },
     {
       path: '/term-management',

@@ -6,9 +6,12 @@ import { useClassesStore } from '@/stores/classes';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 
+const props = defineProps(['filters', 'globalFilters'])
 const router = useRouter()
 const classesStore = useClassesStore()
 
+const filters = ref(props.filters)
+const globalFilters = ref(props.globalFilters)
 const selectedRow = ref({})
 const primarySelection = ref({})
 const secondarySelection= ref({})
@@ -39,7 +42,7 @@ function showClass() {
         :value="classesStore.data" dataKey="id" 
         :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
         resizableColumns columnResizeMode="fit"
-        v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
+        v-model:filters="filters" :globalFilterFields="globalFilters"
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
         v-model:selection="primarySelection" selectionMode="single" 
         @rowSelect="onExpandRow(primarySelection.id)" @rowUnselect="onCollapseRow()"

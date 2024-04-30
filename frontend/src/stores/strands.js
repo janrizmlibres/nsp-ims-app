@@ -1,49 +1,48 @@
 import { defineStore } from 'pinia'
 
 export const useStrandStore = defineStore('strands', {
-    state: () => ({
-        data: [
-            {
-                id: 1,
-                strandcode: 'LS1E',
-                strandname: 'Communication Skills - English'
-            },
-            {
-                id: 2,
-                strandcode: 'LS1F',
-                strandname: 'Communication Skills - Filipino'
-            },
-            {
-                id: 3,
-                strandcode: 'LS2',
-                strandname: 'Science'
-            },
-            {
-                id: 4,
-                strandcode: 'LS3',
-                strandname: 'Mathematics'
-            },
-            {
-                id: 5,
-                strandcode: 'LS4',
-                strandname: 'Career and Life Skills'
-            },
-            {
-                id: 6,
-                strandcode: 'LS5',
-                strandname: 'Understanding the Self and the Society (Culture, Arts and Music)'
-            },
-            {
-                id: 7,
-                strandcode: 'LS6',
-                strandname: 'Digital Literacy'
-            },
-        ],
-
-        dataColumns: [
-            { field: 'id', header: 'ID'},
-            { field: 'strandcode', header: 'Learning Strand Code' },
-            { field: 'strandname', header: 'Learning Strand Name' }
+  state: () => ({
+    data: [
+      {
+        id: 1,
+        code: 'LS1E',
+        name: 'Communication Skills - English'
+      },
+      {
+        id: 2,
+        code: 'LS1F',
+        name: 'Communication Skills - Filipino'
+      },
+      {
+        id: 3,
+        code: 'LS2',
+        name: 'Science'
+      },
+      {
+        id: 4,
+        code: 'LS3',
+        name: 'Mathematics'
+      },
+      {
+        id: 5,
+        code: 'LS4',
+        name: 'Career and Life Skills'
+      },
+      {
+        id: 6,
+        code: 'LS5',
+        name: 'Understanding the Self and the Society (Culture, Arts and Music)'
+      },
+      {
+        id: 7,
+        code: 'LS6',
+        name: 'Digital Literacy'
+      }
     ],
-  }),
+
+    dataColumns: [
+      { field: 'code', header: 'Learning Strand Code' },
+      { field: 'name', header: 'Learning Strand Name' }
+    ]
+  })
 })

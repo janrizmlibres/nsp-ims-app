@@ -7,36 +7,36 @@ const Staff = sequelize.define("staff", {
     allowNull: false,
     primaryKey: true,
   },
-  last_login: DATE,
-  last_name: {
+  lastLogin: DATE,
+  lastName: {
     type: STRING,
     allowNull: false,
   },
-  first_name: {
+  firstName: {
     type: STRING,
     allowNull: false,
   },
-  middle_name: STRING,
-  suffix_name: STRING,
+  middleName: STRING,
+  suffixName: STRING,
+  email: STRING,
+  contactNum: STRING,
+  position: STRING,
+  hashedPw: {
+    type: STRING,
+    allowNull: false,
+  },
   fullname: {
     type: VIRTUAL,
     get() {
       return (
-        this.first_name +
-        (this.middle_name === null ? " " : ` ${this.middle_name} `) +
-        this.last_name
+        this.firstName +
+        (this.middleName === null ? " " : ` ${this.middleName} `) +
+        this.lastName
       );
     },
     set(_value) {
       throw new Error("Do not try to set the `fullname` value!");
     },
-  },
-  email: STRING,
-  contact_num: STRING,
-  position: STRING,
-  hashed_pw: {
-    type: STRING,
-    allowNull: false,
   },
 });
 
