@@ -4,15 +4,34 @@
       <div class="dashboard-text">Dashboard</div>
       <YearButton :class="!isSidebarHovering && !isSidebarPinned ? 'year-button-not-hovering' : 'year-button'"/>
     </div>
-    <div :class="!isSidebarHovering && !isSidebarPinned ? 'student-dashboard-panels-not-hovering' : 'student-dashboard-panels'">
-        <StudentWidget :seriesData="[50, 50]" widgetTitle="LEARNERS" totalText="100" />
-        <StudentWidget :seriesData="[30, 70]" widgetTitle="ELEMENTARY" totalText="60" />
-        <StudentWidget :seriesData="[80, 20]" widgetTitle="JUNIOR HIGH" totalText="120" />
-        <StudentWidget :seriesData="[60, 40]" widgetTitle="ACTIVE LEARNERS" totalText="180" />
+    <div class="student-dashboard-panels">
+        <StudentWidget class="student-widget-" :seriesData="[50, 50]" widgetTitle="LEARNERS" totalText="100" />
+        <StudentWidget 
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
+          :style="`--translate-x: 420px; --translate-y: -150px`"
+          :seriesData="[30, 70]" 
+          widgetTitle="ELEMENTARY" 
+          totalText="60" />
+        <StudentWidget 
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
+          :style="`--translate-x: 840px; --translate-y: -300px`" 
+          :seriesData="[80, 20]" 
+          widgetTitle="JUNIOR HIGH" 
+          totalText="120" />
+        <StudentWidget
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
+          :style="`--translate-x: 1260px; --translate-y: -450px`" 
+          :seriesData="[60, 40]" 
+          widgetTitle="ACTIVE LEARNERS" 
+          totalText="180" />
     </div>
-    <div :class="!isSidebarHovering && !isSidebarPinned ? 'middle-container-not-hover' : 'middle-container'">
-      <LineChart :class="!isSidebarHovering && !isSidebarPinned ? 'line-chart-not-hover' : 'line-chart'" />
-      <BarChart :class="!isSidebarHovering && !isSidebarPinned ? 'bar-chart-not-hover' : 'bar-chart'"/>
+    <div class="middle-container">
+      <LineChart 
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'line-chart'" 
+          :style="`--translate-x: -600px; --translate-y: 390px`"  />
+      <BarChart 
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'bar-chart'" 
+          :style="`--translate-x: 270px; --translate-y: 70px`"  />
     </div>
   </ContentPane>
 </template>
@@ -59,12 +78,13 @@ export default {
   .year-button-not-hovering{
     align-self: flex-end;
     display: block;
-    margin-left: 1368px;
+    margin-left: 1397px;
   }
 
   .header-container {
     display: flex;
     align-items: center; /* This will vertically align the items */
+    margin-bottom: 20px;
     }
   .dashboard-text {
     font-weight: bold;
@@ -92,54 +112,25 @@ export default {
 }
   
   .student-dashboard-panels {
-      display: flex-start;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
+      position: relative;
       margin-top: 0px;
       margin-left: 10px;
       margin-right: 10px;
   }
 
   .student-dashboard-panels-not-hovering {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
+    position: relative;
     margin-top: 0px;
     margin-left: 10px;
     margin-right: 10px;
   }
 
   .line-chart {
-    padding: 5px;
-    width: 850px;
-    height: 321px;
-    background-color: white;
     margin-top: 169px;
-    border-radius: 10px;
-    border-bottom: 5px solid #265492;
-    position: relative; /* Add this line */
-    }
-
-    .line-chart-not-hover {
-    padding: 5px;
-    width: 850px;
-    height: 321px;
-    background-color: white;
-    margin-top: 135px;
-    border-radius: 10px;
-    border-bottom: 5px solid #265492;
     position: relative; /* Add this line */
     }
   
     .bar-chart {
-      padding: 5px;
-      width: 850px;
-      height: 321px;
-      background-color: white;
-      border-radius: 10px;
-      border-bottom: 5px solid #265492;
       position: relative; /* Add this line */
       margin-top: 20px;
     }
@@ -155,4 +146,36 @@ export default {
       margin-top: 135px;
       margin-left: 20px;
     }
+
+    .student-widget {
+      position: relative; /* Add this line */
+
+      margin-top: 20px;
+      margin-right: 20px;
+    }
+
+    :root {
+  --translate-x: 0px;
+  --translate-y: 0px;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translate(var(--translate-x), var(--translate-y));
+  }
+}
+
+.animate {
+  animation-name: slide;
+  animation-duration: 200ms;
+  animation-timing-function: ease-in;
+  animation-delay: 0s;
+  animation-iteration-count: 1;
+  animation-direction: normal;
+  animation-fill-mode: forwards;
+}
+
 </style>

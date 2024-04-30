@@ -48,3 +48,14 @@ export default {
         <apexchart type="line" height="310" :options="chartOptions" :series="series"></apexchart>
     </div>
 </template>
+
+<style>
+.LineChart-widget {
+    padding: 5px;
+    width: 850px;
+    height: 321px;
+    background-color: white;
+    border-radius: 10px;
+    border-bottom: 5px solid #265492;
+    }
+</style>

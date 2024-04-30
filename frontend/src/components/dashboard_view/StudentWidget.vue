@@ -104,15 +104,13 @@ export default {
     }
 
     .widget {
-      display: flex;
+        display: flex;
       flex-direction: column;
       justify-content: flex-start; /* Aligns children to the start on the main axis */
       align-items: flex-start; /* Aligns children to the start on the cross axis */
       width: 390px;
       height: 150px;
       background-color: white;
-      margin-top: 20px;
-      margin-right: 20px;
       border-radius: 10px;
       border-bottom: 5px solid #265492;
       padding: 10px; /* Add padding to the widget for better control of inner elements */
