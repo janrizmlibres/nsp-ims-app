@@ -1,9 +1,16 @@
 import { validationResult } from "express-validator";
 import Staff from "../models/staff.js";
+import Permission from "../models/permission.js";
+import bcrypt from "bcrypt";
 
 export async function getStaffs(req, res, next) {
   try {
-    const staffs = await Staff.findAll();
+    let { includePerms } = req.query;
+
+    const staffs = await Staff.findAll(
+      includePerms === "true" ? { include: Permission } : {}
+    );
+
     res.status(200).json({
       message: "Fetched all staff successfully.",
       staffs: staffs,
@@ -34,6 +41,7 @@ export async function getStaff(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
 
@@ -42,8 +50,6 @@ export async function updateStaff(req, res, next) {
 
   try {
     const errors = validationResult(req);
-
-    console.log(errors);
 
     if (!errors.isEmpty()) {
       const error = new Error("Validation failed, entered data is incorrect.");
@@ -59,16 +65,7 @@ export async function updateStaff(req, res, next) {
       throw error;
     }
 
-    staff.set({
-      first_name: req.body.firstName,
-      middle_name: req.body.middleName,
-      last_name: req.body.lastName,
-      suffix_name: req.body.suffixName,
-      position: req.body.position,
-      email: req.body.email,
-      contact_num: req.body.contact_num,
-    });
-
+    staff.set(req.body);
     const result = await staff.save();
 
     res.status(200).json({
@@ -80,5 +77,61 @@ export async function updateStaff(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
+  }
+}
+
+export async function updatePermissions(req, res, next) {
+  try {
+    for (const staff of req.body.updatedData) {
+      const staffInstance = await Staff.findByPk(staff.id, {
+        include: Permission,
+      });
+
+      const { id, fullname, ...updatedPerms } = staff;
+      await staffInstance.permission.update(updatedPerms);
+    }
+
+    res.status(200).json({ message: "Permissions Updated!" });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
+export async function updatePassword(req, res, next) {
+  try {
+    const userId = req.params.userId;
+    const staff = await Staff.findByPk(userId);
+
+    if (!staff) {
+      const error = Error("Staff not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const hashedPw = await bcrypt.hash(req.body.newPw, 12);
+
+    if (hashedPw === staff.hashedPw) {
+      const error = Error("New password is the same as the old password.");
+
+      // Code for Unprocessable Entity
+      // request was well-formed but could not be processed due to semantic errors
+      error.statusCode = 422;
+
+      throw error;
+    }
+
+    await staff.update({ hashedPw });
+    res.status(200).json({ message: "Password updated!" });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
   }
 }
