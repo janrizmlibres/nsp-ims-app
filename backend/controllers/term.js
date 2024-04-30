@@ -5,16 +5,13 @@ import Student from "../models/nsp_student.js"
 export async function getActiveTerm(req, res, next) {
     try {
         const activeTerm = await Term.findOne(
-            {   where: { status: true },
-                include: [{
-                    model: ClassLevel
-                }] 
-            }
+            {where: { status: true },
+            include: [ClassLevel]}
         );
         
         res.status(200).json({
             message: "Fetched active academic year successfully.",
-            activeTerm: activeTerm,
+            data: activeTerm,
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -26,16 +23,15 @@ export async function getActiveTerm(req, res, next) {
 
 export async function getAllTerms(req, res, next) {
     try {
-        const terms = await Term.findAll({
-            where: {
-                status: false
-            }, include: [{
-                model: ClassLevel, include: [Student]
-            }]
-        });
+        const terms = await Term.findAll(
+            {where: {status: false}, 
+            include: [{model: ClassLevel, 
+                include: [Student]}]}
+        );
+
         res.status(200).json({
             message: "Fetched all terms successfully.",
-            terms: terms,
+            data: terms,
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -52,7 +48,7 @@ export async function addClass(req, res, next) {
 
     try {
         const active_year = await Term.findOne(
-            { where: { status: true } }
+            {where: { status: true }}
         );
         
         const new_class = await active_year.createClass_level({
@@ -61,7 +57,7 @@ export async function addClass(req, res, next) {
 
         res.status(201).json({ 
             message: "Class created!",
-            new_class: new_class
+            data: new_class
         });
     } catch (error) {
         if (!error.statusCode) {
