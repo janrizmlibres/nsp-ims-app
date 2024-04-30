@@ -3,12 +3,12 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext'
 
-import { useTermStore } from '@/stores/terms';
+// import { useTermsStore } from '@/stores/terms.js';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 
 const router = useRouter()
-const termStore = useTermStore()
+const termStore = useTermsStore()
 
 const primarySelection = ref({})
 

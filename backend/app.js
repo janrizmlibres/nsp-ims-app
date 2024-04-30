@@ -3,12 +3,17 @@ import express from "express";
 import sequelize from "./util/database.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
+import termRoutes from "./routes/term.js";
+import classRoutes from "./routes/class.js"
+import setAssociations from "./util/relations.js";
+import bcrypt from "bcryptjs";
 
 import * as dbInjector from "./util/db_injector.js";
 import "./util/relations.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
+setAssociations();
 
 app.use(express.json());
 
@@ -32,6 +37,8 @@ app.get("/", (_, res) => {
 
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
+app.use("/term", termRoutes);
+app.use("/class", classRoutes);
 
 app.use((error, req, res, next) => {
   console.log(error);
@@ -44,6 +51,7 @@ try {
   await sequelize.sync({ force: true });
   await dbInjector.injectStaff();
   await dbInjector.injectAcademicYear();
+  await dbInjector.injectLearningStrand();
   app.listen(port);
   console.log("Listening on port " + port);
 } catch (error) {
