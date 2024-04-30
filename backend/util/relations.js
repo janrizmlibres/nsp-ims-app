@@ -45,6 +45,10 @@ function setAssociations() {
     // Student-ClassLevel Relationship
     Student.belongsToMany(ClassLevel, { through: Enrollment });
     ClassLevel.belongsToMany(Student, { through: Enrollment });
+    ClassLevel.hasMany(Enrollment)
+    Enrollment.belongsTo(ClassLevel)
+    Student.hasMany(Enrollment)
+    Enrollment.belongsTo(Student)
 
     // // Student-Class Schedule Relationship
     // Student.belongsToMany(ClassLearningStrand, { through: Attendance });
