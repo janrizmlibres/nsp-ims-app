@@ -40,29 +40,3 @@ export async function getAllTerms(req, res, next) {
         next(error);
     }
 }
-
-export async function addClass(req, res, next) {
-    const {
-        school_level,
-    } = req.body;
-
-    try {
-        const active_year = await Term.findOne(
-            {where: { status: true }}
-        );
-        
-        const new_class = await active_year.createClass_level({
-            school_level: school_level
-        });
-
-        res.status(201).json({ 
-            message: "Class created!",
-            data: new_class
-        });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
