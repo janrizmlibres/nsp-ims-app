@@ -1,19 +1,27 @@
 <script setup>
+// Presets
 import Divider from 'primevue/divider';
 import StrandCard from './StrandCard.vue';
 import Button from 'primevue/button';
-import { useRouter } from 'vue-router';
+import ProgressSpinner from 'primevue/progressspinner';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+
+// stores
 import { useClassStore } from '@/stores/class';
 
-const props = defineProps(['classId'])
-const router = useRouter()
+const route = useRoute()
+
 const classStore = useClassStore()
 
-function showAddStrandForm() {
-    router.push({name: 'add-learning-strand', query: {id: props.classId}})
-}
+const isFetching = ref(true)
+const allStrands = ref([])
+onMounted(async () => {
+    const strands = await classStore.getAllStrands({classId: route.query.id})
+    allStrands.value.push(... strands)
 
-    console.log(classStore.allStrands)
+    isFetching.value = false
+})
 </script>
 
 <template>
@@ -21,13 +29,15 @@ function showAddStrandForm() {
         <div class="bg-transparent border-none flex flex-row gap-x-6 items-center px-4">
             <div class="u-txt-active font-semibold text-3xl content-center">Learning Strands</div>
             <div class="relative mr-2">
-                <Button type="button" icon="fa fa-plus" label="Add" @click="showAddStrandForm" aria-haspopup="true" aria-controls="overlay_menu" />
+                <Button type="button" icon="fa fa-plus" label="Add" @click="{}" aria-haspopup="true" aria-controls="overlay_menu" />
             </div>
         </div>
         <Divider class="before:border-t before:border-surface-400"/>
         
-        <div class="grid lg:grid-cols-3 md:grid-cols-1 gap-12 p-4">
-            <StrandCard v-for="learningStrand of classStore.allStrands" :key="learningStrand.teacher" :title="learningStrand.learning_strand.name" :teacher="learningStrand.teacher"/>
+        <ProgressSpinner v-if="isFetching && allStrands.length === 0" />
+        <span v-else-if="!isFetching && allStrands.length === 0" class="flex flex-col text-center">No learning strands created.</span>
+        <div v-else class="grid lg:grid-cols-3 md:grid-cols-1 gap-12 p-4">
+            <StrandCard v-for="learningStrand of allStrands" :key="learningStrand.teacher" :title="learningStrand.learning_strand.name" :teacher="learningStrand.teacher"/>
         </div>
     </div>
 </template>
