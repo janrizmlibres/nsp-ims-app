@@ -3,7 +3,7 @@ import ContentPane from '@/components/UI/ContentPane.vue';
 </script>
 
 <template>
-    <ContentPane>
+    <ContentPane header="Module Submission">
         
     </ContentPane>
 </template>

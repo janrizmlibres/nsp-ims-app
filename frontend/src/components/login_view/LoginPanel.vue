@@ -9,8 +9,10 @@ import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 import { useAuthStore } from '@/stores/auth'
+import { useTermStore } from '@/stores/term'
 
 const authStore = useAuthStore()
+const termStore = useTermStore()
 const toast = useToast()
 const router = useRouter()
 
@@ -45,6 +47,9 @@ async function submitEvent() {
     // Save the token and user id to global store
     const { token, userId } = result.data
     authStore.login(token, userId)
+
+    await termStore.getActiveTerm()
+
     await router.replace({ name: 'dashboard' }) // navigate to dashboard
   } catch (error) {
     toast.add({

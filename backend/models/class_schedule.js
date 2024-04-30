@@ -1,7 +1,6 @@
 import { INTEGER, STRING, TIME } from "sequelize";
 import sequelize from "../util/database.js";
-import LearningStrand from "./learning_strand.js";
-import Class from "./class.js";
+import ClassLearningStrand from "./class_learning_strand.js";
 
 const ClassSchedule = sequelize.define('class_schedule', {
     id: {
@@ -10,29 +9,18 @@ const ClassSchedule = sequelize.define('class_schedule', {
         allowNull: false,
         primaryKey: true,
     },
-    classId: {
-        type: INTEGER,
-        references: {
-        model: Class,
-        key: 'id',
-        },
-    },
-    learningStrandId: {
-        type: INTEGER,
-        references: {
-        model: LearningStrand,
-        key: 'id',
-        },
-    },
     day: {
         type: STRING,
         allowNull: false
     },
-    time: {
+    start_time: {
         type: TIME,
         allowNull: false
     },
-    teacher: STRING
+    end_time: {
+        type: TIME,
+        allowNull: false
+    },
 });
 
 export default ClassSchedule;

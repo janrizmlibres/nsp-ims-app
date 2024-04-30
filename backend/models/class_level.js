@@ -1,7 +1,7 @@
 import { INTEGER, STRING, DATE } from "sequelize";
 import sequelize from "../util/database.js";
 
-const Class = sequelize.define("class", {
+const ClassLevel = sequelize.define("class_level", {
   id: {
     type: INTEGER,
     autoIncrement: true,
@@ -11,7 +11,8 @@ const Class = sequelize.define("class", {
   school_level: {
     type: STRING,
     allowNull: false,
+    unique: true
   }
 });
 
-export default Class;
+export default ClassLevel;
