@@ -1,16 +1,73 @@
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import Staff from "../models/staff.js";
-import ClassLevel from "../models/class_level.js";
 import bcrypt from "bcryptjs";
 
 export async function injectStaff() {
   const staffData = [
     [
       {
+        lastName: "Istrator",
+        firstName: "Admin",
+        id: "91267",
+        accessLevel: 1,
+        password: "rootpass",
+      },
+      {
+        canMgStuds: true,
+        canMgEnrollment: true,
+        canMgVolunteer: true,
+        canMgClass: true,
+        canMgTerm: true,
+        canMgLs: true,
+        canMgStudReq: true,
+        canMgStaff: true,
+      },
+    ],
+    [
+      {
+        lastName: "Caga",
+        firstName: "John",
+        id: "11267",
+        accessLevel: 2,
+        password: "rootpass",
+      },
+      {
+        canMgStuds: true,
+        canMgEnrollment: true,
+        canMgVolunteer: true,
+        canMgClass: true,
+        canMgTerm: true,
+        canMgLs: true,
+        canMgStudReq: true,
+        canMgStaff: true,
+      },
+    ],
+    [
+      {
+        lastName: "Portman",
+        firstName: "Natalie",
+        id: "21267",
+        accessLevel: 2,
+        password: "rootpass",
+      },
+      {
+        canMgStuds: true,
+        canMgEnrollment: true,
+        canMgVolunteer: true,
+        canMgClass: true,
+        canMgTerm: true,
+        canMgLs: true,
+        canMgStudReq: true,
+        canMgStaff: true,
+      },
+    ],
+    [
+      {
         lastName: "Dimal",
         firstName: "Nazib",
         id: "53697",
+        accessLevel: 3,
         password: "nazpass",
       },
       {
@@ -24,6 +81,7 @@ export async function injectStaff() {
         lastName: "Rola",
         firstName: "Xander",
         id: "55166",
+        accessLevel: 3,
         password: "xandpass",
       },
       {
@@ -40,6 +98,7 @@ export async function injectStaff() {
         lastName: "Umel",
         firstName: "Ace",
         id: "57381",
+        accessLevel: 3,
         password: "acepass",
       },
       {
@@ -67,126 +126,127 @@ export async function injectAcademicYear() {
   const termData = [
     {
       batch_number: 1,
-      academic_year: '2015-2016',
+      academic_year: "2015-2016",
       start_date: new Date("2015-06-01"),
       end_date: new Date("2016-03-31"),
-      status: false
+      status: false,
     },
     {
       batch_number: 2,
-      academic_year: '2016-2017',
+      academic_year: "2016-2017",
       start_date: new Date("2016-06-01"),
       end_date: new Date("2017-03-31"),
-      status: false
+      status: false,
     },
     {
       batch_number: 3,
-      academic_year: '2017-2018',
+      academic_year: "2017-2018",
       start_date: new Date("2017-06-01"),
       end_date: new Date("2018-03-31"),
-      status: false
+      status: false,
     },
     {
       batch_number: 4,
-      academic_year: '2018-2019',
+      academic_year: "2018-2019",
       start_date: new Date("2018-06-01"),
       end_date: new Date("2019-03-31"),
-      status: false
+      status: false,
     },
     {
       batch_number: 5,
-      academic_year: '2019-2020',
+      academic_year: "2019-2020",
       start_date: new Date("2020-08-01"),
       end_date: new Date("2021-05-31"),
-      status: false
+      status: false,
     },
     {
       batch_number: 6,
-      academic_year: '2021-2022',
+      academic_year: "2021-2022",
       start_date: new Date("2021-08-01"),
       end_date: new Date("2022-05-31"),
-      status: false
+      status: false,
     },
     {
       batch_number: 7,
-      academic_year: '2022-2023',
+      academic_year: "2022-2023",
       start_date: new Date("2022-08-01"),
       end_date: new Date("2023-05-31"),
-      status: false
+      status: false,
     },
     {
       batch_number: 8,
-      academic_year: '2023-2024',
+      academic_year: "2023-2024",
       start_date: new Date("2023-08-01"),
       end_date: new Date("2024-05-31"),
-      status: true
+      status: true,
     },
   ];
 
   const classLevelData = [
     {
-      school_level: "Grade School"
+      school_level: "Grade School",
     },
     {
-      school_level: "Junior High School"
+      school_level: "Junior High School",
     },
   ];
 
-  await Promise.all(termData.map(async (academic_year) => {
-    await Term.create(academic_year);
-  }));
-
-  const active_year = await Term.findOne(
-      { where: { status: true } }
+  await Promise.all(
+    termData.map(async (academic_year) => {
+      await Term.create(academic_year);
+    })
   );
 
-  await Promise.all(classLevelData.map(async (class_level) => {
-    await active_year.createClass_level(
-      {
-        school_level: class_level.school_level
-      }
-    )
-  }));
+  const active_year = await Term.findOne({ where: { status: true } });
+
+  await Promise.all(
+    classLevelData.map(async (class_level) => {
+      await active_year.createClass_level({
+        school_level: class_level.school_level,
+      });
+    })
+  );
 }
 
 export async function injectLearningStrand() {
   const learningStrandData = [
     {
       code: "LS1",
-      name: "Communication Skills - English"
+      name: "Communication Skills - English",
     },
     {
       code: "LS2",
-      name: "Communication Skills - Filipino"
+      name: "Communication Skills - Filipino",
     },
     {
       code: "LS3",
-      name: "Science"
+      name: "Science",
     },
     {
       code: "LS4",
-      name: "Mathematics"
+      name: "Mathematics",
     },
     {
       code: "LS5",
-      name: "Career and Life Skills"
+      name: "Career and Life Skills",
     },
     {
       code: "LS6",
-      name: "Understanding the Self and Society"
+      name: "Understanding the Self and Society",
     },
     {
       code: "LS7",
-      name: "Digital Literacy"
+      name: "Digital Literacy",
     },
     {
       code: "HVE",
-      name: "Homeroom/Values Education"
+      name: "Homeroom/Values Education",
     },
   ];
 
-
-  await Promise.all(learningStrandData.map(async (learning_strand) => {
-    await LearningStrand.create(learning_strand);
-  }));
+  await Promise.all(
+    learningStrandData.map(async (learning_strand) => {
+      await LearningStrand.create(learning_strand);
+    })
+  );
 }
