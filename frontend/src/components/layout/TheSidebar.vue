@@ -2,6 +2,7 @@
 // Presets
 import Button from 'primevue/button'
 import PanelMenu from 'primevue/panelmenu'
+import Skeleton from 'primevue/skeleton'
 
 // Utils
 import { onMounted, ref } from 'vue'
@@ -13,7 +14,7 @@ const sidebarStore = useSidebarStore()
 const termStore = useTermStore()
 
 const items = ref([])
-
+const isFetching = ref(true)
 onMounted(async () => {
   const activeTerm = await termStore.getActiveTerm()
   const gradeSchool = activeTerm.class_levels.find(obj => {return obj.school_level === 'Grade School'})
@@ -93,48 +94,50 @@ onMounted(async () => {
       ]
     },
     {
-      key: '6', label: 'Staff Management', icon: 'fa fa-user',
+      key: '6', label: 'Term Management', icon: 'fa fa-calendar-days',
+      route: { name: 'term-management' }
+    },
+    {
+      key: '7', label: 'Learning Strand Management', icon: 'fa fa-book',
+      route: { name: 'learning-strand-management' }
+    },
+    {
+      key: '8', label: 'Student Requirements Management', icon: 'fa fa-list',
+      route: { name: 'student-requirements-management' }
+    },
+    {
+      key: '9', label: 'Staff Management', icon: 'fa fa-user',
       items: [
         {
-          key: '6-1', label: 'Staff Records', icon: 'fa fa-address-book',
+          key: '9-1', label: 'Staff Records', icon: 'fa fa-address-book',
           route: { name: 'staff-records' }
         },
         {
-          key: '6-2', label: 'Staff Permissions', icon: 'fa fa-shield-halved',
+          key: '9-2', label: 'Staff Permissions', icon: 'fa fa-shield-halved',
           route: { name: 'staff-permissions' }
         },
         {
-          key: '6-3', label: 'Add Staff', icon: 'fa fa-user-plus',
+          key: '9-3', label: 'Add Staff', icon: 'fa fa-user-plus',
           route: { name: 'add-staff' }
         }
       ]
     },
     {
-      key: '7', label: 'Utilities', icon: 'fa fa-gear',
+      key: '10', label: 'Utilities', icon: 'fa fa-gear',
       items: [
         {
-          key: '7-1', label: 'Term Management', icon: 'fa fa-calendar-days',
-          route: { name: 'term-management' }
-        },
-        {
-          key: '7-2', label: 'Learning Strand Management', icon: 'fa fa-book',
-          route: { name: 'learning-strand-management' }
-        },
-        {
-          key: '7-3', label: 'Student Requirements Management', icon: 'fa fa-list',
-          route: { name: 'student-requirements-management' }
-        },
-        {
-          key: '7-4', label: 'Generate Reports', icon: 'fa fa-note-sticky',
+          key: '10-1', label: 'Generate Reports', icon: 'fa fa-note-sticky',
           route: { name: 'dashboard' }
         },
+        {
+          key: '10-2', label: 'Audit Trails', icon: 'fa fa-clock-rotate-left',
+          route: { name: 'dashboard' }
+        }
       ]
-    },
-    {
-      key: '8', label: 'Audit Trails', icon: 'fa fa-clock-rotate-left',
-      route: { name: 'dashboard' }
-    },
+    }
   ]
+
+  isFetching.value = false
 })
 
 const buttonPt = {
@@ -289,7 +292,10 @@ function changeState() {
     </div>
     <div class="border-t mx-6"></div>
 
-    <PanelMenu class="h-full overflow-y-auto overflow-x-hidden mb-4"
+    <div v-if="isFetching" class="h-full p-4">
+      <Skeleton class="h-full" />
+    </div>
+    <PanelMenu v-else class="h-full overflow-y-auto overflow-x-hidden mb-4"
       v-model:expandedKeys="expandedKeys"
       :model="items"
       :pt="panelMenuPt">
