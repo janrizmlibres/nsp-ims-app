@@ -52,6 +52,7 @@ try {
   await dbInjector.injectStaff();
   await dbInjector.injectAcademicYear();
   await dbInjector.injectLearningStrand();
+  await dbInjector.injectLearner();
   app.listen(port);
   console.log("Listening on port " + port);
 } catch (error) {

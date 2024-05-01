@@ -3,6 +3,8 @@ import LearningStrand from "../models/learning_strand.js";
 import Staff from "../models/staff.js";
 import ClassLevel from "../models/class_level.js";
 import bcrypt from "bcryptjs";
+import Learner from "../models/learner.js";
+import Student from "../models/nsp_student.js";
 
 export async function injectStaff() {
   const staffData = [
@@ -146,6 +148,110 @@ export async function injectAcademicYear() {
         school_level: class_level.school_level
       }
     )
+  }));
+}
+1242312145189
+export async function injectLearner() {
+  const learnerData = [
+    {
+      lrn: 1242312145189,
+      lastName: 'Dela Cruz',
+      firstName: 'Juan',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lrn: 1242312145145,
+      lastName: 'Bautista',
+      firstName: 'Felix',
+      middleName: 'Polso',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Amidrano',
+      firstName: 'Nicolette',
+      middleName: 'Bucio',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Fernandez',
+      firstName: 'Hero',
+      middleName: 'Baltazar',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lrn: 1242312145714,
+      lastName: 'Santos',
+      firstName: 'Dominic',
+      middleName: 'Dicolano',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lrn: 1242562145189,
+      lastName: 'Fulminar',
+      firstName: 'Ashley',
+      middleName: 'De Guzman',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Quintos',
+      firstName: 'Ariel',
+      middleName: 'Furtonado',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Hilot',
+      firstName: 'Van',
+      middleName: 'Culminares',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lrn: 1247192145189,
+      lastName: 'Alonto',
+      firstName: 'Princess Aliah',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Montecillo',
+      firstName: 'Dirk',
+      middleName: 'Santocildis',
+      category: 'Out-of-School Youth'
+    },
+  ]
+
+  await Promise.all(learnerData.map(async (learner) => {
+    await Learner.create(learner);
+  }));
+
+  const learners = await Learner.findAll()
+
+  await Promise.all(learners.map(async (learner) => {
+    await learner.createStudent(
+      {
+        ftl_pretest: getRandomInt(0, 100)
+      }
+    )
+  }));
+
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  const class_levels = await ClassLevel.findAll()
+
+  await Promise.all(class_levels.map(async (class_level) => {
+    const students = await Student.findAll()
+
+    await Promise.all(students.map(async (student) => {
+      class_level.addStudent(student, {
+        through: {
+          hasEnrollmentForm: true,
+          status: 'Active',
+          modularity: 'Regular',
+        }
+      })
+    }));
   }));
 }
 
