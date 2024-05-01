@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import ProgressBar from 'primevue/progressbar';
 
 const router = useRouter()
-
+defineProps(['title', 'teacher', 'schedule'])
 function showStrand() {
     router.push('/strand-information')
 }
@@ -36,10 +36,10 @@ function showStrand() {
             class: '!pt-0 u-bg-pcolor rounded-b-3xl overflow-hidden '
         }
     }">
-        <template #title> Understanding the Self and Society </template>
+        <template #title> {{ title }} </template>
         <template #subtitle><ProgressBar :value="50"></ProgressBar></template>
         <template #content>
-            <h3> Dela Cruz, Juan A. </h3>
+            <h3> {{ teacher }} </h3>
             <p class="m-0 max-h">
                 MTH | 6:00 PM - 7:00 PM
             </p>

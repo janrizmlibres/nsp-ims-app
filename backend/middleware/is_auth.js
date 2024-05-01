@@ -13,12 +13,6 @@ export default function (req, res, next) {
     const token = authHeader.split(" ")[1];
     const decodedToken = jwt.verify(token, "HEHESECRET");
 
-    if (!decodedToken) {
-      const error = new Error("Not authenticated.");
-      error.statusCode = 401;
-      throw error;
-    }
-
     req.userId = decodedToken.userId;
     next();
   } catch (error) {
@@ -26,5 +20,6 @@ export default function (req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
