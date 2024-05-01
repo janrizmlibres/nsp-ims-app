@@ -2,8 +2,10 @@ import ClassLearningStrand from "../models/class_learning_strand.js";
 import ClassLevel from "../models/class_level.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Enrollment from "../models/enrollment.js";
+import Learner from "../models/learner.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
+import Student from "../models/nsp_student.js";
 
 export async function count(req, res, next) {
     const data = req.get("data")
@@ -154,6 +156,36 @@ export async function getAllModules(req, res, next) {
     try {
         const classLevel = await ClassLevel.findByPk(classId, {
             include: {model: ClassLearningStrand, include: [Module]}
+        })
+        
+        const modules = []
+        console.log(classLevel);
+        classLevel.class_learning_strands.forEach(learningStrand => {
+            modules.push(...learningStrand.modules)
+        });
+
+        res.status(201).json({ 
+            message: "Fetched all modules successfully!",
+            data: modules
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+export async function getAllStudents(req, res, next) {
+    const {
+        classId
+    } = req.body
+    
+    try {
+        const classLevel = await ClassLevel.findByPk(classId, {
+            include: {model: Enrollment, 
+                include: {model: Student, 
+                    include: [Learner]}}
         })
         
         const modules = []
