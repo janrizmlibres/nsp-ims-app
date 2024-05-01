@@ -84,6 +84,7 @@ export async function login(req, res, next) {
       message: "Authentication successful",
       token: token,
       userId: staff.id,
+      userName: staff.fullname
     });
   } catch (error) {
     if (!error.statusCode) {
