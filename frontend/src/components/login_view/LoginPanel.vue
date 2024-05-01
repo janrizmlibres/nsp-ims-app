@@ -2,11 +2,11 @@
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
 import { checkInputEmpty } from '@/util/interactions.js'
+import Password from 'primevue/password'
 import Button from 'primevue/button'
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -40,12 +40,10 @@ async function submitEvent() {
   const password = passwordInput.value
 
   try {
-    const result = await axios.post('http://localhost:8080/auth/login', { id, password })
-    // Save the token and user id to global store
-    const { token, userId, userName } = result.data
-    authStore.login(token, userId, userName)
-    await router.replace({ name: 'dashboard' }) // navigate to dashboard
+    await authStore.login(id, password)
+    await router.replace({ name: 'dashboard' })
   } catch (error) {
+    console.log(error)
     toast.add({
       severity: 'error',
       summary: 'Error Logging In',
@@ -64,6 +62,9 @@ async function submitEvent() {
       <p class="text-4xl font-bold u-txt-pcolor u-letter-spacing mb-12">WELCOME!</p>
       <p class="text-base font-bold u-txt-pcolor">User ID</p>
       <InputText
+        aria-label="username"
+        name="username"
+        autocomplete="username"
         class="mt-2 w-80 h-7"
         v-model="userIdInput"
         @blur="checkInputEmptyForUsername"
@@ -71,12 +72,16 @@ async function submitEvent() {
         :invalid="isUsernameInvalid"
       />
       <p class="text-base font-bold u-txt-pcolor mt-6">Password</p>
-      <InputText
+      <Password
+        aria-label="password"
+        input-id="password"
+        autocomplete="password"
         class="mt-2 w-80 h-7"
         v-model="passwordInput"
         @blur="checkInputEmptyForPassword"
         @keyup.enter="submitEvent"
         :invalid="isPasswordInvalid"
+        :feedback="false"
       />
       <br /><Button
         class="mt-10 w-40 h-12 rounded-sm text-white font-bold text-base cursor-pointer"

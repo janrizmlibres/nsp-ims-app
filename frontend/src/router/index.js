@@ -4,6 +4,8 @@ import LoginView from '../views/login/LoginView.vue'
 
 // Dashboard View
 import DashboardView from '../views/DashboardView.vue'
+import LoginView from '../views/login_view/LoginView.vue'
+import TheRootView from '@/views/TheRootView.vue'
 
 // Class Management Views
 import ClassesView from '../views/class_mgmt/ClassesView.vue'
@@ -33,95 +35,130 @@ const router = createRouter({
       component: LoginView
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: DashboardView
-    },
-    {
-      path: '/classes',
-      name: 'class-records',
-      component: ClassesView,
-    },
-    {
-      path: '/:term/class',
-      name: 'class-info',
-      component: ClassView,
-      query: {
-        id: Number
-      },
+      path: '/',
+      component: TheRootView,
+      redirect: { name: 'dashboard' },
       children: [
         {
-          path: 'add_learning_strand',
-          name: 'class-info',
-          component: CreateClassesView
+          path: 'dashboard',
+          name: 'dashboard',
+          component: DashboardView
         },
         {
           path: '',
-          name: 'strand-info',
-          component: StrandView,
-          query: Number,
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgClass ? true : { name: 'dashboard' }
+          },
+          children: [
+            {
+              path: ':term/class',
+              name: 'class-info',
+              component: ClassView,
+              query: { id: Number },
+              children: [
+                {
+                  path: 'add_learning_strand',
+                  name: 'class-info',
+                  component: CreateClassesView
+                },
+                {
+                  path: '',
+                  name: 'strand-info',
+                  component: StrandView,
+                  query: Number,
+                  children: [
+                    {
+                      path: '',
+                      name: 'module-info',
+                      component: ModuleView,
+                      query: {
+                        module: Number
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              path: 'classes',
+              name: 'class-records',
+              component: ClassesView
+            }
+          ]
+        },
+        {
+          path: '/management/terms',
+          name: 'term-management',
+          component: TermView,
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgTerm ? true : { name: 'dashboard' }
+          }
+        },
+        {
+          path: '/management/learning_strands',
+          name: 'learning-strand-management',
+          component: LearningStrandView,
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgLs ? true : { name: 'dashboard' }
+          }
+        },
+        {
+          path: '/management/student_requirements',
+          name: 'student-requirements-management',
+          component: StudentRequirementView,
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgStudReq ? true : { name: 'dashboard' }
+          }
+        },
+        {
+          path: 'staffs',
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgStaff ? true : { name: 'dashboard' }
+          },
           children: [
             {
               path: '',
-              name: 'module-info',
-              component: ModuleView,
-              query: {
-                module: Number
-              }
+              name: 'staff-records',
+              component: RecordsView
             },
+            {
+              path: 'permissions',
+              name: 'staff-permissions',
+              component: PermissionsView
+            },
+            {
+              path: 'add',
+              name: 'add-staff',
+              component: StaffFormView
+            },
+            {
+              path: ':userId',
+              name: 'edit-staff',
+              component: StaffFormView,
+              props: true
+            }
           ]
-        },
+        }
       ]
-    },
-    {
-      path: '/management/terms',
-      name: 'term-management',
-      component: TermView
-    },
-    {
-      path: '/management/student_requirements',
-      name: 'student-requirements-management',
-      component: StudentRequirementView
-    },
-    {
-      path: '/management/learning_strands',
-      name: 'learning-strand-management',
-      component: LearningStrandView
-    },
-    {
-      path: '/staffs',
-      name: 'staff-records',
-      component: RecordsView
-    },
-    {
-      path: '/staffs/permissions',
-      name: 'staff-permissions',
-      component: PermissionsView
-    },
-    {
-      path: '/staffs/add',
-      name: 'add-staff',
-      component: StaffFormView
-    },
-    {
-      path: '/staffs/:userId',
-      name: 'edit-staff',
-      component: StaffFormView,
-      props: true
     },
     { path: '/:misc(.*)', redirect: { name: 'login' } }
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   const authStore = useAuthStore()
 
   if (to.name !== 'login' && !authStore.isAuthenticated) {
-    next({ name: 'login' })
+    return { name: 'login' }
   } else if (to.name === 'login' && authStore.isAuthenticated) {
-    next({ name: 'dashboard' })
+    return { name: 'dashboard' }
   } else {
-    next()
+    return true
   }
 })
 

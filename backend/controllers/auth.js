@@ -4,6 +4,7 @@ import { validationResult } from "express-validator";
 import prand from "pure-rand";
 
 import Staff from "../models/staff.js";
+import Permission from "../models/permission.js";
 
 export async function signup(req, res, next) {
   try {
@@ -54,13 +55,14 @@ export async function signup(req, res, next) {
  * If there is an error while searching for the user, it returns an error message.
  * @param {Object} req - The request object
  * @param {Object} res - The response object
+ * @param next - The next middleware function
  * @returns {Object} - The response object
  */
 export async function login(req, res, next) {
-  const { id, password } = req.body;
+  const { userId, password } = req.body;
 
   try {
-    const staff = await Staff.findByPk(id);
+    const staff = await Staff.findByPk(userId, { include: Permission });
 
     if (!staff) {
       const error = new Error("Authentication failed. User not found.");
@@ -83,13 +85,18 @@ export async function login(req, res, next) {
     return res.status(200).json({
       message: "Authentication successful",
       token: token,
-      userId: staff.id,
-      userName: staff.fullname
+      staff: {
+        id: staff.id,
+        accessLevel: staff.accessLevel,
+        permissions: staff.permission,
+        userName: staff.fullname
+      },
     });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
