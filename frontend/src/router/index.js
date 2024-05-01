@@ -39,38 +39,43 @@ const router = createRouter({
           component: DashboardView
         },
         {
-          path: '/classes',
-          name: 'class-records',
-          component: ClassesView
-        },
-        {
-          path: '/:term/class',
-          name: 'class-info',
-          component: ClassView,
-          query: {
-            id: Number
-          },
+          path: '',
           children: [
             {
-              path: 'add_learning_strand',
+              path: '/:term/class',
               name: 'class-info',
-              component: CreateClassesView
-            },
-            {
-              path: '',
-              name: 'strand-info',
-              component: StrandView,
-              query: Number,
+              component: ClassView,
+              query: {
+                id: Number
+              },
               children: [
                 {
+                  path: 'add_learning_strand',
+                  name: 'class-info',
+                  component: CreateClassesView
+                },
+                {
                   path: '',
-                  name: 'module-info',
-                  component: ModuleView,
-                  query: {
-                    module: Number
-                  }
+                  name: 'strand-info',
+                  component: StrandView,
+                  query: Number,
+                  children: [
+                    {
+                      path: '',
+                      name: 'module-info',
+                      component: ModuleView,
+                      query: {
+                        module: Number
+                      }
+                    }
+                  ]
                 }
               ]
+            },
+            {
+              path: '/classes',
+              name: 'class-records',
+              component: ClassesView
             }
           ]
         },
@@ -90,25 +95,30 @@ const router = createRouter({
           component: LearningStrandView
         },
         {
-          path: '/staffs',
-          name: 'staff-records',
-          component: RecordsView
-        },
-        {
-          path: '/staffs/permissions',
-          name: 'staff-permissions',
-          component: PermissionsView
-        },
-        {
-          path: '/staffs/add',
-          name: 'add-staff',
-          component: StaffFormView
-        },
-        {
-          path: '/staffs/:userId',
-          name: 'edit-staff',
-          component: StaffFormView,
-          props: true
+          path: 'staffs',
+          children: [
+            {
+              path: '',
+              name: 'staff-records',
+              component: RecordsView
+            },
+            {
+              path: 'permissions',
+              name: 'staff-permissions',
+              component: PermissionsView
+            },
+            {
+              path: 'add',
+              name: 'add-staff',
+              component: StaffFormView
+            },
+            {
+              path: ':userId',
+              name: 'edit-staff',
+              component: StaffFormView,
+              props: true
+            }
+          ]
         }
       ]
     },
