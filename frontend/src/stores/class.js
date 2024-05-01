@@ -24,28 +24,24 @@ export const useClassStore = defineStore('class', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
 
-        return result
+        return result.data.data
     }
     
 
     async function addLearningStrand(form) {
         const authStore = useAuthStore()
 
-        const result = await axios.post('http://localhost:8080/class/addLearningStrand', form, {
+        await axios.post('http://localhost:8080/class/addLearningStrand', form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
-
-        console.log(result);
     }
 
     async function addSchedule(form) {
         const authStore = useAuthStore()
 
-        const result = await axios.post('http://localhost:8080/class/learningStrand/addSchedule', form, {
+        await axios.post('http://localhost:8080/class/learningStrand/addSchedule', form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
-
-        console.log(result);
     }
 
     async function getAllStrands(form) {
@@ -64,12 +60,21 @@ export const useClassStore = defineStore('class', () => {
         const result = await axios.post('http://localhost:8080/class/allModules', form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
-        console.log(result.data.data);
         
         return result.data.data
     }
 
-    return { allStrands, count, getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules }
+    async function getAllStudents(form) {
+        const authStore = useAuthStore()
+
+        const result = await axios.post('http://localhost:8080/class/allStudents', form, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+        
+        return result.data.data
+    }
+
+    return { allStrands, count, getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules, getAllStudents }
 })
 
 
