@@ -55,6 +55,7 @@ export async function signup(req, res, next) {
  * If there is an error while searching for the user, it returns an error message.
  * @param {Object} req - The request object
  * @param {Object} res - The response object
+ * @param next - The next middleware function
  * @returns {Object} - The response object
  */
 export async function login(req, res, next) {
@@ -95,5 +96,6 @@ export async function login(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }

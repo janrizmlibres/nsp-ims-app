@@ -2,6 +2,7 @@
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
 import { checkInputEmpty } from '@/util/interactions.js'
+import Password from 'primevue/password'
 import Button from 'primevue/button'
 
 import { ref } from 'vue'
@@ -61,6 +62,9 @@ async function submitEvent() {
       <p class="text-4xl font-bold u-txt-pcolor u-letter-spacing mb-12">WELCOME!</p>
       <p class="text-base font-bold u-txt-pcolor">User ID</p>
       <InputText
+        aria-label="username"
+        name="username"
+        autocomplete="username"
         class="mt-2 w-80 h-7"
         v-model="userIdInput"
         @blur="checkInputEmptyForUsername"
@@ -68,12 +72,16 @@ async function submitEvent() {
         :invalid="isUsernameInvalid"
       />
       <p class="text-base font-bold u-txt-pcolor mt-6">Password</p>
-      <InputText
+      <Password
+        aria-label="password"
+        input-id="password"
+        autocomplete="password"
         class="mt-2 w-80 h-7"
         v-model="passwordInput"
         @blur="checkInputEmptyForPassword"
         @keyup.enter="submitEvent"
         :invalid="isPasswordInvalid"
+        :feedback="false"
       />
       <br /><Button
         class="mt-10 w-40 h-12 rounded-sm text-white font-bold text-base cursor-pointer"
