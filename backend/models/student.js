@@ -1,4 +1,4 @@
-import { BOOLEAN, INET, INTEGER, STRING } from "sequelize";
+import { INTEGER, STRING } from "sequelize";
 import sequelize from "../util/database.js";
 
 const Student = sequelize.define("student", {
@@ -8,28 +8,24 @@ const Student = sequelize.define("student", {
     primaryKey: true,
     autoIncrement: true,
   },
-  canBeCalled: {
-    type: BOOLEAN,
-    allowNull: false,
-    defaultValue: true,
-  },
-  canBeNight: {
-    type: BOOLEAN,
-    allowNull: false,
-    defaultValue: true,
-  },
-  digitalLiteracy: {
+  lrn: {
     type: STRING,
     allowNull: false,
   },
-  ftl: {
-    type: INTEGER,
-    allowNull: false,
-  },
-  bridger: {
+  category: {
     type: STRING,
     allowNull: false,
   },
+  lastName: {
+    type: STRING,
+    allowNull: false,
+  },
+  middleName: STRING,
+  firstName: {
+    type: STRING,
+    allowNull: false,
+  },
+  firstName: STRING,
 });
 
 export default Student;
