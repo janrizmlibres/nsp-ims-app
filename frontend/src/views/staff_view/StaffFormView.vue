@@ -39,6 +39,7 @@ const submitLabel = ref(props.userId === null ? 'Submit' : 'Save')
 
 const isLoading = ref(false)
 const okToLeave = ref(true)
+const isInitialState = ref(true)
 const updateKey = ref(0)
 const isEditView = ref(props.userId === null)
 
@@ -48,6 +49,7 @@ const confirm = useConfirm()
 function updateData(data) {
   okToLeave.value = false
   formData.value = data
+  isInitialState.value = false
 }
 
 async function submitData() {
@@ -89,6 +91,7 @@ onBeforeRouteLeave((to) => {
     return true
   }
 
+  console.log('Should show modal')
   confirm.require({
     message: 'Do you really want to leave? you have unsaved changes!',
     header: 'Redirect Confirmation',
@@ -143,7 +146,7 @@ onMounted(async () => {
 
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Button class="h-10 u-bg-green" @click="submitData">
+          <Button class="h-10 u-bg-green" :disabled="isInitialState" @click="submitData">
             <ProgressSpinner
               v-if="isLoading"
               style="width: 50px; height: 50px"
