@@ -29,25 +29,26 @@ const router = createRouter({
     },
     {
       path: '/',
-      name: 'root',
       component: TheRootView,
       redirect: { name: 'dashboard' },
       children: [
         {
-          path: '/dashboard',
+          path: 'dashboard',
           name: 'dashboard',
           component: DashboardView
         },
         {
           path: '',
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgClass ? true : { name: 'dashboard' }
+          },
           children: [
             {
-              path: '/:term/class',
+              path: ':term/class',
               name: 'class-info',
               component: ClassView,
-              query: {
-                id: Number
-              },
+              query: { id: Number },
               children: [
                 {
                   path: 'add_learning_strand',
@@ -73,7 +74,7 @@ const router = createRouter({
               ]
             },
             {
-              path: '/classes',
+              path: 'classes',
               name: 'class-records',
               component: ClassesView
             }
@@ -82,20 +83,36 @@ const router = createRouter({
         {
           path: '/management/terms',
           name: 'term-management',
-          component: TermView
-        },
-        {
-          path: '/management/student_requirements',
-          name: 'student-requirements-management',
-          component: StudentRequirementView
+          component: TermView,
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgTerm ? true : { name: 'dashboard' }
+          }
         },
         {
           path: '/management/learning_strands',
           name: 'learning-strand-management',
-          component: LearningStrandView
+          component: LearningStrandView,
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgLs ? true : { name: 'dashboard' }
+          }
+        },
+        {
+          path: '/management/student_requirements',
+          name: 'student-requirements-management',
+          component: StudentRequirementView,
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgStudReq ? true : { name: 'dashboard' }
+          }
         },
         {
           path: 'staffs',
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgStaff ? true : { name: 'dashboard' }
+          },
           children: [
             {
               path: '',
@@ -126,15 +143,15 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   const authStore = useAuthStore()
 
   if (to.name !== 'login' && !authStore.isAuthenticated) {
-    next({ name: 'login' })
+    return { name: 'login' }
   } else if (to.name === 'login' && authStore.isAuthenticated) {
-    next({ name: 'root' })
+    return { name: 'dashboard' }
   } else {
-    next()
+    return true
   }
 })
 

@@ -40,7 +40,7 @@ async function submitEvent() {
 
   try {
     await authStore.login(id, password)
-    await router.replace({ name: 'root' })
+    await router.replace({ name: 'dashboard' })
   } catch (error) {
     console.log(error)
     toast.add({

@@ -87,7 +87,6 @@ export async function injectStaff() {
       {
         canMgStuds: true,
         canMgVolunteer: true,
-        canMgClass: true,
         canMgLs: true,
         canMgStudReq: true,
         canMgStaff: true,
