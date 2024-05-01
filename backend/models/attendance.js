@@ -1,26 +1,20 @@
 import { INTEGER, STRING, DATE, TEXT } from "sequelize";
 import sequelize from "../util/database.js";
-import ClassSchedule from "./class_learning_strand.js";
 import Student from "./nsp_student.js";
+import Session from "./session.js";
 
 const Attendance = sequelize.define("attendance", {
-  id: {
-    type: INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true,
+  studentId: {
+      type: INTEGER,
+      references: {
+      model: Student,
+      key: 'id',
+      },
   },
-  // studentId: {
-  //     type: INTEGER,
-  //     references: {
-  //     model: Student,
-  //     key: 'id',
-  //     },
-  // },
-  classScheduleId: {
+  sessionId: {
     type: INTEGER,
     references: {
-      model: ClassSchedule,
+      model: Session,
       key: "id",
     },
   },
