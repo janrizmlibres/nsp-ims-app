@@ -7,7 +7,6 @@ import Button from 'primevue/button'
 
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -41,12 +40,8 @@ async function submitEvent() {
   const password = passwordInput.value
 
   try {
-    const result = await axios.post('http://localhost:8080/auth/login', { id, password })
-
-    // Save the token and user id to global store
-    const { token, userId } = result.data
-    authStore.login(token, userId)
-    await router.replace({ name: 'dashboard' }) // navigate to dashboard
+    await authStore.login(id, password)
+    await router.replace({ name: 'dashboard' })
   } catch (error) {
     console.log(error)
     toast.add({

@@ -14,7 +14,7 @@ async function goToAddStaffview() {
 </script>
 
 <template>
-  <div class="mb-2 text-right mt-10">
+  <div class="mb-2 text-right mt-2">
     <div class="inline-block ml-auto mr-0">
       <span class="relative">
         <font-awesome-icon
