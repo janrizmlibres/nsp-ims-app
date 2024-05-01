@@ -1,7 +1,8 @@
 import { validationResult } from "express-validator";
+import bcrypt from "bcrypt";
+
 import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
-import bcrypt from "bcrypt";
 
 export async function getStaffs(req, res, next) {
   try {

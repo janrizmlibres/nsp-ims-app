@@ -41,3 +41,5 @@ const Application = sequelize.define("application", {
     allowNull: false,
   },
 });
+
+export default Application;
