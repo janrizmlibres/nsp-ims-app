@@ -240,6 +240,11 @@ export async function injectLearner() {
 
   const class_levels = await ClassLevel.findAll()
 
+  function getRandomStatus() {
+    let status = ['Inactive', 'Active', 'Drop']
+    return status[Math.floor(Math.random() * 2)];
+  }
+
   await Promise.all(class_levels.map(async (class_level) => {
     const students = await Student.findAll()
 
@@ -247,7 +252,7 @@ export async function injectLearner() {
       class_level.addStudent(student, {
         through: {
           hasEnrollmentForm: true,
-          status: 'Active',
+          status: getRandomStatus(),
           modularity: 'Regular',
         }
       })
