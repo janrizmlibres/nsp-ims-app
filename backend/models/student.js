@@ -16,16 +16,15 @@ const Student = sequelize.define("student", {
     type: STRING,
     allowNull: false,
   },
-  lastName: {
-    type: STRING,
-    allowNull: false,
-  },
-  middleName: STRING,
   firstName: {
     type: STRING,
     allowNull: false,
   },
-  firstName: STRING,
+  middleName: STRING,
+  lastName: {
+    type: STRING,
+    allowNull: false,
+  },
 });
 
 export default Student;

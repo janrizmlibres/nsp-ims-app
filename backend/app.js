@@ -41,7 +41,7 @@ app.use("/auth", authRoutes);
 app.use("/term", termRoutes);
 app.use("/class", classRoutes);
 
-app.use((error, req, res, next) => {
+app.use((error, _req, res) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
@@ -50,6 +50,7 @@ app.use((error, req, res, next) => {
 
 try {
   await sequelize.sync({ force: true });
+  await dbInjector.injectStudent();
   await dbInjector.injectStaff();
   await dbInjector.injectAcademicYear();
   await dbInjector.injectLearningStrand();
