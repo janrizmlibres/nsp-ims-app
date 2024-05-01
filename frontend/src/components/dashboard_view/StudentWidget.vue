@@ -13,7 +13,7 @@
                 </div>
                 <div class="total-container">
                     <div class="total-text">{{ totalText }}</div>
-                    <button class="total-button">View List</button>
+                    <ViewListButton />
                 </div>
             </div>
         </div>
@@ -23,11 +23,13 @@
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DoughnutChart from "@/components/dashboard_view/DoughnutChart.vue";
+import ViewListButton from "@/components/dashboard_view/ViewListButton.vue";
 
 export default {
     components: {
         'font-awesome-icon': FontAwesomeIcon,
         DoughnutChart,
+        ViewListButton,
     },
     props: {
         seriesData: {
@@ -121,11 +123,6 @@ export default {
 .total-button {
   margin-top: 1.875rem;
   margin-left: 5.625rem;
-  background-color: #265492;
-  padding: 0.5rem;
-  color: white;
-  border-radius: 0.625rem;
-  font-size: 0.75rem;
 }
 
 .male-icon {
