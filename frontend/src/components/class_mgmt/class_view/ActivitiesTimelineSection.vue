@@ -3,7 +3,7 @@
 import Divider from 'primevue/divider';
 import TimelineCard from './TimelineCard.vue';
 import ProgressSpinner from 'primevue/progressspinner';
-import { onMounted, ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 // stores
@@ -15,12 +15,14 @@ const classStore = useClassStore()
 
 const isFetching = ref(true)
 const allModules = ref([])
-onMounted(async () => {
-    const modules = await classStore.getAllModules({classId: route.query.id})
+async function fetchModules(id) {
+    const modules = await classStore.getAllModules({classId: id})
     allModules.value.push(... modules)
 
     isFetching.value = false
-})
+}
+
+watch(() => route.query.id, fetchModules, {immediate: true})
 </script>
 
 <template>
