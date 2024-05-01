@@ -1,4 +1,3 @@
-/* App.vue */
 <script>
 import VueApexCharts from "vue3-apexcharts";
 
@@ -52,7 +51,7 @@ export default {
 <style>
 .LineChart-widget {
     padding: 5px;
-    width: 850px;
+    width: 1000px;
     height: 321px;
     background-color: white;
     border-radius: 10px;

@@ -2,37 +2,35 @@
   <ContentPane>
     <div class="header-container">
       <div class="dashboard-text">Dashboard</div>
-      <YearButton :class="!isSidebarHovering && !isSidebarPinned ? 'year-button-not-hovering' : 'year-button'"/>
+      <YearButton class="year-button"/>
     </div>
     <div class="student-dashboard-panels">
         <StudentWidget class="student-widget-" :seriesData="[50, 50]" widgetTitle="LEARNERS" totalText="100" />
         <StudentWidget 
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
-          :style="`--translate-x: 420px; --translate-y: -150px`"
+          :style="`--translate-x: 420px; --translate-y: -170px`"
           :seriesData="[30, 70]" 
           widgetTitle="ELEMENTARY" 
           totalText="60" />
         <StudentWidget 
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
-          :style="`--translate-x: 840px; --translate-y: -300px`" 
+          :style="`--translate-x: 840px; --translate-y: -340px`" 
           :seriesData="[80, 20]" 
           widgetTitle="JUNIOR HIGH" 
           totalText="120" />
         <StudentWidget
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
-          :style="`--translate-x: 1260px; --translate-y: -450px`" 
+        :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
+          :style="`--translate-x: 1260px; --translate-y: -510px`" 
           :seriesData="[60, 40]" 
           widgetTitle="ACTIVE LEARNERS" 
           totalText="180" />
     </div>
-    <div class="middle-container">
       <LineChart 
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'line-chart'" 
-          :style="`--translate-x: -600px; --translate-y: 390px`"  />
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-charts' : 'line-chart'" 
+          :style="`--translate-x: 850px; --translate-y: 230px`"  />
       <BarChart 
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'bar-chart'" 
-          :style="`--translate-x: 270px; --translate-y: 70px`"  />
-    </div>
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-charts' : 'bar-chart'" 
+          :style="`--translate-x: 10px; --translate-y: -90px`"  />
   </ContentPane>
 </template>
 
@@ -54,7 +52,6 @@ export default {
     BarChart,
     LineChart,
   },
-  // ... other options ...
   computed: {
     isSidebarHovering() {
       const sidebarStore = useSidebarStore()
@@ -63,29 +60,30 @@ export default {
     isSidebarPinned() {
       const sidebarStore = useSidebarStore()
       return sidebarStore.isPinned
-    }
-  }
+    },
 }
+};
 </script>
 
 <style scoped>
-  .year-button {
-    align-self: flex-end;
-    display: block;
-    margin-left: 1038px;
+  .student-widget {
+    margin-bottom: 20px;
+    margin-right: 20px;
+    animation: slide-back 1s ease 0s 1 normal forwards;
   }
-
-  .year-button-not-hovering{
-    align-self: flex-end;
+  .year-button {
+    position: absolute;
     display: block;
-    margin-left: 1397px;
+    top: 160px;
+    left: 1630px;
   }
 
   .header-container {
     display: flex;
     align-items: center; /* This will vertically align the items */
     margin-bottom: 20px;
-    }
+  }
+
   .dashboard-text {
     font-weight: bold;
     font-size: 30px;
@@ -94,88 +92,59 @@ export default {
   }
   .middle-container {
     position: absolute;
-    top: 55px;
-    left: 720px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-left: 10px;
-    margin-bottom: 10px;
   }
-  .middle-container-not-hover {
-  position: absolute;
-  top: 280px;
-  left: 130px;
-  display: flex;
-  flex-direction: row; /* Change this from column to row */
-  /* Your existing styles */
-}
   
   .student-dashboard-panels {
-      position: relative;
-      margin-top: 0px;
-      margin-left: 10px;
-      margin-right: 10px;
-  }
-
-  .student-dashboard-panels-not-hovering {
-    position: relative;
-    margin-top: 0px;
+    position: absolute;
+    margin-top: 80px;
     margin-left: 10px;
     margin-right: 10px;
   }
 
   .line-chart {
-    margin-top: 169px;
-    position: relative; /* Add this line */
-    }
+    margin-top: 80px;
+    margin-left: 450px;
+    position: absolute;
+    animation: slide-back 1s ease 0s 1 normal forwards;
+  }
   
-    .bar-chart {
-      position: relative; /* Add this line */
-      margin-top: 20px;
-    }
-
-    .bar-chart-not-hover {
-      padding: 5px;
-      width: 850px;
-      height: 321px;
-      background-color: white;
-      border-radius: 10px;
-      border-bottom: 5px solid #265492;
-      position: relative; /* Add this line */
-      margin-top: 135px;
-      margin-left: 20px;
-    }
-
-    .student-widget {
-      position: relative; /* Add this line */
-
-      margin-top: 20px;
-      margin-right: 20px;
-    }
-
-    :root {
-  --translate-x: 0px;
-  --translate-y: 0px;
-}
-
-@keyframes slide {
-  from {
-    transform: translateX(0);
+  .bar-chart {
+    top: 580px;
+    left: 730px;
+    position: absolute;
+    animation: slide-back 1s ease 0s 1 normal forwards;
   }
-  to {
-    transform: translate(var(--translate-x), var(--translate-y));
-  }
-}
 
-.animate {
-  animation-name: slide;
-  animation-duration: 200ms;
-  animation-timing-function: ease-in;
-  animation-delay: 0s;
-  animation-iteration-count: 1;
-  animation-direction: normal;
-  animation-fill-mode: forwards;
-}
+  :root {
+    --translate-x: 0px;
+    --translate-y: 0px;
+  }
+
+  @keyframes slide {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translate(var(--translate-x), var(--translate-y));
+    }
+  }
+
+  @keyframes slide-back {
+    from {
+      transform: translate(var(--translate-x), var(--translate-y));
+    }
+    to {
+      transform: translateX(0) translateY(0);
+    }
+  }
+
+  .animate {
+    animation: slide 1s ease 0s 1 normal forwards;
+  }
+
+  .animate-charts {
+    animation: slide 1s ease 0s 1 normal forwards;
+    width: 810px;
+  }
 
 </style>

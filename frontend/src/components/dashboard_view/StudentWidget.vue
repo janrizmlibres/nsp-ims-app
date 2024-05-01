@@ -114,6 +114,8 @@ export default {
       border-radius: 10px;
       border-bottom: 5px solid #265492;
       padding: 10px; /* Add padding to the widget for better control of inner elements */
+      margin-bottom: 20px;
+    margin-right: 20px;
   }
 
   .total-container {
