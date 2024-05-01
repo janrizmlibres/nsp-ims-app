@@ -4,19 +4,13 @@ import Module from "./module.js";
 import Student from "./nsp_student.js";
 
 const ModuleSubmission = sequelize.define("module_submission", {
-  id: {
-    type: INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true,
+  studentId: {
+      type: INTEGER,
+      references: {
+      model: Student,
+      key: 'id',
+      },
   },
-  // studentId: {
-  //     type: INTEGER,
-  //     references: {
-  //     model: Student,
-  //     key: 'id',
-  //     },
-  // },
   moduleId: {
     type: INTEGER,
     references: {
