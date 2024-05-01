@@ -17,10 +17,8 @@ const termStore = useTermStore()
 const authStore = useAuthStore()
 
 const items = ref([])
-const userName = ref()
 const isFetching = ref(true)
 onMounted(async () => {
-  userName.value = authStore.userName
   const activeTerm = await termStore.getActiveTerm()
   const gradeSchool = activeTerm.class_levels.find(obj => {return obj.school_level === 'Grade School'})
   const juniorHighSchool = activeTerm.class_levels.find(obj => {return obj.school_level === 'Junior High School'})
@@ -338,7 +336,7 @@ function changeState() {
         <span class="fa fa-circle-user text-surface-100" />
       </span>
       <div class="flex flex-col u-sidebar-footer-text">
-        <span>{{ userName }}</span>
+        <span>{{ authStore.userName }}</span>
         <span class="text-sm">Role</span>
       </div>
     </div>
