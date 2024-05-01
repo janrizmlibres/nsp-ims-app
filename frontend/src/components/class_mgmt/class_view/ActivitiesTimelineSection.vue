@@ -29,8 +29,8 @@ onMounted(async () => {
             <span class="font-semibold text-xl u-txt-active">Timeline</span>
             <Divider />
 
-            <ProgressSpinner v-if="isFetching" />
-            <div v-else class="flex flex-col gap-2 px-8 pb-4 overflow-auto">
+            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+            <div v-else class="flex flex-col gap-2 px-8 pb-4 overflow-auto justify-center">
                 <span v-if="allModules.length === 0" class="text-center">No upcoming activities due</span>
                 <TimelineCard v-else v-for="module of allModules" :key="module.id" />
             </div>
