@@ -337,12 +337,22 @@ function setVisibility(keyValue) {
 
   return hasNoPermission(keyValue) ? false : true
 }
+
+const handleMouseOver = () => {
+  sidebarStore.handleMouseOver();
+};
+
+const handleMouseLeave = () => {
+  sidebarStore.handleMouseLeave();
+};
 </script>
 
 <template>
   <div
     class="flex flex-col z-50 u-sidemain-max-height h-screen u-bg-pcolor text-surface-100 rounded-md border-none shadow-xltransition-all duration-500 ease-in-out ml-4 my-4"
     :class="sidebarStore.isPinned ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'"
+    @mouseover="handleMouseOver"
+    @mouseleave="handleMouseLeave"
   >
     <div class="u-sidebar-header text-surface-100 whitespace-nowrap p-5">
       <span class="u-sidebar-header-text text-3xl">Menu</span>
