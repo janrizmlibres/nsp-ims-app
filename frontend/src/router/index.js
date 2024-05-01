@@ -39,6 +39,7 @@ const router = createRouter({
       path: '/:term/class',
       name: 'class-info',
       component: ClassView,
+      props: true,
       query: {
         id: Number
       },
