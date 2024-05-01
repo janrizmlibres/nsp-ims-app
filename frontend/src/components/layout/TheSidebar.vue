@@ -318,44 +318,24 @@ function changeState() {
 }
 
 function setVisibility(keyValue) {
-  const {
-    canMgStuds,
-    canMgEnrollment,
-    canMgVolunteer,
-    canMgClass,
-    canMgTerm,
-    canMgLs,
-    canMgStudReq,
-    canMgStaff
-  } = authStore.staff.permissions
+  const permissions = authStore.staff.permissions
 
-  if (keyValue === '2' && !canMgStuds) {
-    // Student Management
-    return false
-  } else if (keyValue === '3' && !canMgEnrollment) {
-    // Enrollment Management
-    return false
-  } else if (keyValue === '4' && !canMgVolunteer) {
-    // Volunteer Management
-    return false
-  } else if (keyValue === '5' && !canMgClass) {
-    // Class Management
-    return false
-  } else if (keyValue === '6' && !canMgTerm) {
-    // Term Management
-    return false
-  } else if (keyValue === '7' && !canMgLs) {
-    // Learning Strand Management
-    return false
-  } else if (keyValue === '8' && !canMgStudReq) {
-    // Student Requirements Management
-    return false
-  } else if (keyValue === '9' && !canMgStaff) {
-    // Staff Management
-    return false
-  } else {
-    return true
+  const permissionMap = {
+    2: 'canMgStuds',
+    3: 'canMgEnrollment',
+    4: 'canMgVolunteer',
+    5: 'canMgClass',
+    6: 'canMgTerm',
+    7: 'canMgLs',
+    8: 'canMgStudReq',
+    9: 'canMgStaff'
   }
+
+  const hasNoPermission = (keyValue) => {
+    return keyValue in permissionMap && !permissions[permissionMap[keyValue]]
+  }
+
+  return hasNoPermission(keyValue) ? false : true
 }
 </script>
 
