@@ -75,7 +75,7 @@ export default {
     position: absolute;
     display: block;
     top: 160px;
-    left: 1630px;
+    left: 1670px;
   }
 
   .header-container {

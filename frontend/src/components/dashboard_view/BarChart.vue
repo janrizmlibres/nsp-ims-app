@@ -46,7 +46,7 @@ export default {
 <style>
   .BarChart-widget {
     padding: 5px;
-    width: 1000px;
+    width: 1040px;
     height: 321px;
     background-color: white;
     border-radius: 10px;
