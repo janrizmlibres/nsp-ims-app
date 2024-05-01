@@ -4,14 +4,14 @@ import Student from "./nsp_student.js";
 import ClassLevel from "./class_level.js";
 
 const Enrollment = sequelize.define('enrollment', {
-    nsp_studentId: {
+    nspStudentId: {
         type: INTEGER,
         references: {
         model: Student,
         key: 'id',
         },
     },
-    class_levelId: {
+    classLevelId: {
         type: INTEGER,
         references: {
         model: ClassLevel,
