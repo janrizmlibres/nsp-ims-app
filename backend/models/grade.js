@@ -1,26 +1,20 @@
 import { INTEGER, STRING, DATE } from "sequelize";
 import sequelize from "../util/database.js";
-import Module from "./module.js";
-import Class from "./class.js";
+import Student from "./nsp_student.js";
+import ClassLearningStrand from "./class_learning_strand.js";
 
 const Grade = sequelize.define("grade", {
-  id: {
-    type: INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true,
+  studentId: {
+      type: INTEGER,
+      references: {
+      model: Student,
+      key: 'id',
+      },
   },
-  // studentId: {
-  //     type: INTEGER,
-  //     references: {
-  //     model: Student,
-  //     key: 'id',
-  //     },
-  // },
-  classId: {
+  classLearningStrandId: {
     type: INTEGER,
     references: {
-      model: Class,
+      model: ClassLearningStrand,
       key: "id",
     },
   },
