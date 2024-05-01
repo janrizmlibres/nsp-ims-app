@@ -13,7 +13,7 @@ export async function count(req, res, next) {
 
     try {
         const classLevel = await ClassLevel.findByPk(data);
-            console.log(classLevel)
+
         if (!classLevel.students) {
             const count = await classLevel.countStudent(
                 {
@@ -41,7 +41,7 @@ export async function getClass(req, res, next) {
 
     try {
         const classLevel = await ClassLevel.findByPk(classId);
-        console.log(classLevel);
+        
         res.status(200).json({
         message: "Fetched class successfully.",
         data: classLevel,
@@ -135,7 +135,6 @@ export async function getAllStrands(req, res, next) {
             include: [LearningStrand, ClassSchedule]
         })
 
-        console.log(learningStrands);
         res.status(201).json({ 
             message: "Learning strand added!",
             data: learningStrands
@@ -159,7 +158,6 @@ export async function getAllModules(req, res, next) {
         })
         
         const modules = []
-        console.log(classLevel);
         classLevel.class_learning_strands.forEach(learningStrand => {
             modules.push(...learningStrand.modules)
         });
@@ -182,21 +180,36 @@ export async function getAllStudents(req, res, next) {
     } = req.body
     
     try {
-        const classLevel = await ClassLevel.findByPk(classId, {
+        const activeStudents = await ClassLevel.findByPk(classId, {
             include: {model: Enrollment, 
+                where: {
+                    status: 'Active'
+                },
                 include: {model: Student, 
                     include: [Learner]}}
         })
-        
-        const modules = []
-        console.log(classLevel);
-        classLevel.class_learning_strands.forEach(learningStrand => {
-            modules.push(...learningStrand.modules)
-        });
+
+        const inactiveStudents = await ClassLevel.findByPk(classId, {
+            include: {model: Enrollment, 
+                where: {
+                    status: 'Inactive'
+                },
+                include: {model: Student, 
+                    include: [Learner]}}
+        })
+
+        const dropStudents = await ClassLevel.findByPk(classId, {
+            include: {model: Enrollment, 
+                where: {
+                    status: 'Drop'
+                },
+                include: {model: Student, 
+                    include: [Learner]}}
+        })
 
         res.status(201).json({ 
             message: "Fetched all modules successfully!",
-            data: modules
+            data: [activeStudents, inactiveStudents, dropStudents]
         });
     } catch (error) {
         if (!error.statusCode) {
