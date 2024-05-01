@@ -8,19 +8,19 @@
         <StudentWidget class="student-widget-" :seriesData="[50, 50]" widgetTitle="LEARNERS" totalText="100" />
         <StudentWidget 
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
-          :style="`--translate-x: 420px; --translate-y: -170px`"
+          :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
           :seriesData="[30, 70]" 
           widgetTitle="ELEMENTARY" 
           totalText="60" />
         <StudentWidget 
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
-          :style="`--translate-x: 840px; --translate-y: -340px`" 
+          :style="`--translate-x: 52.5rem; --translate-y: -21.25rem`"
           :seriesData="[80, 20]" 
           widgetTitle="JUNIOR HIGH" 
           totalText="120" />
         <StudentWidget
         :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
-          :style="`--translate-x: 1260px; --translate-y: -510px`" 
+        :style="`--translate-x: 78.75rem; --translate-y: -31.875rem`"
           :seriesData="[60, 40]" 
           widgetTitle="ACTIVE LEARNERS" 
           totalText="180" />
@@ -28,11 +28,11 @@
       <LineChart 
           :key="lineChartKey"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-line-chart' : 'line-chart'"
-          :style="`--initial-x: 450px; --initial-y: 15px; --translate-x: 850px; --translate-y: 210px;`" />
+          :style="`--initial-x: 28.125rem; --initial-y: 0.9375rem; --translate-x: 53.125rem; --translate-y: 13.125rem;`" />
       <BarChart 
           :key="barChartKey"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-bar-chart' : 'bar-chart'"
-          :style="`--initial-x: 450px; --initial-y: 34px; --translate-x: 10px; --translate-y: -111px;`" />
+          :style="`--initial-x: 28.125rem; --initial-y: 2.125rem; --translate-x: 0.625rem; --translate-y: -6.9375rem;`" />
   </ContentPane>
 </template>
 
@@ -69,28 +69,28 @@ export default {
 
 <style scoped>
   .student-widget {
-    margin-bottom: 20px;
-    margin-right: 20px;
+    margin-bottom: 1.25rem;
+    margin-right: 1.25rem;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
   .year-button {
     position: absolute;
     display: block;
-    top: 160px;
-    left: 1670px;
+    top: 10rem;
+    left: 104.375rem;
+    z-index: 3;
   }
 
   .header-container {
     display: flex;
     align-items: center; /* This will vertically align the items */
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
   }
 
   .dashboard-text {
     font-weight: bold;
-    font-size: 30px;
-    margin-top: 0px;
-    margin-left: 10px;
+    font-size: 1.875rem;
+    margin-left: 0.625rem;
   }
   .middle-container {
     position: absolute;
@@ -98,28 +98,28 @@ export default {
   
   .student-dashboard-panels {
     position: absolute;
-    margin-top: 80px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-top: 5rem;
+    margin-left: 0.625rem;
+    margin-right: 0.625rem;
   }
 
   .line-chart {
-    margin-top: 65px;
+    margin-top: 4.0625rem;
     position: absolute;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
   
   .bar-chart {
-    margin-top: 385px;
+    margin-top: 24.0625rem;
     position: absolute;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
 
   :root {
-    --translate-x: 0px;
-    --translate-y: 0px;
-    --initial-x: 0px;
-    --initial-y: 0px;
+    --translate-x: 0rem;
+    --translate-y: 0rem;
+    --initial-x: 0rem;
+    --initial-y: 0rem;
   }
 
   @keyframes slide {
@@ -146,12 +146,12 @@ export default {
 
   .animate-line-chart {
     animation: slide 0.5s ease 0s 1 normal forwards;
-    width: 810px;
+    width: 50.625rem;
   }
 
   .animate-bar-chart {
     animation: slide 0.5s ease 0s 1 normal forwards;
-    width: 810px;
+    width: 50.625rem;
   }
 
 </style>

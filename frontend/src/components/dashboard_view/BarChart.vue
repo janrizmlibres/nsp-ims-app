@@ -44,12 +44,12 @@ export default {
 </template>
 
 <style>
-  .BarChart-widget {
-    padding: 5px;
-    width: 1040px;
-    height: 321px;
+.BarChart-widget {
+    padding: 0.3125rem;
+    width: 65rem;
+    height: 20.0625rem;
     background-color: white;
-    border-radius: 10px;
-    border-bottom: 5px solid #265492;
-  }
+    border-radius: 0.625rem;
+    border-bottom: 0.3125rem solid #265492;
+}
 </style>

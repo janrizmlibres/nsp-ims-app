@@ -1,20 +1,46 @@
 <template>
-    <button class="button" @click="toggleDatePicker">
+  <div>
+    <button class="button" @click="showDropdown = !showDropdown">
       <font-awesome-icon :icon="['fas', 'filter']" />
       Year
     </button>
-  </template>
-  
-  <script>
-  </script>
-  
-  <style scoped>
-    .button {
-    background-color: white;
-    color: black;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 10px;
-    width: 100px; /* Adjust this value to your needs */
-  }
-  </style>
+    <div class="card flex justify-content-center" v-if="showDropdown">
+      <Listbox v-model="selectedYear" :options="years" multiple optionLabel="name" class="w-full md:w-14rem" />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from "vue";
+import Listbox from 'primevue/listbox';
+
+const showDropdown = ref(false);
+const selectedYear = ref();
+const years = ref([
+  { name: '2010-2011', code: '2010-2011' },
+  { name: '2011-2012', code: '2011-2012' },
+  { name: '2012-2013', code: '2012-2013' },
+  { name: '2013-2014', code: '2013-2014' },
+  { name: '2014-2015', code: '2014-2015' },
+  { name: '2015-2016', code: '2015-2016' },
+  { name: '2016-2017', code: '2016-2017' },
+  { name: '2017-2018', code: '2017-2018' },
+  { name: '2018-2019', code: '2018-2019' },
+  { name: '2019-2020', code: '2019-2020' },
+  { name: '2020-2021', code: '2020-2021' },
+  { name: '2021-2022', code: '2021-2022' },
+  { name: '2022-2023', code: '2022-2023' },
+  { name: '2023-2024', code: '2023-2024' }
+]);
+</script>
+
+<style scoped>
+.button {
+  background-color: white;
+  color: black;
+  padding: 0.625rem;
+  cursor: pointer;
+  border-radius: 0.625rem;
+  width: 6.25rem;
+}
+</style>
