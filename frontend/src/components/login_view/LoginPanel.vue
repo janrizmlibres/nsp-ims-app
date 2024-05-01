@@ -41,10 +41,9 @@ async function submitEvent() {
 
   try {
     const result = await axios.post('http://localhost:8080/auth/login', { id, password })
-
     // Save the token and user id to global store
-    const { token, userId } = result.data
-    authStore.login(token, userId)
+    const { token, userId, userName } = result.data
+    authStore.login(token, userId, userName)
     await router.replace({ name: 'dashboard' }) // navigate to dashboard
   } catch (error) {
     toast.add({
