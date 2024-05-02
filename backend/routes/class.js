@@ -4,12 +4,11 @@ import isAuth from "../middleware/is_auth.js";
 
 const router = express.Router();
 
-router.post("/count", isAuth, classController.count);
-router.post("/getClass", isAuth, classController.getClass);
-router.post("/allStrands", isAuth, classController.getAllStrands);
-router.post("/allModules", isAuth, classController.getAllModules);
-router.post("/allStudents", isAuth, classController.getAllStudents);
-router.post("/addLearningStrand", isAuth, classController.addLearningStrand);
-router.post("/learningStrand/addSchedule", isAuth, classController.addSchedule);
+router.get("/:classId", isAuth, classController.getClass);
+router.get("/:classId/strands", isAuth, classController.getAllStrands);
+router.get("/:classId/modules", isAuth, classController.getAllModules);
+router.get("/:classId/students", isAuth, classController.getAllStudents);
+router.post("/:classId/learningStrand/add", isAuth, classController.addLearningStrand);
+router.post("/:classId/learningStrand/schedule/add", isAuth, classController.addSchedule);
 
 export default router;
