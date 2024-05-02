@@ -4,14 +4,13 @@ import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
-import Student from "../models/nsp_student.js";
+import Learner from "../models/learner.js";
 import Enrollment from "../models/enrollment.js";
 import Attendance from "../models/attendance.js";
 import ModuleSubmission from "../models/module_submission.js";
 import ClassLearningStrand from "../models/class_learning_strand.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Session from "../models/session.js";
-import Learner from "../models/learner.js";
 
 function setAssociations() {
     // Staff-Permission Relationship
@@ -44,33 +43,29 @@ function setAssociations() {
     })
     Module.belongsTo(ClassLearningStrand)
 
-    // Learner-Student Relationship
-    Learner.hasOne(Student)
-    Student.belongsTo(Learner)
-
     // Student-ClassLevel Relationship
-    Student.belongsToMany(ClassLevel, { through: Enrollment });
-    ClassLevel.belongsToMany(Student, { through: Enrollment });
+    Learner.belongsToMany(ClassLevel, { through: Enrollment });
+    ClassLevel.belongsToMany(Learner, { through: Enrollment });
     ClassLevel.hasMany(Enrollment)
     Enrollment.belongsTo(ClassLevel)
-    Student.hasMany(Enrollment)
-    Enrollment.belongsTo(Student)
+    Learner.hasMany(Enrollment)
+    Enrollment.belongsTo(Learner)
 
     // Student-Class Learning Strand Relationship
-    Student.belongsToMany(Session, { through: Attendance });
-    Session.belongsToMany(Student, { through: Attendance });
+    Learner.belongsToMany(Session, { through: Attendance });
+    Session.belongsToMany(Learner, { through: Attendance });
     Session.hasMany(Attendance)
     Attendance.belongsTo(Session)
-    Student.hasMany(Attendance)
-    Attendance.belongsTo(Student)
+    Learner.hasMany(Attendance)
+    Attendance.belongsTo(Learner)
 
     // Student-Module Relationship
-    Student.belongsToMany(Module, { through: ModuleSubmission });
-    Module.belongsToMany(Student, { through: ModuleSubmission });
+    Learner.belongsToMany(Module, { through: ModuleSubmission });
+    Module.belongsToMany(Learner, { through: ModuleSubmission });
     Module.hasMany(ModuleSubmission)
     ModuleSubmission.belongsTo(Module)
-    Student.hasMany(ModuleSubmission)
-    ModuleSubmission.belongsTo(Student)
+    Learner.hasMany(ModuleSubmission)
+    ModuleSubmission.belongsTo(Learner)
 }
 
 export default setAssociations
