@@ -5,42 +5,15 @@ import Enrollment from "../models/enrollment.js";
 import Learner from "../models/learner.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
-import Student from "../models/nsp_student.js";
-
-export async function count(req, res, next) {
-    const data = req.get("data")
-    console.log(data);
-
-    try {
-        const classLevel = await ClassLevel.findByPk(data);
-
-        if (!classLevel.students) {
-            const count = await classLevel.countStudent(
-                {
-                    where: {'$enrollment.status$': true},
-                    include: [Enrollment]
-                }
-            )
-        } else count = 0
-        res.status(200).json({
-        message: "Counted Students successfully.",
-        data: count,
-        });
-    } catch (error) {
-        if (!error.statusCode) {
-        error.statusCode = 500;
-        }
-        next(error);
-    }
-}
+import Term from "../models/term.js"
 
 export async function getClass(req, res, next) {
-    const {
-        classId
-    } = req.body
+    const classId = req.params.classId;
 
     try {
-        const classLevel = await ClassLevel.findByPk(classId);
+        const classLevel = await ClassLevel.findByPk(classId, {
+            include: [Term]
+        });
         
         res.status(200).json({
         message: "Fetched class successfully.",
@@ -55,8 +28,9 @@ export async function getClass(req, res, next) {
 }
 
 export async function addLearningStrand(req, res, next) {
+    const classId = req.params.classId;
+
     const {
-        classId,
         name,
         teacher
     } = req.body
@@ -86,8 +60,9 @@ export async function addLearningStrand(req, res, next) {
 }
 
 export async function addSchedule(req, res, next) {
+    const classId = req.params.classId;
+
     const {
-        classId,
         name,
         day,
         start_time,
@@ -125,9 +100,7 @@ export async function addSchedule(req, res, next) {
 }
 
 export async function getAllStrands(req, res, next) {
-    const {
-        classId
-    } = req.body
+    const classId = req.params.classId;
 
     try {
         const learningStrands = await ClassLearningStrand.findAll({
@@ -148,9 +121,7 @@ export async function getAllStrands(req, res, next) {
 }
 
 export async function getAllModules(req, res, next) {
-    const {
-        classId
-    } = req.body
+    const classId = req.params.classId;
     
     try {
         const classLevel = await ClassLevel.findByPk(classId, {
@@ -175,9 +146,7 @@ export async function getAllModules(req, res, next) {
 }
 
 export async function getAllStudents(req, res, next) {
-    const {
-        classId
-    } = req.body
+    const classId = req.params.classId;
     
     try {
         const activeStudents = await ClassLevel.findByPk(classId, {
@@ -185,8 +154,7 @@ export async function getAllStudents(req, res, next) {
                 where: {
                     status: 'Active'
                 },
-                include: {model: Student, 
-                    include: [Learner]}}
+                include: [Learner]}
         })
 
         const inactiveStudents = await ClassLevel.findByPk(classId, {
@@ -194,8 +162,7 @@ export async function getAllStudents(req, res, next) {
                 where: {
                     status: 'Inactive'
                 },
-                include: {model: Student, 
-                    include: [Learner]}}
+                include: [Learner]}
         })
 
         const dropStudents = await ClassLevel.findByPk(classId, {
@@ -203,13 +170,16 @@ export async function getAllStudents(req, res, next) {
                 where: {
                     status: 'Drop'
                 },
-                include: {model: Student, 
-                    include: [Learner]}}
+                include: [Learner]}
         })
 
         res.status(201).json({ 
             message: "Fetched all modules successfully!",
-            data: [activeStudents, inactiveStudents, dropStudents]
+            data: {
+                active: activeStudents, 
+                inactive: inactiveStudents, 
+                drop: dropStudents
+            }
         });
     } catch (error) {
         if (!error.statusCode) {
