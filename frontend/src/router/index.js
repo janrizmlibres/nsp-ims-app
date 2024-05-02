@@ -45,34 +45,36 @@ const router = createRouter({
           },
           children: [
             {
-              path: ':term/class',
-              name: 'class-info',
-              component: ClassView,
-              props: true,
-              query: { id: Number },
+              path: '/class',
+              beforeEnter: (to) => {
+                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
+              },
               children: [
                 {
-                  path: 'add_learning_strand',
+                  path: '',
                   name: 'class-info',
-                  component: CreateClassesView
+                  component: ClassView,
+                  query: {id: Number}
                 },
                 {
                   path: '',
-                  name: 'strand-info',
-                  component: StrandView,
-                  query: Number,
-                  children: [
-                    {
-                      path: '',
-                      name: 'module-info',
-                      component: ModuleView,
-                      query: {
-                        module: Number
-                      }
-                    }
-                  ]
-                }
+                  name: 'add-learning-strand',
+                  component: CreateClassesView,
+                  query: {id: Number, action: String}
+                },
               ]
+            },
+            {
+              path: '/strand',
+              name: 'strand-info',
+              component: StrandView,
+              query: {id: Number},
+            },
+            {
+              path: '/module',
+              name: 'module-info',
+              component: ModuleView,
+              query: {id: Number}
             },
             {
               path: 'classes',
