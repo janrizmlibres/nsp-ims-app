@@ -3,20 +3,21 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
-// stores
-import { useRosterStore } from '@/stores/roster';
-
-
-const props = defineProps({data: Object, filters: Object})
+const props = defineProps(['data', 'filters'])
 const data = ref(props.data)
-// const enrollments = ref(props.data.enrollments)
-// const students = ref(enrollments.value.find(obj => {return obj.key === 'student'}))
-// const learners = ref(students.value.find(obj => {return obj.key === 'learner'}))
 const filters = ref(props.filters)
 
-const rosterStore = useRosterStore()
+const learners = ref([])
+
+onMounted(() => {
+    if (data.value != null) {
+        for (const enrollment of data.value) {
+            learners.value.push(enrollment.learner)
+        }
+    }
+})
 
 const dataColumns = ref([
     { field: 'lrn', header: 'LRN' },
@@ -27,9 +28,10 @@ const dataColumns = ref([
 ])
 
 const exportRef = ref()
-rosterStore.exportRef = exportRef
-
-const custom_pt = {
+function exportCSV() {
+    exportRef.value.exportCSV()
+}
+const customPt = {
     root: {
         class: ['flex flex-col pt-2 justify-between']
     },
@@ -104,32 +106,39 @@ const custom_pt = {
     }
 }
 </script>
-<!-- :sortField="{}" :sortOrder="-1" removableSort  -->
+
 <template>
     <DataTable 
-        :value="[]" dataKey="id" 
-
+        :value="learners" dataKey="id" 
+        sortField="lastName" :sortOrder="-1" removableSort 
         v-model:filters="filters" :globalFilterFields="['lrn', 'lastname', 'firstname', 'category']"
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
         ref="exportRef"  scrollable
         @rowSelect="{}" @rowUnselect="{}"
         :ptOptions="{mergeProps:true}"
-        :pt="custom_pt"
+        :pt="customPt"
     >
         <template #empty> <div class="text-center">No records found.</div> </template>
         <template #loading> <div class="text-center">Loading class roster. Please wait.</div> </template>
 
-        <Column header="">
+        <Column header="" style="width: 2rem">
             <template #body>
                 <Button label="change status" link />
             </template>
         </Column>
-        <Column header="">
+        <Column header="" style="width: 2rem">
             <template #body>
                 <Button label="drop" link />
             </template>
         </Column>
         <Column v-for="col of dataColumns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
+
+        <template #paginatorstart>
+            
+        </template>
+        <template #paginatorend>
+            <Button type="button" icon="pi pi-download" @click="exportCSV" text />
+        </template>
     </DataTable>
 </template>
 

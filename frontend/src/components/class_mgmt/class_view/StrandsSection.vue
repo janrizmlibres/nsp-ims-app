@@ -6,6 +6,7 @@ import Button from 'primevue/button';
 import ProgressSpinner from 'primevue/progressspinner';
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import { RouterLink } from 'vue-router'
 
 // stores
 import { useClassStore } from '@/stores/class';
@@ -18,8 +19,15 @@ const isFetching = ref(true)
 const allStrands = ref([])
 
 async function fetchStrands(id) {
-    const strands = await classStore.getAllStrands({classId: id})
-    allStrands.value.push(... strands)
+    route.value = useRoute()
+    isFetching.value = true
+    
+    try {
+        await classStore.getAllStrands(id)
+        allStrands.value = classStore.strands
+    } catch(error) {
+        console.log(error.response.data.message)
+    }
 
     isFetching.value = false
 }
@@ -32,7 +40,9 @@ watch(() => route.query.id, fetchStrands, {immediate: true})
         <div class="bg-transparent border-none flex flex-row gap-x-6 items-center px-4">
             <div class="u-txt-active font-semibold text-3xl content-center">Learning Strands</div>
             <div class="relative mr-2">
-                <Button type="button" icon="fa fa-plus" label="Add" @click="{}" aria-haspopup="true" aria-controls="overlay_menu" />
+                <router-link :to="{ name: 'add-learning-strand', query: { id: route.query.id, action: 'addLearningStrand' } }">
+                    <Button type="button" icon="fa fa-plus" label="Add" />
+                </router-link>
             </div>
         </div>
         <Divider class="before:border-t before:border-surface-400"/>

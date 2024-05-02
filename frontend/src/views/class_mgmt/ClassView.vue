@@ -12,19 +12,22 @@ import ClassRosterSection from '@/components/class_mgmt/class_view/ClassRosterSe
 // stores
 import { useClassStore } from '@/stores/class';
 
-defineProps(['term'])
 const route = useRoute()
 
 const classStore = useClassStore()
 
 const schoolLevel = ref()
-const isLoading = ref(true)
+const term = ref()
 
 async function fetchClassLevel(id) {
-    const classLevel = await classStore.getClass({classId: id})
-    schoolLevel.value = classLevel.school_level
-
-    isLoading.value = false
+    route.value = useRoute()
+    try {
+        await classStore.getClass(id)
+        schoolLevel.value = classStore.classLevel.school_level
+        term.value = classStore.classLevel.term.academic_year
+    } catch (error) {
+        console.log(error.response.data.message)
+    }
 }
 
 watch(() => route.query.id, fetchClassLevel, {immediate: true})

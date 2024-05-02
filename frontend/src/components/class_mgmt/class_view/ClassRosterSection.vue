@@ -3,6 +3,7 @@
 import Divider from 'primevue/divider';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import ProgressSpinner from 'primevue/progressspinner';
 import { FilterMatchMode } from 'primevue/api';
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -19,19 +20,28 @@ const route = useRoute()
 const classStore = useClassStore()
 
 const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 })
 
 const isFetching = ref(true)
-const active = ref()
-const inactive = ref()
-const drop = ref()
-async function fetchStudents(id) {
-    const students = await classStore.getAllStudents({classId: id})
+const active = ref([])
+const inactive = ref([])
+const drop = ref([])
 
-    active.value = students[0]
-    inactive.value = students[1]
-    drop.value = students[2]
+async function fetchStudents(id) {
+    route.value = useRoute()
+    isFetching.value = true
+    
+    try {
+        await classStore.getAllStudents(id)
+        const students = ref(classStore.students)
+        active.value = students.value.active.enrollments
+        inactive.value = students.value.inactive.enrollments
+        drop.value = students.value.drop != null ? students.value.drop.enrollments : null
+
+    } catch(error) {
+        console.log(error)
+    }
 
     isFetching.value = false
 }
@@ -47,7 +57,8 @@ watch(() => route.query.id, fetchStudents, {immediate: true})
         </div>
         <Divider class="before:border-t before:border-surface-400"/>
 
-        <TabView class="p-2 bg-white shadow-xl rounded-md">
+        <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+        <TabView v-else class="p-2 bg-white shadow-xl rounded-md">
             <TabPanel header="Active">
                 <RosterTable :data="active" :filters="filters" />
             </TabPanel>
