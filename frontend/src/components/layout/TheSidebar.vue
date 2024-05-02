@@ -120,7 +120,6 @@ onMounted(async () => {
               icon: 'fa fa-user-plus',
               route: {
                 name: 'class-info',
-                params: { term: activeTerm.academic_year },
                 query: { id: gradeSchool.id }
               }
             },
@@ -130,7 +129,6 @@ onMounted(async () => {
               icon: 'fa fa-user-plus',
               route: {
                 name: 'class-info',
-                params: { term: activeTerm.academic_year },
                 query: { id: juniorHighSchool.id }
               }
             }
