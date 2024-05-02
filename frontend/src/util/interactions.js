@@ -20,9 +20,11 @@ export function checkInputEmpty(input, isInvalid) {
 }
 
 /**
- * This is designed to get the error message from the error response. And does the necessary actions.
+ * This is designed to replace the standard error handling in axios requests. where the error response is displayed in a toast.
  * If the error response is "jwt expired", it will log out the user and redirect to the login page.
  * Otherwise, it will display the error message in a toast. This function can be used in the catch block of an axios request.
+ * The router and toast objects are from vue-router and PrimeVue respectively. The router parameter is needed to redirect the user to the login page,
+ * if the error response is "jwt expired".
  * for example:
  * ```javascript
  * try {
@@ -34,6 +36,8 @@ export function checkInputEmpty(input, isInvalid) {
  * @param errorResponse - the error response from an axios request
  * @param router - the router object from vue-router
  * @param toast - the toast object from PrimeVue
+ * @param summary - the summary of the toast message. Default is "Error"
+ * @param severity - the severity of the toast message. Default is "error"
  */
 export function errorChecker(errorResponse, router, toast, summary =  "Error", severity = "error") {
     const authStore = useAuthStore()
