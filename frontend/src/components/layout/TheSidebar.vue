@@ -119,7 +119,7 @@ onMounted(async () => {
               label: 'Grade School',
               icon: 'fa fa-user-plus',
               route: {
-                name: 'class-info',
+                name: 'class',
                 query: { id: gradeSchool.id }
               }
             },
@@ -128,7 +128,7 @@ onMounted(async () => {
               label: 'Junior High School',
               icon: 'fa fa-user-plus',
               route: {
-                name: 'class-info',
+                name: 'class',
                 query: { id: juniorHighSchool.id }
               }
             }
