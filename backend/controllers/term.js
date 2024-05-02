@@ -1,6 +1,6 @@
 import Term from "../models/term.js";
 import ClassLevel from "../models/class_level.js";
-import Student from "../models/nsp_student.js"
+import Learner from "../models/learner.js";
 
 export async function getActiveTerm(req, res, next) {
     try {
@@ -26,7 +26,7 @@ export async function getAllTerms(req, res, next) {
         const terms = await Term.findAll(
             {where: {status: false}, 
             include: [{model: ClassLevel, 
-                include: [Student]}]}
+                include: [Learner]}]}
         );
 
         res.status(200).json({
