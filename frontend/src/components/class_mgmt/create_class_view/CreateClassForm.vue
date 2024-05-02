@@ -10,6 +10,8 @@ import { onMounted, ref } from 'vue';
 
 // stores
 import { useClassStore } from '@/stores/class';
+import { useUtilitiesStore } from '@/stores/utilities';
+import { useVolunteerStore } from '@/stores/volunteer';
 
 const emit = defineEmits(['addForm'])
 const route = useRoute()
@@ -29,9 +31,11 @@ onMounted(async () => {
 })
 
 const classStore = useClassStore()
+const utilitiesStore = useUtilitiesStore()
+const volunteerStore = useVolunteerStore()
 const formData = ref({
-    name: '',
-    teacher: '',
+    strand: '',
+    volunteer: '',
     class_schedule: {
         school_days: [],
         start_time: ref(),
@@ -39,9 +43,9 @@ const formData = ref({
     }
 })
 
-const learningStrands = ref(['Mathematics', 'Science', 'Understanding the Self and Society']);
+const learningStrands = ref();
+const volunteers = ref()
 
-const teachers = ref(['Dela Cruz, Shelly', 'Fuentes, Alonzo', 'Firma, Alejandra', 'Horticullado, Gabriel', 'Santos, John']);
 const days = ref([
     {name: "M", key: "1"},
     {name: "T", key: "2"},
@@ -53,8 +57,8 @@ const days = ref([
 
 function resetForm() {
     formData.value = {
-        name: '',
-        teacher: '',
+        strand: '',
+        volunteer: '',
         class_schedule: {
             school_days: [],
             start_time: ref(),
@@ -67,6 +71,14 @@ function addForm() {
     emit('addForm', formData.value)
     resetForm()
 }
+
+onMounted(async () => {
+    await utilitiesStore.getLearningStrands()
+    learningStrands.value = utilitiesStore.learningStrands
+
+    await volunteerStore.getAllVolunteers()
+    volunteers.value = volunteerStore.volunteers
+})
 </script>
 
 <template>
@@ -93,14 +105,14 @@ function addForm() {
                 <div class="flex flex-col justify-between mb-8">
                     <span class="mr-3 u-txt-active">Learning Strand</span>
                     <span class="relative">
-                        <Dropdown v-model="formData.name" :options="learningStrands" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
+                        <Dropdown v-model="formData.strand" :options="learningStrands" optionLabel="name" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
                     </span>
                 </div>
 
                 <div class="flex flex-col justify-between">
                     <span class="mr-3 u-txt-active">Teacher</span>
                     <span class="relative">
-                        <Dropdown v-model="formData.teacher" :options="teachers" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
+                        <Dropdown v-model="formData.volunteer" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
                     </span>
                 </div>
             </div>
