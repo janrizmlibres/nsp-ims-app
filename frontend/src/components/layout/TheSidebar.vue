@@ -203,7 +203,7 @@ onMounted(async () => {
           key: '10-2',
           label: 'Audit Trails',
           icon: 'fa fa-clock-rotate-left',
-          route: { name: 'dashboard' }
+          route: { name: 'audit-trails' }
         }
       ]
     }

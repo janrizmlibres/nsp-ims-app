@@ -4,7 +4,6 @@ import LoginView from '../views/login/LoginView.vue'
 
 // Dashboard View
 import DashboardView from '../views/DashboardView.vue'
-import LoginView from '../views/login_view/LoginView.vue'
 import TheRootView from '@/views/TheRootView.vue'
 
 // Class Management Views
@@ -23,6 +22,7 @@ import TermView from '../views/term_view/TermView.vue'
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
 import StaffFormView from '@/views/staff_view/StaffFormView.vue'
+import AuditView from '@/views/staff_mgmt/AuditView.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -141,6 +141,16 @@ const router = createRouter({
               name: 'edit-staff',
               component: StaffFormView,
               props: true
+            }
+          ]
+        },
+        {
+          path: 'utilities',
+          children: [
+            {
+              path: 'audit-trails',
+              name: 'audit-trails',
+              component: AuditView
             }
           ]
         }
