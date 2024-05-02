@@ -35,7 +35,7 @@ export function checkInputEmpty(input, isInvalid) {
  * @param router - the router object from vue-router
  * @param toast - the toast object from PrimeVue
  */
-export function errorChecker(errorResponse, router, toast) {
+export function errorChecker(errorResponse, router, toast, summary =  "Error", severity = "error") {
     const authStore = useAuthStore()
     
     if (errorResponse  === "jwt expired") {
@@ -49,8 +49,8 @@ export function errorChecker(errorResponse, router, toast) {
         router.push({ name: 'login' })
     } else {
         toast.add({
-            severity: 'error',
-            summary: 'Error',
+            severity: severity,
+            summary: summary,
             detail: errorResponse,
             life: 3000
         })
