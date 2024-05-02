@@ -11,16 +11,26 @@ import ModuleSubmission from "../models/module_submission.js";
 import ClassLearningStrand from "../models/class_learning_strand.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Session from "../models/session.js";
+import Volunteer from "../models/volunteer.js";
+import StudentVolunteer from "../models/student_volunteer.js";
+import ProfessionalVolunteer from "../models/professional_volunteer.js";
+import VolunteerPersonalInformation from "../models/volunteer_personal_information.js";
+import VolunteerContactInformation from "../models/volunteer_contact_information.js";
+import VolunteerEmergency from "../models/volunteer_emergency_contact.js";
+import VolunteerSpecialization from "../models/volunteer_specialization.js";
 
 function setAssociations() {
     // Staff-Permission Relationship
-    Staff.hasOne(Permission);
+    Staff.hasOne(Permission, {
+        onDelete: 'RESTRICT',
+        onUpdate: 'CASCADE',
+    });
     Permission.belongsTo(Staff);
 
     // Year-Class Relationship
     Term.hasMany(ClassLevel, {
         onDelete: 'RESTRICT',
-        onUpdate: 'RESTRICT',
+        onUpdate: 'CASCADE',
     })
     ClassLevel.belongsTo(Term)
 
@@ -37,10 +47,7 @@ function setAssociations() {
     ClassSchedule.belongsTo(ClassLearningStrand)
 
     // ClassLearningStrand-Module Relationship
-    ClassLearningStrand.hasMany(Module, {
-        onDelete: 'RESTRICT',
-        onUpdate: 'CASCADE',
-    })
+    ClassLearningStrand.hasMany(Module)
     Module.belongsTo(ClassLearningStrand)
 
     // Student-ClassLevel Relationship
@@ -66,6 +73,32 @@ function setAssociations() {
     ModuleSubmission.belongsTo(Module)
     Learner.hasMany(ModuleSubmission)
     ModuleSubmission.belongsTo(Learner)
+
+    // Volunteer-Affiliation Relationship
+    Volunteer.hasOne(StudentVolunteer)
+    StudentVolunteer.belongsTo(Volunteer)
+    Volunteer.hasOne(ProfessionalVolunteer)
+    ProfessionalVolunteer.belongsTo(Volunteer)
+
+    // Volunteer-Personal Information Relationship
+    Volunteer.hasOne(VolunteerPersonalInformation)
+    VolunteerPersonalInformation.belongsTo(Volunteer)
+
+    // Volunteer-Contact Information Relationship
+    Volunteer.hasOne(VolunteerContactInformation)
+    VolunteerContactInformation.belongsTo(Volunteer)
+
+    // Volunteer-Emergency Contact Relationship
+    Volunteer.hasOne(VolunteerEmergency)
+    VolunteerEmergency.belongsTo(Volunteer)
+
+    // Volunteer-Availability Relationship
+    Volunteer.hasOne(VolunteerSpecialization)
+    VolunteerSpecialization.belongsTo(Volunteer)
+
+    // Volunteer-Specialization Relationship
+    Volunteer.hasOne(VolunteerSpecialization)
+    VolunteerSpecialization.belongsTo(Volunteer)
 }
 
 export default setAssociations
