@@ -25,13 +25,13 @@ const tableData = ref([])
 
 function addForm(data) {
     learningStrandData.value.push({
-        name: data.name,
-        teacher: data.teacher
+        name: data.strand.name,
+        teacher: data.volunteer.fullname
     })
 
     for (var school_day of data.class_schedule.school_days) {
         scheduleData.value.push({
-            name: data.name,
+            name: data.strand.name,
             day: school_day,
             start_time: data.class_schedule.start_time.getUTCHours (),
             end_time: data.class_schedule.end_time.getUTCHours (),
@@ -39,8 +39,8 @@ function addForm(data) {
     }
 
     tableData.value.push({
-        name: data.name,
-        teacher: data.teacher,
+        name: data.strand.name,
+        teacher: data.volunteer.fullname,
         school_days: data.class_schedule.school_days.toString(),
         start_time: data.class_schedule.start_time.toLocaleTimeString(),
         end_time: data.class_schedule.end_time.toLocaleTimeString()
