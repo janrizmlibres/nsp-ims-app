@@ -1,7 +1,18 @@
+import bcrypt from "bcryptjs";
+
+import Student from "../models/student.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import Staff from "../models/staff.js";
-import bcrypt from "bcryptjs";
+
+export async function injectStudent() {
+  await Student.create({
+    lrn: "198765150721",
+    category: "Out-of-School Youth",
+    firstName: "Juan",
+    lastName: "Dela Cruz",
+  });
+}
 
 export async function injectStaff() {
   const staffData = [

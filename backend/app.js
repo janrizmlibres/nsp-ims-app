@@ -1,15 +1,15 @@
 import express from "express";
 
 import sequelize from "./util/database.js";
+import setAssociations from "./util/relations.js";
+import * as dbInjector from "./util/db_injector.js";
+import "./util/relations.js";
+
+import profileRoutes from "./routes/profile.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
 import termRoutes from "./routes/term.js";
-import classRoutes from "./routes/class.js"
-import setAssociations from "./util/relations.js";
-import bcrypt from "bcryptjs";
-
-import * as dbInjector from "./util/db_injector.js";
-import "./util/relations.js";
+import classRoutes from "./routes/class.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -35,12 +35,13 @@ app.get("/", (_, res) => {
   res.send("Please enter a valid endpoint.");
 });
 
+app.use("/profile", profileRoutes);
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
 app.use("/term", termRoutes);
 app.use("/class", classRoutes);
 
-app.use((error, req, res, next) => {
+app.use((error, _req, res) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
@@ -49,6 +50,7 @@ app.use((error, req, res, next) => {
 
 try {
   await sequelize.sync({ force: true });
+  await dbInjector.injectStudent();
   await dbInjector.injectStaff();
   await dbInjector.injectAcademicYear();
   await dbInjector.injectLearningStrand();
