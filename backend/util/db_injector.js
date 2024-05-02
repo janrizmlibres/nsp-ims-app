@@ -4,6 +4,7 @@ import Staff from "../models/staff.js";
 import ClassLevel from "../models/class_level.js";
 import bcrypt from "bcryptjs";
 import Learner from "../models/learner.js";
+import Volunteer from "../models/volunteer.js";
 
 export async function injectStaff() {
   const staffData = [
@@ -341,6 +342,83 @@ export async function injectLearningStrand() {
   await Promise.all(
     learningStrandData.map(async (learning_strand) => {
       await LearningStrand.create(learning_strand);
+    })
+  );
+}
+
+export async function injectVolunteer() {
+  const volunteerData = [
+    {
+      volunteerId: 1,
+      affiliation: 'Student',
+      lastName: 'Dela Cruz',
+      firstName: 'Shelly'
+    },
+    {
+      volunteerId: 2,
+      affiliation: 'Student',
+      lastName: 'Fuentes',
+      firstName: 'Alonzo'
+    },
+    {
+      volunteerId: 3,
+      affiliation: 'Student',
+      lastName: 'Firma',
+      firstName: 'Alejandra'
+    },
+    {
+      volunteerId: 4,
+      affiliation: 'Student',
+      lastName: 'Horticullado',
+      firstName: 'Gabriel'
+    },
+    {
+      volunteerId: 5,
+      affiliation: 'Student',
+      lastName: 'Santos',
+      firstName: 'John'
+    },
+    {
+      volunteerId: 6,
+      affiliation: 'Student',
+      lastName: 'Dapin',
+      firstName: 'Job'
+    },
+    {
+      volunteerId: 7,
+      affiliation: 'Student',
+      lastName: 'Roa',
+      firstName: 'Wilson'
+    },
+    {
+      volunteerId: 8,
+      affiliation: 'Student',
+      lastName: 'Dimagiba',
+      firstName: 'Felixson'
+    },
+    {
+      volunteerId: 9,
+      affiliation: 'Student',
+      lastName: 'Goma',
+      firstName: 'Fernan'
+    },
+    {
+      volunteerId: 10,
+      affiliation: 'Student',
+      lastName: 'Lopez',
+      firstName: 'Kenneth'
+    },
+    {
+      volunteerId: 11,
+      affiliation: 'Student',
+      lastName: 'Sayson',
+      firstName: 'Daisy'
+    },
+  ]
+
+  await Promise.all(
+    volunteerData.map(async (volunteer) => {
+      await Volunteer.create(volunteer);
     })
   );
 }
