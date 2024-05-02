@@ -47,6 +47,10 @@
   .u-bg-pcolor-darker {
     background-color: #1c467e;
   }
+
+  .u-border-bottom {
+      border-bottom: 5px solid #265492;
+  }
   
   .u-bc-button {
     border-color: #1c467e;
