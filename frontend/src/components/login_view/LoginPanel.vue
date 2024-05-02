@@ -1,7 +1,6 @@
 ﻿<script setup>
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
-import { checkInputEmpty } from '@/util/interactions.js'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 
@@ -9,6 +8,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
+import { errorChecker } from '@/util/interactions.js'
 
 const authStore = useAuthStore()
 const toast = useToast()
