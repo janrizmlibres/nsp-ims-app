@@ -1,13 +1,13 @@
 import { INTEGER, STRING, DATE, TEXT } from "sequelize";
 import sequelize from "../util/database.js";
-import Student from "./nsp_student.js";
+import Learner from "./learner.js";
 import Session from "./session.js";
 
 const Attendance = sequelize.define("attendance", {
-  studentId: {
+  learnerId: {
       type: INTEGER,
       references: {
-      model: Student,
+      model: Learner,
       key: 'id',
       },
   },

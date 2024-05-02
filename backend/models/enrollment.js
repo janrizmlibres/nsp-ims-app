@@ -1,13 +1,13 @@
 import { INTEGER, STRING, DATE, BOOLEAN, TEXT } from "sequelize";
 import sequelize from "../util/database.js";
-import Student from "./nsp_student.js";
+import Learner from "./learner.js";
 import ClassLevel from "./class_level.js";
 
 const Enrollment = sequelize.define('enrollment', {
-    nspStudentId: {
+    learnerId: {
         type: INTEGER,
         references: {
-        model: Student,
+        model: Learner,
         key: 'id',
         },
     },
@@ -19,6 +19,10 @@ const Enrollment = sequelize.define('enrollment', {
         },
     },
     hasEnrollmentForm: BOOLEAN,
+    digital_literacy: INTEGER,
+    ftl_pretest: INTEGER,
+    callable: BOOLEAN,
+    bridger: BOOLEAN,
     dateEnrolled: DATE,
     status: STRING,
     modularity: STRING,
