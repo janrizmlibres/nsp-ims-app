@@ -1,4 +1,4 @@
-import { INTEGER, STRING, DATE, TEXT } from "sequelize";
+import { INTEGER, DATE } from "sequelize";
 import sequelize from "../util/database.js";
 
 const Session = sequelize.define("session", {

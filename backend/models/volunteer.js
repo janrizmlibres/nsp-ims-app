@@ -1,4 +1,4 @@
-import { INTEGER, DATE, BOOLEAN, STRING } from "sequelize";
+import { INTEGER, STRING, VIRTUAL } from "sequelize";
 import sequelize from "../util/database.js";
 
 const Volunteer = sequelize.define("volunteer", {

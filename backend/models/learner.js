@@ -1,4 +1,4 @@
-import { INTEGER, DATE, BOOLEAN, STRING, MEDIUMINT, BIGINT } from "sequelize";
+import { INTEGER, STRING, BIGINT } from "sequelize";
 import sequelize from "../util/database.js";
 
 const Learner = sequelize.define("learner", {

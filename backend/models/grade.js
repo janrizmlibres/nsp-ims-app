@@ -1,4 +1,4 @@
-import { INTEGER, STRING, DATE } from "sequelize";
+import { INTEGER, STRING } from "sequelize";
 import sequelize from "../util/database.js";
 import Student from "./nsp_student.js";
 import ClassLearningStrand from "./class_learning_strand.js";
