@@ -342,12 +342,12 @@ function setVisibility(keyValue) {
 }
 
 const handleMouseOver = () => {
-  sidebarStore.handleMouseOver();
-};
+  sidebarStore.handleMouseOver()
+}
 
 const handleMouseLeave = () => {
-  sidebarStore.handleMouseLeave();
-};
+  sidebarStore.handleMouseLeave()
+}
 </script>
 
 <template>
