@@ -1,34 +1,43 @@
 <script setup>
+// Presets
 import Dropdown from 'primevue/dropdown';
 import Checkbox from 'primevue/checkbox';
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import { useTermStore } from '@/stores/term';
+import { useRoute } from 'vue-router';
+import { onMounted, ref } from 'vue';
 
-import { onBeforeMount, ref } from 'vue';
+// stores
 import { useClassStore } from '@/stores/class';
 
-const props = defineProps(['id', 'formData'])
 const emit = defineEmits(['addForm'])
+const route = useRoute()
 
-const instance = ref()
-const level_name = ref('')
-onBeforeMount(async () => {
+const term = ref()
+const schoolLevel = ref()
+
+onMounted(async () => {
     try {
-        const result = await classStore.getClass({classId: props.id})
-        console.log(result);
-        instance.value = result.data.class
-        level_name.value = ref(instance.value.school_level)
-        console.log(level_name.value);
+        await classStore.getClass(route.query.id)
+        const classLevel = ref(classStore.classLevel)
+        schoolLevel.value = classLevel.value.school_level
+        term.value = classLevel.value.term.academic_year
     } catch (error) {
         console.log(error.response.data.message)
     }
 })
 
-const termStore = useTermStore()
 const classStore = useClassStore()
-const formData = ref(props.formData)
+const formData = ref({
+    name: '',
+    teacher: '',
+    class_schedule: {
+        school_days: [],
+        start_time: ref(),
+        end_time: ref()
+    }
+})
 
 const learningStrands = ref(['Mathematics', 'Science', 'Understanding the Self and Society']);
 
@@ -65,13 +74,13 @@ function addForm() {
         <div>
             <span class="mr-3 u-txt-active">School Year</span>
             <span class="relative">
-                <InputText disabled :placeholder="termStore.activeTerm.academic_year" />
+                <InputText disabled :placeholder="term" />
             </span>
         </div>
         <div>
             <span class="mr-3 u-txt-active">School Level</span>
             <span class="relative">
-                <InputText disabled :placeholder="level_name.value" />
+                <InputText disabled :placeholder="schoolLevel" />
             </span>
         </div>
     </div>
