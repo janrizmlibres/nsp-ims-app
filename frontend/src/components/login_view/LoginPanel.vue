@@ -55,13 +55,13 @@ async function submitEvent() {
     await authStore.login(id, password)
     await router.replace({ name: 'dashboard' })
   } catch (error) {
-    console.log(error)
-    toast.add({
-      severity: 'error',
-      summary: 'Error Logging In',
-      detail: error.response.data.message,
-      life: 3000
-    })
+    errorChecker(
+      error.response.data.message, 
+      router, 
+      toast, 
+      "error", 
+      "Error Logging In"
+    )
   }
 }
 </script>
