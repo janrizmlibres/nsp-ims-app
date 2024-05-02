@@ -1,9 +1,9 @@
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import Staff from "../models/staff.js";
+import ClassLevel from "../models/class_level.js";
 import bcrypt from "bcryptjs";
 import Learner from "../models/learner.js";
-import Student from "../models/nsp_student.js";
 
 export async function injectStaff() {
   const staffData = [
@@ -280,22 +280,6 @@ export async function injectLearner() {
     await Learner.create(learner);
   }));
 
-  const learners = await Learner.findAll()
-
-  await Promise.all(learners.map(async (learner) => {
-    await learner.createStudent(
-      {
-        ftl_pretest: getRandomInt(0, 100)
-      }
-    )
-  }));
-
-  function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
   const class_levels = await ClassLevel.findAll()
 
   function getRandomStatus() {
@@ -304,10 +288,10 @@ export async function injectLearner() {
   }
 
   await Promise.all(class_levels.map(async (class_level) => {
-    const students = await Student.findAll()
+    const learners = await Learner.findAll()
 
-    await Promise.all(students.map(async (student) => {
-      class_level.addStudent(student, {
+    await Promise.all(learners.map(async (learner) => {
+      class_level.addLearner(learner, {
         through: {
           hasEnrollmentForm: true,
           status: getRandomStatus(),
