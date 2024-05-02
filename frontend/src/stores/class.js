@@ -4,77 +4,69 @@ import { ref } from 'vue'
 import { useAuthStore } from './auth'
 
 export const useClassStore = defineStore('class', () => {
-    const allStrands = ref(JSON.parse(sessionStorage.getItem('allStrands')))
+    const classLevel = ref()
+    const strands = ref()
+    const modules = ref()
+    const students = ref()
 
-    async function count(formData) {
+    async function getClass(classId) {
         const authStore = useAuthStore()
 
-        const result = await axios.get('http://localhost:8080/class/count', {
-            headers: {Authorization: 'Bearer ' + authStore.token},
-            data: formData
-        })
-
-        return result
-    }
-
-    async function getClass(form) {
-        const authStore = useAuthStore()
-
-        const result = await axios.post('http://localhost:8080/class/getClass', form, {
+        const result = await axios.get(`http://localhost:8080/class/${classId}`, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
 
-        return result.data.data
+        classLevel.value = result.data.data
     }
     
 
-    async function addLearningStrand(form) {
+    async function addLearningStrand(classId, form) {
         const authStore = useAuthStore()
 
-        await axios.post('http://localhost:8080/class/addLearningStrand', form, {
+        await axios.post(`http://localhost:8080/class/${classId}/learningStrand/add`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
     }
 
-    async function addSchedule(form) {
+    async function addSchedule(classId, form) {
         const authStore = useAuthStore()
 
-        await axios.post('http://localhost:8080/class/learningStrand/addSchedule', form, {
+        await axios.post(`http://localhost:8080/class/${classId}/learningStrand/schedule/add`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
     }
 
-    async function getAllStrands(form) {
+    async function getAllStrands(classId) {
         const authStore = useAuthStore()
 
-        const result = await axios.post('http://localhost:8080/class/allStrands', form, {
-            headers: {Authorization: 'Bearer ' + authStore.token},
-        })
-        
-        return result.data.data
-    }
-
-    async function getAllModules(form) {
-        const authStore = useAuthStore()
-
-        const result = await axios.post('http://localhost:8080/class/allModules', form, {
+        const result = await axios.get(`http://localhost:8080/class/${classId}/strands`, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        return result.data.data
+        strands.value = result.data.data
     }
 
-    async function getAllStudents(form) {
+    async function getAllModules(classId) {
         const authStore = useAuthStore()
 
-        const result = await axios.post('http://localhost:8080/class/allStudents', form, {
+        const result = await axios.get(`http://localhost:8080/class/${classId}/modules`, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        return result.data.data
+        modules.value = result.data.data
     }
 
-    return { allStrands, count, getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules, getAllStudents }
+    async function getAllStudents(classId) {
+        const authStore = useAuthStore()
+
+        const result = await axios.get(`http://localhost:8080/class/${classId}/students`, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+        
+        students.value = result.data.data
+    }
+
+    return { classLevel, strands, modules, students, getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules, getAllStudents }
 })
 
 
