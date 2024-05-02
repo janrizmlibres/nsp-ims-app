@@ -7,7 +7,7 @@ import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
-import CreateClassesView from '../views/class_mgmt/CreateClassesView.vue'
+import AddStrandView from '../views/class_mgmt/AddStrandView.vue'
 
 import StudentRequirementView from '../views/requirement_view/StudentRequirementView.vue'
 import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
@@ -18,6 +18,7 @@ import PermissionsView from '@/views/staff_view/PermissionsView.vue'
 import StaffFormView from '@/views/staff_view/StaffFormView.vue'
 
 import { useAuthStore } from '@/stores/auth'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,7 +60,7 @@ const router = createRouter({
                 {
                   path: '',
                   name: 'add-learning-strand',
-                  component: CreateClassesView,
+                  component: AddStrandView,
                   query: {id: Number, action: String}
                 },
               ]
