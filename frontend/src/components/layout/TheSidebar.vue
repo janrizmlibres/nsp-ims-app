@@ -2,6 +2,7 @@
 // Presets
 import Button from 'primevue/button'
 import PanelMenu from 'primevue/panelmenu'
+import Skeleton from 'primevue/skeleton'
 
 // Utils
 import { onMounted, ref } from 'vue'
@@ -16,7 +17,7 @@ const termStore = useTermStore()
 const authStore = useAuthStore()
 
 const items = ref([])
-
+const isFetching = ref(true)
 onMounted(async () => {
   const activeTerm = await termStore.getActiveTerm()
 
@@ -207,6 +208,8 @@ onMounted(async () => {
       ]
     }
   ]
+
+  isFetching.value = false
 })
 
 const buttonPt = {
@@ -339,12 +342,12 @@ function setVisibility(keyValue) {
 }
 
 const handleMouseOver = () => {
-  sidebarStore.handleMouseOver();
-};
+  sidebarStore.handleMouseOver()
+}
 
 const handleMouseLeave = () => {
-  sidebarStore.handleMouseLeave();
-};
+  sidebarStore.handleMouseLeave()
+}
 </script>
 
 <template>
@@ -379,7 +382,11 @@ const handleMouseLeave = () => {
     </div>
     <div class="border-t mx-6"></div>
 
+    <div v-if="isFetching" class="h-full p-4">
+      <Skeleton class="h-full" />
+    </div>
     <PanelMenu
+      v-else
       class="h-full overflow-y-auto overflow-x-hidden mb-4"
       v-model:expandedKeys="expandedKeys"
       :model="items"
@@ -429,8 +436,8 @@ const handleMouseLeave = () => {
         <span class="fa fa-circle-user text-surface-100" />
       </span>
       <div class="flex flex-col u-sidebar-footer-text">
-        <span>{{}}</span>
-        <span class="text-sm">{{}}</span>
+        <span>{{ authStore.userName }}</span>
+        <span class="text-sm">Role</span>
       </div>
     </div>
   </div>
