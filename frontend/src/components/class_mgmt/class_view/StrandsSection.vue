@@ -18,12 +18,13 @@ const classStore = useClassStore()
 const isFetching = ref(true)
 const allStrands = ref([])
 
-async function fetchStrands(id) {
+async function fetchStrands(query) {
+    console.log(query);
     route.value = useRoute()
     isFetching.value = true
     
     try {
-        await classStore.getAllStrands(id)
+        await classStore.getAllStrands(query.id)
         allStrands.value = classStore.strands
     } catch(error) {
         console.log(error.response.data.message)
@@ -32,7 +33,7 @@ async function fetchStrands(id) {
     isFetching.value = false
 }
 
-watch(() => route.query.id, fetchStrands, {immediate: true})
+watch(() => route.query, fetchStrands, {immediate: true})
 </script>
 
 <template>
@@ -40,7 +41,7 @@ watch(() => route.query.id, fetchStrands, {immediate: true})
         <div class="bg-transparent border-none flex flex-row gap-x-6 items-center px-4">
             <div class="u-txt-active font-semibold text-3xl content-center">Learning Strands</div>
             <div class="relative mr-2">
-                <router-link :to="{ name: 'add-learning-strand', query: { id: route.query.id, action: 'addLearningStrand' } }">
+                <router-link :to="{ name: 'class', query: { id: route.query.id, action: 'addLearningStrand' } }">
                     <Button type="button" icon="fa fa-plus" label="Add" />
                 </router-link>
             </div>
