@@ -7,7 +7,6 @@ import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
-import AddStrandView from '../views/class_mgmt/AddStrandView.vue'
 
 import StudentRequirementView from '../views/requirement_view/StudentRequirementView.vue'
 import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
@@ -47,23 +46,14 @@ const router = createRouter({
           children: [
             {
               path: '/class',
+              name: 'class',
+              component: ClassView,
+              query: {
+                id: Number, action: String
+              },
               beforeEnter: (to) => {
                 return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
-              },
-              children: [
-                {
-                  path: '',
-                  name: 'class-info',
-                  component: ClassView,
-                  query: {id: Number}
-                },
-                {
-                  path: '',
-                  name: 'add-learning-strand',
-                  component: AddStrandView,
-                  query: {id: Number, action: String}
-                },
-              ]
+              }
             },
             {
               path: '/strand',
