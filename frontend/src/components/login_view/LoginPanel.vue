@@ -20,6 +20,18 @@ const passwordInput = ref(null)
 const isUsernameInvalid = ref(false)
 const isPasswordInvalid = ref(false)
 
+function checkInputEmpty(input, isInvalid) {
+  const inputValue = input.value || '';
+
+  if (inputValue.trim() === '') {
+    isInvalid.value = true;
+    return true;
+  } else {
+    isInvalid.value = false
+    return false;
+  }
+}
+
 function checkInputEmptyForUsername() {
   checkInputEmpty(userIdInput, isUsernameInvalid)
 }
