@@ -1,4 +1,4 @@
-import { INTEGER, STRING, DATE, VIRTUAL } from "sequelize";
+import { INTEGER, STRING, DATE, VIRTUAL, INET } from "sequelize";
 import sequelize from "../util/database.js";
 
 const Staff = sequelize.define("staff", {
@@ -24,6 +24,15 @@ const Staff = sequelize.define("staff", {
   hashedPw: {
     type: STRING,
     allowNull: false,
+  },
+  // Access Levels:
+  // 1 - Admin
+  // 2 - Sub-Admin
+  // 3 - Staff
+  accessLevel: {
+    type: INTEGER,
+    allowNull: false,
+    defaultValue: 3,
   },
   fullname: {
     type: VIRTUAL,
