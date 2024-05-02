@@ -1,17 +1,24 @@
 import { createRouter, createWebHistory } from 'vue-router'
+// Login View
+import LoginView from '../views/login/LoginView.vue'
+
+// Dashboard View
 import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/login_view/LoginView.vue'
 import TheRootView from '@/views/TheRootView.vue'
 
+// Class Management Views
 import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
 
+// Utilities Views
 import StudentRequirementView from '../views/requirement_view/StudentRequirementView.vue'
 import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
 import TermView from '../views/term_view/TermView.vue'
 
+// Staff Management Views
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
 import StaffFormView from '@/views/staff_view/StaffFormView.vue'
