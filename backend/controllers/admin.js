@@ -1,15 +1,18 @@
 import { validationResult } from "express-validator";
 import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
+import Audit from "../models/audit.js";
 import bcrypt from "bcrypt";
 
 export async function getStaffs(req, res, next) {
   try {
-    let { includePerms } = req.query;
+    let { includePerms, includeAudit } = req.query;
+    let associations = [];
 
-    const staffs = await Staff.findAll(
-      includePerms === "true" ? { include: Permission } : {}
-    );
+    if (includePerms) associations.push(Permission);
+    if (includeAudit) associations.push(Audit);
+
+    const staffs = await Staff.findAll({ include: associations });
 
     res.status(200).json({
       message: "Fetched all staff successfully.",

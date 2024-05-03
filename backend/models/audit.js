@@ -1,5 +1,5 @@
 import { DATE, INTEGER, STRING } from "sequelize";
-import sequelize from "../util/database";
+import sequelize from "../util/database.js";
 
 const Audit = sequelize.define("audit", {
   id: {

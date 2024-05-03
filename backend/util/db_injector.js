@@ -23,6 +23,11 @@ export async function injectStaff() {
         canMgStudReq: true,
         canMgStaff: true,
       },
+      {
+        id: 7,
+        description: "Added Staff with ID: 53725",
+        date: new Date(),
+      },
     ],
     [
       {
@@ -41,6 +46,11 @@ export async function injectStaff() {
         canMgLs: true,
         canMgStudReq: true,
         canMgStaff: true,
+      },
+      {
+        id: 2,
+        description: "Added Staff with ID: 53697",
+        date: new Date(),
       },
     ],
     [
@@ -61,6 +71,11 @@ export async function injectStaff() {
         canMgStudReq: true,
         canMgStaff: true,
       },
+      {
+        id: 3,
+        description: "Added Staff with ID: 53698",
+        date: new Date(),
+      },
     ],
     [
       {
@@ -74,6 +89,11 @@ export async function injectStaff() {
         canMgStuds: true,
         canMgVolunteer: true,
         canMgClass: true,
+      },
+      {
+        id: 4,
+        description: "Added Staff with ID: 53699",
+        date: new Date(),
       },
     ],
     [
@@ -91,6 +111,11 @@ export async function injectStaff() {
         canMgStudReq: true,
         canMgStaff: true,
       },
+      {
+        id: 5,
+        description: "Added Staff with ID: 53723",
+        date: new Date(),
+      },
     ],
     [
       {
@@ -105,17 +130,23 @@ export async function injectStaff() {
         canMgClass: true,
         canMgStudReq: true,
       },
+      {
+        id: 6,
+        description: "Added Staff with ID: 53724",
+        date: new Date(),
+      },
     ],
   ];
 
   const createStaff = async (staffData) => {
-    const [staff, perms] = staffData;
+    const [staff, perms, audit] = staffData;
 
     staff.hashedPw = await bcrypt.hash(staff.password, 12);
     delete staff.password;
 
     const createdStaff = await Staff.create(staff);
     await createdStaff.createPermission(perms);
+    await createdStaff.createAudit(audit);
   };
 
   await Promise.all(staffData.map(createStaff));
