@@ -2,7 +2,7 @@
 import InputText from 'primevue/inputtext'
 import { ref } from 'vue'
 
-const props = defineProps({ formDataProp: Object })
+const props = defineProps({ formDataProp: Object, isEditView: Boolean })
 const formData = ref(props.formDataProp)
 </script>
 
@@ -18,30 +18,6 @@ const formData = ref(props.formDataProp)
 
     <div class="flex grow font-medium pt-10">
       <div class="basis-1/2 pr-16 pl-2">
-        <div class="flex gap-10 mb-2 items-center">
-          <div class="basis-32 text-right">
-            <span>Username</span>
-          </div>
-          <InputText
-            class="grow h-10"
-            type="text"
-            v-model="formData.username"
-            @update:modelValue="$emit('dataChanged', formData)"
-          />
-        </div>
-
-        <div class="flex gap-10 mb-14 items-center">
-          <div class="basis-32 text-right">
-            <span>Password</span>
-          </div>
-          <InputText
-            class="grow h-10"
-            type="text"
-            v-model="formData.password"
-            @update:modelValue="$emit('dataChanged', formData)"
-          />
-        </div>
-
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
             <span>First Name</span>
@@ -78,7 +54,7 @@ const formData = ref(props.formDataProp)
           />
         </div>
 
-        <div class="flex gap-10 items-center">
+        <div class="flex gap-10 mb-12 items-center">
           <div class="basis-32 text-right">
             <span>Suffix</span>
           </div>
@@ -86,6 +62,18 @@ const formData = ref(props.formDataProp)
             class="w-20 h-10"
             type="text"
             v-model="formData.suffixName"
+            @update:modelValue="$emit('dataChanged', formData)"
+          />
+        </div>
+
+        <div v-show="isEditView" class="flex gap-10 items-center">
+          <div class="basis-32 text-right">
+            <span>Password</span>
+          </div>
+          <InputText
+            class="grow h-10"
+            type="text"
+            v-model="formData.password"
             @update:modelValue="$emit('dataChanged', formData)"
           />
         </div>
@@ -112,6 +100,18 @@ const formData = ref(props.formDataProp)
             class="grow h-10"
             type="text"
             v-model="formData.email"
+            @update:modelValue="$emit('dataChanged', formData)"
+          />
+        </div>
+
+        <div class="flex gap-10 mb-2 items-center">
+          <div class="basis-32 text-right">
+            <span>Position</span>
+          </div>
+          <InputText
+            class="grow h-10"
+            type="text"
+            v-model="formData.position"
             @update:modelValue="$emit('dataChanged', formData)"
           />
         </div>

@@ -14,7 +14,7 @@ import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
 import TermView from '../views/term_view/TermView.vue'
 import RecordsView from '@/views/staff_view/RecordsView.vue'
 import PermissionsView from '@/views/staff_view/PermissionsView.vue'
-import AddStaffView from '@/views/staff_view/AddStaffView.vue'
+import StaffFormView from '@/views/staff_view/StaffFormView.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -110,7 +110,13 @@ const router = createRouter({
     {
       path: '/staffs/add',
       name: 'add-staff',
-      component: AddStaffView
+      component: StaffFormView
+    },
+    {
+      path: '/staffs/:userId',
+      name: 'edit-staff',
+      component: StaffFormView,
+      props: true
     },
     { path: '/:misc(.*)', redirect: { name: 'login' } }
   ]
