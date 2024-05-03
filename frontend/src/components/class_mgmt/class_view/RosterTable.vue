@@ -111,7 +111,7 @@ const customPt = {
     <DataTable 
         :value="learners" dataKey="id" 
         sortField="lastName" :sortOrder="-1" removableSort 
-        v-model:filters="filters" :globalFilterFields="['lrn', 'lastname', 'firstname', 'category']"
+        v-model:filters="filters" :globalFilterFields="['lrn', 'lastName', 'firstName', 'category']"
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
         ref="exportRef"  scrollable
         @rowSelect="{}" @rowUnselect="{}"
