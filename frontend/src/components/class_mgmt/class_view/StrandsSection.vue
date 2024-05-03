@@ -51,7 +51,7 @@ watch(() => route.query, fetchStrands, {immediate: true})
         <ProgressSpinner v-if="isFetching && allStrands.length === 0" class="flex justify-center" />
         <span v-else-if="!isFetching && allStrands.length === 0" class="flex flex-col text-center">No learning strands created.</span>
         <div v-else class="grid lg:grid-cols-3 md:grid-cols-1 gap-12 p-4">
-            <StrandCard v-for="learningStrand of allStrands" :key="learningStrand.teacher" :title="learningStrand.learning_strand.name" :teacher="learningStrand.teacher"/>
+            <StrandCard v-for="learningStrand of allStrands" :key="learningStrand.teacher" :title="learningStrand.learning_strand.name" :teacher="learningStrand.teacher" :schedule="learningStrand.class_schedules" />
         </div>
     </div>
 </template>
