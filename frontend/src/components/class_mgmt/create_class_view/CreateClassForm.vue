@@ -5,6 +5,7 @@ import Checkbox from 'primevue/checkbox';
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
+import InputIcon from 'primevue/inputicon';
 import { useRoute } from 'vue-router';
 import { onMounted, ref } from 'vue';
 
@@ -133,13 +134,13 @@ onMounted(async () => {
                     <div>
                         <span class="mr-3 u-txt-active">Start Time</span>
                         <div>
-                            <Calendar id="calendar-timeonly" v-model="formData.class_schedule.start_time" timeOnly hourFormat="12" />
+                            <Calendar id="calendar-timeonly" v-model="formData.class_schedule.start_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
                         </div>
                     </div>
                     <div>
                         <span class="mr-3 u-txt-active">End Time</span>
                         <div>
-                            <Calendar id="calendar-timeonly" v-model="formData.class_schedule.end_time" timeOnly hourFormat="12" />
+                            <Calendar id="calendar-timeonly" v-model="formData.class_schedule.end_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
                         </div>
                     </div>
                 </div>
