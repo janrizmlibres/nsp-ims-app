@@ -34,7 +34,7 @@ export const useRequirementStore = defineStore('requirements', {
         ],
 
         dataColumns: [
-            { field: 'requirement_name', header: 'Student Requirement Name' }
+            { field: 'requirement_name', header: 'Student Requirement' }
     ],
   }),
 })
