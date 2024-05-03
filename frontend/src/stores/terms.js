@@ -73,8 +73,7 @@ export const useTermStore = defineStore('terms', {
             { field: 'batch_number', header: 'Batch No.' },
             { field: 'academic_year', header: 'Academic Year' },
             { field: 'start_date', header: 'Start Date' },
-            { field: 'end_date', header: 'End Date' },
-            { field: 'term_status', header: 'Status' }
+            { field: 'end_date', header: 'End Date' }
     ],
   }),
 })
