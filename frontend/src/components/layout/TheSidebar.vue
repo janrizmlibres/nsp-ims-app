@@ -178,18 +178,18 @@ async function render(activeTerm) {
       },
       {
         key: '8',
-        label: 'Utilities',
+        label: 'Utilities & Configurations',
         icon: 'fa fa-gear',
         items: [
           {
             key: '8-1',
-            label: 'Learning Strand Management',
+            label: 'Learning Strand Config',
             icon: 'fa fa-book',
             route: { name: 'learning-strand-management' }
           },
           {
             key: '8-2',
-            label: 'Student Requirements Management',
+            label: 'Student Requirements Config',
             icon: 'fa fa-list',
             route: { name: 'student-requirements-management' }
           },
