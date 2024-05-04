@@ -5,7 +5,6 @@ import Checkbox from 'primevue/checkbox';
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import InputIcon from 'primevue/inputicon';
 import { useRoute } from 'vue-router';
 import { onMounted, ref } from 'vue';
 
