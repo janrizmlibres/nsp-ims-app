@@ -53,6 +53,13 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function logout() {
+    try {
+      const result = axios.post('http://localhost:8080/auth/logout', { refreshToken: refreshToken.value })
+    
+    } catch (error) {
+      console.error('Failed to logout', error)
+    }
+    
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('refreshToken')
     sessionStorage.removeItem('staff')
