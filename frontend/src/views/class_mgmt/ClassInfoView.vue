@@ -19,17 +19,21 @@ const classStore = useClassStore()
 const schoolLevel = ref()
 const term = ref()
 
-async function fetchClassLevel(id) {
+async function fetchClassLevel(query) {
     try {
-        await classStore.getClass(id)
+        await classStore.getClass(query.id)
         schoolLevel.value = classStore.classLevel.school_level
         term.value = classStore.classLevel.term.academic_year
+
+        await classStore.getAllModules(query.id)
+        await classStore.getAllStrands(query.id)
+        await classStore.getAllStudents(query.id)
     } catch (error) {
         console.log(error.response.data.message)
     }
 }
 
-watch(() => route.query.id, fetchClassLevel, {immediate: true})
+watch(() => route.query, fetchClassLevel, {immediate: true})
 </script>
 
 <template>
