@@ -24,6 +24,14 @@ const scheduleData = ref([])
 const tableData = ref([])
 
 function addForm(data) {
+    const start_time_hours = data.class_schedule.start_time.getHours()
+    const start_time_minutes = data.class_schedule.start_time.getMinutes()
+    const start_time = start_time_hours + ':' + start_time_minutes
+
+    const end_time_hours = data.class_schedule.end_time.getHours()
+    const end_time_minutes = data.class_schedule.end_time.getMinutes()
+    const end_time = end_time_hours + ':' + end_time_minutes
+
     learningStrandData.value.push({
         name: data.strand.name,
         teacher: data.volunteer.fullname
@@ -33,8 +41,8 @@ function addForm(data) {
         scheduleData.value.push({
             name: data.strand.name,
             day: school_day,
-            start_time: data.class_schedule.start_time.getUTCHours (),
-            end_time: data.class_schedule.end_time.getUTCHours (),
+            start_time: start_time,
+            end_time: end_time,
         })
     }
 
