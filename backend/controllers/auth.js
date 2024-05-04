@@ -108,3 +108,58 @@ export async function login(req, res, next) {
     return error;
   }
 }
+
+/**
+ * The refreshToken function is used to refresh the authentication token.
+ * It takes the refresh token from the request body.
+ * It then verifies the refresh token.
+ * If the refresh token is invalid, it returns an error message.
+ * If the refresh token is valid, it generates a new authentication token and a new refresh token.
+ * It then invalidates the old refresh token.
+ * It sends the new authentication token and the new refresh token back to the client.
+ * @param req - The request object. It should contain the refresh token.
+ * @param res - The response object. It should contain the new authentication token and the new refresh token.
+ * @param next - The next middleware function.
+ */
+export async function refreshToken(req, res, next) {
+  const refreshToken = req.body.refreshToken;
+
+  if (!refreshToken) {
+    const error = new Error("No refresh token provided.");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  if (invalidatedTokens.includes(refreshToken)) {
+    const error = new Error("Invalid refresh token.");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  let userId;
+  try {
+    const decoded = jwt.verify(refreshToken, "HEHESECRET");
+    userId = decoded.userId;
+  } catch (err) {
+    const error = new Error("Invalid refresh token.");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  const newAuthToken = jwt.sign({ userId: userId }, "HEHESECRET", {
+    expiresIn: "1h",
+  });
+
+  const newRefreshToken = jwt.sign({ userId: userId }, "HEHESECRET", {
+    expiresIn: "10h",
+  });
+
+  // Invalidate the old refresh token
+  invalidatedTokens.push(refreshToken);
+
+  return res.status(200).json({
+    message: "Refresh successful",
+    authToken: newAuthToken,
+    refreshToken: newRefreshToken,
+  });
+}
