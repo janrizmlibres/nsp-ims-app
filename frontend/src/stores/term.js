@@ -16,6 +16,16 @@ export const useTermStore = defineStore('term', () => {
     return result.data.data
   }
 
+  async function addClass(formData) {
+    const authStore = useAuthStore()
+
+    const result = await axios.post('http://localhost:8080/term/add_class', formData, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    return result.data.data
+  }
+
   async function getActiveTerm() {
     const authStore = useAuthStore()
 
@@ -26,5 +36,5 @@ export const useTermStore = defineStore('term', () => {
     activeTerm.value = result.data.data
   }
 
-  return { activeTerm, getAllTerms, getActiveTerm }
+  return { activeTerm, getAllTerms, addClass, getActiveTerm }
 })
