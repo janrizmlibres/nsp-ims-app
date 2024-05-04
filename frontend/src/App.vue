@@ -54,11 +54,13 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+import ActionDialog from './components/dialog/ActionDialog.vue';
 </script>
 
 <template>
   <Toast />
   <ConfirmDialog />
   <LogoutDialog />
+  <ActionDialog />
   <RouterView />
 </template>

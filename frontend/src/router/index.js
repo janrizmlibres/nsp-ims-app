@@ -9,7 +9,6 @@ import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
-import CreateClassesView from '../views/class_mgmt/CreateClassesView.vue'
 
 // Utilities Views
 import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
@@ -23,6 +22,7 @@ import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
 import AuditView from '@/views/staff_mgmt/AuditView.vue'
 
 import { useAuthStore } from '@/stores/auth'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,33 +50,27 @@ const router = createRouter({
           },
           children: [
             {
-              path: ':term/class',
-              name: 'class-info',
+              path: '/class',
+              name: 'class',
               component: ClassView,
-              query: { id: Number },
-              children: [
-                {
-                  path: 'add_learning_strand',
-                  name: 'class-info',
-                  component: CreateClassesView
-                },
-                {
-                  path: '',
-                  name: 'strand-info',
-                  component: StrandView,
-                  query: Number,
-                  children: [
-                    {
-                      path: '',
-                      name: 'module-info',
-                      component: ModuleView,
-                      query: {
-                        module: Number
-                      }
-                    }
-                  ]
-                }
-              ]
+              query: {
+                id: Number, action: String
+              },
+              beforeEnter: (to) => {
+                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
+              }
+            },
+            {
+              path: '/strand',
+              name: 'strand-info',
+              component: StrandView,
+              query: {id: Number},
+            },
+            {
+              path: '/module',
+              name: 'module-info',
+              component: ModuleView,
+              query: {id: Number}
             },
             {
               path: 'classes',

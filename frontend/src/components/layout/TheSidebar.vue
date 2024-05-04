@@ -120,8 +120,7 @@ async function render(activeTerm) {
                 label: 'Grade School',
                 icon: 'fa fa-user-plus',
                 route: {
-                  name: 'class-info',
-                  params: { term: activeTerm.academic_year },
+                  name: 'class',
                   query: { id: gradeSchool.id }
                 }
               },
@@ -130,8 +129,7 @@ async function render(activeTerm) {
                 label: 'Junior High School',
                 icon: 'fa fa-user-plus',
                 route: {
-                  name: 'class-info',
-                  params: { term: activeTerm.academic_year },
+                  name: 'class',
                   query: { id: juniorHighSchool.id }
                 }
               }

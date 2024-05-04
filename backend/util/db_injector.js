@@ -1,7 +1,10 @@
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import Staff from "../models/staff.js";
+import ClassLevel from "../models/class_level.js";
 import bcrypt from "bcryptjs";
+import Learner from "../models/learner.js";
+import Volunteer from "../models/volunteer.js";
 
 export async function injectStaff() {
   const staffData = [
@@ -237,6 +240,99 @@ export async function injectAcademicYear() {
     })
   );
 }
+1242312145189
+export async function injectLearner() {
+  const learnerData = [
+    {
+      lrn: 1242312145189,
+      lastName: 'Dela Cruz',
+      firstName: 'Juan',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lrn: 1242312145145,
+      lastName: 'Bautista',
+      firstName: 'Felix',
+      middleName: 'Polso',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Amidrano',
+      firstName: 'Nicolette',
+      middleName: 'Bucio',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Fernandez',
+      firstName: 'Hero',
+      middleName: 'Baltazar',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lrn: 1242312145714,
+      lastName: 'Santos',
+      firstName: 'Dominic',
+      middleName: 'Dicolano',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lrn: 1242562145189,
+      lastName: 'Fulminar',
+      firstName: 'Ashley',
+      middleName: 'De Guzman',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Quintos',
+      firstName: 'Ariel',
+      middleName: 'Furtonado',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Hilot',
+      firstName: 'Van',
+      middleName: 'Culminares',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lrn: 1247192145189,
+      lastName: 'Alonto',
+      firstName: 'Princess Aliah',
+      category: 'Out-of-School Youth'
+    },
+    {
+      lastName: 'Montecillo',
+      firstName: 'Dirk',
+      middleName: 'Santocildis',
+      category: 'Out-of-School Youth'
+    },
+  ]
+
+  await Promise.all(learnerData.map(async (learner) => {
+    await Learner.create(learner);
+  }));
+
+  const class_levels = await ClassLevel.findAll()
+
+  function getRandomStatus() {
+    let status = ['Inactive', 'Active', 'Drop']
+    return status[Math.floor(Math.random() * 2)];
+  }
+
+  await Promise.all(class_levels.map(async (class_level) => {
+    const learners = await Learner.findAll()
+
+    await Promise.all(learners.map(async (learner) => {
+      class_level.addLearner(learner, {
+        through: {
+          hasEnrollmentForm: true,
+          status: getRandomStatus(),
+          modularity: 'Regular',
+        }
+      })
+    }));
+  }));
+}
 
 export async function injectLearningStrand() {
   const learningStrandData = [
@@ -277,6 +373,83 @@ export async function injectLearningStrand() {
   await Promise.all(
     learningStrandData.map(async (learning_strand) => {
       await LearningStrand.create(learning_strand);
+    })
+  );
+}
+
+export async function injectVolunteer() {
+  const volunteerData = [
+    {
+      volunteerId: 1,
+      affiliation: 'Student',
+      lastName: 'Dela Cruz',
+      firstName: 'Shelly'
+    },
+    {
+      volunteerId: 2,
+      affiliation: 'Student',
+      lastName: 'Fuentes',
+      firstName: 'Alonzo'
+    },
+    {
+      volunteerId: 3,
+      affiliation: 'Student',
+      lastName: 'Firma',
+      firstName: 'Alejandra'
+    },
+    {
+      volunteerId: 4,
+      affiliation: 'Student',
+      lastName: 'Horticullado',
+      firstName: 'Gabriel'
+    },
+    {
+      volunteerId: 5,
+      affiliation: 'Student',
+      lastName: 'Santos',
+      firstName: 'John'
+    },
+    {
+      volunteerId: 6,
+      affiliation: 'Student',
+      lastName: 'Dapin',
+      firstName: 'Job'
+    },
+    {
+      volunteerId: 7,
+      affiliation: 'Student',
+      lastName: 'Roa',
+      firstName: 'Wilson'
+    },
+    {
+      volunteerId: 8,
+      affiliation: 'Student',
+      lastName: 'Dimagiba',
+      firstName: 'Felixson'
+    },
+    {
+      volunteerId: 9,
+      affiliation: 'Student',
+      lastName: 'Goma',
+      firstName: 'Fernan'
+    },
+    {
+      volunteerId: 10,
+      affiliation: 'Student',
+      lastName: 'Lopez',
+      firstName: 'Kenneth'
+    },
+    {
+      volunteerId: 11,
+      affiliation: 'Student',
+      lastName: 'Sayson',
+      firstName: 'Daisy'
+    },
+  ]
+
+  await Promise.all(
+    volunteerData.map(async (volunteer) => {
+      await Volunteer.create(volunteer);
     })
   );
 }
