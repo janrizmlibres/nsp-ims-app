@@ -5,6 +5,7 @@ import Checkbox from 'primevue/checkbox';
 import Calendar from 'primevue/calendar';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
+import { useToast } from 'primevue/usetoast';
 import { useRoute } from 'vue-router';
 import { onMounted, ref } from 'vue';
 
@@ -15,6 +16,7 @@ import { useVolunteerStore } from '@/stores/volunteer';
 
 const emit = defineEmits(['addForm'])
 const route = useRoute()
+const toast = useToast()
 
 const term = ref()
 const schoolLevel = ref()
@@ -33,14 +35,16 @@ onMounted(async () => {
 const classStore = useClassStore()
 const utilitiesStore = useUtilitiesStore()
 const volunteerStore = useVolunteerStore()
-const formData = ref({
-    strand: '',
-    volunteer: '',
-    class_schedule: {
-        school_days: [],
-        start_time: ref(),
-        end_time: ref()
-    }
+
+const strandData = ref({
+    strand: null,
+    volunteer: null
+})
+
+const strandScheduleData = ref({
+    school_days: null,
+    start_time: null,
+    end_time: null
 })
 
 const learningStrands = ref();
@@ -56,19 +60,32 @@ const days = ref([
 ]);
 
 function resetForm() {
-    formData.value = {
-        strand: '',
-        volunteer: '',
-        class_schedule: {
-            school_days: [],
-            start_time: ref(),
-            end_time: ref()
-        }
+    strandData.value = {
+        strand: null,
+        volunteer: null
+    }
+
+    strandScheduleData.value = {
+        school_days: null,
+        start_time: null,
+        end_time: null
     }
 }
 
 function addForm() {
-    emit('addForm', formData.value)
+    if (Object.values(strandData.value).some(o => o === null) ||
+        Object.values(strandScheduleData.value).some(o => o === null)) {
+        toast.add({
+            severity: 'error',
+            summary: 'Incomplete Form',
+            detail: "Please fill all necessary information",
+            life: 3000
+        })
+
+        return
+    }
+
+    emit('addForm', strandData.value, strandScheduleData.value)
     resetForm()
 }
 
@@ -105,14 +122,14 @@ onMounted(async () => {
                 <div class="flex flex-col justify-between mb-8">
                     <span class="mr-3 u-txt-active">Learning Strand</span>
                     <span class="relative">
-                        <Dropdown v-model="formData.strand" :options="learningStrands" optionLabel="name" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
+                        <Dropdown v-model="strandData.strand" :options="learningStrands" optionLabel="name" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
                     </span>
                 </div>
 
                 <div class="flex flex-col justify-between">
                     <span class="mr-3 u-txt-active">Teacher</span>
                     <span class="relative">
-                        <Dropdown v-model="formData.volunteer" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
+                        <Dropdown v-model="strandData.volunteer" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
                     </span>
                 </div>
             </div>
@@ -123,7 +140,7 @@ onMounted(async () => {
                     <span class="mr-3 u-txt-active">School Days</span>
                     <div class="grid grid-cols-3 card gap-3">
                         <div v-for="day of days" :key="day.key" class="flex items-center">
-                            <Checkbox v-model="formData.class_schedule.school_days" :inputId="day.key" name="day" :value="day.name" class="mr-2"/>
+                            <Checkbox v-model="strandScheduleData.school_days" :inputId="day.key" name="day" :value="day.name" class="mr-2"/>
                             <label :for="day.key">{{ day.name }}</label>
                         </div>
                     </div>
@@ -133,13 +150,13 @@ onMounted(async () => {
                     <div>
                         <span class="mr-3 u-txt-active">Start Time</span>
                         <div>
-                            <Calendar id="calendar-timeonly" v-model="formData.class_schedule.start_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+                            <Calendar id="calendar-timeonly" v-model="strandScheduleData.start_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
                         </div>
                     </div>
                     <div>
                         <span class="mr-3 u-txt-active">End Time</span>
                         <div>
-                            <Calendar id="calendar-timeonly" v-model="formData.class_schedule.end_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+                            <Calendar id="calendar-timeonly" v-model="strandScheduleData.end_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
                         </div>
                     </div>
                 </div>
