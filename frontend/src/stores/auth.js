@@ -12,6 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
     const result = await axios.post('http://localhost:8080/auth/login', { userId, password })
 
     const tokenData = result.data.token
+    const refreshTokenData = result.data.refreshToken
     const staffData = result.data.staff
 
     /*eslint no-unused-vars: ["error", { "ignoreRestSiblings": true }]*/
@@ -19,9 +20,11 @@ export const useAuthStore = defineStore('auth', () => {
     staffData.permissions = cleanedPerms
 
     sessionStorage.setItem('token', tokenData)
+    sessionStorage.setItem('refreshToken', refreshTokenData)
     sessionStorage.setItem('staff', JSON.stringify(staffData))
 
     token.value = tokenData
+    refreshToken.value = refreshTokenData
     staff.value = staffData
   }
 
