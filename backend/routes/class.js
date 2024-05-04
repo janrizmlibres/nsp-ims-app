@@ -10,5 +10,6 @@ router.get("/:classId/modules", isAuth, classController.getAllModules);
 router.get("/:classId/students", isAuth, classController.getAllStudents);
 router.post("/:classId/learningStrand/add", isAuth, classController.addLearningStrand);
 router.post("/:classId/learningStrand/schedule/add", isAuth, classController.addSchedule);
+router.patch("/:classId/student/:learnerId/changeStatus", isAuth, classController.updateStudentStatus)
 
 export default router;

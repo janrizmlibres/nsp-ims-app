@@ -188,3 +188,23 @@ export async function getAllStudents(req, res, next) {
         next(error);
     }
 }
+
+export async function updateStudentStatus(req, res, next) {
+    try {
+        const classId = req.params.classId
+        const learnerId = req.params.learnerId;
+        console.log(classId);
+        await Enrollment.update(
+            { status: req.body.newStatus}, 
+            { where: { classLevelId: classId, learnerId: learnerId }
+        });
+
+        res.status(200).json({ message: "Status updated!" });
+        } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    }
+}
