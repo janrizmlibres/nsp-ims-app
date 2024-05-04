@@ -78,7 +78,7 @@ export async function login(req, res, next) {
       throw error;
     }
 
-    const token = jwt.sign({ userId: staff.id }, "HEHESECRET", {
+    const authToken = jwt.sign({ userId: staff.id }, "HEHESECRET", {
       expiresIn: "1h",
     });
 
