@@ -4,7 +4,7 @@ import LearningStrand from "./learning_strand.js";
 import ClassLevel from "./class_level.js";
 
 const ClassLearningStrand = sequelize.define('class_learning_strand', {
-    classId: {
+    classLevelId: {
         type: INTEGER,
         references: {
         model: ClassLevel,
