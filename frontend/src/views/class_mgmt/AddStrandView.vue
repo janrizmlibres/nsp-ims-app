@@ -25,33 +25,35 @@ const scheduleData = ref([])
 const tableData = ref([])
 
 function addForm(strandData, strandScheduleData) {
-    const start_time_hours = strandScheduleData.start_time.getHours()
-    const start_time_minutes = strandScheduleData.start_time.getMinutes()
-    const start_time = start_time_hours + ':' + start_time_minutes
-
-    const end_time_hours = strandScheduleData.end_time.getHours()
-    const end_time_minutes = strandScheduleData.end_time.getMinutes()
-    const end_time = end_time_hours + ':' + end_time_minutes
-
     learningStrandData.value.push({
         name: strandData.strand.name,
         teacher: strandData.volunteer.fullname
     })
 
-    scheduleData.value.push({
-        name: strandData.strand.name,
-        days: strandScheduleData.school_days.toString(),
-        start_time: start_time,
-        end_time: end_time,
-    })
+    for (const schedule of strandScheduleData) {
+        const start_time_hours = schedule.start_time.getHours()
+        const start_time_minutes = schedule.start_time.getMinutes()
+        const start_time = start_time_hours + ':' + start_time_minutes
 
-    tableData.value.push({
-        name: strandData.strand.name,
-        teacher: strandData.volunteer.fullname,
-        school_days: strandScheduleData.school_days.toString(),
-        start_time: strandScheduleData.start_time.toLocaleTimeString(),
-        end_time: strandScheduleData.end_time.toLocaleTimeString()
-    })
+        const end_time_hours = schedule.end_time.getHours()
+        const end_time_minutes = schedule.end_time.getMinutes()
+        const end_time = end_time_hours + ':' + end_time_minutes
+
+        scheduleData.value.push({
+            name: strandData.strand.name,
+            days: schedule.school_days.toString(),
+            start_time: start_time,
+            end_time: end_time,
+        })
+
+        tableData.value.push({
+            name: strandData.strand.name,
+            teacher: strandData.volunteer.fullname,
+            school_days: schedule.school_days.toString(),
+            start_time: schedule.start_time.toLocaleTimeString(),
+            end_time: schedule.end_time.toLocaleTimeString()
+        })
+    }
 }
 
 async function submitData() {
@@ -89,10 +91,8 @@ const cancel = () => {
 
 <template>
     <ContentPane header="Add Learning Strands">
-        <div class="w-fit">
-            <CreateClassForm @addForm="addForm"/>
-        </div>
-        
+        <CreateClassForm @addForm="addForm"/>
+ 
         <div class="bg-white rounded-md shadow-xl flex flex-col p-7 pt-4 flex-1">            
             <LearningStrandsTable :classData="tableData"/>
 
