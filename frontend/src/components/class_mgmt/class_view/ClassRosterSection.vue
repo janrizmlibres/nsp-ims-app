@@ -6,7 +6,6 @@ import TabPanel from 'primevue/tabpanel';
 import ProgressSpinner from 'primevue/progressspinner';
 import { FilterMatchMode } from 'primevue/api';
 import { ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
 
 // Custom Components
 import RosterTabHeader from './RosterTabHeader.vue';
@@ -14,8 +13,6 @@ import RosterTable from './RosterTable.vue';
 
 // stores
 import { useClassStore } from '@/stores/class';
-
-const route = useRoute()
 
 const classStore = useClassStore()
 
@@ -28,25 +25,26 @@ const active = ref([])
 const inactive = ref([])
 const drop = ref([])
 
-async function fetchStudents(id) {
-    route.value = useRoute()
+async function fetchStudents(data) {
     isFetching.value = true
     
     try {
-        await classStore.getAllStudents(id)
-        const students = ref(classStore.students)
-        active.value = students.value.active.enrollments
-        inactive.value = students.value.inactive.enrollments
-        drop.value = students.value.drop != null ? students.value.drop.enrollments : null
+        const students = data
+        active.value = students.active.enrollments
+        inactive.value = students.inactive.enrollments
+        drop.value = students.drop != null ? students.drop.enrollments : null
 
     } catch(error) {
         console.log(error)
     }
 
+    console.log(active.value);
+    console.log(inactive.value);
+    console.log(drop.value);
     isFetching.value = false
 }
 
-watch(() => route.query.id, fetchStudents, {immediate: true})
+watch(() => classStore.students, fetchStudents, {immediate: false})
 </script>
 
 <template>
@@ -60,13 +58,13 @@ watch(() => route.query.id, fetchStudents, {immediate: true})
         <ProgressSpinner v-if="isFetching" class="flex justify-center" />
         <TabView v-else class="p-2 bg-white shadow-xl rounded-md">
             <TabPanel header="Active">
-                <RosterTable :data="active" :filters="filters" />
+                <RosterTable :dropTable="false" v-model="active" :filters="filters" />
             </TabPanel>
             <TabPanel header="Inactive">
-                <RosterTable :data="inactive" :filters="filters" />
+                <RosterTable :dropTable="false" v-model="inactive" :filters="filters" />
             </TabPanel>
             <TabPanel header="Dropped">
-                <RosterTable :data="drop" :filters="filters" />
+                <RosterTable :dropTable="true" v-model="drop" :filters="filters" />
             </TabPanel>
         </TabView>
     </div>
