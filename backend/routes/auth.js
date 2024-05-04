@@ -5,6 +5,8 @@ import isAuth from "../middleware/is_auth.js";
 
 const router = express.Router();
 
+router.post("/refresh-token", authController.refreshToken);
+
 router.post("/login", authController.login);
 
 router.post(
