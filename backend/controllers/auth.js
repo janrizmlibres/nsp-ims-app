@@ -82,9 +82,14 @@ export async function login(req, res, next) {
       expiresIn: "1h",
     });
 
+    const refreshToken = jwt.sign({ userId: staff.id }, "HEHESECRET", {
+      expiresIn: "10h", // Refresh token valid for 7 days
+    });
+
     return res.status(200).json({
       message: "Authentication successful",
-      token: token,
+      authToken: authToken,
+      refreshToken: refreshToken,
       staff: {
         id: staff.id,
         accessLevel: staff.accessLevel,
