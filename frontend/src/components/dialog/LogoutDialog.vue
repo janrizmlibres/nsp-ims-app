@@ -4,7 +4,7 @@ import Button from 'primevue/button';
 </script>
 
 <template>
-  <ConfirmDialog group="logout">
+  <ConfirmDialog group="authenticationError">
     <template #container="{ message, acceptCallback, rejectCallback }">
       <div class="flex flex-col items-center p-5 bg-surface-0 dark:bg-surface-700 rounded-md">
         <div class="rounded-full u-bg-red dark:bg-primary-400 text-surface-0 dark:text-surface-900 inline-flex justify-center items-center h-[6rem] w-[6rem] -mt-[3rem]">
