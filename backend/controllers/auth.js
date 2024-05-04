@@ -6,6 +6,10 @@ import prand from "pure-rand";
 import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
 
+// This could be a database or in-memory data structure
+// This is a simple in-memory implementation
+let invalidatedTokens = [];
+
 export async function signup(req, res, next) {
   try {
     const errors = validationResult(req);
