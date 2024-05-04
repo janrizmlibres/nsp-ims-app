@@ -7,9 +7,11 @@ const confirm = useConfirm();
 
 const confirmLogout = () => {
   confirm.require({
-    group: 'logout',
+    group: 'authenticationError',
     message: ' Are you sure you want to logout?',
     header: 'Confirmation',
+    acceptButton: 'Logout',
+    rejectButton: 'Cancel',
     accept: () => {
       logout()
     },
