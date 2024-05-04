@@ -4,6 +4,7 @@ import { validationResult } from "express-validator";
 import prand from "pure-rand";
 
 import Staff from "../models/staff.js";
+import Permission from "../models/permission.js";
 
 export async function signup(req, res, next) {
   try {
@@ -15,23 +16,12 @@ export async function signup(req, res, next) {
       throw error;
     }
 
-    const {
-      password,
-      firstName,
-      middleName,
-      lastName,
-      suffixName,
-      position,
-      email,
-      contactNum,
-    } = req.body;
-
     const seed = Date.now() ^ (Math.random() * 0x100000000);
     const rng = prand.xoroshiro128plus(seed);
     const min = 10000;
     const max = 99999;
 
-    const hashedPw = await bcrypt.hash(password, 12);
+    const hashedPw = await bcrypt.hash(req.body.password, 12);
     let userId = prand.unsafeUniformIntDistribution(min, max, rng);
     let staff = await Staff.findByPk(userId);
 
@@ -40,17 +30,9 @@ export async function signup(req, res, next) {
       staff = await Staff.findByPk(userId);
     }
 
-    const user = await Staff.create({
-      id: userId,
-      hashed_pw: hashedPw,
-      first_name: firstName,
-      middle_name: middleName.length == 0 ? null : middleName,
-      last_name: lastName,
-      suffix_name: suffixName.length == 0 ? null : suffixName,
-      position: position.length == 0 ? null : position,
-      email: email.length == 0 ? null : email,
-      contact_num: contactNum.length == 0 ? null : contactNum,
-    });
+    delete req.body.password;
+    const user = await Staff.create({ id: userId, hashedPw, ...req.body });
+    await user.createPermission();
 
     res.status(201).json({ message: "User created!", user });
   } catch (error) {
@@ -61,25 +43,26 @@ export async function signup(req, res, next) {
   }
 }
 
+/**
+ * The login function is used to authenticate a user.
+ * It takes the username and password from the request body.
+ * It then searches for the user in the database.
+ * If the user is found, it compares the password with the hashed password in the database.
+ * If the password matches, it generates a token using the user's username and id.
+ * The token is then sent back to the client.
+ * If the password does not match, it returns an error message.
+ * If the user is not found, it returns an error message.
+ * If there is an error while searching for the user, it returns an error message.
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ * @param next - The next middleware function
+ * @returns {Object} - The response object
+ */
 export async function login(req, res, next) {
-  /**
-   * The login function is used to authenticate a user.
-   * It takes the username and password from the request body.
-   * It then searches for the user in the database.
-   * If the user is found, it compares the password with the hashed password in the database.
-   * If the password matches, it generates a token using the user's username and id.
-   * The token is then sent back to the client.
-   * If the password does not match, it returns an error message.
-   * If the user is not found, it returns an error message.
-   * If there is an error while searching for the user, it returns an error message.
-   * @param {Object} req - The request object
-   * @param {Object} res - The response object
-   * @returns {Object} - The response object
-   */
-  const { id, password } = req.body;
+  const { userId, password } = req.body;
 
   try {
-    const staff = await Staff.findByPk(id);
+    const staff = await Staff.findByPk(userId, { include: Permission });
 
     if (!staff) {
       const error = new Error("Authentication failed. User not found.");
@@ -87,7 +70,7 @@ export async function login(req, res, next) {
       throw error;
     }
 
-    const result = await bcrypt.compare(password, staff.hashed_pw);
+    const result = await bcrypt.compare(password, staff.hashedPw);
 
     if (!result) {
       const error = new Error("Authentication failed. Wrong password.");
@@ -95,21 +78,25 @@ export async function login(req, res, next) {
       throw error;
     }
 
-    const token = jwt.sign(
-      { username: staff.username, id: staff.id },
-      "HEHESECRET", // replace with your secret key
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ userId: staff.id }, "HEHESECRET", {
+      expiresIn: "1h",
+    });
 
     return res.status(200).json({
       message: "Authentication successful",
       token: token,
-      userId: staff.id,
+      staff: {
+        id: staff.id,
+        accessLevel: staff.accessLevel,
+        permissions: staff.permission,
+        userName: staff.fullname
+      },
     });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }

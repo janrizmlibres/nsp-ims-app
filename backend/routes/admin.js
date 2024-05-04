@@ -29,4 +29,17 @@ router.put(
   adminController.updateStaff
 );
 
+router.put(
+  "/staffs/update-permissions",
+  isAuth,
+  adminController.updatePermissions
+);
+
+router.patch(
+  "/staff/:userId",
+  isAuth,
+  [body("newPw").isStrongPassword({ minLength: 8 })],
+  adminController.updatePassword
+);
+
 export default router;

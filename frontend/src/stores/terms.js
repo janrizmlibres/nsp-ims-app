@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
+import { FilterMatchMode } from 'primevue/api';
+import { ref } from 'vue';
 
-export const useTermStore = defineStore('terms', {
+export const useTermsStore = defineStore('terms', {
     state: () => ({
         data: [
             {

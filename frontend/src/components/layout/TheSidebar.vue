@@ -1,239 +1,382 @@
 <script setup>
+// Presets
 import Button from 'primevue/button'
 import PanelMenu from 'primevue/panelmenu'
+import Skeleton from 'primevue/skeleton'
 
-import { useSideBarStore } from '@/stores/sidebar'
-import { ref } from 'vue'
+// Utils
+import { computed, ref, watch } from 'vue'
 
-defineProps(['name', 'role'])
+// Stores
+import { useSidebarStore } from '@/stores/sidebar'
+import { useTermStore } from '@/stores/term'
+import { useAuthStore } from '@/stores/auth'
 
-const sideBarStateStore = useSideBarStore()
+const sidebarStore = useSidebarStore()
+const termStore = useTermStore()
+const authStore = useAuthStore()
 
-const items = ref([
-  {
-    key: '1',
-    label: 'Dashboard',
-    icon: 'fa fa-home',
-    route: { name: 'dashboard' }
-  },
-  {
-    key: '2',
-    label: 'Student Management',
-    icon: 'fa fa-id-card',
-    items: [
+const items = ref([])
+const isFetching = ref(true)
+const role = ref('')
+async function render(activeTerm) {
+  if (activeTerm != null) {
+      const gradeSchool = activeTerm.class_levels.find((obj) => {
+      return obj.school_level === 'Grade School'
+    })
+
+    const juniorHighSchool = activeTerm.class_levels.find((obj) => {
+      return obj.school_level === 'Junior High School'
+    })
+
+    items.value = [
       {
-        key: '2-1',
-        label: 'Student Records',
-        icon: 'fa fa-address-book',
+        key: '1',
+        label: 'Dashboard',
+        icon: 'fa fa-home',
         route: { name: 'dashboard' }
       },
       {
-        key: '2-2',
-        label: 'Student Requirements',
-        icon: 'fa fa-list-check',
-        route: { name: 'dashboard' }
+        key: '2',
+        label: 'Student Management',
+        icon: 'fa fa-id-card',
+        items: [
+          {
+            key: '2-1',
+            label: 'Student Records',
+            icon: 'fa fa-address-book',
+            route: { name: 'dashboard' }
+          },
+          {
+            key: '2-2',
+            label: 'Student Requirements',
+            icon: 'fa fa-list-check',
+            route: { name: 'dashboard' }
+          },
+          {
+            key: '2-3',
+            label: 'Admit Students',
+            icon: 'fa fa-user-plus',
+            route: { name: 'dashboard' }
+          }
+        ]
       },
       {
-        key: '2-3',
-        label: 'Admit Students',
-        icon: 'fa fa-user-plus',
-        route: { name: 'dashboard' }
-      }
-    ]
-  },
-  {
-    key: '3',
-    label: 'Enrollment Management',
-    icon: 'fa fa-school',
-    items: [
-      {
-        key: '3-1',
-        label: 'Active Academic Year',
-        icon: 'fa fa-calendar-week',
-        route: { name: 'dashboard' }
+        key: '3',
+        label: 'Enrollment Management',
+        icon: 'fa fa-school',
+        items: [
+          {
+            key: '3-1',
+            label: 'Academic Year',
+            icon: 'fa fa-calendar-week',
+            route: { name: 'dashboard' }
+          },
+          {
+            key: '3-2',
+            label: 'Enrollment Records',
+            icon: 'fa fa-scroll',
+            route: { name: 'dashboard' }
+          },
+          {
+            key: '3-3',
+            label: 'Enroll Students',
+            icon: 'fa fa-school-flag',
+            route: { name: 'dashboard' }
+          }
+        ]
       },
       {
-        key: '3-2',
-        label: 'Enrollment Records',
-        icon: 'fa fa-scroll',
-        route: { name: 'dashboard' }
+        key: '4',
+        label: 'Volunteer Management',
+        icon: 'fa fa-users',
+        items: [
+          {
+            key: '4-1',
+            label: 'Volunteer Records',
+            icon: 'fa fa-address-book',
+            route: { name: 'dashboard' }
+          },
+          {
+            key: '4-2',
+            label: 'Admit Volunteers',
+            icon: 'fa fa-user-plus',
+            route: { name: 'dashboard' }
+          }
+        ]
       },
       {
-        key: '3-3',
-        label: 'Enroll Students',
-        icon: 'fa fa-school-flag',
-        route: { name: 'dashboard' }
-      }
-    ]
-  },
-  {
-    key: '4',
-    label: 'Volunteer Management',
-    icon: 'fa fa-users',
-    items: [
-      {
-        key: '4-1',
-        label: 'Volunteer Records',
-        icon: 'fa fa-address-book',
-        route: { name: 'dashboard' }
+        key: '5',
+        label: 'Class Management',
+        icon: 'fa fa-book-open',
+        items: [
+          {
+            key: '5-1',
+            label: 'Active Classes',
+            icon: 'fa fa-book-bookmark',
+            items: [
+              {
+                key: '5-1-1',
+                label: 'Grade School',
+                icon: 'fa fa-user-plus',
+                route: {
+                  name: 'class-info',
+                  params: { term: activeTerm.academic_year },
+                  query: { id: gradeSchool.id }
+                }
+              },
+              {
+                key: '5-1-2',
+                label: 'Junior High School',
+                icon: 'fa fa-user-plus',
+                route: {
+                  name: 'class-info',
+                  params: { term: activeTerm.academic_year },
+                  query: { id: juniorHighSchool.id }
+                }
+              }
+            ]
+          },
+          {
+            key: '5-2',
+            label: 'Class Records',
+            icon: 'fa fa-scroll',
+            route: { name: 'class-records' }
+          }
+        ]
       },
       {
-        key: '4-2',
-        label: 'Admit Volunteers',
-        icon: 'fa fa-user-plus',
-        route: { name: 'dashboard' }
-      }
-    ]
-  },
-  {
-    key: '5',
-    label: 'Class Management',
-    icon: 'fa fa-book-open',
-    items: [
-      {
-        key: '5-1',
-        label: 'Active Classes',
-        icon: 'fa fa-book-bookmark',
-        route: { name: 'active-classes' }
+        key: '6',
+        label: 'Term Management',
+        icon: 'fa fa-calendar-days',
+        route: { name: 'term-management' }
       },
       {
-        key: '5-2',
-        label: 'Class Records',
-        icon: 'fa fa-scroll',
-        route: { name: 'class-records' }
+        key: '7',
+        label: 'Staff Management',
+        icon: 'fa fa-user',
+        items: [
+          {
+            key: '7-1',
+            label: 'Staff Records',
+            icon: 'fa fa-address-book',
+            route: { name: 'staff-records' }
+          },
+          {
+            key: '7-2',
+            label: 'Staff Permissions',
+            icon: 'fa fa-shield-halved',
+            route: { name: 'staff-permissions' }
+          },
+          {
+            key: '7-3',
+            label: 'Add Staff',
+            icon: 'fa fa-user-plus',
+            route: { name: 'add-staff' }
+          }
+        ]
       },
       {
-        key: '5-3',
-        label: 'Create Classes',
-        icon: 'fa fa-book-medical',
-        route: { name: 'create-classes' }
-      }
-    ]
-  },
-  {
-    key: '6',
-    label: 'Term Management',
-    icon: 'fa fa-calendar-days',
-    route: { name: 'term-management' }
-  },
-  {
-    key: '7',
-    label: 'Learning Strand Management',
-    icon: 'fa fa-book',
-    route: { name: 'learning-strand-management' }
-  },
-  {
-    key: '8',
-    label: 'Student Requirements Management',
-    icon: 'fa fa-list',
-    route: { name: 'student-requirements-management' }
-  },
-  {
-    key: '9',
-    label: 'Staff Management',
-    icon: 'fa fa-user',
-    items: [
-      {
-        key: '9-1',
-        label: 'Staff Records',
-        icon: 'fa fa-address-book',
-        route: { name: 'staff-records' }
-      },
-      {
-        key: '9-2',
-        label: 'Staff Permissions',
-        icon: 'fa fa-shield-halved',
-        route: { name: 'staff-permissions' }
-      },
-      {
-        key: '9-3',
-        label: 'Add Staff',
-        icon: 'fa fa-user-plus',
-        route: { name: 'add-staff' }
-      }
-    ]
-  },
-  {
-    key: '10',
-    label: 'Utilities',
-    icon: 'fa fa-gear',
-    items: [
-      {
-        key: '10-1',
-        label: 'Generate Reports',
-        icon: 'fa fa-note-sticky',
-        route: { name: 'dashboard' }
-      },
-      {
-        key: '10-2',
-        label: 'Audit Trails',
-        icon: 'fa fa-clock-rotate-left',
-        route: { name: 'dashboard' }
+        key: '8',
+        label: 'Utilities & Configurations',
+        icon: 'fa fa-gear',
+        items: [
+          {
+            key: '8-1',
+            label: 'Learning Strand Config',
+            icon: 'fa fa-book',
+            route: { name: 'learning-strand-management' }
+          },
+          {
+            key: '8-2',
+            label: 'Student Requirements Config',
+            icon: 'fa fa-list',
+            route: { name: 'student-requirements-management' }
+          },
+          {
+            key: '8-3',
+            label: 'Generate Reports',
+            icon: 'fa fa-note-sticky',
+            route: { name: 'dashboard' }
+          },
+          {
+            key: '8-4',
+            label: 'Audit Trails',
+            icon: 'fa fa-clock-rotate-left',
+            route: { name: 'dashboard' }
+          }
+        ]
       }
     ]
   }
-])
+
+  role.value = computed(() => {
+    if (authStore.staff.accessLevel === 1) {
+      return 'Admin'
+    }  else if (authStore.staff.accessLevel === 2) {
+      return 'Sub-Admin'
+    } else {
+      return 'Staff'
+    }
+  })
+  isFetching.value = false
+}
+
+watch(() => termStore.activeTerm, render, { immediate: true })
+const buttonPt = {
+  root: ({ props }) => ({
+    class: [
+      // Colors
+      {
+        'text-surface-100':
+          !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+        'bg-transparent':
+          !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
+        'border-none':
+          !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+      },
+      // States
+      {
+        'hover:u-bg-pcolor-darker':
+          !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+      },
+      { 'focus:u-ring-scolor': props.severity === null }
+    ]
+  })
+}
+const panelMenuPt = {
+  root: {
+    class: 'my-4'
+  },
+  panel: {
+    class: 'text-sm'
+  },
+  headercontent: {
+    class: [
+      // Color
+      'border-none',
+      'u-bg-pcolor',
+      'text-surface-100',
+      // States
+      'hover:bg-surface-100',
+      'hover:u-txt-active',
+      // Transition
+      'transition duration-200 ease-in-out',
+      'transition-shadow duration-200'
+    ]
+  },
+  headeraction: {
+    class: [
+      'relative',
+      'leading-none',
+      'flex items-center',
+      'p-5',
+      'select-none cursor-pointer no-underline'
+    ]
+  },
+  menucontent: {
+    class: ['border-none', 'rounded-t-none', 'u-bg-pcolor-2']
+  },
+  menu: {
+    class: ['outline-none', 'm-0 p-0 list-none']
+  },
+  content: {
+    class: ['border-none rounded-none', 'transition-shadow duration-200']
+  },
+  action: {
+    class: [
+      'relative',
+      // Font
+      'leading-none',
+      // Flex & Alignments
+      'flex items-center',
+      // Spacing
+      'u-sidebar-submenuitem-pl',
+      // Color
+      'text-surface-100',
+      // States
+      'hover:bg-surface-100 hover:u-txt-active',
+      // Misc
+      'cursor-pointer no-underline',
+      'select-none overflow-hidden'
+    ]
+  },
+  icon: {
+    class: ['mr-2']
+  },
+  submenu: {
+    class: 'p-0 pl-4 m-0 list-none'
+  },
+  transition: {
+    enterFromClass: 'max-h-0',
+    enterActiveClass:
+      'overflow-hidden transition-[max-height] duration-1000 ease-[cubic-bezier(0.42,0,0.58,1)]',
+    enterToClass: 'max-h-[1000px]',
+    leaveFromClass: 'max-h-[1000px]',
+    leaveActiveClass:
+      'overflow-hidden transition-[max-height] duration-[450ms] ease-[cubic-bezier(0,1,0,1)]',
+    leaveToClass: 'max-h-0'
+  }
+}
 
 const expandedKeys = ref({})
+
+// functions
 function collapseAll() {
   expandedKeys.value = {}
 }
 
 function changeState() {
   collapseAll()
-  sideBarStateStore.changePinnedState()
-  sideBarStateStore.changeExpansionState()
+  sidebarStore.changePinnedState()
+}
+
+function setVisibility(keyValue) {
+  const permissions = authStore.staff.permissions
+
+  const permissionMap = {
+    2: 'canMgStuds',
+    3: 'canMgEnrollment',
+    4: 'canMgVolunteer',
+    5: 'canMgClass',
+    6: 'canMgTerm',
+    7: 'canMgLs',
+    8: 'canMgStudReq',
+    9: 'canMgStaff'
+  }
+
+  const hasNoPermission = (keyValue) => {
+    return keyValue in permissionMap && !permissions[permissionMap[keyValue]]
+  }
+
+  return hasNoPermission(keyValue) ? false : true
+}
+
+const handleMouseOver = () => {
+  sidebarStore.handleMouseOver()
+}
+
+const handleMouseLeave = () => {
+  sidebarStore.handleMouseLeave()
 }
 </script>
 
 <template>
-  <div class="flex flex-col u-sidemain-max-height h-screen text-surface-100 rounded-md u-bg-pcolor ml-4 my-4 border-none shadow-xl z-50 transition-all duration-500 ease-in-out"
-  :class="sideBarStateStore.isExpanded ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'">
-    <div class="p-5 text-surface-100 whitespace-nowrap u-sidebar-header">
-      <span class="text-3xl u-sidebar-header-text">Menu</span>
+  <div
+    class="flex flex-col z-50 u-sidemain-max-height h-screen u-bg-pcolor text-surface-100 rounded-md border-none shadow-xltransition-all duration-500 ease-in-out ml-4 my-4"
+    :class="sidebarStore.isPinned ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'"
+    @mouseover="handleMouseOver"
+    @mouseleave="handleMouseLeave"
+  >
+    <div class="u-sidebar-header text-surface-100 whitespace-nowrap p-5">
+      <span class="u-sidebar-header-text text-3xl">Menu</span>
       <Button
-        v-if="sideBarStateStore.isPinned"
+        v-if="sidebarStore.isPinned"
         icon="fa fa-chevron-left"
         type="button"
         class="min-w-8 h-8"
         @click="changeState"
-        :pt="{
-          root: ({ props }) => ({
-            class: [
-              // Colors
-              {
-                'text-surface-100':
-                  !props.link &&
-                  props.severity === null &&
-                  !props.text &&
-                  !props.outlined &&
-                  !props.plain,
-                'bg-transparent':
-                  !props.link &&
-                  props.severity === null &&
-                  !props.text &&
-                  !props.outlined &&
-                  !props.plain,
-                'border-none':
-                  !props.link &&
-                  props.severity === null &&
-                  !props.text &&
-                  !props.outlined &&
-                  !props.plain
-              },
-              // States
-              {
-                'hover:u-bg-pcolor-darker':
-                  !props.link &&
-                  props.severity === null &&
-                  !props.text &&
-                  !props.outlined &&
-                  !props.plain
-              },
-              { 'focus:u-ring-scolor': props.severity === null }
-            ]
-          })
-        }"
+        :pt="buttonPt"
         :pt-options="{ mergeProps: true, mergeSections: true }"
       >
       </Button>
@@ -243,170 +386,67 @@ function changeState() {
         type="button"
         class="min-w-8 h-8"
         @click="changeState"
-        :pt="{
-          root: ({ props }) => ({
-            class: [
-              // Colors
-              {
-                'text-surface-100':
-                  !props.link &&
-                  props.severity === null &&
-                  !props.text &&
-                  !props.outlined &&
-                  !props.plain,
-                'bg-transparent':
-                  !props.link &&
-                  props.severity === null &&
-                  !props.text &&
-                  !props.outlined &&
-                  !props.plain,
-                'border-none':
-                  !props.link &&
-                  props.severity === null &&
-                  !props.text &&
-                  !props.outlined &&
-                  !props.plain
-              },
-              // States
-              {
-                'hover:u-bg-pcolor-darker':
-                  !props.link &&
-                  props.severity === null &&
-                  !props.text &&
-                  !props.outlined &&
-                  !props.plain
-              },
-              { 'focus:u-ring-scolor': props.severity === null }
-            ]
-          })
-        }"
+        :pt="buttonPt"
         :pt-options="{ mergeProps: true, mergeSections: true }"
       >
       </Button>
     </div>
-    <div class="border-b mx-6"></div>
-    <PanelMenu
-      class="h-full overflow-y-auto overflow-x-hidden mb-4"
+    <div class="border-t mx-6"></div>
+
+    <div v-if="isFetching" class="h-full p-4">
+      <Skeleton class="h-full" />
+    </div>
+    <PanelMenu v-else class="h-full overflow-y-auto overflow-x-hidden mb-4"
       v-model:expandedKeys="expandedKeys"
       :model="items"
-      :pt="{
-        root: {
-          class: 'my-4'
-        },
-        panel: {
-          class: 'text-sm'
-        },
-        headercontent: {
-          class: [
-            // Color
-            'border-none',
-            'u-bg-pcolor',
-            'text-surface-100',
-            // States
-            'hover:bg-surface-100',
-            'hover:u-txt-active',
-            // Transition
-            'transition duration-200 ease-in-out',
-            'transition-shadow duration-200'
-          ]
-        },
-        headeraction: {
-          class: [
-            'relative',
-            'leading-none',
-            'flex items-center',
-            'p-5',
-            'select-none cursor-pointer no-underline'
-          ]
-        },
-        menucontent: {
-          class: ['border-none', 'rounded-t-none', 'u-bg-pcolor-2']
-        },
-        menu: {
-          class: ['outline-none', 'm-0 p-0 list-none']
-        },
-        content: {
-          class: ['border-none rounded-none', 'transition-shadow duration-200']
-        },
-        action: {
-          class: [
-            'relative',
-            // Font
-            'leading-none',
-            // Flex & Alignments
-            'flex items-center',
-            // Spacing
-            'u-sidebar-submenuitem-pl',
-            // Color
-            'text-surface-100',
-            // States
-            'hover:bg-surface-100 hover:u-txt-active',
-            // Misc
-            'cursor-pointer no-underline',
-            'select-none overflow-hidden'
-          ]
-        },
-        icon: {
-          class: ['mr-2']
-        },
-        submenu: {
-          class: 'p-0 pl-4 m-0 list-none'
-        },
-        transition: {
-          enterFromClass: 'max-h-0',
-          enterActiveClass:
-            'overflow-hidden transition-[max-height] duration-1000 ease-[cubic-bezier(0.42,0,0.58,1)]',
-          enterToClass: 'max-h-[1000px]',
-          leaveFromClass: 'max-h-[1000px]',
-          leaveActiveClass:
-            'overflow-hidden transition-[max-height] duration-[450ms] ease-[cubic-bezier(0,1,0,1)]',
-          leaveToClass: 'max-h-0'
-        }
-      }"
+      :pt="panelMenuPt"
     >
       <template #item="{ item, props, hasSubmenu, active }">
-        <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-          <a v-ripple v-bind="props.action" :href="href" @click="navigate">
-            <div class="flex items-center px-5 py-3" @click="collapseAll">
-              <span
-                class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
-              >
-                <span :class="item.icon" class="fa-lg text-surface-100" />
-              </span>
-              <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
-            </div>
-          </a>
-        </router-link>
-        <a
-          v-else
-          v-ripple
-          class="flex items-center px-5 py-3"
-          v-bind="props.action"
-          :href="item.url"
-          :target="item.target"
-        >
-          <span
-            class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
+        <div v-show="setVisibility(item.key)">
+          <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+            <a v-ripple v-bind="props.action" :href="href" @click="navigate">
+              <div class="flex items-center px-5 py-3" @click="collapseAll">
+                <span
+                  class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
+                >
+                  <span :class="item.icon" class="fa-lg text-surface-100"
+                /></span>
+                <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
+              </div>
+            </a>
+          </router-link>
+          <a
+            v-else
+            v-ripple
+            class="flex items-center px-5 py-3"
+            v-bind="props.action"
+            :href="item.url"
+            :target="item.target"
           >
-            <span :class="item.icon" class="fa-lg text-surface-100" />
-          </span>
-          <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
-          <i
-            v-if="hasSubmenu && !active"
-            class="pi pi-angle-right ml-auto u-sidebar-menuitem-dropdown"
-          ></i>
-          <i v-else class="pi pi-angle-down ml-auto u-sidebar-menuitem-dropdown"></i>
-        </a>
+            <span
+              class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
+            >
+              <span :class="item.icon" class="fa-lg text-surface-100" />
+            </span>
+            <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
+            <i
+              v-if="hasSubmenu && !active"
+              class="pi pi-angle-right ml-auto u-sidebar-menuitem-dropdown"
+            ></i>
+            <i v-else class="pi pi-angle-down ml-auto u-sidebar-menuitem-dropdown"></i>
+          </a>
+        </div>
       </template>
     </PanelMenu>
+
     <div class="border-t mx-6"></div>
     <div class="px-5 py-4 text-surface-100 whitespace-nowrap u-sidebar-footer">
       <span class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md">
         <span class="fa fa-circle-user text-surface-100" />
       </span>
       <div class="flex flex-col u-sidebar-footer-text">
-        <span>{{ name }}</span>
-        <span class="text-sm">{{ role }}</span>
+        <span>{{ authStore.staff.userName }}</span>
+        <span class="text-sm"> {{  role.value  }}</span>
       </div>
     </div>
   </div>

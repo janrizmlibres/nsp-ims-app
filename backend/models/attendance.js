@@ -1,34 +1,35 @@
 import { INTEGER, STRING, DATE, TEXT } from "sequelize";
 import sequelize from "../util/database.js";
-import ClassSchedule from "./class_schedule.js";
+import ClassSchedule from "./class_learning_strand.js";
+import Student from "./nsp_student.js";
 
-const Attendance = sequelize.define('attendance', {
-    id: {
-        type: INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true,
+const Attendance = sequelize.define("attendance", {
+  id: {
+    type: INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  // studentId: {
+  //     type: INTEGER,
+  //     references: {
+  //     model: Student,
+  //     key: 'id',
+  //     },
+  // },
+  classScheduleId: {
+    type: INTEGER,
+    references: {
+      model: ClassSchedule,
+      key: "id",
     },
-    studentId: {
-        type: INTEGER,
-        references: {
-        model: Student,
-        key: 'id',
-        },
-    },
-    classScheduleId: {
-        type: INTEGER,
-        references: {
-        model: ClassSchedule,
-        key: 'id',
-        },
-    },
-    date: {
-        type: DATE,
-        allowNull: false
-    },
-    status: STRING,
-    remarks: TEXT
+  },
+  date: {
+    type: DATE,
+    allowNull: false,
+  },
+  status: STRING,
+  remarks: TEXT,
 });
 
 export default Attendance;

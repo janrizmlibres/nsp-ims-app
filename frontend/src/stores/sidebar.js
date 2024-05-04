@@ -1,18 +1,30 @@
 import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-export const useSideBarStore = defineStore('sidebar', {
-  state: () => ({
-    isPinned: true,
-    isExpanded: true
-  }),
+export const useSidebarStore = defineStore('sidebar', () => {
+  // State properties
+  const isPinned = ref(true)
+  const isHovering = ref(false)
 
-  actions: {
-    changePinnedState() {
-      this.isPinned = !this.isPinned
-    },
-  
-    changeExpansionState() {
-      this.isExpanded = !this.isExpanded
-    }
+  // Actions
+  function changePinnedState() {
+    isPinned.value = !isPinned.value
+  }
+
+  function handleMouseOver() {
+    isHovering.value = true
+  }
+
+  function handleMouseLeave() {
+    isHovering.value = false
+  }
+
+  // Return exposed state and actions
+  return {
+    isPinned,
+    isHovering,
+    changePinnedState,
+    handleMouseOver,
+    handleMouseLeave
   }
 })
