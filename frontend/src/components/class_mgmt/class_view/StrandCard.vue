@@ -12,12 +12,31 @@ function showStrand() {
 }
 
 const schedules = ref(props.schedule)
-const days = ref([])
+const scheds = ref([])
 console.log(schedules.value);
 
-for (const schedule of schedules) {
-    days.value.push(schedule.day)
-    
+for (const schedule of schedules.value) {
+    const format = schedule.day + ' | ' + formatDate(schedule.start_time) + ' - ' + formatDate(schedule.end_time) 
+    scheds.value.push({data:format})
+}
+
+function formatDate(time) {
+    let hms = time.split(':')
+    let hours = hms[0]
+    const minutes = hms[1]
+    const seconds = hms[2]
+    let dd = "AM"
+
+    if (hours >= 12) {
+        hours = hours - 12
+        dd = "PM"
+    }
+    if (hours === 0) {
+        hours = 12
+    }
+
+    const formattedTime = `${hours}:${minutes} ${dd}`
+    return time.replace(new RegExp(`${hms[0]}:${minutes}:${seconds}`), formattedTime)
 }
 
 const customPt = {
@@ -27,19 +46,19 @@ const customPt = {
         ]
     },
     body: {
-        class: '!p-0'
+        class: '!p-0 flex flex-col h-full'
     },
     caption: {
-        class: 'px-8 pt-8'
+        class: 'px-8 pt-8 flex-[2]'
     },
     title: {
         class: 'text-lg font-bold'
     },
     content: {
-        class: 'pl-8 pb-8'
+        class: 'px-8 pb-8 flex-[2]'
     },
     footer: {
-        class: '!pt-0 u-bg-pcolor rounded-b-3xl overflow-hidden '
+        class: '!pt-0 u-bg-pcolor rounded-b-3xl overflow-hidden'
     }
 }
 </script>
@@ -53,9 +72,11 @@ const customPt = {
         <template #subtitle><ProgressBar :value="50"></ProgressBar></template>
         <template #content>
             <h3> {{ props.teacher }} </h3>
-            <p class="m-0 max-h">
-                MTH | 6:00 PM - 7:00 PM
-            </p>
+            <div class="flex flex-col justify-center">
+                <p v-for="sched of scheds" :key="sched.data" class="m-0 max-h">
+                    {{ sched.data }}
+                </p>
+            </div>
             
         </template>
         <template #footer>
