@@ -203,7 +203,7 @@ async function render(activeTerm) {
             key: '8-4',
             label: 'Audit Trails',
             icon: 'fa fa-clock-rotate-left',
-            route: { name: 'dashboard' }
+            route: { name: 'audit-trails' }
           }
         ]
       }

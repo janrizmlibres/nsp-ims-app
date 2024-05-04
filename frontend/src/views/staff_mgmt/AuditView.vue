@@ -7,14 +7,42 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
 import { useStaffsStore } from '@/stores/staffs'
-import { onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const staffsStore = useStaffsStore()
+
+const selectedUser = ref(null)
+const userAudits = ref(null)
+const emptyText = ref('Select user to audit')
+
+watch(selectedUser, () => {
+  if (selectedUser.value !== null) {
+    userAudits.value = selectedUser.value.audits
+    emptyText.value = 'No audits found.'
+  } else {
+    emptyText.value = 'Select user to audit.'
+  }
+})
 
 onMounted(async () => {
   try {
     await staffsStore.getAllStaff({ includeAudit: true })
-    console.log(staffsStore.staffs)
+
+    staffsStore.staffs.forEach((staff) => {
+      staff.audits.forEach((audit) => {
+        const date = new Date(audit.date)
+        audit.date = date.toLocaleDateString(
+          { hour12: true },
+          {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+          }
+        )
+      })
+    })
   } catch (error) {
     console.log(error)
   }
@@ -31,7 +59,12 @@ onMounted(async () => {
             <div
               class="p-2 rounded-[0.3125rem] border u-border-color h-full shadow-[0_0_4px_0_rgba(0,0,0,0.1)]"
             >
-              <DataTable :value="staffsStore.staffs" :loading="isLoading" scrollable>
+              <DataTable
+                :value="staffsStore.staffs"
+                v-model:selection="selectedUser"
+                selectionMode="single"
+                scrollable
+              >
                 <template #empty> No staffs found. </template>
                 <template #loading> Loading staffs data. Please wait. </template>
 
@@ -45,18 +78,17 @@ onMounted(async () => {
             <div
               class="p-2 rounded-[0.3125rem] border u-border-color h-full shadow-[0_0_4px_0_rgba(0,0,0,0.1)]"
             >
-              <DataTable :value="staffsStore.staffs" :loading="isLoading" scrollable>
-                <template #empty> No staffs found. </template>
-                <template #loading> Loading staffs data. Please wait. </template>
+              <DataTable :value="userAudits" scrollable>
+                <template #empty> {{ emptyText }} </template>
+                <template #loading> Loading audit data. Please wait. </template>
 
-                <Column field="id" header="User ID" sortable></Column>
-                <Column field="fullname" header="Full Name" sortable></Column>
+                <Column field="id" header="Audit ID" sortable></Column>
+                <Column field="description" header="Description" sortable></Column>
+                <Column field="date" header="Date" sortable></Column>
               </DataTable>
             </div>
           </SplitterPanel>
         </Splitter>
-        <!-- <div></div>
-        <div></div> -->
       </div>
     </BaseCard>
   </ContentPane>

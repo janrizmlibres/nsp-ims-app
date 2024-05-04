@@ -1,8 +1,9 @@
 import { validationResult } from "express-validator";
+import bcrypt from "bcrypt";
+
 import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
 import Audit from "../models/audit.js";
-import bcrypt from "bcrypt";
 
 export async function getStaffs(req, res, next) {
   try {
@@ -130,6 +131,28 @@ export async function updatePassword(req, res, next) {
 
     await staff.update({ hashedPw });
     res.status(200).json({ message: "Password updated!" });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
+export async function addAudit(req, res, next) {
+  try {
+    const { userId, description, date } = req.body;
+    const staff = await Staff.findByPk(userId);
+
+    if (!staff) {
+      const error = new Error("Staff not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await staff.createAudit({ description, date });
+    res.status(200).json({ message: "Audit created." });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
