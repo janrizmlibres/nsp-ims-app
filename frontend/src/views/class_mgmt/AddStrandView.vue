@@ -13,6 +13,7 @@ import LearningStrandsTable from '@/components/class_mgmt/create_class_view/Lear
 //  stores
 import { useClassStore } from '@/stores/class';
 
+
 const route = useRoute()
 const router = useRouter()
 const confirm = useConfirm();
@@ -23,33 +24,33 @@ const learningStrandData = ref([])
 const scheduleData = ref([])
 const tableData = ref([])
 
-function addForm(data) {
-    const start_time_hours = data.class_schedule.start_time.getHours()
-    const start_time_minutes = data.class_schedule.start_time.getMinutes()
+function addForm(strandData, strandScheduleData) {
+    const start_time_hours = strandScheduleData.start_time.getHours()
+    const start_time_minutes = strandScheduleData.start_time.getMinutes()
     const start_time = start_time_hours + ':' + start_time_minutes
 
-    const end_time_hours = data.class_schedule.end_time.getHours()
-    const end_time_minutes = data.class_schedule.end_time.getMinutes()
+    const end_time_hours = strandScheduleData.end_time.getHours()
+    const end_time_minutes = strandScheduleData.end_time.getMinutes()
     const end_time = end_time_hours + ':' + end_time_minutes
 
     learningStrandData.value.push({
-        name: data.strand.name,
-        teacher: data.volunteer.fullname
+        name: strandData.strand.name,
+        teacher: strandData.volunteer.fullname
     })
 
     scheduleData.value.push({
-        name: data.strand.name,
-        days: data.class_schedule.school_days.toString(),
+        name: strandData.strand.name,
+        days: strandScheduleData.school_days.toString(),
         start_time: start_time,
         end_time: end_time,
     })
 
     tableData.value.push({
-        name: data.strand.name,
-        teacher: data.volunteer.fullname,
-        school_days: data.class_schedule.school_days.toString(),
-        start_time: data.class_schedule.start_time.toLocaleTimeString(),
-        end_time: data.class_schedule.end_time.toLocaleTimeString()
+        name: strandData.strand.name,
+        teacher: strandData.volunteer.fullname,
+        school_days: strandScheduleData.school_days.toString(),
+        start_time: strandScheduleData.start_time.toLocaleTimeString(),
+        end_time: strandScheduleData.end_time.toLocaleTimeString()
     })
 }
 
@@ -75,7 +76,7 @@ async function submitData() {
 
 const cancel = () => {
     confirm.require({
-        group: 'cancel',
+        group: 'actionGuard',
         message: ' Are you sure you want to cancel?',
         header: 'Confirmation',
         accept: () => {
