@@ -8,7 +8,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
-import { errorChecker } from '@/util/interactions.js'
 
 const authStore = useAuthStore()
 const toast = useToast()
