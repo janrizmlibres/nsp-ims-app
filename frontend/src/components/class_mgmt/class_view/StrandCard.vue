@@ -5,18 +5,17 @@ import ProgressBar from 'primevue/progressbar';
 import { ref } from 'vue';
 
 const router = useRouter()
-const props = defineProps(['title', 'teacher', 'schedule'])
+const props = defineProps(['id', 'title', 'teacher', 'schedule'])
 
 function showStrand() {
-    router.push('/strand-information')
+    router.push({ name: 'strand-info', query: { id: props.id} })
 }
 
 const schedules = ref(props.schedule)
 const scheds = ref([])
-console.log(schedules.value);
 
 for (const schedule of schedules.value) {
-    const format = schedule.day + ' | ' + formatDate(schedule.start_time) + ' - ' + formatDate(schedule.end_time) 
+    const format = schedule.days + ' | ' + formatDate(schedule.start_time) + ' - ' + formatDate(schedule.end_time) 
     scheds.value.push({data:format})
 }
 
