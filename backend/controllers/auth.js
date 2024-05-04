@@ -92,7 +92,7 @@ export async function login(req, res, next) {
 
     return res.status(200).json({
       message: "Authentication successful",
-      authToken: authToken,
+      token: authToken,
       refreshToken: refreshToken,
       staff: {
         id: staff.id,
@@ -159,7 +159,7 @@ export async function refreshToken(req, res, next) {
 
   return res.status(200).json({
     message: "Refresh successful",
-    authToken: newAuthToken,
+    token: newAuthToken,
     refreshToken: newRefreshToken,
   });
 }
