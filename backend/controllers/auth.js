@@ -163,3 +163,17 @@ export async function refreshToken(req, res, next) {
     refreshToken: newRefreshToken,
   });
 }
+
+export async function logout(req, res, next) {
+  const refreshToken = req.body.refreshToken;
+
+  if (!refreshToken) {
+    const error = new Error("No refresh token provided.");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  invalidatedTokens.push(refreshToken);
+
+  return res.status(200).json({ message: "Logout successful" });
+}
