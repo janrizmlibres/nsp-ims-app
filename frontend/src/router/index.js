@@ -11,14 +11,15 @@ import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
 
 // Utilities Views
-import StudentRequirementView from '../views/utilities/StudentRequirementView.vue'
-import LearningStrandView from '../views/utilities/LearningStrandView.vue'
-import TermView from '../views/utilities/TermView.vue'
+import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
+import LearningStrandView from '@/views/utilities/LearningStrandView.vue'
+import TermView from '@/views/utilities/TermView.vue'
 
 // Staff Management Views
 import RecordsView from '@/views/staff_mgmt/RecordsView.vue'
 import PermissionsView from '@/views/staff_mgmt/PermissionsView.vue'
 import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
+import AuditView from '@/views/staff_mgmt/AuditView.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -132,6 +133,16 @@ const router = createRouter({
               name: 'edit-staff',
               component: StaffFormView,
               props: true
+            }
+          ]
+        },
+        {
+          path: 'utilities',
+          children: [
+            {
+              path: 'audit-trails',
+              name: 'audit-trails',
+              component: AuditView
             }
           ]
         }

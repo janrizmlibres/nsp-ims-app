@@ -1,7 +1,8 @@
 import Term from "../models/term.js";
-import ClassLevel from "../models/class_level.js"
+import ClassLevel from "../models/class_level.js";
 import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
+import Audit from "../models/audit.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
 import Learner from "../models/learner.js";
@@ -20,31 +21,32 @@ import VolunteerEmergency from "../models/volunteer_emergency_contact.js";
 import VolunteerSpecialization from "../models/volunteer_specialization.js";
 
 function setAssociations() {
-    // Staff-Permission Relationship
-    Staff.hasOne(Permission, {
-        onDelete: 'RESTRICT',
-        onUpdate: 'CASCADE',
-    });
-    Permission.belongsTo(Staff);
+  // Staff-Permission Relationship
+  Staff.hasOne(Permission);
+  Permission.belongsTo(Staff);
 
-    // Year-Class Relationship
-    Term.hasMany(ClassLevel, {
-        onDelete: 'RESTRICT',
-        onUpdate: 'CASCADE',
-    })
-    ClassLevel.belongsTo(Term)
+  // Staff-Audit Relationship
+  Staff.hasMany(Audit);
+  Audit.belongsTo(Staff);
 
-    // Class-LearningStrand Relationship
-    ClassLevel.belongsToMany(LearningStrand, { through: ClassLearningStrand });
-    LearningStrand.belongsToMany(ClassLevel, { through: ClassLearningStrand });
-    LearningStrand.hasMany(ClassLearningStrand)
-    ClassLearningStrand.belongsTo(LearningStrand)
-    ClassLevel.hasMany(ClassLearningStrand)
-    ClassLearningStrand.belongsTo(ClassLevel)
+  // Year-Class Relationship
+  Term.hasMany(ClassLevel, {
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
+  });
+  ClassLevel.belongsTo(Term);
 
-    // ClassLearningStrand-Schedule Relationship
-    ClassLearningStrand.hasMany(ClassSchedule)
-    ClassSchedule.belongsTo(ClassLearningStrand)
+  // Class-LearningStrand Relationship
+  ClassLevel.belongsToMany(LearningStrand, { through: ClassLearningStrand });
+  LearningStrand.belongsToMany(ClassLevel, { through: ClassLearningStrand });
+  LearningStrand.hasMany(ClassLearningStrand);
+  ClassLearningStrand.belongsTo(LearningStrand);
+  ClassLevel.hasMany(ClassLearningStrand);
+  ClassLearningStrand.belongsTo(ClassLevel);
+
+  // ClassLearningStrand-Schedule Relationship
+  ClassLearningStrand.hasMany(ClassSchedule);
+  ClassSchedule.belongsTo(ClassLearningStrand);
 
     // ClassLearningStrand-Module Relationship
     ClassLearningStrand.hasMany(Module)
@@ -101,8 +103,4 @@ function setAssociations() {
     VolunteerSpecialization.belongsTo(Volunteer)
 }
 
-export default setAssociations
-
-
-
-
+export default setAssociations;

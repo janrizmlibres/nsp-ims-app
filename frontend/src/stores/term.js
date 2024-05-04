@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAuthStore } from './auth'
+import { ref } from 'vue'
 
 export const useTermStore = defineStore('term', () => {
+  const activeTerm = ref()
+
   async function getAllTerms() {
     const authStore = useAuthStore()
 
@@ -20,8 +23,8 @@ export const useTermStore = defineStore('term', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
     
-    return result.data.data
+    activeTerm.value = result.data.data
   }
 
-  return { getAllTerms, getActiveTerm }
+  return { activeTerm, getAllTerms, getActiveTerm }
 })
