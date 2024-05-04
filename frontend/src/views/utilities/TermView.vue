@@ -7,12 +7,12 @@ import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'
 import Calendar from 'primevue/calendar'
 
-import { useTermsStore } from '@/stores/terms'
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+// import { useTermsStore } from '@/stores/terms'
+// import { useRouter } from 'vue-router'
+// import { ref } from 'vue'
 
-const router = useRouter()
-const termStore = useTermsStore()
+// const router = useRouter()
+// const termStore = useTermsStore()
 </script>
 
 <template>
