@@ -66,7 +66,19 @@ export const useClassStore = defineStore('class', () => {
         students.value = result.data.data
     }
 
-    return { classLevel, strands, modules, students, getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules, getAllStudents }
+    async function updateStudentStatus(classId, learnerId, newStatus) {
+        const authStore = useAuthStore()
+    
+        await axios.patch(
+            `http://localhost:8080/class/${classId}/student/${learnerId}/changeStatus`,
+            { newStatus },
+            {
+            headers: { Authorization: 'Bearer ' + authStore.token }
+            }
+        )
+    }
+
+    return { classLevel, strands, modules, students, getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules, getAllStudents, updateStudentStatus }
 })
 
 
