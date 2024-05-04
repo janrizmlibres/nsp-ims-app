@@ -1,9 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// Login View
-import LoginView from '../views/login/LoginView.vue'
-
 // Dashboard View
 import DashboardView from '../views/DashboardView.vue'
+import LoginView from '../views/login/LoginView.vue'
 import TheRootView from '@/views/TheRootView.vue'
 
 // Class Management Views
