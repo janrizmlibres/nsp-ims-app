@@ -37,14 +37,12 @@ function addForm(data) {
         teacher: data.volunteer.fullname
     })
 
-    for (var school_day of data.class_schedule.school_days) {
-        scheduleData.value.push({
-            name: data.strand.name,
-            day: school_day,
-            start_time: start_time,
-            end_time: end_time,
-        })
-    }
+    scheduleData.value.push({
+        name: data.strand.name,
+        days: data.class_schedule.school_days.toString(),
+        start_time: start_time,
+        end_time: end_time,
+    })
 
     tableData.value.push({
         name: data.strand.name,
