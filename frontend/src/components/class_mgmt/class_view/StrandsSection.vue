@@ -19,7 +19,6 @@ const isFetching = ref(true)
 const allStrands = ref([])
 
 async function fetchStrands(query) {
-    console.log(query);
     isFetching.value = true
     
     try {
