@@ -4,9 +4,10 @@ import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(sessionStorage.getItem('token') || null)
+  const refreshToken = ref(sessionStorage.getItem('refreshToken') || null)
   const staff = ref(JSON.parse(sessionStorage.getItem('staff')) || null)
   const isAuthenticated = computed(() => token.value !== null)
-
+  
   async function login(userId, password) {
     const result = await axios.post('http://localhost:8080/auth/login', { userId, password })
 
