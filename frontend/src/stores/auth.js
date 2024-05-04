@@ -54,8 +54,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   function logout() {
     sessionStorage.removeItem('token')
+    sessionStorage.removeItem('refreshToken')
     sessionStorage.removeItem('staff')
     token.value = null
+    refreshToken.value = null
     staff.value = null
   }
   
