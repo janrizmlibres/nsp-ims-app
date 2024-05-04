@@ -18,12 +18,11 @@ const classStore = useClassStore()
 const isFetching = ref(true)
 const allStrands = ref([])
 
-async function fetchStrands(query) {
+async function fetchStrands(data) {
     isFetching.value = true
     
     try {
-        await classStore.getAllStrands(query.id)
-        allStrands.value = classStore.strands
+        allStrands.value = data
     } catch(error) {
         console.log(error.response.data.message)
     }
@@ -31,7 +30,7 @@ async function fetchStrands(query) {
     isFetching.value = false
 }
 
-watch(() => route.query, fetchStrands, {immediate: true})
+watch(() => classStore.strands, fetchStrands, {immediate: false})
 </script>
 
 <template>
@@ -49,7 +48,7 @@ watch(() => route.query, fetchStrands, {immediate: true})
         <ProgressSpinner v-if="isFetching && allStrands.length === 0" class="flex justify-center" />
         <span v-else-if="!isFetching && allStrands.length === 0" class="flex flex-col text-center">No learning strands created.</span>
         <div v-else class="grid lg:grid-cols-3 md:grid-cols-1 gap-12 p-4">
-            <StrandCard v-for="learningStrand of allStrands" :key="learningStrand.teacher" :id="learningStrand.classLevelId" :title="learningStrand.learning_strand.name" :teacher="learningStrand.teacher" :schedule="learningStrand.class_schedules" />
+            <StrandCard v-for="learningStrand of allStrands" :key="learningStrand.teacher" :id="learningStrand.id" :title="learningStrand.learning_strand.name" :teacher="learningStrand.teacher" :schedule="learningStrand.class_schedules" />
         </div>
     </div>
 </template>
