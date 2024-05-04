@@ -13,7 +13,7 @@ import Button from 'primevue/button';
         <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
         <p class="mb-0">{{ message.message }}</p>
         <div class="flex items-center gap-2 mt-4">
-          <Button label="Logout" @click="acceptCallback" class="w-[8rem]"
+          <Button @click="acceptCallback" class="w-[8rem]"
                   :pt="{
               root: ({ props, context, parent }) => ({
                 class: [
@@ -29,8 +29,8 @@ import Button from 'primevue/button';
               })
             }"
                   :pt-options="{mergeProps: true}"
-          />
-          <Button label="Cancel" outlined @click="rejectCallback" class="w-[8rem]"
+          > {{message.acceptButton}} </Button>
+          <Button outlined @click="rejectCallback" class="w-[8rem]"
                   :pt="{
               root: ({ props, context, parent }) => ({
                 class: [
@@ -41,7 +41,7 @@ import Button from 'primevue/button';
               })
             }"
                   :pt-options="{mergeProps: true}"
-          />
+          > {{message.rejectButton}} </Button>
         </div>
       </div>
     </template>
