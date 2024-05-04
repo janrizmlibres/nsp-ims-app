@@ -47,11 +47,11 @@
   .u-bg-pcolor-darker {
     background-color: #1c467e;
   }
-  
+
   .u-bc-button {
     border-color: #1c467e;
   }
-  
+
   .u-bg-button-hover:hover {
     background-color: #265492;
   }
@@ -59,7 +59,7 @@
   .u-bg-border-button-hover:hover {
     border-color: #265492;
   }
-  
+
   .u-bg-border-button-focus {
     --tw-ring-color: #265492;
   }
@@ -128,6 +128,10 @@
     color: #b1b7bb;
   }
 
+  .u-border-color {
+    border-color: #b1b7bb;
+  }
+
   .u-txt-link {
     color: #265492;
   }
@@ -137,11 +141,11 @@
   .u-login-panel-width {
     width: 30rem;
   }
-  
+
   .u-login-panel-height {
     height: 33rem;
   }
-  
+
   .u-letter-spacing {
     letter-spacing: 0.3rem;
   }
@@ -149,11 +153,11 @@
   .u-input-text-hover:hover {
     border-color: #1c467e;
   }
-  
+
   .u-input-text-focus {
     --tw-ring-color: #3569ac;
   }
-  
+
   .u-input-text-error {
     border-color: #c94b24;
   }

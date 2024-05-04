@@ -21,7 +21,7 @@ const isFetching = ref(true)
 const role = ref('')
 async function render(activeTerm) {
   if (activeTerm != null) {
-      const gradeSchool = activeTerm.class_levels.find((obj) => {
+    const gradeSchool = activeTerm.class_levels.find((obj) => {
       return obj.school_level === 'Grade School'
     })
 
@@ -203,7 +203,7 @@ async function render(activeTerm) {
             key: '8-4',
             label: 'Audit Trails',
             icon: 'fa fa-clock-rotate-left',
-            route: { name: 'dashboard' }
+            route: { name: 'audit-trails' }
           }
         ]
       }
@@ -213,7 +213,7 @@ async function render(activeTerm) {
   role.value = computed(() => {
     if (authStore.staff.accessLevel === 1) {
       return 'Admin'
-    }  else if (authStore.staff.accessLevel === 2) {
+    } else if (authStore.staff.accessLevel === 2) {
       return 'Sub-Admin'
     } else {
       return 'Staff'
@@ -396,7 +396,9 @@ const handleMouseLeave = () => {
     <div v-if="isFetching" class="h-full p-4">
       <Skeleton class="h-full" />
     </div>
-    <PanelMenu v-else class="h-full overflow-y-auto overflow-x-hidden mb-4"
+    <PanelMenu
+      v-else
+      class="h-full overflow-y-auto overflow-x-hidden mb-4"
       v-model:expandedKeys="expandedKeys"
       :model="items"
       :pt="panelMenuPt"
@@ -446,7 +448,7 @@ const handleMouseLeave = () => {
       </span>
       <div class="flex flex-col u-sidebar-footer-text">
         <span>{{ authStore.staff.userName }}</span>
-        <span class="text-sm"> {{  role.value  }}</span>
+        <span class="text-sm"> {{ role.value }}</span>
       </div>
     </div>
   </div>

@@ -1,7 +1,8 @@
 import Term from "../models/term.js";
-import ClassLevel from "../models/class_level.js"
+import ClassLevel from "../models/class_level.js";
 import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
+import Audit from "../models/audit.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
 import Student from "../models/nsp_student.js";
@@ -12,51 +13,51 @@ import ClassLearningStrand from "../models/class_learning_strand.js";
 import ClassSchedule from "../models/class_schedule.js";
 
 function setAssociations() {
-    // Staff-Permission Relationship
-    Staff.hasOne(Permission);
-    Permission.belongsTo(Staff);
+  // Staff-Permission Relationship
+  Staff.hasOne(Permission);
+  Permission.belongsTo(Staff);
 
-    // Year-Class Relationship
-    Term.hasMany(ClassLevel, {
-        onDelete: 'RESTRICT',
-        onUpdate: 'RESTRICT',
-    })
-    ClassLevel.belongsTo(Term)
+  // Staff-Audit Relationship
+  Staff.hasMany(Audit);
+  Audit.belongsTo(Staff);
 
-    // Class-LearningStrand Relationship
-    ClassLevel.belongsToMany(LearningStrand, { through: ClassLearningStrand });
-    LearningStrand.belongsToMany(ClassLevel, { through: ClassLearningStrand });
-    LearningStrand.hasMany(ClassLearningStrand)
-    ClassLearningStrand.belongsTo(LearningStrand)
-    ClassLevel.hasMany(ClassLearningStrand)
-    ClassLearningStrand.belongsTo(ClassLevel)
+  // Year-Class Relationship
+  Term.hasMany(ClassLevel, {
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
+  });
+  ClassLevel.belongsTo(Term);
 
-    // ClassLearningStrand-Schedule Relationship
-    ClassLearningStrand.hasMany(ClassSchedule)
-    ClassSchedule.belongsTo(ClassLearningStrand)
+  // Class-LearningStrand Relationship
+  ClassLevel.belongsToMany(LearningStrand, { through: ClassLearningStrand });
+  LearningStrand.belongsToMany(ClassLevel, { through: ClassLearningStrand });
+  LearningStrand.hasMany(ClassLearningStrand);
+  ClassLearningStrand.belongsTo(LearningStrand);
+  ClassLevel.hasMany(ClassLearningStrand);
+  ClassLearningStrand.belongsTo(ClassLevel);
 
-    // ClassLearningStrand-Module Relationship
-    ClassLearningStrand.hasMany(Module, {
-        onDelete: 'RESTRICT',
-        onUpdate: 'CASCADE',
-    })
-    Module.belongsTo(ClassLearningStrand)
+  // ClassLearningStrand-Schedule Relationship
+  ClassLearningStrand.hasMany(ClassSchedule);
+  ClassSchedule.belongsTo(ClassLearningStrand);
 
-    // Student-ClassLevel Relationship
-    Student.belongsToMany(ClassLevel, { through: Enrollment });
-    ClassLevel.belongsToMany(Student, { through: Enrollment });
+  // ClassLearningStrand-Module Relationship
+  ClassLearningStrand.hasMany(Module, {
+    onDelete: "RESTRICT",
+    onUpdate: "CASCADE",
+  });
+  Module.belongsTo(ClassLearningStrand);
 
-    // // Student-Class Schedule Relationship
-    // Student.belongsToMany(ClassLearningStrand, { through: Attendance });
-    // ClassLearningStrand.belongsToMany(Student, { through: Attendance });
+  // Student-ClassLevel Relationship
+  Student.belongsToMany(ClassLevel, { through: Enrollment });
+  ClassLevel.belongsToMany(Student, { through: Enrollment });
 
-    // Student-Module Relationship
-    Student.belongsToMany(Module, { through: ModuleSubmission });
-    Module.belongsToMany(Student, { through: ModuleSubmission });
+  // // Student-Class Schedule Relationship
+  // Student.belongsToMany(ClassLearningStrand, { through: Attendance });
+  // ClassLearningStrand.belongsToMany(Student, { through: Attendance });
+
+  // Student-Module Relationship
+  Student.belongsToMany(Module, { through: ModuleSubmission });
+  Module.belongsToMany(Student, { through: ModuleSubmission });
 }
 
-export default setAssociations
-
-
-
-
+export default setAssociations;
