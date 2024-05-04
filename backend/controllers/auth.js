@@ -13,6 +13,7 @@ let invalidatedTokens = [];
 export async function signup(req, res, next) {
   try {
     const errors = validationResult(req);
+    console.log(errors);
 
     if (!errors.isEmpty()) {
       const error = new Error("Validation failed, entered data is incorrect.");
@@ -98,7 +99,7 @@ export async function login(req, res, next) {
         id: staff.id,
         accessLevel: staff.accessLevel,
         permissions: staff.permission,
-        userName: staff.fullname
+        userName: staff.fullname,
       },
     });
   } catch (error) {
