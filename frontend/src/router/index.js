@@ -1,21 +1,25 @@
 import { createRouter, createWebHistory } from 'vue-router'
+// Dashboard View
 import DashboardView from '../views/DashboardView.vue'
-import LoginView from '../views/login_view/LoginView.vue'
+import LoginView from '../views/login/LoginView.vue'
 import TheRootView from '@/views/TheRootView.vue'
 
+// Class Management Views
 import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
 import CreateClassesView from '../views/class_mgmt/CreateClassesView.vue'
 
-import StudentRequirementView from '../views/requirement_view/StudentRequirementView.vue'
-import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
-import TermView from '../views/term_view/TermView.vue'
+// Staff Management Views
+import RecordsView from '@/views/staff_mgmt/RecordsView.vue'
+import PermissionsView from '@/views/staff_mgmt/PermissionsView.vue'
+import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
 
-import RecordsView from '@/views/staff_view/RecordsView.vue'
-import PermissionsView from '@/views/staff_view/PermissionsView.vue'
-import StaffFormView from '@/views/staff_view/StaffFormView.vue'
+// Utilities Views
+import StudentRequirementView from '../views/utilities/StudentRequirementView.vue'
+import LearningStrandView from '../views/utilities/LearningStrandView.vue'
+import TermView from '../views/utilities/TermView.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
