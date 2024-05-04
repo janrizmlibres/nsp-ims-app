@@ -20,7 +20,6 @@ const allStrands = ref([])
 
 async function fetchStrands(query) {
     console.log(query);
-    route.value = useRoute()
     isFetching.value = true
     
     try {
