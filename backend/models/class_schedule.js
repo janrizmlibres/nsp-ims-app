@@ -8,7 +8,7 @@ const ClassSchedule = sequelize.define('class_schedule', {
         allowNull: false,
         primaryKey: true,
     },
-    day: {
+    days: {
         type: STRING,
         allowNull: false
     },
