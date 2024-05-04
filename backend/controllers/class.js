@@ -64,7 +64,7 @@ export async function addSchedule(req, res, next) {
 
     const {
         name,
-        day,
+        days,
         start_time,
         end_time
     } = req.body
@@ -83,7 +83,7 @@ export async function addSchedule(req, res, next) {
         })
         
         await class_learning_strand.createClass_schedule({
-            day: day,
+            days: days,
             start_time: start_time,
             end_time: end_time
         });
