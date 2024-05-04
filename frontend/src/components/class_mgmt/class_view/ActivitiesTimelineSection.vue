@@ -4,33 +4,28 @@ import Divider from 'primevue/divider';
 import TimelineCard from './TimelineCard.vue';
 import ProgressSpinner from 'primevue/progressspinner';
 import { ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
 
 // stores
 import { useClassStore } from '@/stores/class';
-
-const route = useRoute()
 
 const classStore = useClassStore()
 
 const isFetching = ref(true)
 const allModules = ref([])
 
-async function fetchModules(id) {
-    route.value = useRoute()
+function fetchModules(data) {
     isFetching.value = true
     
     try {
-        await classStore.getAllModules(id)
-        allModules.value = classStore.modules
+        allModules.value = data
     } catch(error) {
         console.log(error.response.data.message)
     }
-
+    
     isFetching.value = false
 }
 
-watch(() => route.query.id, fetchModules, {immediate: true})
+watch(() => classStore.modules, fetchModules, {immediate: false})
 </script>
 
 <template>
