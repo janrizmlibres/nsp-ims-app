@@ -7,7 +7,6 @@ import InputText from 'primevue/inputtext';
 import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import { checkInputEmpty } from '@/util/interactions.js'
 
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';

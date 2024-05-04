@@ -1,7 +1,6 @@
 ﻿<script setup>
 import InputText from 'primevue/inputtext'
 import { useToast } from 'primevue/usetoast'
-import { checkInputEmpty } from '@/util/interactions.js'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 
@@ -19,6 +18,18 @@ const passwordInput = ref(null)
 
 const isUsernameInvalid = ref(false)
 const isPasswordInvalid = ref(false)
+
+function checkInputEmpty(input, isInvalid) {
+  const inputValue = input.value || '';
+
+  if (inputValue.trim() === '') {
+    isInvalid.value = true;
+    return true;
+  } else {
+    isInvalid.value = false
+    return false;
+  }
+}
 
 function checkInputEmptyForUsername() {
   checkInputEmpty(userIdInput, isUsernameInvalid)
@@ -43,7 +54,6 @@ async function submitEvent() {
     await authStore.login(id, password)
     await router.replace({ name: 'dashboard' })
   } catch (error) {
-    console.log(error)
     toast.add({
       severity: 'error',
       summary: 'Error Logging In',
