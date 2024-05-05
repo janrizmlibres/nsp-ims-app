@@ -147,7 +147,7 @@ const dropStudent = (learnerId, studentLastName, studentFirstName) => {
         sortField="lastName" :sortOrder="-1" removableSort 
         v-model:filters="filters" :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'category']"
         paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        ref="exportRef"  scrollable
+        ref="exportRef"  scrollable showGridlines
         @rowSelect="{}" @rowUnselect="{}"
         :ptOptions="{mergeProps:true}"
         :pt="customPt"
