@@ -74,9 +74,7 @@ export async function login(req, res, next) {
       throw error;
     }
 
-    console.log("We here");
     const result = await bcrypt.compare(password, staff.hashedPw);
-    console.log(result);
 
     if (!result) {
       const error = new Error("Authentication failed. Wrong password.");

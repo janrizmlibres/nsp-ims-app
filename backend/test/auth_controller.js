@@ -109,8 +109,9 @@ let res = {
 
 async function resetDb() {
   await sequelize.query("SET FOREIGN_KEY_CHECKS=0");
+  await sequelize.drop();
+  await sequelize.query("SET FOREIGN_KEY_CHECKS=1");
   setAssociations();
   await sequelize.sync({ force: true });
-  await sequelize.query("SET FOREIGN_KEY_CHECKS=1");
   await injectAll();
 }

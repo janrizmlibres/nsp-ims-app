@@ -1,9 +1,6 @@
-import "dotenv/config";
 import { expect } from "chai";
-import sinon from "sinon";
 
 import * as adminController from "../controllers/admin.js";
-import Staff from "../models/staff.js";
 
 import sequelize from "../util/database.js";
 import { injectAll } from "../util/db_injector.js";
@@ -112,8 +109,9 @@ function expectStaffFound(res, message, code, id) {
 
 async function resetDb() {
   await sequelize.query("SET FOREIGN_KEY_CHECKS=0");
+  await sequelize.drop();
+  await sequelize.query("SET FOREIGN_KEY_CHECKS=1");
   setAssociations();
   await sequelize.sync({ force: true });
-  await sequelize.query("SET FOREIGN_KEY_CHECKS=1");
   await injectAll();
 }
