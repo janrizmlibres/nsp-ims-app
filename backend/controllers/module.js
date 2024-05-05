@@ -15,8 +15,6 @@ export async function getModule(req, res, next) {
                 model: ClassLearningStrand, include: [LearningStrand]
             }]
         })
-
-        console.log(module);
         
         res.status(200).json({
         message: "Fetched module successfully.",
