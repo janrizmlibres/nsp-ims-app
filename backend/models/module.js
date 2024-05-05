@@ -10,7 +10,8 @@ const Module = sequelize.define('module', {
     },
     title: {
         type: STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     distribution_date: {
         type: DATE,
