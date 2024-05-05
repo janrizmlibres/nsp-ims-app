@@ -107,7 +107,6 @@ describe("Signup", () => {
     };
 
     await signup(req, res, () => {});
-    console.log(res);
     expect(res.statusCode).to.equal(201);
     expect(res.body.message).to.equal("User created!");
     expect(res.body.user).to.be.an("object");

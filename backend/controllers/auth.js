@@ -13,7 +13,6 @@ let invalidatedTokens = [];
 export async function signup(req, res, next) {
   try {
     const errors = validationResult(req);
-    console.log(errors);
 
     if (!errors.isEmpty()) {
       const error = new Error("Validation failed, entered data is incorrect.");

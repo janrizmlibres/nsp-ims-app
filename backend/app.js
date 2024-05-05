@@ -2,7 +2,7 @@ import express from "express";
 import "dotenv/config";
 
 import sequelize from "./util/database.js";
-import setAssociations from "./util/relations.js";
+import setAssociations from "./util/associations.js";
 import { injectAll } from "./util/db_injector.js";
 
 import adminRoutes from "./routes/admin.js";

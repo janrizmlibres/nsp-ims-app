@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { expect } from "chai";
 import sinon from "sinon";
 
@@ -6,17 +7,11 @@ import Staff from "../models/staff.js";
 
 import sequelize from "../util/database.js";
 import { injectAll } from "../util/db_injector.js";
+import setAssociations from "../util/associations.js";
 
 describe("Admin Controller (Staffs)", () => {
-  before(async () => {
-    await sequelize.sync({ force: true });
-    await injectAll();
-  });
-
-  after(async () => {
-    await sequelize.sync({ force: true });
-    await injectAll();
-  });
+  before(async () => await resetDb());
+  after(async () => await resetDb());
 
   beforeEach(() => {
     sinon.stub(Staff, "findAll");
@@ -28,9 +23,9 @@ describe("Admin Controller (Staffs)", () => {
     Staff.findByPk.restore();
   });
 
-  it("should be able to get a total of 2 staffs from the database", async () => {
-    Staff.findAll.returns([{ id: 11111 }, { id: 22222 }, { id: 33333 }]);
-    await adminController.getStaffs({}, res, () => {});
+  it("should be able to get a total of 5 staffs from the database", async () => {
+    const req = { query: { includePerms: false, includeAudit: false } };
+    await adminController.getStaffs(req, res, () => {});
 
     expect(res).to.have.property("statusCode", 200);
     expect(res.body).to.have.property(
@@ -38,7 +33,7 @@ describe("Admin Controller (Staffs)", () => {
       "Fetched all staff successfully."
     );
     expect(res.body).to.have.property("staffs");
-    expect(res.body.staffs).to.have.length(3);
+    expect(res.body.staffs).to.have.length(5);
   });
 
   it("shoud throw an error if staff cannot be found via get request", async () => {
@@ -150,4 +145,13 @@ function expectStaffFound(res, message, code, id) {
   expect(res.body.message).to.be.equal(message);
   expect(res.body).to.have.property("staff");
   expect(res.body.staff.id).to.be.equal(id);
+}
+
+async function resetDb() {
+  setAssociations();
+  await sequelize.query("SET FOREIGN_KEY_CHECKS=0");
+  await sequelize.drop();
+  await sequelize.query("SET FOREIGN_KEY_CHECKS=1");
+  await sequelize.sync({ force: true });
+  await injectAll();
 }
