@@ -2,6 +2,7 @@ import ClassLearningStrand from "../models/class_learning_strand.js";
 import ClassLevel from "../models/class_level.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Enrollment from "../models/enrollment.js";
+import Grade from "../models/grade.js";
 import Learner from "../models/learner.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
@@ -42,11 +43,43 @@ export async function addLearningStrand(req, res, next) {
             where: {name:name}
         })
 
+        const classLearningStrand = await ClassLearningStrand.findOne({
+            where: {
+                classLevelId: classLevel.id,
+                learningStrandId: learningStrand.id
+            }
+        })
+
+        if (classLearningStrand) {
+            const error = Error(`${learningStrand.name} exists already!`);
+            error.statusCode = 404;
+            throw error;
+        }
+
         await classLevel.addLearning_strand(learningStrand, {
             through: {
                 teacher: teacher
             }
         })
+
+        const newClassLearningStrand = await ClassLearningStrand.findOne({
+            where: {
+                classLevelId: classLevel.id,
+                learningStrandId: learningStrand.id
+            }
+        })
+
+        const enrollments = await Enrollment.findAll({
+            where: {classLevelId: newClassLearningStrand.classLevelId}, 
+            include: [Learner]
+        })
+
+        for (const enrollment of enrollments) {
+            await newClassLearningStrand.addLearner(enrollment.learner, {
+                through: Grade
+            })
+        }
+
 
         res.status(201).json({ 
             message: "Learning strand added!"
@@ -135,8 +168,6 @@ export async function getAllModules(req, res, next) {
             }
         })
 
-        console.log(modules);
-
         res.status(201).json({ 
             message: "Fetched all modules successfully!",
             data: modules
@@ -197,7 +228,6 @@ export async function updateStudentStatus(req, res, next) {
     try {
         const classId = req.params.classId
         const learnerId = req.params.learnerId;
-        console.log(classId);
         await Enrollment.update(
             { status: req.body.newStatus}, 
             { where: { classLevelId: classId, learnerId: learnerId }
@@ -211,4 +241,29 @@ export async function updateStudentStatus(req, res, next) {
         next(error);
         return error;
     }
+}
+
+export async function getAllGrades(req, res, next) {
+    // const classId = req.params.classId;
+
+    // try {
+    //     const grades = await ClassLearningStrand.findAll({
+    //         where: {classLevelId: classId}, 
+    //         include: [{
+    //             model: Grade, include: {
+    //                 model: Learner, include: [Enrollment]
+    //             }
+    //         }, LearningStrand]
+    //     })
+
+    //     res.status(201).json({ 
+    //         message: "Grades fetched successfully!",
+    //         data: grades
+    //     });
+    // } catch (error) {
+    //     if (!error.statusCode) {
+    //         error.statusCode = 500;
+    //     }
+    //     next(error);
+    // }
 }
