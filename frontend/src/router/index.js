@@ -62,9 +62,14 @@ const router = createRouter({
             },
             {
               path: '/strand',
-              name: 'strand-info',
+              name: 'strand',
               component: StrandView,
-              query: {id: Number},
+              query: {
+                  id: Number, action: String
+              },
+              beforeEnter: (to) => {
+                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
+              }
             },
             {
               path: '/module',
