@@ -13,15 +13,10 @@ export async function getStaffs(req, res, next) {
     if (includePerms) associations.push(Permission);
     if (includeAudit) associations.push(Audit);
 
-    console.log("We here");
-
     const staffs = await Staff.findAll({
-      // include: associations,
-      where: { accessLevel: 3 },
+      include: associations,
+      where: { accessLevel: [2, 3] },
     });
-
-    console.log("this is ti");
-    console.log(staffs);
 
     res.status(200).json({
       message: "Fetched all staff successfully.",

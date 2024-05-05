@@ -1,25 +1,21 @@
-"use strict";
-export default (sequelize, DataTypes) => {
-  const Audit = sequelize.define("audit", {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    description: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-  });
+import { STRING, INTEGER, DATE } from "sequelize";
+import sequelize from "../util/database.js";
 
-  Audit.associate = (models) => {
-    Audit.belongsTo(models.Staff);
-  };
+const Audit = sequelize.define("audit", {
+  id: {
+    type: INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  description: {
+    type: STRING,
+    allowNull: false,
+  },
+  date: {
+    type: DATE,
+    allowNull: false,
+  },
+});
 
-  return Audit;
-};
+export default Audit;

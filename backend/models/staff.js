@@ -1,57 +1,52 @@
-"use strict";
-export default (sequelize, DataTypes) => {
-  const Staff = sequelize.define("staff", {
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-    },
-    lastLogin: DataTypes.DATE,
-    lastName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    middleName: DataTypes.STRING,
-    suffixName: DataTypes.STRING,
-    email: DataTypes.STRING,
-    contactNum: DataTypes.STRING,
-    position: DataTypes.STRING,
-    hashedPw: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    // Access Levels:
-    // 1 - Admin
-    // 2 - Sub-Admin
-    // 3 - Staff
-    accessLevel: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 3,
-    },
-    fullname: {
-      type: DataTypes.VIRTUAL,
-      get() {
-        return (
-          this.firstName +
-          (this.middleName === null ? " " : ` ${this.middleName} `) +
-          this.lastName
-        );
-      },
-      set(_value) {
-        throw new Error("Do not try to set the `fullname` value!");
-      },
-    },
-  });
+import { INTEGER, DATE, STRING, VIRTUAL } from "sequelize";
+import sequelize from "../util/database.js";
 
-  Staff.associate = (models) => {
-    Staff.hasOne(models.Permission);
-    Staff.hasOne(models.Audit);
-  };
+const Staff = sequelize.define("staff", {
+  id: {
+    type: INTEGER,
+    allowNull: false,
+    primaryKey: true,
+  },
+  lastLogin: DATE,
+  lastName: {
+    type: STRING,
+    allowNull: false,
+  },
+  firstName: {
+    type: STRING,
+    allowNull: false,
+  },
+  middleName: STRING,
+  suffixName: STRING,
+  email: STRING,
+  contactNum: STRING,
+  position: STRING,
+  hashedPw: {
+    type: STRING,
+    allowNull: false,
+  },
+  // Access Levels:
+  // 1 - Admin
+  // 2 - Sub-Admin
+  // 3 - Staff
+  accessLevel: {
+    type: INTEGER,
+    allowNull: false,
+    defaultValue: 3,
+  },
+  fullname: {
+    type: VIRTUAL,
+    get() {
+      return (
+        this.firstName +
+        (this.middleName === null ? " " : ` ${this.middleName} `) +
+        this.lastName
+      );
+    },
+    set(_value) {
+      throw new Error("Do not try to set the `fullname` value!");
+    },
+  },
+});
 
-  return Staff;
-};
+export default Staff;
