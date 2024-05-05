@@ -4,7 +4,20 @@ import sinon from "sinon";
 import * as adminController from "../controllers/admin.js";
 import Staff from "../models/staff.js";
 
+import sequelize from "../util/database.js";
+import { injectAll } from "../util/db_injector.js";
+
 describe("Admin Controller (Staffs)", () => {
+  before(async () => {
+    await sequelize.sync({ force: true });
+    await injectAll();
+  });
+
+  after(async () => {
+    await sequelize.sync({ force: true });
+    await injectAll();
+  });
+
   beforeEach(() => {
     sinon.stub(Staff, "findAll");
     sinon.stub(Staff, "findByPk");
