@@ -1,5 +1,4 @@
 import express from "express";
-import "dotenv/config";
 
 import sequelize from "./util/database.js";
 import setAssociations from "./util/associations.js";
@@ -12,6 +11,11 @@ import classRoutes from "./routes/class.js";
 import strandRoutes from "./routes/strand.js";
 import utilitiesRoutes from "./routes/utilities.js";
 import volunteerRoutes from "./routes/volunteer.js";
+import setAssociations from "./util/relations.js";
+import bcrypt from "bcryptjs";
+
+import * as dbInjector from "./util/db_injector.js";
+import "./util/relations.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -54,7 +58,11 @@ app.use((error, req, res, next) => {
 
 try {
   await sequelize.sync({ force: true });
-  await injectAll();
+  await dbInjector.injectStaff();
+  await dbInjector.injectAcademicYear();
+  await dbInjector.injectLearningStrand();
+  await dbInjector.injectLearner();
+  await dbInjector.injectVolunteer();
   app.listen(port);
   console.log("Listening on port " + port);
 } catch (error) {

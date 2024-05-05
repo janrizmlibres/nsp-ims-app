@@ -10,6 +10,11 @@ services:
             - backend/node_modules/
         - action: rebuild
           path: backend/package.json
+    environment:
+      - DATABASE_DB=nsp_db
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=#NSP_2024
+      - DATABASE_HOST=db
     ports:
       - 8080:8080
     networks:
