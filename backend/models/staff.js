@@ -1,3 +1,4 @@
+"use strict";
 export default (sequelize, DataTypes) => {
   const Staff = sequelize.define("staff", {
     id: {

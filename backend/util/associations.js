@@ -1,8 +1,8 @@
 import Term from "../models/term.js";
 import ClassLevel from "../models/class_level.js";
-import Staff from "../models/staff.js";
-import Permission from "../models/permission.js";
-import Audit from "../models/audit.js";
+// import Staff from "../models/staff.js";
+// import Permission from "../models/permission.js";
+// import Audit from "../models/audit.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
 import Learner from "../models/learner.js";
@@ -22,11 +22,11 @@ import VolunteerSpecialization from "../models/volunteer_specialization.js";
 
 function setAssociations() {
   // Staff-Permission Relationship
-  Permission.belongsTo(Staff);
+  // Permission.belongsTo(Staff);
 
   // Staff-Audit Relationship
-  Staff.hasMany(Audit);
-  Audit.belongsTo(Staff);
+  // Staff.hasMany(Audit);
+  // Audit.belongsTo(Staff);
 
   // Year-Class Relationship
   Term.hasMany(ClassLevel);

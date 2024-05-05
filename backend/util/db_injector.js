@@ -1,6 +1,6 @@
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
-import Staff from "../models/staff.js";
+import StaffModel from "../models/staff.js";
 import ClassLevel from "../models/class_level.js";
 import bcrypt from "bcryptjs";
 import Learner from "../models/learner.js";
