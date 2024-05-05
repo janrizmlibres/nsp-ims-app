@@ -2,6 +2,7 @@ import ClassLearningStrand from "../models/class_learning_strand.js";
 import ClassLevel from "../models/class_level.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Enrollment from "../models/enrollment.js";
+import Grade from "../models/grade.js";
 import Learner from "../models/learner.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
@@ -37,6 +38,16 @@ export async function addModule(req, res, next) {
 
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
+
+        const mod = await Module.findOne({
+            where: {title: name}
+        })
+
+        if (mod) {
+            const error = Error("Module name exists already!");
+            error.statusCode = 404;
+            throw error;
+        }
 
         const module = await classLearningStrand.createModule({
             title: name,
@@ -91,13 +102,40 @@ export async function getAllModules(req, res, next) {
             module.dataValues.lacking = lacking
             module.dataValues.complete = complete
             module.dataValues.total = total
-
-            console.log(module);
         }
 
         res.status(201).json({ 
             message: "Modules fetched successfully!",
             data: modules
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+export async function getAllGrades(req, res, next) {
+    const classLearningStrandId = req.params.classLearningStrandId;
+
+    try {
+        const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
+
+        const grades = await Grade.findAll({
+            where: {classLearningStrandId: classLearningStrandId}, 
+            include: [{
+                model: Learner, include: {model: Enrollment, where: {classLevelId: classLearningStrand.classLevelId}}
+            }, {
+                model: ClassLearningStrand, include: [LearningStrand]
+            }]
+        })
+
+        console.log(grades);
+
+        res.status(201).json({ 
+            message: "Grades fetched successfully!",
+            data: grades
         });
     } catch (error) {
         if (!error.statusCode) {

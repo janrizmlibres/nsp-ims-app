@@ -6,6 +6,7 @@ import { useAuthStore } from './auth'
 export const useStrandStore = defineStore('strand', () => {
     const strand = ref()
     const modules = ref()
+    const grades = ref()
     const visibleDialog = ref(false)
 
     async function getStrand(classLearningStrandId) {
@@ -36,11 +37,21 @@ export const useStrandStore = defineStore('strand', () => {
         modules.value = result.data.data
     }
 
+    async function getAllGrades(classLearningStrandId) {
+        const authStore = useAuthStore()
+
+        const result = await axios.get(`http://localhost:8080/strand/${classLearningStrandId}/grades`, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+        
+        grades.value = result.data.data
+    }
+
     function showHideDialog() {
         this.visibleDialog = !this.visibleDialog
     }
 
-    return { strand, modules, visibleDialog, getStrand, showHideDialog, addModule, getAllModules }
+    return { strand, modules, grades, visibleDialog, getStrand, showHideDialog, addModule, getAllModules, getAllGrades }
 })
 
 
