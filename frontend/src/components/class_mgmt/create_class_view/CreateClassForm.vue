@@ -40,7 +40,7 @@ const classStore = useClassStore()
 const utilitiesStore = useUtilitiesStore()
 const volunteerStore = useVolunteerStore()
 
-const strandData = ref()
+const strandData = ref(null)
 const strandScheduleData = ref([])
 
 const strandTempData = ref({
@@ -89,11 +89,11 @@ function resetForm() {
 }
 
 function addForm() {
-    if (strandScheduleData.value.length === 0) {
+    if (strandData.value === null || strandScheduleData.value.length === 0) {
         toast.add({
             severity: 'error',
-            summary: 'No Schedule Added',
-            detail: "Please add a schedule to this learning strand",
+            summary: 'Incomplete Form',
+            detail: "Please fill all necessary information",
             life: 3000
         })
 
@@ -192,7 +192,7 @@ const active = ref(0)
 
     <div class="flex flex-row gap-4 h-[30rem]">
         <div class="flex-1 flex flex-col bg-white rounded-md shadow-xl p-8 pb-4 mb-8">
-            <Stepper v-model:activeStep="active">
+            <Stepper v-model:activeStep="active" linear>
                 <StepperPanel>
                     <template #header="{ index, clickCallback }">
                         <button class="bg-transparent border-none inline-flex flex-column gap-2" @click="clickCallback">
