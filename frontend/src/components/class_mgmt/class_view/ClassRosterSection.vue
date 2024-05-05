@@ -37,10 +37,7 @@ async function fetchStudents(data) {
     } catch(error) {
         console.log(error)
     }
-
-    console.log(active.value);
-    console.log(inactive.value);
-    console.log(drop.value);
+    
     isFetching.value = false
 }
 
