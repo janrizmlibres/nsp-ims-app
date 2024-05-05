@@ -91,58 +91,38 @@ const customPt = {
     }
 }
 
-const props = defineProps(['group', 'dropTable'])
+const props = defineProps(['modelValue', 'dropTable'])
 const dropTable = ref(props.dropTable)
 const learners = ref([])
 
-const isFetching = ref(true)
-
-async function fetchUpdate(data) {
-    isFetching.value = true
-    const tempData = ref([])
+function fetchData(data) {
+    learners.value.length = 0
+    console.log(data);
     
-    if (data != null) {
-        try {
-            for (const grade of data) {
-                const enrollment = grade.learner.enrollments[0]
-
-                if (props.group == 'active' && enrollment.status == 'Active') tempData.value.push(grade)
-                else if (props.group == 'inactive' && enrollment.status == 'Inactive') tempData.value.push(grade)
-                else if (props.group == 'drop' && enrollment.status == 'Drop') tempData.value.push(grade)
-            }
-        } catch(error) {
-            console.log(error)
+    for (const grade of data) {
+        let date = new Date(grade.updatedAt)
+        if (grade.updatedAt !== null) {
+            date = new Date(grade.updatedAt)
+            date = date.toLocaleString()
         }
 
-        learners.value.length = 0
-
-        for (const grade of tempData.value) {
-            let date = new Date(grade.updatedAt)
-            if (grade.updatedAt !== null) {
-                date = new Date(grade.updatedAt)
-                date = date.toLocaleString()
-            }
-
-            const temp = {
-                id: grade.id,
-                lastName: grade.learner.lastName,
-                firstName: grade.learner.firstName,
-                middleName: grade.learner.middleName,
-                first_quarter: grade.first_quarter,
-                second_quarter: grade.second_quarter,
-                third_quarter: grade.third_quarter,
-                fourth_quarter: grade.fourth_quarter,
-                remarks: grade.remarks,
-                updatedAt: date
-            }
-            learners.value.push(temp)
+        const temp = {
+            id: grade.id,
+            lastName: grade.learner.lastName,
+            firstName: grade.learner.firstName,
+            middleName: grade.learner.middleName,
+            first_quarter: grade.first_quarter,
+            second_quarter: grade.second_quarter,
+            third_quarter: grade.third_quarter,
+            fourth_quarter: grade.fourth_quarter,
+            remarks: grade.remarks,
+            updatedAt: date
         }
+        learners.value.push(temp)
     }
-    
-    isFetching.value = false
 }
 
-watch(() => strandStore.grades, fetchUpdate, {immediate: true})
+watch(() => props.modelValue, fetchData, { immediate: true })
 
 const editingRows = ref([]);
 
