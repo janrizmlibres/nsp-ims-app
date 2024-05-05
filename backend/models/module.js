@@ -12,8 +12,14 @@ const Module = sequelize.define('module', {
         type: STRING,
         allowNull: false
     },
-    distribution_date: DATE,
-    retrieval_date: DATE
+    distribution_date: {
+        type: DATE,
+        allowNull: false
+    },
+    retrieval_date: {
+        type: DATE,
+        allowNull: false
+    }
 });
 
 export default Module;
