@@ -1,11 +1,19 @@
 <script setup>
 import Card from 'primevue/card';
+import { useRoute, useRouter } from 'vue-router';
 
-const props = defineProps(['title', 'content'])
+const props = defineProps(['title', 'content', 'action'])
+const router = useRouter()
+const route = useRoute()
+
+function showPage() {
+    router.push({ name: 'strand', query: { id: route.query.id, action: props.action } })
+}
 </script>
 
 <template>
     <Card
+    @click="showPage"
     :pt-options="{mergeProps:false}"
     :pt="{
         root: {
