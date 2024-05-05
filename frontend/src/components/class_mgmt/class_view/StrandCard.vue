@@ -8,7 +8,7 @@ const router = useRouter()
 const props = defineProps(['id', 'title', 'teacher', 'schedule'])
 
 function showStrand() {
-    router.push({ name: 'strand-info', query: { id: props.id} })
+    router.push({ name: 'strand', query: { id: props.id} })
 }
 
 const schedules = ref(props.schedule)
