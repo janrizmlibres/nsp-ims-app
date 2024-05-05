@@ -1,13 +1,19 @@
-import { INTEGER, STRING } from "sequelize";
+import { BOOLEAN, INTEGER, STRING } from "sequelize";
 import sequelize from "../util/database.js";
-import Student from "./nsp_student.js";
 import ClassLearningStrand from "./class_learning_strand.js";
+import Learner from "./learner.js";
 
 const Grade = sequelize.define("grade", {
-  studentId: {
+  id: {
+    type: INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  learnerId: {
       type: INTEGER,
       references: {
-      model: Student,
+      model: Learner,
       key: 'id',
       },
   },
@@ -18,10 +24,10 @@ const Grade = sequelize.define("grade", {
       key: "id",
     },
   },
-  first_quarter: STRING,
-  second_quarter: STRING,
-  third_quarter: STRING,
-  fourth_quarter: STRING,
+  first_quarter: BOOLEAN,
+  second_quarter: BOOLEAN,
+  third_quarter: BOOLEAN,
+  fourth_quarter: BOOLEAN,
   remarks: STRING,
 });
 
