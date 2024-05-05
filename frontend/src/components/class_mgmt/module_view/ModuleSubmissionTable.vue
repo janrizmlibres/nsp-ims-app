@@ -100,9 +100,7 @@ async function fetchModule(data) {
     learners.value.length = 0
 
     try {
-        const moduleSubmissions = data.module_submissions
-        
-        for (const moduleSubmission of moduleSubmissions) {
+        for (const moduleSubmission of data.module_submissions) {
             let date1 = null
             let date2 = null
 
@@ -118,7 +116,6 @@ async function fetchModule(data) {
 
             const temp = {
                 id: moduleSubmission.id,
-                lrn: moduleSubmission.learner.lrn,
                 lastName: moduleSubmission.learner.lastName,
                 firstName: moduleSubmission.learner.firstName,
                 middleName: moduleSubmission.learner.middleName,
@@ -203,7 +200,6 @@ const onRowEditSave = async (event) => {
             <template #empty> <div class="text-center">No records found.</div> </template>
             <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
-            <Column field="lrn" header="LRN" frozen />
             <Column field="lastName" header="Last Name" frozen sortable />
             <Column field="firstName" header="First Name" frozen sortable />
             <Column field="middleName" header="Middle Name" />
@@ -230,7 +226,7 @@ const onRowEditSave = async (event) => {
                 </template>
             </Column>
             <Column field="updatedAt" header="Updated At" sortable />
-            <Column :rowEditor="true" bodyStyle="text-align:center"></Column>
+            <Column :rowEditor="true" bodyStyle="text-align:center" frozen class="sticky right-0"></Column>
         </DataTable>
         </div>
     </div>
