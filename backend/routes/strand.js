@@ -5,6 +5,8 @@ import isAuth from "../middleware/is_auth.js";
 const router = express.Router();
 
 router.get("/:classLearningStrandId", isAuth, strandController.getStrand);
+router.get("/:classLearningStrandId/modules", isAuth, strandController.getAllModules);
+router.post("/:classLearningStrandId/module/add", isAuth, strandController.addModule);
 
 export default router;
 
