@@ -4,6 +4,12 @@ import Module from "./module.js";
 import Learner from "./learner.js";
 
 const ModuleSubmission = sequelize.define("module_submission", {
+  id: {
+    type: INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
   learnerId: {
       type: INTEGER,
       references: {
@@ -18,12 +24,12 @@ const ModuleSubmission = sequelize.define("module_submission", {
       key: "id",
     },
   },
-  title: {
+  date_submitted: DATE,
+  remarks: STRING,
+  status: {
     type: STRING,
-    allowNull: false,
-  },
-  distribution_date: DATE,
-  retrieval_date: DATE,
+    defaultValue: 'No Submission'
+  }
 });
 
 export default ModuleSubmission;
