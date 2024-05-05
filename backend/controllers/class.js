@@ -6,6 +6,7 @@ import Learner from "../models/learner.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
 import Term from "../models/term.js"
+import { Op } from "sequelize";
 
 export async function getClass(req, res, next) {
     const classId = req.params.classId;
@@ -41,15 +42,14 @@ export async function addLearningStrand(req, res, next) {
             where: {name:name}
         })
 
-        const classLearningStrand = await classLevel.addLearning_strand(learningStrand, {
+        await classLevel.addLearning_strand(learningStrand, {
             through: {
                 teacher: teacher
             }
         })
 
         res.status(201).json({ 
-            message: "Learning strand added!",
-            data: classLearningStrand
+            message: "Learning strand added!"
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -124,14 +124,18 @@ export async function getAllModules(req, res, next) {
     const classId = req.params.classId;
     
     try {
-        const classLevel = await ClassLevel.findByPk(classId, {
-            include: {model: ClassLearningStrand, include: [Module]}
+        const modules = await Module.findAll({
+            where: {
+                retrieval_date: { [Op.gte]: new Date() }
+            },
+            include: {
+                model: ClassLearningStrand, where: {
+                    classLevelId: classId
+                }, include: [LearningStrand]
+            }
         })
-        
-        const modules = []
-        classLevel.class_learning_strands.forEach(learningStrand => {
-            modules.push(...learningStrand.modules)
-        });
+
+        console.log(modules);
 
         res.status(201).json({ 
             message: "Fetched all modules successfully!",
