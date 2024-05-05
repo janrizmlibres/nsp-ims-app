@@ -7,6 +7,7 @@ import termRoutes from "./routes/term.js";
 import classRoutes from "./routes/class.js"
 import strandRoutes from "./routes/strand.js"
 import moduleRoutes from "./routes/module.js"
+import gradeRoutes from "./routes/grade.js"
 import utilitiesRoutes from "./routes/utilities.js"
 import volunteerRoutes from "./routes/volunteer.js"
 import setAssociations from "./util/relations.js";
@@ -45,6 +46,7 @@ app.use("/term", termRoutes);
 app.use("/class", classRoutes);
 app.use("/strand", strandRoutes);
 app.use("/module", moduleRoutes);
+app.use("/grade", gradeRoutes);
 app.use("/utilities", utilitiesRoutes);
 app.use("/volunteer", volunteerRoutes);
 
