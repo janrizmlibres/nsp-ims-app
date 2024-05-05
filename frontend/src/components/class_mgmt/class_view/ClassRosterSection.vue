@@ -25,14 +25,13 @@ const active = ref([])
 const inactive = ref([])
 const drop = ref([])
 
-async function fetchStudents(data) {
+function fetchStudents(data) {
     isFetching.value = true
     
     try {
-        const students = data
-        active.value = students.active.enrollments
-        inactive.value = students.inactive.enrollments
-        drop.value = students.drop != null ? students.drop.enrollments : null
+        active.value = data.active.enrollments
+        inactive.value = data.inactive.enrollments
+        drop.value = data.drop != null ? data.drop.enrollments : null
 
     } catch(error) {
         console.log(error)
