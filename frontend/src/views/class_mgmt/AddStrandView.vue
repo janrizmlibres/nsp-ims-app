@@ -4,6 +4,7 @@ import Button from 'primevue/button';
 import { useConfirm } from "primevue/useconfirm";
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 
 // Custom
 import ContentPane from '@/components/UI/ContentPane.vue'
@@ -13,7 +14,7 @@ import LearningStrandsTable from '@/components/class_mgmt/create_class_view/Lear
 //  stores
 import { useClassStore } from '@/stores/class';
 
-
+const toast = useToast()
 const route = useRoute()
 const router = useRouter()
 const confirm = useConfirm();
@@ -21,16 +22,12 @@ const confirm = useConfirm();
 const classStore = useClassStore()
 
 const learningStrandData = ref([])
-const scheduleData = ref([])
 const tableData = ref([])
 
-function addForm(strandData, strandScheduleData) {
-    learningStrandData.value.push({
-        name: strandData.strand.name,
-        teacher: strandData.volunteer.fullname
-    })
-
+function addForm(strandData, strandScheduleData) {    
+    const scheduleData = ref([])
     for (const schedule of strandScheduleData) {
+
         const start_time_hours = schedule.start_time.getHours()
         const start_time_minutes = schedule.start_time.getMinutes()
         const start_time = start_time_hours + ':' + start_time_minutes
@@ -54,21 +51,33 @@ function addForm(strandData, strandScheduleData) {
             end_time: schedule.end_time.toLocaleTimeString()
         })
     }
+
+    learningStrandData.value.push({
+        name: strandData.strand.name,
+        teacher: strandData.volunteer.fullname,
+        schedule: scheduleData.value
+    })
 }
 
 async function submitData() {
     for (var learningStrand of learningStrandData.value) {
         try {
             await classStore.addLearningStrand(route.query.id, learningStrand)
-        } catch (error) {
-            console.log(error.response.data.message);
-        }
-    }
 
-    for (var schedule of scheduleData.value) {
-        try {
-            await classStore.addSchedule(route.query.id, schedule)
+            for (var schedule of learningStrand.schedule) {
+                try {
+                    await classStore.addSchedule(route.query.id, schedule)
+                } catch (error) {
+                    console.log(error.response.data.message);
+                }
+            }
         } catch (error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicated Learning Strand',
+                detail: error.response.data.message,
+                life: 3000
+            })
             console.log(error.response.data.message);
         }
     }
