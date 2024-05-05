@@ -44,7 +44,12 @@ async function addModule() {
             retriDate: range.value[1]
         })
     } catch(error) {
-        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Duplicated Module Name',
+            detail: error.response.data.message,
+            life: 3000
+        })
     }
 
     await strandStore.getAllModules(route.query.id)
