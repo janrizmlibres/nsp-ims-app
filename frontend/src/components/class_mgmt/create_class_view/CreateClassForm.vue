@@ -10,40 +10,49 @@ import StepperPanel from 'primevue/stepperpanel';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { useToast } from 'primevue/usetoast';
-import { useRoute } from 'vue-router';
 import { onMounted, ref } from 'vue';
 
 // stores
-import { useClassStore } from '@/stores/class';
 import { useUtilitiesStore } from '@/stores/utilities';
 import { useVolunteerStore } from '@/stores/volunteer';
+import { useTermStore } from '@/stores/term';
+import { useClassStore } from '@/stores/class';
 
-const emit = defineEmits(['addForm'])
-const route = useRoute()
+const emit = defineEmits(['submit', 'chooseLevel'])
 const toast = useToast()
 
-const term = ref()
-const schoolLevel = ref()
-
-onMounted(async () => {
-    try {
-        await classStore.getClass(route.query.id)
-        const classLevel = ref(classStore.classLevel)
-        schoolLevel.value = classLevel.value.school_level
-        term.value = classLevel.value.term.academic_year
-    } catch (error) {
-        console.log(error.response.data.message)
-    }
-})
-
-const classStore = useClassStore()
 const utilitiesStore = useUtilitiesStore()
 const volunteerStore = useVolunteerStore()
+const termStore = useTermStore()
+const classStore = useClassStore()
 
+const term = ref()
+const classes = ref()
+const learningStrands = ref();
+const volunteers = ref([])
+
+onMounted(async () => {
+    await utilitiesStore.getLearningStrands()
+    learningStrands.value = utilitiesStore.learningStrands
+
+    await volunteerStore.getAllVolunteers()
+    volunteerStore.volunteers.forEach((data) => volunteers.value.push(data.fullname))
+
+    await termStore.getActiveTerm()
+
+    term.value = termStore.activeTerm.academic_year
+    classes.value = termStore.activeTerm.class_levels
+})
+
+const active = ref(0)
 const strandData = ref(null)
 const strandScheduleData = ref([])
+const strandDataTable = ref([])
+const strandSchedDataTable = ref([])
 
 const strandTempData = ref({
+    term: term,
+    classLevel: null,
     strand: null,
     volunteer: null
 })
@@ -54,12 +63,6 @@ const strandScheduleTempData = ref({
     end_time: null
 })
 
-const strandDataTable = ref([])
-const strandSchedDataTable = ref([])
-
-const learningStrands = ref();
-const volunteers = ref()
-
 const days = ref([
     {name: "M", key: "1"},
     {name: "T", key: "2"},
@@ -69,27 +72,8 @@ const days = ref([
     {name: "S", key: "6"},
 ]);
 
-function resetForm() {
-    strandData.value = null
-    strandScheduleData.value.length = 0
-
-    strandTempData.value = {
-        strand: null,
-        volunteer: null
-    }
-
-    strandScheduleTempData.value = {
-        school_days: null,
-        start_time: null,
-        end_time: null
-    }
-
-    strandDataTable.value.length = 0
-    strandSchedDataTable.value.length = 0
-}
-
-function addForm() {
-    if (strandData.value === null || strandScheduleData.value.length === 0) {
+function tempAddStrand(next) {
+    if (Object.values(strandTempData.value).some(o => o === null)) {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
@@ -100,34 +84,18 @@ function addForm() {
         return
     }
 
-    emit('addForm', strandData.value, strandScheduleData.value)
-    resetForm()
-    active.value = 0
-}
-
-function tempAddStrand(data, func) {
-    if (Object.values(data).some(o => o === null)) {
-        toast.add({
-            severity: 'error',
-            summary: 'Incomplete Form',
-            detail: "Please fill all necessary information",
-            life: 3000
-        })
-
-        return
-    }
-
-    strandData.value = data
+    strandData.value = strandTempData.value
 
     strandDataTable.value.push({
-        name: data.strand.name,
-        teacher: data.volunteer.fullname
+        name: strandTempData.value.strand.name,
+        teacher: strandTempData.value.volunteer
     })
-    func()
+
+    next()
 }
 
-function tempAddSched(data) {
-    if (Object.values(data).some(o => o === null)) {
+function tempAddSched() {
+    if (Object.values(strandScheduleTempData.value).some(o => o === null)) {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
@@ -137,15 +105,16 @@ function tempAddSched(data) {
 
         return
     }
+    
+    strandScheduleData.value.push(strandScheduleTempData.value)
 
-    strandScheduleData.value.push(data)
-
-    const sched = {
-        school_days: data.school_days.toString(),
-        start_time: data.start_time.toLocaleTimeString(),
-        end_time: data.end_time.toLocaleTimeString()
+    const schedule = {
+        school_days: strandScheduleTempData.value.school_days.toString(),
+        start_time: strandScheduleTempData.value.start_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        end_time: strandScheduleTempData.value.end_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
     }
-    strandSchedDataTable.value.push(sched)
+
+    strandSchedDataTable.value.push(schedule)
     
     strandScheduleTempData.value = {
         school_days: null,
@@ -159,19 +128,54 @@ function resetTemp(func) {
     strandScheduleData.value.length = 0
     strandDataTable.value.length = 0
     strandSchedDataTable.value.length = 0
+
     func()
 }
 
-onMounted(async () => {
-    await utilitiesStore.getLearningStrands()
-    learningStrands.value = utilitiesStore.learningStrands
+function addStrand() {
+    if (strandData.value === null || strandScheduleData.value.length === 0) {
+        toast.add({
+            severity: 'error',
+            summary: 'Incomplete Form',
+            detail: "Please fill all necessary information",
+            life: 3000
+        })
 
-    await volunteerStore.getAllVolunteers()
-    volunteers.value = volunteerStore.volunteers
-})
+        return
+    }
 
-const active = ref(0)
+    emit('submit', strandData.value, strandScheduleData.value, strandTempData.value.classLevel.id)
+    resetForm()
+    active.value = 0
+}
 
+function resetForm() {
+    strandData.value = null
+    strandScheduleData.value.length = 0
+
+    strandTempData.value.strand = null
+    strandTempData.value.volunteer = null
+
+    strandScheduleTempData.value = {
+        school_days: null,
+        start_time: null,
+        end_time: null
+    }
+
+    strandDataTable.value.length = 0
+    strandSchedDataTable.value.length = 0
+}
+
+async function getAllStrands() {
+    const classLevelId = strandTempData.value.classLevel.id
+    try {
+        await classStore.getAllStrands(classLevelId)
+    } catch(error) {
+        console.log(error.response.data.message);
+    }
+
+    emit('chooseLevel', classStore.strands)
+}
 </script>
 
 <template>
@@ -185,12 +189,12 @@ const active = ref(0)
         <div>
             <span class="mr-3 u-txt-active">School Level</span>
             <span class="relative">
-                <InputText disabled :placeholder="schoolLevel" />
+                <Dropdown v-model="strandTempData.classLevel" :options="classes" optionLabel="school_level" placeholder="Select a Level" class="w-full md:w-[14rem]" @update:modelValue="getAllStrands" />
             </span>
         </div>
     </div>
 
-    <div class="flex flex-row gap-4 h-[30rem]">
+    <div class="flex flex-row gap-4 h-[27rem]">
         <div class="flex-1 flex flex-col bg-white rounded-md shadow-xl p-8 pb-4 mb-8">
             <Stepper v-model:activeStep="active" linear>
                 <StepperPanel>
@@ -203,7 +207,7 @@ const active = ref(0)
                     </template>
                     <template #content="{ nextCallback }">
                         <div class="flex flex-col gap-2">
-                            <div class="text-center mt-3 mb-3 text-xl font-semibold u-txt-active">Add a Learning Strand</div>
+                            <div class="text-center mt-3 mb-3 text-xl font-semibold u-txt-active">Choose a Learning Strand to Add</div>
                             <div class="flex flex-col justify-center mx-auto">
                                 <div class="flex flex-col mb-4">
                                     <span class="mr-3 u-txt-active">Learning Strand</span>
@@ -215,13 +219,13 @@ const active = ref(0)
                                 <div class="flex flex-col">
                                     <span class="mr-3 u-txt-active">Teacher</span>
                                     <span class="relative">
-                                        <Dropdown v-model="strandTempData.volunteer" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
+                                        <Dropdown v-model="strandTempData.volunteer" :options="volunteers" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex pt-8 justify-end">
-                            <Button label="Next" icon="pi pi-arrow-right" iconPos="right" @click="tempAddStrand(strandTempData, nextCallback)" />
+                        <div class="flex pt-8 justify-end bg-transparent">
+                            <Button label="Next" icon="pi pi-arrow-right" iconPos="right" @click="tempAddStrand(nextCallback)" />
                         </div>
                     </template>
                 </StepperPanel>
@@ -260,10 +264,10 @@ const active = ref(0)
                                 </div>
                             </div>
                         </div>
-                        <div class="flex pt-12 justify-between">
+                        <div class="flex pt-12 justify-between bg-transparent">
                             <Button label="Back" severity="secondary" icon="pi pi-arrow-left" @click="resetTemp(prevCallback)" />
-                            <Button icon="fa fa-plus" label="Add Schedule" class="col-start-2 inset-y-0 right-0 self-end" @click="tempAddSched(strandScheduleTempData)" />
-                            <Button label="Submit" icon="pi pi-arrow-right" iconPos="right" @click="addForm" />
+                            <Button icon="fa fa-plus" label="Add Schedule" class="col-start-2 inset-y-0 right-0 self-end" @click="tempAddSched()" />
+                            <Button label="Submit" icon="pi pi-arrow-right" iconPos="right" @click="addStrand" />
                         </div>
                     </template>
                 </StepperPanel>
