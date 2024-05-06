@@ -31,7 +31,7 @@ export async function addModule(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
 
     const {
-        name,
+        title,
         distriDate,
         retriDate
     } = req.body
@@ -39,18 +39,20 @@ export async function addModule(req, res, next) {
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
 
-        const mod = await Module.findOne({
-            where: {title: name}
+        const modules = await Module.findAll({
+            where: {classLearningStrandId: classLearningStrandId}
         })
 
-        if (mod) {
+        console.log(modules);
+
+        if (modules.some(e => e.title === title)) {
             const error = Error("Module name exists already!");
             error.statusCode = 404;
             throw error;
         }
 
         const module = await classLearningStrand.createModule({
-            title: name,
+            title: title,
             distribution_date: distriDate,
             retrieval_date: retriDate
         })
