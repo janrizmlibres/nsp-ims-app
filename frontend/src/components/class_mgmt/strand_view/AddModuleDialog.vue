@@ -39,14 +39,14 @@ async function addModule() {
         }
         
         await strandStore.addModule(route.query.id, {
-            name: value.value,
+            title: value.value,
             distriDate: range.value[0],
             retriDate: range.value[1]
         })
     } catch(error) {
         toast.add({
             severity: 'error',
-            summary: 'Duplicated Module Name',
+            summary: 'Duplicated Module Title',
             detail: error.response.data.message,
             life: 3000
         })
