@@ -70,7 +70,7 @@ async function render(activeTerm) {
             key: '3-1',
             label: 'Academic Year',
             icon: 'fa fa-calendar-week',
-            route: { name: 'dashboard' }
+            route: { name: 'active-enrollment' }
           },
           {
             key: '3-2',
