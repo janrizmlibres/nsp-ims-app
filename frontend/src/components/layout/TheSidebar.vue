@@ -45,7 +45,7 @@ async function render(activeTerm) {
             key: '2-1',
             label: 'Student Records',
             icon: 'fa fa-address-book',
-            route: { name: 'dashboard' }
+            route: { name: 'student-records' }
           },
           {
             key: '2-2',

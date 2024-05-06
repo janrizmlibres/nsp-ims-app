@@ -1,4 +1,4 @@
-import Student from "../models/student";
+import Student from "../models/student.js";
 import Application from "../models/application.js";
 import PersonalInfo from "../models/personal_info.js";
 import ContactInfo from "../models/contact_info.js";

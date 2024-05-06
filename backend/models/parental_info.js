@@ -1,5 +1,5 @@
-import { INTEGER } from "sequelize";
-import sequelize from "../util/database";
+import { INTEGER, STRING } from "sequelize";
+import sequelize from "../util/database.js";
 
 const ParentalInfo = sequelize.define("parental_info", {
   id: {

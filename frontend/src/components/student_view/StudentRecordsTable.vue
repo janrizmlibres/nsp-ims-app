@@ -1,13 +1,8 @@
 <script setup>
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Button from 'primevue/button'
 
-import { useStaffsStore } from '@/stores/staffs'
-import { onBeforeMount, ref } from 'vue'
-import { RouterLink } from 'vue-router'
-
-import { useRosterStore } from '@/stores/roster'
+import { ref } from 'vue'
 
 const custom_pt = {
   root: {
@@ -92,7 +87,6 @@ const custom_pt = {
 const props = defineProps(['filters'])
 const mutFilters = ref(props.filters)
 
-const rosterStore = useRosterStore()
 const columns = [
   { field: 'lrn', header: 'LRN' },
   { field: 'lastName', header: 'Last Name' },
@@ -101,21 +95,27 @@ const columns = [
   { field: 'suffix', header: 'Suffix' },
   { field: 'hat', header: 'School Level' },
   { field: 'sex', header: 'Sex' },
-  { field: 'religion', header: 'Religion' },
+  { field: 'religion', header: 'Religion' }
 ]
-
 </script>
 
 <template>
   <h1>This is the table!</h1>
-  <DataTable :value="rosterStore.data"
+  <DataTable
+    :value="rosterStore.data"
     v-model:filters="mutFilters"
     :globalFilterFields="['id', 'fullname']"
     scrollable
     removableSort
     :ptOptions="{ mergeProps: true }"
-    :pt="custom_pt">
-    <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
+    :pt="custom_pt"
+  >
+    <Column
+      v-for="col of columns"
+      :key="col.field"
+      :field="col.field"
+      :header="col.header"
+      sortable
+    ></Column>
   </DataTable>
 </template>
-

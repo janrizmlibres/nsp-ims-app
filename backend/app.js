@@ -11,6 +11,7 @@ import classRoutes from "./routes/class.js";
 import strandRoutes from "./routes/strand.js";
 import utilitiesRoutes from "./routes/utilities.js";
 import volunteerRoutes from "./routes/volunteer.js";
+import profileRoutes from "./routes/profile.js";
 
 const app = express();
 const port = process.env.PORT || 3000;

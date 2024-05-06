@@ -27,7 +27,6 @@ import StudentRequirementsView from '@/views/student_view/StudentRequirementsVie
 
 import { useAuthStore } from '@/stores/auth'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -49,7 +48,7 @@ const router = createRouter({
         {
           path: '/students',
           name: 'student-records',
-          component: StudentView
+          component: StudentRecordsView
         },
         {
           path: '',
@@ -63,7 +62,8 @@ const router = createRouter({
               name: 'class',
               component: ClassView,
               query: {
-                id: Number, action: String
+                id: Number,
+                action: String
               },
               beforeEnter: (to) => {
                 return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
@@ -73,13 +73,13 @@ const router = createRouter({
               path: '/strand',
               name: 'strand-info',
               component: StrandView,
-              query: {id: Number},
+              query: { id: Number }
             },
             {
               path: '/module',
               name: 'module-info',
               component: ModuleView,
-              query: {id: Number}
+              query: { id: Number }
             },
             {
               path: 'classes',
@@ -172,11 +172,11 @@ const router = createRouter({
       name: 'module-info',
       component: ModuleView
     },
-    {
-      path: '/create-classes',
-      name: 'create-classes',
-      component: CreateClassesView
-    },
+    // {
+    //   path: '/create-classes',
+    //   name: 'create-classes',
+    //   component: CreateClassesView
+    // },
     {
       path: '/term-management',
       name: 'term-management',
