@@ -155,21 +155,13 @@ const dropStudent = (learnerId, studentLastName, studentFirstName) => {
         <template #empty> <div class="text-center">No records found.</div> </template>
         <template #loading> <div class="text-center">Loading class roster. Please wait.</div> </template>
 
-        <Column v-if="!dropTable" header="" style="width: 2rem">
-            <template #body="slotProps">
-                <Button label="change status" link @click="changeStatus(slotProps.data.id, slotProps.data.status)" />
-            </template>
-        </Column>
-        <Column v-if="!dropTable" header="" style="width: 2rem">
-            <template #body="slotProps">
-                <Button label="drop" link @click="dropStudent(slotProps.data.id, slotProps.data.lastName, slotProps.data.firstName)" />
-            </template>
-        </Column>
-        <Column v-if="!dropTable" header="" style="width: 2rem">
-            <template #body>
-                <Button label="view" link />
-            </template>
-        </Column>
+        <Column header="" class="u-txt-active text-center">
+                <template #body="slotProps">
+                    <RouterLink :to="{ name: 'module-info', query: { id: slotProps.data.id} }">
+                        <i class="fa fa-eye" />
+                    </RouterLink>
+                </template>
+            </Column>
         <Column field="lrn" header="LRN" frozen sortable />
         <Column field="lastName" header="Last Name" frozen sortable />
         <Column field="firstName" header="First Name" frozen sortable />
