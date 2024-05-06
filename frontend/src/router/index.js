@@ -9,6 +9,7 @@ import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
+import AddStrandView from '@/views/class_mgmt/AddStrandView.vue'
 
 // Utilities Views
 import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
@@ -22,6 +23,7 @@ import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
 import AuditView from '@/views/staff_mgmt/AuditView.vue'
 
 import { useAuthStore } from '@/stores/auth'
+
 
 
 const router = createRouter({
@@ -54,11 +56,16 @@ const router = createRouter({
               name: 'class',
               component: ClassView,
               query: {
-                id: Number, action: String
+                id: Number
               },
               beforeEnter: (to) => {
                 return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
               }
+            },
+            {
+              path: '/schedule',
+              name: 'schedule',
+              component: AddStrandView
             },
             {
               path: '/strand',
