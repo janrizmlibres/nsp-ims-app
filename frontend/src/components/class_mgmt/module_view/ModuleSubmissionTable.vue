@@ -7,6 +7,7 @@ import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
 import Tag from 'primevue/tag';
+import Button from 'primevue/button';
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -178,6 +179,11 @@ const onRowEditSave = async (event) => {
 
     await moduleStore.getModule(route.query.id)
 };
+
+const exportRef = ref()
+function exportCSV() {
+    exportRef.value.exportCSV()
+}
 </script>
 
 <template>
@@ -190,7 +196,7 @@ const onRowEditSave = async (event) => {
         <DataTable 
             :value="learners" dataKey="id" 
             sortField="lastName" :sortOrder="1" removableSort 
-            resizableColumns columnResizeMode="fit" showGridlines 
+            resizableColumns columnResizeMode="fit" showGridlines ref="exportRef"
             paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
             v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
             :ptOptions="{mergeProps:true}"
@@ -226,6 +232,12 @@ const onRowEditSave = async (event) => {
             </Column>
             <Column field="updatedAt" header="Updated At" sortable />
             <Column :rowEditor="true" bodyStyle="text-align:center" frozen class="sticky right-0"></Column>
+            <template #paginatorstart>
+            
+            </template>
+            <template #paginatorend>
+                <Button type="button" icon="pi pi-download" @click="exportCSV" text />
+            </template>
         </DataTable>
         </div>
 </template>
