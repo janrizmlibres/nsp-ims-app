@@ -98,7 +98,7 @@ export async function login(req, res, next) {
         id: staff.id,
         accessLevel: staff.accessLevel,
         permissions: staff.permission,
-        userName: staff.fullname
+        userName: staff.fullname,
       },
     });
   } catch (error) {

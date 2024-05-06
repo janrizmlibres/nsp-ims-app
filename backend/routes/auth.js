@@ -15,7 +15,7 @@ router.post(
   "/signup",
   isAuth,
   [
-    body("password").isStrongPassword({ minLength: 8 }),
+    body("password").isLength({ min: 8 }),
     body("firstName").isAlpha("en-US"),
     body("middleName")
       .trim()

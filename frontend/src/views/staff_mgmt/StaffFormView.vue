@@ -91,7 +91,6 @@ onBeforeRouteLeave((to) => {
     return true
   }
 
-  console.log('Should show modal')
   confirm.require({
     message: 'Do you really want to leave? you have unsaved changes!',
     header: 'Redirect Confirmation',
