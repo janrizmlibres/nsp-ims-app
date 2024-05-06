@@ -8,7 +8,7 @@ import EmergencyPerson from "../models/emergency_person.js";
 
 export async function getStudents(_req, res, next) {
   try {
-    const students = Student.findAll();
+    const students = await Student.findAll();
 
     res.status(200).json({
       message: "Fetched all students successfully.",

@@ -8,6 +8,15 @@ import ClassLevel from "../models/class_level.js";
 import Learner from "../models/learner.js";
 import Volunteer from "../models/volunteer.js";
 
+export async function injectAll() {
+  await injectStaff();
+  await injectStudent();
+  await injectAcademicYear();
+  await injectLearningStrand();
+  await injectLearner();
+  await injectVolunteer();
+}
+
 export async function injectStudent() {
   await Student.create({
     lrn: "198765150721",
@@ -15,14 +24,13 @@ export async function injectStudent() {
     firstName: "Juan",
     lastName: "Dela Cruz",
   });
-}
 
-export async function injectAll() {
-  await injectStaff();
-  await injectAcademicYear();
-  await injectLearningStrand();
-  await injectLearner();
-  await injectVolunteer();
+  await Student.create({
+    lrn: "127051567891",
+    category: "Out-of-School Youth",
+    firstName: "Pedro",
+    lastName: "Pascual",
+  });
 }
 
 export async function injectStaff() {
