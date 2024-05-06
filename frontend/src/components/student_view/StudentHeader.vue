@@ -2,15 +2,10 @@
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 
-import router from '@/router'
 import { ref } from 'vue'
 
 const props = defineProps(['globalFilter'])
 const filter = ref(props.globalFilter)
-
-async function goToStudentRecordsview() {
-  await router.push({ name: 'add-students' })
-}
 </script>
 
 <template>
@@ -29,12 +24,7 @@ async function goToStudentRecordsview() {
           @update:modelValue="$emit('filterChanged', filter)"
         />
       </span>
-      <Button
-        icon="fa-solid fa-user-plus"
-        aria-label="Submit"
-        class="ml-2 h-10"
-        @click="goToStudentRecordsview"
-      />
+      <Button icon="fa-solid fa-user-plus" aria-label="Submit" class="ml-2 h-10" />
       <Button label="Export Data" icon="fa-solid fa-file-export" class="ml-2 h-10" />
     </div>
   </div>

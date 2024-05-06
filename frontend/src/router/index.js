@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 // Dashboard View
 import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/login/LoginView.vue'
-import TheRootView from '@/views/TheRootView.vue'
+import TheRootView from '../views/TheRootView.vue'
 
 // Class Management Views
 import ClassesView from '../views/class_mgmt/ClassesView.vue'
@@ -21,9 +21,7 @@ import PermissionsView from '@/views/staff_mgmt/PermissionsView.vue'
 import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
 import AuditView from '@/views/staff_mgmt/AuditView.vue'
 
-import StudentRecordsView from '@/views/student_view/StudentRecordsView.vue'
-import StudentFormView from '@/views/student_view/StudentFormView.vue'
-import StudentRequirementsView from '@/views/student_view/StudentRequirementsView.vue'
+import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -213,21 +211,16 @@ const router = createRouter({
       component: StaffFormView,
       props: true
     },
-    {
-      path: '/students',
-      name: 'student-records',
-      component: StudentRecordsView
-    },
-    {
-      path: '/students/add',
-      name: 'add-students',
-      component: StudentFormView
-    },
-    {
-      path: '/students/requirements',
-      name: 'student-requirements',
-      component: StudentRequirementsView
-    },
+    // {
+    //   path: '/students/add',
+    //   name: 'add-students',
+    //   component: StudentFormView
+    // },
+    // {
+    //   path: '/students/requirements',
+    //   name: 'student-requirements',
+    //   component: StudentRequirementsView
+    // },
     { path: '/:misc(.*)', redirect: { name: 'login' } }
   ]
 })
