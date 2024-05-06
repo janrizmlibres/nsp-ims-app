@@ -6,6 +6,5 @@ const router = express.Router();
 
 router.get("/active", isAuth, termController.getActiveTerm);
 router.get("/terms", isAuth, termController.getAllTerms);
-router.post("/add_class", termController.addClass);
 
 export default router;

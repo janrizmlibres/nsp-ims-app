@@ -1,15 +1,16 @@
 import express from "express";
 
 import sequelize from "./util/database.js";
-import setAssociations from "./util/relations.js";
-import * as dbInjector from "./util/db_injector.js";
-import "./util/relations.js";
+import { injectAll } from "./util/db_injector.js";
+import setAssociations from "./util/associations.js";
 
-import profileRoutes from "./routes/profile.js";
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
 import termRoutes from "./routes/term.js";
 import classRoutes from "./routes/class.js";
+import strandRoutes from "./routes/strand.js";
+import utilitiesRoutes from "./routes/utilities.js";
+import volunteerRoutes from "./routes/volunteer.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -40,6 +41,9 @@ app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
 app.use("/term", termRoutes);
 app.use("/class", classRoutes);
+app.use("/strand", strandRoutes);
+app.use("/utilities", utilitiesRoutes);
+app.use("/volunteer", volunteerRoutes);
 
 app.use((error, _req, res) => {
   console.log(error);
@@ -50,10 +54,7 @@ app.use((error, _req, res) => {
 
 try {
   await sequelize.sync({ force: true });
-  await dbInjector.injectStudent();
-  await dbInjector.injectStaff();
-  await dbInjector.injectAcademicYear();
-  await dbInjector.injectLearningStrand();
+  await injectAll();
   app.listen(port);
   console.log("Listening on port " + port);
 } catch (error) {

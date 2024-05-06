@@ -1,6 +1,6 @@
 import Term from "../models/term.js";
 import ClassLevel from "../models/class_level.js";
-import Student from "../models/nsp_student.js"
+import Learner from "../models/learner.js";
 
 export async function getActiveTerm(req, res, next) {
     try {
@@ -26,38 +26,12 @@ export async function getAllTerms(req, res, next) {
         const terms = await Term.findAll(
             {where: {status: false}, 
             include: [{model: ClassLevel, 
-                include: [Student]}]}
+                include: [Learner]}]}
         );
 
         res.status(200).json({
             message: "Fetched all terms successfully.",
             data: terms,
-        });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-
-export async function addClass(req, res, next) {
-    const {
-        school_level,
-    } = req.body;
-
-    try {
-        const active_year = await Term.findOne(
-            {where: { status: true }}
-        );
-        
-        const new_class = await active_year.createClass_level({
-            school_level: school_level
-        });
-
-        res.status(201).json({ 
-            message: "Class created!",
-            data: new_class
         });
     } catch (error) {
         if (!error.statusCode) {
