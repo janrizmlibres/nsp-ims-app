@@ -69,7 +69,7 @@ async function addModule() {
         <div class="flex flex-col gap-4 mb-4">
             <div class="flex flex-col">
                 <label>Distribution Date - Retrieval Date</label>
-                <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" :manualInput="false" />
+                <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" hideOnRangeSelection="true" :manualInput="false" />
             </div>
         </div>
         <div class="flex justify-end gap-2">
