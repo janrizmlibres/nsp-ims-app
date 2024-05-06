@@ -47,11 +47,27 @@ export const useStrandStore = defineStore('strand', () => {
         grades.value = result.data.data
     }
 
+    async function updateTeacher(classLearningStrandId, form) {
+        const authStore = useAuthStore()
+
+        await axios.patch(`http://localhost:8080/strand/${classLearningStrandId}/teacher/update`, form, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+    }
+
+    async function updateSchedule(scheduleId, form) {
+        const authStore = useAuthStore()
+
+        await axios.patch(`http://localhost:8080/strand/schedule/${scheduleId}/update`, form, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+    }
+
     function showHideDialog() {
         this.visibleDialog = !this.visibleDialog
     }
 
-    return { strand, modules, grades, visibleDialog, getStrand, showHideDialog, addModule, getAllModules, getAllGrades }
+    return { strand, modules, grades, visibleDialog, getStrand, showHideDialog, addModule, getAllModules, getAllGrades, updateTeacher, updateSchedule }
 })
 
 

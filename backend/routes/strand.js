@@ -8,6 +8,8 @@ router.get("/:classLearningStrandId", isAuth, strandController.getStrand);
 router.get("/:classLearningStrandId/modules", isAuth, strandController.getAllModules);
 router.get("/:classLearningStrandId/grades", isAuth, strandController.getAllGrades);
 router.post("/:classLearningStrandId/module/add", isAuth, strandController.addModule);
+router.patch("/:classLearningStrandId/teacher/update", isAuth, strandController.updateTeacher);
+router.patch("/schedule/:scheduleId/update", isAuth, strandController.updateSchedule);
 
 export default router;
 

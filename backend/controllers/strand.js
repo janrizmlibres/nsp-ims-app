@@ -144,3 +144,39 @@ export async function getAllGrades(req, res, next) {
         next(error);
     }
 }
+
+export async function updateTeacher(req, res, next) {
+    try {
+        const classLearningStrandId = req.params.classLearningStrandId
+        await ClassLearningStrand.update(
+            req.body, 
+            { where: { id: classLearningStrandId }
+        });
+
+        res.status(200).json({ message: "Status updated!"});
+        } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    }
+}
+
+export async function updateSchedule(req, res, next) {
+    try {
+        const scheduleId = req.params.scheduleId
+        await ClassSchedule.update(
+            req.body, 
+            { where: { id: scheduleId }
+        });
+
+        res.status(200).json({ message: "Status updated!" });
+        } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    }
+}
