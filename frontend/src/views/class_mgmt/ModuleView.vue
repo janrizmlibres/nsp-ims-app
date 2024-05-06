@@ -2,6 +2,7 @@
 // Presets
 import { useRoute } from 'vue-router';
 import { ref, watch } from 'vue';
+import Divider from 'primevue/divider';
 
 // Custom
 import ContentPane from '@/components/UI/ContentPane.vue';
@@ -35,6 +36,7 @@ watch(() => route.query, fetchData, {immediate: true})
 <template>
     <ContentPane :header="name" :subheader="strand">
         <ModuleInfoSection />
+        <Divider class="before:border-t before:border-surface-400 my-10"/>
         <ModuleSubmissionTable />
     </ContentPane>
 </template>

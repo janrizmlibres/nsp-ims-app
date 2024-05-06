@@ -23,13 +23,13 @@ if (data.value != null) {
 }
 const customPt = {
     root: {
-        class: ['rounded-md', 'shadow-md', 'bg-surface-0 dark:bg-surface-900', 'text-surface-700 dark:text-surface-0', 'hover: hover:bg-surface-100 hover:cursor-pointer']
+        class: ['rounded-md', 'shadow-md', 'bg-surface-0', 'u-txt-active', 'hover: hover:bg-surface-100 hover:cursor-pointer transition-all duration-500']
     },
     body: {
         class: 'p-5 px-8'
     },
     title: {
-        class: 'text-lg font-semibold mb-2'
+        class: 'text-md font-semibold mb-2'
     },
     subtitle: {
         class: ['text-sm', 'mb-2', 'text-surface-600 dark:text-surface-0/60']

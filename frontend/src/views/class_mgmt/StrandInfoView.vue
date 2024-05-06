@@ -2,6 +2,7 @@
 // Presets
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import Divider from 'primevue/divider';
 
 // Custom
 import ContentPane from '@/components/UI/ContentPane.vue';
@@ -36,7 +37,8 @@ watch(() => route.query, fetchStrand, {immediate: true})
 <template>
     <ContentPane :header="name">
         <StrandInfoSection />
-        <div class="grid grid-cols-2 gap-12 p-2 mb-12">
+        <Divider class="before:border-t before:border-surface-400 my-10"/>
+        <div class="grid grid-cols-2 gap-8 mb-6">
             <OptionCard title="Grades " content="View Grades" action="viewGrades" />
             <OptionCard title="Attendance " content="View Attendance" action="viewAttendance" />
         </div>

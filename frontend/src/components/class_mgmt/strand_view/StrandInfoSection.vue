@@ -1,7 +1,7 @@
 <script setup>
 // Presets
 import ProgressSpinner from 'primevue/progressspinner';
-
+import Panel from 'primevue/panel';
 import { ref, watch } from 'vue';
 
 // stores
@@ -54,13 +54,13 @@ watch(() => strandStore.strand, fetchStrandInfo, {immediate: false})
 </script>
 
 <template>
-    <div class="bg-white shadow-lg rounded-3xl p-6 mb-12 mx-2 u-border-bottom">
-        <div class="bg-transparent border-none flex flex-row gap-x-6 items-center px-4 mb-4">
-            <i class="fa fa-circle-info fa-xl"></i>
-            <div class="u-txt-active font-semibold text-xl content-center">Learning Strand Information</div>
-            
-        </div>
-        
+    <Panel toggleable class="shadow-md">
+        <template #header>
+            <div class="flex items-center gap-2">
+                <i class="fa fa-circle-info fa-xl"></i>
+                <span class="u-txt-active font-semibold text-xl content-center">Learning Strand Information</span>
+            </div>
+        </template>
         <ProgressSpinner v-if="isFetching" class="flex justify-center" />
         <div v-else class="flex flex-col px-4">
             <span class="text-md u-txt-active flex flex-row">
@@ -76,7 +76,7 @@ watch(() => strandStore.strand, fetchStrandInfo, {immediate: false})
                 </div>
             </span>
         </div>
-    </div>
+    </Panel>
 </template>
 
 <style>

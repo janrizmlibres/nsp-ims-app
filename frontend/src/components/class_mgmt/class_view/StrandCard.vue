@@ -40,8 +40,8 @@ function formatDate(time) {
 
 const customPt = {
     root: {
-        class: ['rounded-t-3xl rounded-b-3xl', 'shadow-md', 'bg-surface-0', 'u-txt-active', 
-            'hover: hover:bg-surface-100 hover:cursor-pointer transition-all duration-200 hover:transform hover:scale-105' 
+        class: ['rounded-lg', 'shadow-md', 'bg-surface-0', 'u-txt-active', 
+            'hover:shadow-xl hover:cursor-pointer transition-all duration-500 hover:transform hover:scale-105' 
         ]
     },
     body: {
@@ -57,7 +57,7 @@ const customPt = {
         class: 'px-8 pb-8 flex-[2]'
     },
     footer: {
-        class: '!pt-0 u-bg-pcolor rounded-b-3xl overflow-hidden'
+        class: '!pt-0 u-bg-pcolor rounded-b-lg overflow-hidden'
     }
 }
 </script>

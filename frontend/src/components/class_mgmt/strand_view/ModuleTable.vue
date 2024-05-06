@@ -28,7 +28,7 @@ const strandStore = useStrandStore()
 
 const customPt = {
     root: {
-        class: ['flex flex-col h-full pt-2 justify-between overflow-auto']
+        class: ['flex flex-col pt-2 justify-between']
     },
     table: {
         class: 'bg-white border-spacing-0 border-separate',
@@ -132,18 +132,13 @@ watch(() => strandStore.modules, fetchModules, {immediate: false})
 </script>
 
 <template>
-    <div>
-        <div class="bg-transparent border-none flex flex-row gap-x-6 items-center px-4">
-            <div class="u-txt-active font-semibold text-3xl content-center">Modules</div>
-            <div class="relative mr-2">
-                <Button type="button" icon="fa fa-plus" label="Add" @click="strandStore.showHideDialog" />
-                <AddModuleDialog />
-            </div>
+    <div class="bg-white shadow-xl rounded-md p-5">
+        <div class="flex flex-row gap-4 items-center px-4">
+            <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
+            <span class="font-semibold text-3xl u-txt-active">Modules</span>
         </div>
-        <Divider class="before:border-t before:border-surface-400"/>
-        
-        <div class="bg-white shadow-xl rounded-md p-5">
-            <DataTable 
+        <Divider />
+        <DataTable 
             :value="allModules" dataKey="id" 
             :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines
@@ -163,8 +158,11 @@ watch(() => strandStore.modules, fetchModules, {immediate: false})
                 </template>
             </Column>
             <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
+            <template #footer> 
+                <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="strandStore.showHideDialog"/>
+                <AddModuleDialog /> 
+            </template>
         </DataTable>
-        </div>
     </div>
 </template>
 
