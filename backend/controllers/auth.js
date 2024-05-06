@@ -166,6 +166,7 @@ export async function refreshToken(req, res, next) {
 }
 
 export async function logout(req, res, next) {
+  const token = req.body.token;
   const refreshToken = req.body.refreshToken;
 
   if (!refreshToken) {
@@ -173,7 +174,17 @@ export async function logout(req, res, next) {
     error.statusCode = 401;
     throw error;
   }
-
+  
+  if (!token) {
+    const error = new Error("No token provided.");
+    error.statusCode = 401;
+    throw error;
+  }
+  
+  if (jwt.verify(token, "HEHESECRET")) {
+    invalidatedTokens.push(token);
+  }
+  
   invalidatedTokens.push(refreshToken);
 
   return res.status(200).json({ message: "Logout successful" });
