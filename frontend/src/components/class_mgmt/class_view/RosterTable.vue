@@ -8,9 +8,8 @@ import { ref, watch } from 'vue';
 import { useClassStore } from '@/stores/class';
 import { useRoute } from 'vue-router';
 
-const props = defineProps(['modelValue', 'filters', 'dropTable'])
+const props = defineProps(['modelValue', 'filters'])
 const filters = ref(props.filters)
-const dropTable = ref(props.dropTable)
 
 const confirm = useConfirm()
 const route = useRoute()

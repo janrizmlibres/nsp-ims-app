@@ -63,13 +63,13 @@ watch(() => classStore.students, fetchStudents, {immediate: false})
             }"
             :ptOptions="{mergeProps:true}">
             <TabPanel header="Active">
-                <RosterTable :dropTable="false" v-model="active" :filters="filters" />
+                <RosterTable v-model="active" :filters="filters" />
             </TabPanel>
             <TabPanel header="Inactive">
-                <RosterTable :dropTable="false" v-model="inactive" :filters="filters" />
+                <RosterTable v-model="inactive" :filters="filters" />
             </TabPanel>
             <TabPanel header="Dropped">
-                <RosterTable :dropTable="true" v-model="drop" :filters="filters" />
+                <RosterTable v-model="drop" :filters="filters" />
             </TabPanel>
         </TabView>
     </div>
