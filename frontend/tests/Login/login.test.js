@@ -29,6 +29,8 @@ test('login test - no user ID', async () => {
     } catch (error) {
         // Check if the status code is 401 (Unauthorized)
         expect(error.response.status).toBe(401)
+        // Check if the error message is as expected
+        expect(error.response.data.message).toBe("Authentication failed. User not found.")
     }
 })
 
@@ -38,8 +40,10 @@ test('login test - no password', async () => {
             userId: '91267'
         })
     } catch (error) {
-        // Check if the status code is 401 (Unauthorized)
+        // Check if the status code is 500 (Internal Server Error)
         expect(error.response.status).toBe(500)
+        // Check if the error message is as expected
+        expect(error.response.data.message).toBe("data and hash arguments required")
     }
 })
 
@@ -52,6 +56,8 @@ test('login test - user ID does not exist', async () => {
     } catch (error) {
         // Check if the status code is 401 (Unauthorized)
         expect(error.response.status).toBe(401)
+        // Check if the error message is as expected
+        expect(error.response.data.message).toBe("Authentication failed. User not found.")
     }
 })
 
@@ -64,5 +70,7 @@ test('login test - incorrect password', async () => {
     } catch (error) {
         // Check if the status code is 401 (Unauthorized)
         expect(error.response.status).toBe(401)
+        // Check if the error message is as expected
+        expect(error.response.data.message).toBe("Authentication failed. Wrong password.")
     }
 })
