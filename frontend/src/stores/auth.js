@@ -54,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   function logout() {
     try {
-      const result = axios.post('http://localhost:8080/auth/logout', { refreshToken: refreshToken.value })
+      const result = axios.post('http://localhost:8080/auth/logout', { token: token.value, refreshToken: refreshToken.value })
     
     } catch (error) {
       console.error('Failed to logout', error)
