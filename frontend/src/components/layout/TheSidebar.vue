@@ -140,7 +140,13 @@ async function render(activeTerm) {
             label: 'Class Records',
             icon: 'fa fa-scroll',
             route: { name: 'class-records' }
-          }
+          },
+          {
+            key: '5-3',
+            label: 'Scheduling',
+            icon: 'fa fa-clock',
+            route: { name: 'schedule' }
+          },
         ]
       },
       {
