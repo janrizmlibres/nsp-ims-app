@@ -23,7 +23,9 @@ if (data.value != null) {
 }
 const customPt = {
     root: {
-        class: ['rounded-md', 'shadow-md', 'bg-surface-0', 'u-txt-active', 'hover: hover:bg-surface-100 hover:cursor-pointer transition-all duration-500']
+        class: ['mx-12 rounded-md', 'shadow-md', 'bg-surface-0', 'u-txt-active',
+            'hover:cursor-pointer hover:cursor-pointer transition-all duration-500 hover:transform hover:scale-105'
+        ]
     },
     body: {
         class: 'p-5 px-8'
