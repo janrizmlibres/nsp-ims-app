@@ -29,12 +29,15 @@ watch(() => classStore.modules, fetchModules, {immediate: false})
 </script>
 
 <template>
-    <div class="bg-white shadow-xl p-4 rounded-md mb-12 u-border-bottom">
-        <span class="font-semibold text-xl u-txt-active">Timeline</span>
+    <div class="bg-white shadow-xl p-4 rounded-md mb-20 u-border-bottom">
+        <div class="flex flex-row gap-4 items-center">
+            <i class="fa-solid fa-chart-line fa-lg u-txt-active"></i>
+            <span class="font-semibold text-2xl u-txt-active">Timeline</span>
+        </div>
         <Divider />
 
         <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-        <div v-else class="flex flex-col gap-2 px-8 pb-4 overflow-auto justify-center">
+        <div v-else class="flex flex-col gap-2 px-auto pb-4 overflow-auto justify-center">
             <span v-if="allModules.length === 0" class="text-center">No upcoming activities due</span>
             <TimelineCard v-else v-for="module of allModules" :key="module.id" :data="module" />
         </div>

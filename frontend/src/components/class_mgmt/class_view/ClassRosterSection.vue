@@ -45,14 +45,23 @@ watch(() => classStore.students, fetchStudents, {immediate: false})
 
 <template>
     <div>
-        <div class="bg-transparent border-none flex flex-row justify-between items-center px-4">
-            <div class="u-txt-active font-semibold text-3xl content-center">Class Roster</div>
+        <div class="bg-transparent border-none flex flex-row justify-between items-center">
+            <div class="flex flex-row gap-4 items-center px-4">
+                <i class="fa fa-address-book fa-2xl u-txt-active"></i>
+                <span class="font-semibold text-3xl u-txt-active">Class Roster</span>
+            </div>
             <RosterTabHeader :filters="filters" />
         </div>
         <Divider class="before:border-t before:border-surface-400"/>
 
         <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-        <TabView v-else class="p-2 bg-white shadow-xl rounded-md">
+        <TabView v-else class="p-2 bg-white shadow-xl rounded-md u-border-bottom u-txt-active"
+            :pt="{
+                tabpanel: {
+                    headerTitle: {class:'u-txt-active'}
+                }
+            }"
+            :ptOptions="{mergeProps:true}">
             <TabPanel header="Active">
                 <RosterTable :dropTable="false" v-model="active" :filters="filters" />
             </TabPanel>
