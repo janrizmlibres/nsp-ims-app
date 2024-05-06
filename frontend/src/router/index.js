@@ -4,6 +4,9 @@ import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/login/LoginView.vue'
 import TheRootView from '@/views/TheRootView.vue'
 
+// Enrollment Views
+import EnrollmentView from '@/views/enrollment/EnrollmentView.vue'
+
 // Class Management Views
 import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
@@ -41,6 +44,20 @@ const router = createRouter({
           path: 'dashboard',
           name: 'dashboard',
           component: DashboardView
+        },
+        {
+          path: 'enrollment',
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+          },
+          children: [
+            {
+              path: 'active',
+              name: 'active-enrollment',
+              component: EnrollmentView
+            }
+          ]
         },
         {
           path: '',
