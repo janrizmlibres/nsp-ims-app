@@ -18,19 +18,28 @@ const classStore = useClassStore()
 const learningStrandData = ref()
 const tableData = ref([])
 
-async function addStrand(strandData, strandScheduleData, id) {
+async function addStrand(strandData, strandScheduleData, id, state) {
     const scheduleData = ref([])
     for (const schedule of strandScheduleData) {
 
         const start_time = to24hr(schedule.start_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
         const end_time = to24hr(schedule.end_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
 
-        scheduleData.value.push({
-            name: strandData.strand.name,
-            days: schedule.school_days.toString(),
-            start_time: start_time,
-            end_time: end_time,
-        })
+        if (state) {
+            scheduleData.value.push({
+                name: strandData.strand.name,
+                days: schedule.school_days.toString(),
+                start_time: start_time,
+                end_time: end_time,
+            })
+        } else {
+            scheduleData.value.push({
+                name: strandData.strand.learning_strand.name,
+                days: schedule.school_days.toString(),
+                start_time: start_time,
+                end_time: end_time,
+            })
+        }
     }
 
     learningStrandData.value = {
@@ -41,13 +50,21 @@ async function addStrand(strandData, strandScheduleData, id) {
     }
 
     try {
-        await classStore.addLearningStrand(learningStrandData.value.classLevelId, learningStrandData.value)
+        if (state) {
+            await classStore.addLearningStrand(learningStrandData.value.classLevelId, learningStrandData.value)
+        }
 
         for (var schedule of learningStrandData.value.schedule) {
+            console.log(learningStrandData.value.classLevelId, schedule);
             try {
                 await classStore.addSchedule(learningStrandData.value.classLevelId, schedule)
             } catch (error) {
-                console.log(error.response.data.message);
+                toast.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: "Cannot add a schedule.",
+                    life: 3000
+                })
             }
         }
 
@@ -55,16 +72,21 @@ async function addStrand(strandData, strandScheduleData, id) {
             await classStore.getAllStrands(id)
 
             updateScheduleTable(classStore.strands)
-        } catch(error) {
-            console.log(error.response.data.message);
-        }
 
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Learning Strand Added Successfully',
-            life: 3000
-        })
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Learning Strand Added Successfully',
+                life: 3000
+            })
+        } catch(error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Unexpected error while fetching data.',
+                life: 3000
+            })
+        }
     } catch (error) {
         toast.add({
             severity: 'error',
@@ -111,7 +133,7 @@ function to12hr(time) {
         hours = hours - 12
         dd = "PM"
     }
-    if (hours === 0) {
+    if (hours === '00') {
         hours = 12
     }
 
