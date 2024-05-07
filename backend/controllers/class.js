@@ -142,7 +142,7 @@ export async function getAllStrands(req, res, next) {
         })
 
         res.status(201).json({ 
-            message: "Learning strand added!",
+            message: "Fetched all strands successfully!",
             data: learningStrands
         });
     } catch (error) {
@@ -207,9 +207,9 @@ export async function getAllStudents(req, res, next) {
                 },
                 include: [Learner]}
         })
-
+        
         res.status(201).json({ 
-            message: "Fetched all modules successfully!",
+            message: "Fetched all students successfully!",
             data: {
                 active: activeStudents, 
                 inactive: inactiveStudents, 
