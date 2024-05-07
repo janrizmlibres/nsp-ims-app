@@ -57,7 +57,7 @@ async function render(activeTerm) {
             key: '2-3',
             label: 'Admit Students',
             icon: 'fa fa-user-plus',
-            route: { name: 'dashboard' }
+            route: { name: 'add-student' }
           }
         ]
       },

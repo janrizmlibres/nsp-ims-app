@@ -22,6 +22,7 @@ import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
 import AuditView from '@/views/staff_mgmt/AuditView.vue'
 
 import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
+import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -44,9 +45,23 @@ const router = createRouter({
           component: DashboardView
         },
         {
-          path: '/students',
-          name: 'student-records',
-          component: StudentRecordsView
+          path: 'students',
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgStuds ? true : { name: 'dashboard' }
+          },
+          children: [
+            {
+              path: '',
+              name: 'student-records',
+              component: StudentRecordsView
+            },
+            {
+              path: 'add',
+              name: 'add-student',
+              component: StudentFormView
+            }
+          ]
         },
         {
           path: '',
