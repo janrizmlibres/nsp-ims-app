@@ -2,6 +2,7 @@
 import Avatar from 'primevue/avatar'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
+import BaseCard from '@/components/UI/BaseCard.vue'
 
 import { ref } from 'vue'
 
@@ -29,7 +30,7 @@ const categories = ref([
         <Dropdown class="h-9" v-model="selectedSuffix" :options="suffixes" placeholder="Suffix" />
         <InputText class="h-9 col-span-2" type="text" v-model="value" placeholder="LRN" />
         <Dropdown
-          class="h-9 col-span-2"
+          class="h-9 col-span-2 content-center"
           v-model="selectedCat"
           :options="categories"
           placeholder="Category"

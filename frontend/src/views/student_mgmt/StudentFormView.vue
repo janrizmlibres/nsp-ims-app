@@ -2,12 +2,12 @@
 import Button from 'primevue/button'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
-import IdentityForm from '@/components/student_mgmt/IdentityForm.vue'
-import BulkForm from '@/components/student_mgmt/BulkForm.vue'
+import IdentityForm from './IdentityForm.vue'
+import BulkForm from './BulkForm.vue'
 </script>
 
 <template>
-  <ContentPane :header="`Students / Add Record`">
+  <ContentPane :header="`Students / Add Record`" subheader="Academic Year 2022 - 2023">
     <div class="flex flex-col gap-3 h-full mr-1">
       <IdentityForm />
       <BulkForm />
