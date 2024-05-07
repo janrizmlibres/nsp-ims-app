@@ -3,6 +3,8 @@ import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
@@ -28,28 +30,28 @@ const categories = ref([
         <div class="flex gap-2 items-center">
           <Avatar label="P" size="xlarge" />
           <div class="grid grid-cols-7 w-full gap-2">
+            <InputText class="h-9 col-span-2" type="text" v-model="value" placeholder="Last Name" />
             <InputText
-              class="h-10 col-span-2"
-              type="text"
-              v-model="value"
-              placeholder="Last Name"
-            />
-            <InputText
-              class="h-10 col-span-2"
+              class="h-9 col-span-2"
               type="text"
               v-model="value"
               placeholder="First Name"
             />
             <InputText
-              class="h-10 col-span-2"
+              class="h-9 col-span-2"
               type="text"
               v-model="value"
               placeholder="Middle Name"
             />
-            <Dropdown v-model="selectedSuffix" :options="suffixes" placeholder="Suffix" />
-            <InputText class="h-10 col-span-2" type="text" v-model="value" placeholder="LRN" />
             <Dropdown
-              class="col-span-2"
+              class="h-9"
+              v-model="selectedSuffix"
+              :options="suffixes"
+              placeholder="Suffix"
+            />
+            <InputText class="h-9 col-span-2" type="text" v-model="value" placeholder="LRN" />
+            <Dropdown
+              class="h-9 col-span-2"
               v-model="selectedCat"
               :options="categories"
               placeholder="Category"
@@ -57,7 +59,16 @@ const categories = ref([
           </div>
         </div>
       </BaseCard>
-      <BaseCard class="grow"> </BaseCard>
+
+      <BaseCard isNotPadded="true" class="grow p-2">
+        <TabView>
+          <TabPanel header="Personal Information"> </TabPanel>
+          <TabPanel header="Contact Information"> </TabPanel>
+          <TabPanel header="Parental Information"> </TabPanel>
+          <TabPanel header="Previous School"> </TabPanel>
+          <TabPanel header="Others"> </TabPanel>
+        </TabView>
+      </BaseCard>
 
       <div class="flex-none text-right">
         <div class="inline-block">
