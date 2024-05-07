@@ -1,21 +1,13 @@
 <script setup>
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import InputText from 'primevue/inputtext'
 
 import { useStrandStore } from '@/stores/strands'
-import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 
-const router = useRouter()
 const strandStore = useStrandStore()
 
 const primarySelection = ref({})
-
-function showStrand() {
-  primarySelection.value = {}
-  router.push('/learning-strand-management')
-}
 </script>
 
 <template>

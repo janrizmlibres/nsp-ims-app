@@ -1,74 +1,16 @@
 <script setup>
 import Button from 'primevue/button'
-import Avatar from 'primevue/avatar'
-import InputText from 'primevue/inputtext'
-import Dropdown from 'primevue/dropdown'
-import TabView from 'primevue/tabview'
-import TabPanel from 'primevue/tabpanel'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
-import BaseCard from '@/components/UI/BaseCard.vue'
-import { ref } from 'vue'
-
-const selectedSuffix = ref()
-const selectedCat = ref()
-
-const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
-const categories = ref([
-  'Out-of-School Youth',
-  'Teenage Pregnancy',
-  'Orphan',
-  'Drug-Related',
-  'Disabled'
-])
+import IdentityForm from '@/components/student_mgmt/IdentityForm.vue'
+import BulkForm from '@/components/student_mgmt/BulkForm.vue'
 </script>
 
 <template>
   <ContentPane :header="`Students / Add Record`">
     <div class="flex flex-col gap-3 h-full mr-1">
-      <BaseCard isNotPadded="true" class="p-2">
-        <div class="flex gap-2 items-center">
-          <Avatar label="P" size="xlarge" />
-          <div class="grid grid-cols-7 w-full gap-2">
-            <InputText class="h-9 col-span-2" type="text" v-model="value" placeholder="Last Name" />
-            <InputText
-              class="h-9 col-span-2"
-              type="text"
-              v-model="value"
-              placeholder="First Name"
-            />
-            <InputText
-              class="h-9 col-span-2"
-              type="text"
-              v-model="value"
-              placeholder="Middle Name"
-            />
-            <Dropdown
-              class="h-9"
-              v-model="selectedSuffix"
-              :options="suffixes"
-              placeholder="Suffix"
-            />
-            <InputText class="h-9 col-span-2" type="text" v-model="value" placeholder="LRN" />
-            <Dropdown
-              class="h-9 col-span-2"
-              v-model="selectedCat"
-              :options="categories"
-              placeholder="Category"
-            />
-          </div>
-        </div>
-      </BaseCard>
-
-      <BaseCard isNotPadded="true" class="grow p-2">
-        <TabView>
-          <TabPanel header="Personal Information"> </TabPanel>
-          <TabPanel header="Contact Information"> </TabPanel>
-          <TabPanel header="Parental Information"> </TabPanel>
-          <TabPanel header="Previous School"> </TabPanel>
-          <TabPanel header="Others"> </TabPanel>
-        </TabView>
-      </BaseCard>
+      <IdentityForm />
+      <BulkForm />
 
       <div class="flex-none text-right">
         <div class="inline-block">
