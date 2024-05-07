@@ -63,11 +63,25 @@ export const useStrandStore = defineStore('strand', () => {
         })
     }
 
+    async function updateGrades(updatedData) {
+        const authStore = useAuthStore()
+
+        await axios.put('http://localhost:8080/strand/grades/update', updatedData, {
+            headers: { Authorization: 'Bearer ' + authStore.token }
+        })
+
+        const idList = []
+
+        updatedData.updatedData.forEach((learner) => {
+            idList.push(learner.id)
+        })
+    }
+
     function showHideDialog() {
         this.visibleDialog = !this.visibleDialog
     }
 
-    return { strand, modules, grades, visibleDialog, getStrand, showHideDialog, addModule, getAllModules, getAllGrades, updateTeacher, updateSchedule }
+    return { strand, modules, grades, visibleDialog, getStrand, showHideDialog, addModule, getAllModules, getAllGrades, updateTeacher, updateSchedule, updateGrades }
 })
 
 
