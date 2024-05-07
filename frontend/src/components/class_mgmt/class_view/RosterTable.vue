@@ -165,7 +165,11 @@ const dropStudent = (learnerId, studentLastName, studentFirstName) => {
         <Column field="lastName" header="Last Name" frozen sortable />
         <Column field="firstName" header="First Name" frozen sortable />
         <Column v-for="col of dataColumns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
-
+        <template #footer>
+            <p>
+                Record(s) count: <span class="u-txt-red"> {{ learners.length }} </span>
+            </p>
+        </template>
         <template #paginatorstart>
             
         </template>
