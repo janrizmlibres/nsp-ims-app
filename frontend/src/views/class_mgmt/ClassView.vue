@@ -11,15 +11,13 @@ import ClassRosterSection from '@/components/class_mgmt/class_view/ClassRosterSe
 
 // stores
 import { useClassStore } from '@/stores/class';
-import { useTermStore } from '@/stores/term';
 
 const route = useRoute()
 
 const classStore = useClassStore()
-const termStore = useTermStore()
 const schoolLevel = ref()
 const term = ref()
-console.log(termStore.activeTerm);
+
 async function fetchClassLevel(query) {
     try {
         await classStore.getClass(query.id)
