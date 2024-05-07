@@ -4,17 +4,16 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
-import { ref, watch } from 'vue';
+import Button from 'primevue/button';
+import { onMounted, ref, watch } from 'vue';
 
 // stores
-import { useGradeStore } from '@/stores/grade';
 import { useStrandStore } from '@/stores/strand';
-import { useRoute } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
 
-const route = useRoute()
-
-const gradeStore = useGradeStore()
 const strandStore = useStrandStore()
+
+const toast = useToast()
 
 const customPt = {
     root: {
@@ -93,62 +92,113 @@ const customPt = {
 
 const props = defineProps(['modelValue', 'dropTable'])
 const dropTable = ref(props.dropTable)
-const learners = ref([])
+const data = ref([])
+const noChanges = ref(true)
 
-function fetchData(data) {
-    learners.value.length = 0
-    console.log(data);
-    
-    for (const grade of data) {
-        let date = new Date(grade.updatedAt)
-        if (grade.updatedAt !== null) {
-            date = new Date(grade.updatedAt)
-            date = date.toLocaleString()
+const startingData = []
+const updatedData = new Set([])
+
+onMounted(async () => {
+    for (const datum of props.modelValue) {
+        let date = new Date(datum.updatedAt)
+        date = date.toLocaleString()
+        console.log(datum);
+        const grades = {
+            id: datum.id,
+            learnerId: datum.learnerId,
+            classLearningStrandId: datum.classLearningStrandId,
+            lastName: datum.learner.lastName,
+            firstName: datum.learner.firstName,
+            middleName: datum.learner.middleName,
+            grades: {
+                first_quarter: datum.first_quarter,
+                second_quarter: datum.second_quarter,
+                third_quarter: datum.third_quarter,
+                fourth_quarter: datum.fourth_quarter,
+                remarks: datum.remarks,
+                updatedAt: date
+            }
         }
 
-        const temp = {
-            id: grade.id,
-            lastName: grade.learner.lastName,
-            firstName: grade.learner.firstName,
-            middleName: grade.learner.middleName,
-            first_quarter: grade.first_quarter,
-            second_quarter: grade.second_quarter,
-            third_quarter: grade.third_quarter,
-            fourth_quarter: grade.fourth_quarter,
-            remarks: grade.remarks,
-            updatedAt: date
-        }
-        learners.value.push(temp)
+        const len = data.value.push(grades)
+        startingData.push(structuredClone(grades))
+
+        watch(data.value[len - 1], (newData) => {
+            updatedData.add(newData)
+            noChanges.value = false
+        })
+    }
+})
+
+async function updateGrades() {
+    try {
+        console.log(updatedData);
+        await strandStore.updateGrades({ updatedData: Array.from(updatedData) })
+
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Updated Grades Successfully',
+            life: 5000
+        })
+
+        noChanges.value = true
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
+        })
     }
 }
 
-watch(() => props.modelValue, fetchData, { immediate: true })
+function resetData() {
+    data.value = structuredClone(startingData)
+    updatedData.clear()
 
-const editingRows = ref([]);
+    for (const datum of data.value) {
+        watch(datum, (newData) => {
+        updatedData.add(newData)
+        noChanges.value = false
+        })
+    }
 
-const onRowEditSave = async (event) => {
-    let { newData } = event;
-    console.log(newData);
+    noChanges.value = true
+}
 
-    await gradeStore.updateGrade(newData.id, {
-        newFirst_quarter: newData.first_quarter,
-        newSecond_quarter: newData.second_quarter,
-        newThird_quarter: newData.third_quarter,
-        newFourth_quarter: newData.fourth_quarter,
-        newRemarks: newData.remarks
-    })
+// const onRowEditSave = async (event) => {
+//     let { newData } = event;
+//     console.log(newData);
 
-    await strandStore.getAllGrades(route.query.id)
-};
+//     await gradeStore.updateGrade(newData.id, {
+//         newFirst_quarter: newData.first_quarter,
+//         newSecond_quarter: newData.second_quarter,
+//         newThird_quarter: newData.third_quarter,
+//         newFourth_quarter: newData.fourth_quarter,
+//         newRemarks: newData.remarks
+//     })
+
+//     await strandStore.getAllGrades(route.query.id)
+// };
+
+// const onCellEditComplete = async (event) => {
+//     let { data, newValue, field } = event;
+    
+//     await gradeStore.updateGrade(data.id, {
+//         [field]: newValue
+//     })
+
+//     await strandStore.getAllGrades(route.query.id)
+    
+// };
 </script>
 
 <template>
     <DataTable 
-        :value="learners" dataKey="id" 
+        :value="data" dataKey="id" 
         sortField="lastName" :sortOrder="1" removableSort 
-        resizableColumns columnResizeMode="fit" showGridlines 
-        paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+        resizableColumns columnResizeMode="fit" showGridlines
         :ptOptions="{mergeProps:true}"
         :pt="customPt"
     >
@@ -158,46 +208,43 @@ const onRowEditSave = async (event) => {
         <Column field="lastName" header="Last Name" frozen sortable />
         <Column field="firstName" header="First Name" frozen sortable />
         <Column field="middleName" header="Middle Name" />
+
         <Column field="first_quarter" header="Q1">
-            <template #body="{ data, field }">
-                <Checkbox v-model="data[field]" :binary="true" disabled />
-            </template>
-            <template #editor="{ data, field }">
-                <Checkbox v-model="data[field]" :binary="true" />
+            <template #body="slotProps">
+                <Checkbox v-model="slotProps.data.grades.first_quarter" :disabled="dropTable" :binary="true" />
             </template>
         </Column>
         <Column field="second_quarter" header="Q2">
-            <template #body="{ data, field }">
-                <Checkbox v-model="data[field]" :binary="true" disabled />
-            </template>
-            <template #editor="{ data, field }">
-                <Checkbox v-model="data[field]" :binary="true" />
+            <template #body="slotProps">
+                <Checkbox v-model="slotProps.data.grades.second_quarter" :disabled="dropTable" :binary="true" />
             </template>
         </Column>
         <Column field="third_quarter" header="Q3">
-            <template #body="{ data, field }">
-                <Checkbox v-model="data[field]" :binary="true" disabled />
-            </template>
-            <template #editor="{ data, field }">
-                <Checkbox v-model="data[field]" :binary="true" />
+            <template #body="slotProps">
+                <Checkbox v-model="slotProps.data.grades.third_quarter" :disabled="dropTable" :binary="true" />
             </template>
         </Column>
         <Column field="fourth_quarter" header="Q4">
-            <template #body="{ data, field }">
-                <Checkbox v-model="data[field]" :binary="true" disabled />
-            </template>
-            <template #editor="{ data, field }">
-                <Checkbox v-model="data[field]" :binary="true" />
+            <template #body="slotProps">
+                <Checkbox v-model="slotProps.data.grades.fourth_quarter" :disabled="dropTable" :binary="true" />
             </template>
         </Column>
         <Column field="remarks" header="Remarks">
-            <template #editor="{ data, field }">
-                <InputText v-model="data[field]" autofocus />
+            <template #body="slotProps">
+                <InputText v-model="slotProps.data.grades.remarks" :disabled="dropTable" autofocus />
             </template>
         </Column>
-        <Column field="updatedAt" header="Updated At" sortable />
-        <Column v-if="!dropTable" :rowEditor="true" bodyStyle="text-align:center" frozen class="sticky right-0"></Column>
+        <Column field="grades.updatedAt" header="Updated At" sortable />
+        <template #footer>
+            <p>
+                Record(s) count: <span class="u-txt-red"> {{ data.length }} </span>
+            </p>
+        </template>
     </DataTable>
+    <div class="flex justify-end gap-2 mt-4">
+        <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateGrades"></Button>
+        <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
+    </div>
 </template>
 
 <style>
