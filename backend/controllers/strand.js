@@ -43,8 +43,6 @@ export async function addModule(req, res, next) {
             where: {classLearningStrandId: classLearningStrandId}
         })
 
-        console.log(modules);
-
         if (modules.some(e => e.title === title)) {
             const error = Error("Module name exists already!");
             error.statusCode = 404;
@@ -133,8 +131,6 @@ export async function getAllGrades(req, res, next) {
             }]
         })
 
-        console.log(grades);
-
         res.status(201).json({ 
             message: "Grades fetched successfully!",
             data: grades
@@ -144,6 +140,29 @@ export async function getAllGrades(req, res, next) {
             error.statusCode = 500;
         }
         next(error);
+    }
+}
+
+export async function updateGrades(req, res, next) {
+    try {
+        for (const learner of req.body.updatedData) {
+            const learnerInstance = await Learner.findByPk(learner.id, {
+                include: {model: Grade, where: {
+                    classLearningStrandId: learner.classLearningStrandId
+                }},
+            });
+            
+            console.log(learner.grades);
+            await learnerInstance.grades[0].update(learner.grades);
+        }
+        
+            res.status(200).json({ message: "Grade Updated!" });
+        } catch (error) {
+            if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
     }
 }
 

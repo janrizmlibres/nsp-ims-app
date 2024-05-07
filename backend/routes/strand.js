@@ -10,6 +10,6 @@ router.get("/:classLearningStrandId/grades", isAuth, strandController.getAllGrad
 router.post("/:classLearningStrandId/module/add", isAuth, strandController.addModule);
 router.patch("/:classLearningStrandId/teacher/update", isAuth, strandController.updateTeacher);
 router.patch("/schedule/:scheduleId/update", isAuth, strandController.updateSchedule);
-
+router.put("/grades/update", isAuth, strandController.updateGrades);
 export default router;
 
