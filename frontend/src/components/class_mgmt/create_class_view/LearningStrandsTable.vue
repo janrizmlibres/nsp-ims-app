@@ -116,7 +116,6 @@ const onRowEditSave = async (event) => {
             })
         }
     }
-    
 };
 
 function to24hr(time12h) {
@@ -138,7 +137,7 @@ function to24hr(time12h) {
 
 <template>
     <DataTable 
-        :value="classData" dataKey="name"
+        :value="classData" dataKey="scheduleId"
         v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
         :ptOptions="{mergeProps:true}"
         :pt="customPt"
