@@ -9,6 +9,7 @@ import Stepper from 'primevue/stepper';
 import StepperPanel from 'primevue/stepperpanel';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Panel from 'primevue/panel';
 import { useToast } from 'primevue/usetoast';
 import { onMounted, ref } from 'vue';
 
@@ -28,22 +29,18 @@ const classStore = useClassStore()
 
 const term = ref()
 const classes = ref()
-const learningStrands = ref();
+const learningStrands = ref([]);
 const volunteers = ref([])
 
 onMounted(async () => {
-    await utilitiesStore.getLearningStrands()
-    learningStrands.value = utilitiesStore.learningStrands
-
-    await volunteerStore.getAllVolunteers()
-    volunteerStore.volunteers.forEach((data) => volunteers.value.push(data.fullname))
-
     await termStore.getActiveTerm()
 
     term.value = termStore.activeTerm.academic_year
     classes.value = termStore.activeTerm.class_levels
 })
 
+const category = ref(null)
+const state = ref(null)
 const active = ref(0)
 const strandData = ref(null)
 const strandScheduleData = ref([])
@@ -72,7 +69,12 @@ const days = ref([
     {name: "S", key: "6"},
 ]);
 
-function tempAddStrand(next) {
+const categories = ref([
+    {category: 'Learning Strand', state: true},
+    {category: 'Schedule', state: false},
+])
+
+function tempAddStrand(next, state) {
     if (Object.values(strandTempData.value).some(o => o === null)) {
         toast.add({
             severity: 'error',
@@ -86,10 +88,17 @@ function tempAddStrand(next) {
 
     strandData.value = strandTempData.value
 
-    strandDataTable.value.push({
-        name: strandTempData.value.strand.name,
-        teacher: strandTempData.value.volunteer
-    })
+    if (state) {
+        strandDataTable.value.push({
+            name: strandTempData.value.strand.name,
+            teacher: strandTempData.value.volunteer
+        })
+    } else {
+        strandDataTable.value.push({
+            name: strandTempData.value.strand.learning_strand.name,
+            teacher: strandTempData.value.volunteer
+        })
+    }
 
     next()
 }
@@ -132,7 +141,7 @@ function resetTemp(func) {
     func()
 }
 
-function addStrand() {
+function addStrand(boolean) {
     if (strandData.value === null || strandScheduleData.value.length === 0) {
         toast.add({
             severity: 'error',
@@ -144,7 +153,7 @@ function addStrand() {
         return
     }
 
-    emit('submit', strandData.value, strandScheduleData.value, strandTempData.value.classLevel.id)
+    emit('submit', strandData.value, strandScheduleData.value, strandTempData.value.classLevel.id, boolean)
     resetForm()
     active.value = 0
 }
@@ -176,6 +185,70 @@ async function getAllStrands() {
 
     emit('chooseLevel', classStore.strands)
 }
+
+const customPt = {
+    root: {
+        class: ['flex flex-col pt-2 justify-between overflow-auto mb-8']
+    },
+    column: {
+        headercell: ({ context, props }) => ({
+            class: [
+                'font-medium',
+                {
+                'space-nowrap border-y bg-clip-padding': context.resizable
+                // Resizable
+                },
+                // Color
+                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
+                {'hover:bg-surface-50': context.sorted}
+            ]
+        }),
+            sorticon: ({ context }) => ({
+                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
+        }),
+            bodycell: {class: 'py-3 '}
+    },
+    bodyrow: ({ context, props }) => ({
+        class: [
+            { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
+            { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
+            { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
+            // State
+            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
+            { 'hover:u-bg-pcolor hover:text-white': props.selectionMode && !context.selected },
+            // Misc
+            { 'cursor-pointer': props.selectionMode }
+        ]
+    })
+}
+
+async function updateState() {
+    active.value = 0
+    state.value = category.value.state
+    
+    resetForm()
+    learningStrands.value.length = 0
+    volunteers.value.length = 0
+    
+    if (state.value) {
+        await utilitiesStore.getLearningStrands()
+        learningStrands.value.push(...utilitiesStore.learningStrands)
+
+        await volunteerStore.getAllVolunteers()
+        volunteerStore.volunteers.forEach((data) => volunteers.value.push(data.fullname))
+    } else {
+        const classLevelId = strandTempData.value.classLevel.id
+        await classStore.getAllStrands(classLevelId)
+        
+        for (const classLearningStrand of classStore.strands) {
+            learningStrands.value.push(classLearningStrand)
+        }
+    }
+}
+
+function autofillTeacher() {
+    strandTempData.value.volunteer = strandTempData.value.strand.teacher
+}
 </script>
 
 <template>
@@ -192,9 +265,26 @@ async function getAllStrands() {
                 <Dropdown v-model="strandTempData.classLevel" :options="classes" optionLabel="school_level" placeholder="Select a Level" class="w-full md:w-[14rem]" @update:modelValue="getAllStrands" />
             </span>
         </div>
+        <div>
+            <span class="mr-3 u-txt-active">Add a</span>
+            <span class="relative">
+                <Dropdown v-model="category" :options="categories" optionLabel="category" placeholder="Select Category" :disabled="strandTempData.classLevel == null" class="w-full md:w-[14rem]" @update:modelValue="updateState" />
+            </span>
+        </div>
     </div>
 
-    <div class="flex flex-row gap-4 h-[27rem]">
+    <Panel v-if="state == null" class="shadow-md mb-8">
+        <template #header>
+            <div class="flex items-center gap-2">
+                <i class="fa fa-circle-info fa-xl"></i>
+                <span class="u-txt-active font-semibold text-xl content-center">Action Required</span>
+            </div>
+        </template>
+        <p class="m-0">
+            Please choose a class level and a category of action in order to continue. Thank you!
+        </p>
+    </Panel>
+    <div v-else class="flex flex-row gap-4 h-[27rem]">
         <div class="flex-1 flex flex-col bg-white rounded-md shadow-xl p-8 pb-4 mb-8">
             <Stepper v-model:activeStep="active" linear>
                 <StepperPanel>
@@ -207,25 +297,27 @@ async function getAllStrands() {
                     </template>
                     <template #content="{ nextCallback }">
                         <div class="flex flex-col gap-2">
-                            <div class="text-center mt-3 mb-3 text-xl font-semibold u-txt-active">Choose a Learning Strand to Add</div>
+                            <div class="text-center mt-3 mb-3 text-xl font-semibold u-txt-active">Choose a Learning Strand</div>
                             <div class="flex flex-col justify-center mx-auto">
                                 <div class="flex flex-col mb-4">
                                     <span class="mr-3 u-txt-active">Learning Strand</span>
                                     <span class="relative">
-                                        <Dropdown v-model="strandTempData.strand" :options="learningStrands" optionLabel="name" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
+                                        <Dropdown v-if="state" v-model="strandTempData.strand" :options="learningStrands" optionLabel="name" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
+                                        <Dropdown v-else v-model="strandTempData.strand" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full md:w-[14rem]" @update:modelValue="autofillTeacher" />
                                     </span>
                                 </div>
 
                                 <div class="flex flex-col">
                                     <span class="mr-3 u-txt-active">Teacher</span>
                                     <span class="relative">
-                                        <Dropdown v-model="strandTempData.volunteer" :options="volunteers" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
+                                        <Dropdown v-if="state" v-model="strandTempData.volunteer" :options="volunteers" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
+                                        <Dropdown v-else v-model="strandTempData.volunteer" :placeholder="strandTempData.volunteer" disabled class="w-full md:w-[14rem]" />
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div class="flex pt-8 justify-end bg-transparent">
-                            <Button label="Next" icon="pi pi-arrow-right" iconPos="right" @click="tempAddStrand(nextCallback)" />
+                            <Button label="Next" icon="pi pi-arrow-right" iconPos="right" @click="tempAddStrand(nextCallback, state)" />
                         </div>
                     </template>
                 </StepperPanel>
@@ -267,7 +359,7 @@ async function getAllStrands() {
                         <div class="flex pt-12 justify-between bg-transparent">
                             <Button label="Back" severity="secondary" icon="pi pi-arrow-left" @click="resetTemp(prevCallback)" />
                             <Button icon="fa fa-plus" label="Add Schedule" class="col-start-2 inset-y-0 right-0 self-end" @click="tempAddSched()" />
-                            <Button label="Submit" icon="pi pi-arrow-right" iconPos="right" @click="addStrand" />
+                            <Button label="Submit" icon="pi pi-arrow-right" iconPos="right" @click="addStrand(state)" />
                         </div>
                     </template>
                 </StepperPanel>
@@ -276,41 +368,7 @@ async function getAllStrands() {
         <div class="flex-1 flex flex-col bg-white rounded-md shadow-xl p-8 pb-4 mb-8">
             <DataTable :value="strandDataTable"
                 :ptOptions="{mergeProps:true}"
-                :pt="{
-                    root: {
-                        class: ['flex flex-col pt-2 justify-between overflow-auto mb-8']
-                    },
-                    column: {
-                        headercell: ({ context, props }) => ({
-                            class: [
-                                'font-medium',
-                                {
-                                'space-nowrap border-y bg-clip-padding': context.resizable
-                                // Resizable
-                                },
-                                // Color
-                                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
-                                {'hover:bg-surface-50': context.sorted}
-                            ]
-                        }),
-                            sorticon: ({ context }) => ({
-                                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-                        }),
-                            bodycell: {class: 'py-3 '}
-                    },
-                    bodyrow: ({ context, props }) => ({
-                        class: [
-                            { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
-                            { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
-                            { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
-                            // State
-                            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
-                            { 'hover:u-bg-pcolor hover:text-white': props.selectionMode && !context.selected },
-                            // Misc
-                            { 'cursor-pointer': props.selectionMode }
-                        ]
-                    })
-                }"
+                :pt="customPt"
             >
                 <template #empty> <div class="text-center">Nothing added.</div> </template>
                 <Column field="name" header="Learning Strand" />
@@ -318,41 +376,7 @@ async function getAllStrands() {
             </DataTable>
             <DataTable :value="strandSchedDataTable"
                 :ptOptions="{mergeProps:true}"
-                :pt="{
-                    root: {
-                        class: ['flex flex-col pt-2 justify-between overflow-auto']
-                    },
-                    column: {
-                        headercell: ({ context, props }) => ({
-                            class: [
-                                'font-medium',
-                                {
-                                'space-nowrap border-y bg-clip-padding': context.resizable
-                                // Resizable
-                                },
-                                // Color
-                                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
-                                {'hover:bg-surface-50': context.sorted}
-                            ]
-                        }),
-                            sorticon: ({ context }) => ({
-                                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-                        }),
-                            bodycell: {class: 'py-3 '}
-                    },
-                    bodyrow: ({ context, props }) => ({
-                        class: [
-                            { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
-                            { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
-                            { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
-                            // State
-                            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
-                            { 'hover:u-bg-pcolor hover:text-white': props.selectionMode && !context.selected },
-                            // Misc
-                            { 'cursor-pointer': props.selectionMode }
-                        ]
-                    })
-                }"
+                :pt="customPt"
             >
                 <template #empty> <div class="text-center">Nothing added.</div> </template>
                 <Column header="Days" field="school_days"/>
@@ -361,7 +385,8 @@ async function getAllStrands() {
             </DataTable>
         </div>
     </div>
-    
+
+
 </template>
 
 <style>
