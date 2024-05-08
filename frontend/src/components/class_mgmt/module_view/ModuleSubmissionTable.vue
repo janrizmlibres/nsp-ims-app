@@ -162,22 +162,23 @@ const statuses = ref([
 const editingRows = ref([]);
 
 const onRowEditSave = async (event) => {
-    let { newData } = event;
-    console.log(newData);
+    let { data, newData } = event;
 
-    let date = null
-    if (newData.date_submitted) {
-        const offset = newData.date_submitted.getTimezoneOffset()
-        date = new Date(newData.date_submitted.getTime() - (offset*60*1000))
+    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        let date = null
+        if (newData.date_submitted) {
+            const offset = newData.date_submitted.getTimezoneOffset()
+            date = new Date(newData.date_submitted.getTime() - (offset*60*1000))
+        }
+
+        await moduleStore.updateModuleSubmission(newData.id, {
+            newStatus: newData.status,
+            newSubmissionDate: date,
+            newRemarks: newData.remarks
+        })
+
+        await moduleStore.getModule(route.query.id)
     }
-
-    await moduleStore.updateModuleSubmission(newData.id, {
-        newStatus: newData.status,
-        newSubmissionDate: date,
-        newRemarks: newData.remarks
-    })
-
-    await moduleStore.getModule(route.query.id)
 };
 
 const exportRef = ref()
@@ -197,7 +198,7 @@ function exportCSV() {
             :value="learners" dataKey="id" 
             sortField="lastName" :sortOrder="1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines ref="exportRef"
-            paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+            :paginator="learners.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
             v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
             :ptOptions="{mergeProps:true}"
             :pt="customPt"
