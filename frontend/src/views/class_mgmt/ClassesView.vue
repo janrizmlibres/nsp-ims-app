@@ -30,7 +30,9 @@ const globalFilters = ref(['batch_number', 'academic_year', 'start_date', 'end_d
                 </span>
             </div>
         </div>
-
-        <ClassesTable :filters="filters" :globalFilters="globalFilters" />
+        
+        <div class="bg-white shadow-xl rounded-md p-5">
+            <ClassesTable :filters="filters" :globalFilters="globalFilters" />
+        </div>
     </ContentPane>
 </template>
