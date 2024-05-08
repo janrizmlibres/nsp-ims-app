@@ -28,6 +28,25 @@ export async function getModule(req, res, next) {
     }
 }
 
+export async function updateModule(req, res, next) {
+    const moduleId = req.params.moduleId
+
+    try {
+        await Module.update(
+            req.body,
+            { where: { id: moduleId }
+        });
+
+        res.status(200).json({ message: "Module updated!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    } 
+}
+
 export async function updateModuleSubmission(req, res, next) {
     const moduleId = req.params.moduleId
 
