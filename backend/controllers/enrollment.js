@@ -8,12 +8,10 @@ export const getAllCurrentEnrolled = async (req, res, next) => {
   const termID = req.params.termID
   
   try {
-    // Get the current term
-    const currentTerm = await Term.findOne(
-      {where: { status: true }}
-    );
-    
-    // Get all class levels for the current term
+    const currentTerm = await Term.findByPk(
+      termID
+    )
+
     const classLevels = await ClassLevel.findAll({
       where: { termId: currentTerm.id }
     });
