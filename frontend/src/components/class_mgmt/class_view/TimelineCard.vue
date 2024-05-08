@@ -4,8 +4,9 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
-const props = defineProps(['data'])
+const props = defineProps(['data', 'subdata'])
 const data = ref(props.data)
+const subdata = ref(props.subdata)
 
 function showModule() {
     router.push({ name: 'module-info', query: { id: props.data.id} })
@@ -19,7 +20,7 @@ if (data.value != null) {
     let date = new Date(data.value.retrieval_date)
     retriDate.value = date.toDateString()
     title.value = data.value.title
-    learningStrand.value = data.value.class_learning_strand.learning_strand.name
+    learningStrand.value = subdata.value.name
 }
 const customPt = {
     root: {
