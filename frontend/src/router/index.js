@@ -5,7 +5,8 @@ import LoginView from '../views/login/LoginView.vue'
 import TheRootView from '@/views/TheRootView.vue'
 
 // Enrollment Views
-import EnrollmentView from '@/views/enrollment/EnrollmentView.vue'
+import CurrentEnrollmentView from '@/views/enrollment/CurrentEnrollmentView.vue'
+import EnrollmentHistoryView from '@/views/enrollment/EnrollmentHistoryView.vue'
 
 // Class Management Views
 import ClassesView from '../views/class_mgmt/ClassesView.vue'
@@ -53,9 +54,14 @@ const router = createRouter({
           },
           children: [
             {
-              path: 'active',
-              name: 'active-enrollment',
-              component: EnrollmentView
+              path: 'current',
+              name: 'current-enrollment',
+              component: CurrentEnrollmentView
+            },
+            {
+              path: 'history',
+              name: 'enrollment-history',
+              component: EnrollmentHistoryView
             }
           ]
         },
