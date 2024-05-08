@@ -1,3 +1,4 @@
+import Attendance from "../models/attendance.js";
 import ClassLearningStrand from "../models/class_learning_strand.js";
 import ClassLevel from "../models/class_level.js";
 import ClassSchedule from "../models/class_schedule.js";
@@ -6,6 +7,7 @@ import Grade from "../models/grade.js";
 import Learner from "../models/learner.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
+import Session from "../models/session.js";
 
 export async function getStrand(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
@@ -39,12 +41,12 @@ export async function addModule(req, res, next) {
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
 
-        const modules = await Module.findAll({
-            where: {classLearningStrandId: classLearningStrandId}
+        const mod = await Module.findOne({
+            where: {title: title, classLearningStrandId: classLearningStrandId}
         })
 
-        if (modules.some(e => e.title === title)) {
-            const error = Error("Module name exists already!");
+        if (mod) {
+            const error = Error("Module exists already!");
             error.statusCode = 404;
             throw error;
         }
@@ -143,6 +145,28 @@ export async function getAllGrades(req, res, next) {
     }
 }
 
+export async function getAllSessions(req, res, next) {
+    const classLearningStrandId = req.params.classLearningStrandId;
+
+    try {
+        const sessions = await Session.findAll({
+            where: {
+                classLearningStrandId: classLearningStrandId
+            }
+        })
+
+        res.status(201).json({ 
+            message: "Sessions fetched successfully!",
+            data: sessions
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
 export async function updateGrades(req, res, next) {
     try {
         for (const learner of req.body.updatedData) {
@@ -199,5 +223,49 @@ export async function updateSchedule(req, res, next) {
         }
         next(error);
         return error;
+    }
+}
+
+export async function addSession(req, res, next) {
+    const classLearningStrandId = req.params.classLearningStrandId;
+
+    const {
+        date,
+    } = req.body
+
+    try {
+        const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
+
+        const sesh = await Session.findOne({
+            where: {date: date, classLearningStrandId: classLearningStrandId}
+        })
+
+        if (sesh) {
+            const error = Error("Session exists already!");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        const session = await classLearningStrand.createSession({
+            date: date,
+        })
+
+        const enrollments = await Enrollment.findAll({
+            where: {classLevelId: classLearningStrand.classLevelId}, 
+            include: [Learner]
+        })
+
+        for (const enrollment of enrollments) {
+            await session.addLearner(enrollment.learner)
+        }
+
+        res.status(201).json({ 
+            message: "Session added!"
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
     }
 }
