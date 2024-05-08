@@ -5,6 +5,7 @@ import { ref } from 'vue'
 
 export const useTermStore = defineStore('term', () => {
   const activeTerm = ref()
+  const terms = ref()
 
   async function getAllTerms() {
     const authStore = useAuthStore()
@@ -13,17 +14,7 @@ export const useTermStore = defineStore('term', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    return result.data.data
-  }
-
-  async function addClass(formData) {
-    const authStore = useAuthStore()
-
-    const result = await axios.post('http://localhost:8080/term/add_class', formData, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
-
-    return result.data.data
+    terms.value = result.data.data
   }
 
   async function getActiveTerm() {
@@ -36,5 +27,5 @@ export const useTermStore = defineStore('term', () => {
     activeTerm.value = result.data.data
   }
 
-  return { activeTerm, getAllTerms, addClass, getActiveTerm }
+  return { activeTerm, terms, getAllTerms, getActiveTerm }
 })
