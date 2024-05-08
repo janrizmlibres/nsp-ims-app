@@ -7,7 +7,9 @@ export const useStrandStore = defineStore('strand', () => {
     const strand = ref()
     const modules = ref()
     const grades = ref()
-    const visibleDialog = ref(false)
+    const sessions = ref()
+    const visibleAddModuleDialog = ref(false)
+    const visibleAddSessionDialog = ref(false)
 
     async function getStrand(classLearningStrandId) {
         const authStore = useAuthStore()
@@ -23,6 +25,14 @@ export const useStrandStore = defineStore('strand', () => {
         const authStore = useAuthStore()
 
         await axios.post(`http://localhost:8080/strand/${classLearningStrandId}/module/add`, form, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+    }
+
+    async function addSession(classLearningStrandId, form) {
+        const authStore = useAuthStore()
+
+        await axios.post(`http://localhost:8080/strand/${classLearningStrandId}/session/add`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
     }
@@ -45,6 +55,16 @@ export const useStrandStore = defineStore('strand', () => {
         })
         
         grades.value = result.data.data
+    }
+
+    async function getAllSessions(classLearningStrandId) {
+        const authStore = useAuthStore()
+
+        const result = await axios.get(`http://localhost:8080/strand/${classLearningStrandId}/sessions`, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+        
+        sessions.value = result.data.data
     }
 
     async function updateTeacher(classLearningStrandId, form) {
@@ -77,11 +97,15 @@ export const useStrandStore = defineStore('strand', () => {
         })
     }
 
-    function showHideDialog() {
-        this.visibleDialog = !this.visibleDialog
+    function showHideAddModuleDialog() {
+        this.visibleAddModuleDialog = !this.visibleAddModuleDialog
     }
 
-    return { strand, modules, grades, visibleDialog, getStrand, showHideDialog, addModule, getAllModules, getAllGrades, updateTeacher, updateSchedule, updateGrades }
+    function showHideAddSessionDialog() {
+        this.visibleAddSessionDialog = !this.visibleAddSessionDialog
+    }
+
+    return { strand, modules, grades, sessions, visibleAddModuleDialog, visibleAddSessionDialog, getStrand, showHideAddModuleDialog, showHideAddSessionDialog, addModule, addSession, getAllModules, getAllGrades, getAllSessions, updateTeacher, updateSchedule, updateGrades }
 })
 
 
