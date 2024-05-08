@@ -4,7 +4,11 @@ import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import Calendar from 'primevue/calendar';
 import { ref, watch } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import { useRoute } from 'vue-router';
 
 // Custom
 import AddModuleDialog from './AddModuleDialog.vue';
@@ -12,19 +16,20 @@ import AddModuleDialog from './AddModuleDialog.vue';
 // stores
 import { useClassesStore } from '@/stores/classes';
 import { useStrandStore } from '@/stores/strand';
+import { useModuleStore } from '@/stores/module';
 
+const classesStore = useClassesStore()
+const strandStore = useStrandStore()
+const moduleStore = useModuleStore()
+
+const route = useRoute()
+const toast = useToast()
 const cols = ref([
-    {field: 'title', header: 'Title'},
-    {field: 'distribution_date', header: 'Distribution Date'},
-    {field: 'retrieval_date', header: 'Retrieval Date'},
     {field: 'no_submissions', header: 'No Submissions'},
     {field: 'lacking', header: 'Lacking'},
     {field: 'complete', header: 'Complete'},
     {field: 'total', header: 'Total'},
 ])
-
-const classesStore = useClassesStore()
-const strandStore = useStrandStore()
 
 const customPt = {
     root: {
@@ -98,6 +103,7 @@ const customPt = {
     }
 }
 
+
 const isFetching = ref(false)
 const allModules = ref([])
 
@@ -112,8 +118,8 @@ async function fetchModules(data) {
             const temp = ref({
                 id: module.id,
                 title: module.title,
-                distribution_date: distribution_date.toDateString(),
-                retrieval_date: retrieval_date.toDateString(),
+                distribution_date: distribution_date,
+                retrieval_date: retrieval_date,
                 no_submissions: module.noSubmissions,
                 lacking: module.lacking,
                 complete: module.complete,
@@ -129,6 +135,38 @@ async function fetchModules(data) {
 }
 
 watch(() => strandStore.modules, fetchModules, {immediate: false})
+
+const editingRows = ref([]);
+
+const onRowEditSave = async (event) => {
+    let { data, newData } = event;
+    console.log(newData);
+    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        try {
+            await moduleStore.updateModule(newData.id, {
+                title: newData.title,
+                distribution_date: newData.distribution_date,
+                retrieval_date: newData.retrieval_date
+            })
+
+            await strandStore.getAllModules(route.query.id)
+
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Module updated successfully!',
+                life: 3000
+            })
+        } catch(error) {
+            toast.add({
+                severity: 'success',
+                summary: 'Error',
+                detail: 'Unexpected error encountered.',
+                life: 3000
+            })
+        }
+    }
+};
 </script>
 
 <template>
@@ -143,7 +181,8 @@ watch(() => strandStore.modules, fetchModules, {immediate: false})
             :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines
             v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
-            paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+            :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
             :ptOptions="{mergeProps:true}"
             :pt="customPt"
         >
@@ -157,9 +196,31 @@ watch(() => strandStore.modules, fetchModules, {immediate: false})
                     </RouterLink>
                 </template>
             </Column>
+            <Column field="title" header="Title" sortable>
+                <template #editor="{ data, field }">
+                    <InputText v-model="data[field]" autofocus />
+                </template>
+            </Column>
+            <Column field="distribution_date" header="Distribution Date" sortable>
+                <template #body="slotProps">
+                    {{ slotProps.data.distribution_date.toDateString() }}
+                </template>
+                <template #editor="{ data, field }">
+                    <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
+                </template>
+            </Column>
+            <Column field="retrieval_date" header="Retrieval Date" sortable>
+                <template #body="slotProps">
+                    {{ slotProps.data.retrieval_date.toDateString() }}
+                </template>
+                <template #editor="{ data, field }">
+                    <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
+                </template>
+            </Column>
             <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
+            <Column :rowEditor="true" bodyStyle="text-align:center" frozen class="sticky right-0" />
             <template #footer> 
-                <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="strandStore.showHideDialog"/>
+                <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="strandStore.showHideAddModuleDialog"/>
                 <AddModuleDialog /> 
             </template>
         </DataTable>
