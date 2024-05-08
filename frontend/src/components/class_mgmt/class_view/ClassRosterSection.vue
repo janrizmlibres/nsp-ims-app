@@ -29,9 +29,9 @@ function fetchStudents(data) {
     isFetching.value = true
     
     try {
-        active.value = data.active.enrollments
-        inactive.value = data.inactive.enrollments
-        drop.value = data.drop != null ? data.drop.enrollments : null
+        active.value = data.active
+        inactive.value = data.inactive
+        drop.value = data.drop
 
     } catch(error) {
         console.log(error)
