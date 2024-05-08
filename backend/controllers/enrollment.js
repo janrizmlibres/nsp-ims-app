@@ -1,6 +1,5 @@
 ﻿import Term from "../models/term.js";
 import Enrollment from '../models/enrollment.js'
-import ClassLearningStrand from "../models/class_level.js";
 import ClassLevel from "../models/class_level.js";
 import Learner from "../models/learner.js";
 
