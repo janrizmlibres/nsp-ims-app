@@ -5,14 +5,16 @@ import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 // stores
 import { useStrandStore } from '@/stores/strand';
 import { useToast } from 'primevue/usetoast';
+import { useRoute } from 'vue-router';
 
 const strandStore = useStrandStore()
 
+const route = useRoute()
 const toast = useToast()
 
 const customPt = {
@@ -90,19 +92,19 @@ const customPt = {
     }
 }
 
-const props = defineProps(['modelValue', 'dropTable'])
-const dropTable = ref(props.dropTable)
+const props = defineProps(['modelValue', 'isNotActive'])
+const isNotActive = ref(props.isNotActive)
 const data = ref([])
 const noChanges = ref(true)
 
 const startingData = []
 const updatedData = new Set([])
 
-onMounted(async () => {
+watch(() => props.modelValue, () => {
+    data.value.length = 0
+    startingData.length = 0
+
     for (const datum of props.modelValue) {
-        let date = new Date(datum.updatedAt)
-        date = date.toLocaleString()
-        console.log(datum);
         const grades = {
             id: datum.id,
             learnerId: datum.learnerId,
@@ -116,25 +118,25 @@ onMounted(async () => {
                 third_quarter: datum.third_quarter,
                 fourth_quarter: datum.fourth_quarter,
                 remarks: datum.remarks,
-                updatedAt: date
+                updatedAt: datum.updatedAt
             }
         }
 
         const len = data.value.push(grades)
         startingData.push(structuredClone(grades))
-
+        
         watch(data.value[len - 1], (newData) => {
             updatedData.add(newData)
             noChanges.value = false
         })
     }
-})
+}, {immediate: true})
 
 async function updateGrades() {
     try {
         console.log(updatedData);
         await strandStore.updateGrades({ updatedData: Array.from(updatedData) })
-
+        await strandStore.getAllGrades(route.query.id)
         toast.add({
             severity: 'success',
             summary: 'Success',
@@ -166,32 +168,6 @@ function resetData() {
 
     noChanges.value = true
 }
-
-// const onRowEditSave = async (event) => {
-//     let { newData } = event;
-//     console.log(newData);
-
-//     await gradeStore.updateGrade(newData.id, {
-//         newFirst_quarter: newData.first_quarter,
-//         newSecond_quarter: newData.second_quarter,
-//         newThird_quarter: newData.third_quarter,
-//         newFourth_quarter: newData.fourth_quarter,
-//         newRemarks: newData.remarks
-//     })
-
-//     await strandStore.getAllGrades(route.query.id)
-// };
-
-// const onCellEditComplete = async (event) => {
-//     let { data, newValue, field } = event;
-    
-//     await gradeStore.updateGrade(data.id, {
-//         [field]: newValue
-//     })
-
-//     await strandStore.getAllGrades(route.query.id)
-    
-// };
 </script>
 
 <template>
@@ -199,6 +175,7 @@ function resetData() {
         :value="data" dataKey="id" 
         sortField="lastName" :sortOrder="1" removableSort 
         resizableColumns columnResizeMode="fit" showGridlines
+        :paginator="data.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
         :ptOptions="{mergeProps:true}"
         :pt="customPt"
     >
@@ -211,37 +188,41 @@ function resetData() {
 
         <Column field="first_quarter" header="Q1">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.first_quarter" :disabled="dropTable" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.first_quarter" :disabled="isNotActive" :binary="true" />
             </template>
         </Column>
         <Column field="second_quarter" header="Q2">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.second_quarter" :disabled="dropTable" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.second_quarter" :disabled="isNotActive" :binary="true" />
             </template>
         </Column>
         <Column field="third_quarter" header="Q3">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.third_quarter" :disabled="dropTable" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.third_quarter" :disabled="isNotActive" :binary="true" />
             </template>
         </Column>
         <Column field="fourth_quarter" header="Q4">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.fourth_quarter" :disabled="dropTable" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.fourth_quarter" :disabled="isNotActive" :binary="true" />
             </template>
         </Column>
         <Column field="remarks" header="Remarks">
             <template #body="slotProps">
-                <InputText v-model="slotProps.data.grades.remarks" :disabled="dropTable" autofocus />
+                <InputText v-model="slotProps.data.grades.remarks" :disabled="isNotActive" autofocus />
             </template>
         </Column>
-        <Column field="grades.updatedAt" header="Updated At" sortable />
+        <Column field="grades.updatedAt" header="Updated At" sortable>
+            <template #body="slotProps">
+                {{ new Date(slotProps.data.grades.updatedAt).toLocaleString() }}
+            </template>
+        </Column>
         <template #footer>
             <p>
                 Record(s) count: <span class="u-txt-red"> {{ data.length }} </span>
             </p>
         </template>
     </DataTable>
-    <div class="flex justify-end gap-2 mt-4">
+    <div v-if="!isNotActive" class="flex justify-end gap-2 mt-4">
         <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateGrades"></Button>
         <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
     </div>
