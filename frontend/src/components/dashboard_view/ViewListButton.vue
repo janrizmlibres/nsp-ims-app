@@ -1,5 +1,5 @@
 <template>
-    <button class="total-button" @click="visible = !visible">View List</button>
+    <Button label="View List" severity="info" class="total-button" @click="visible = !visible" />
     <div class="card flex justify-content-center">
       <Dialog v-model:visible="visible" modal header="Header" :style="{ width: '50vw' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <p class="m-0">
@@ -13,11 +13,13 @@
   <script>
   import { ref } from "vue";
   import Dialog from 'primevue/dialog'; // Assuming you're using PrimeVue for the Dialog component
+  import Button from 'primevue/button';
   
   export default {
     name: 'ViewListButton',
     components: {
-      Dialog
+      Dialog,
+      Button,
     },
     setup() {
       const visible = ref(false);

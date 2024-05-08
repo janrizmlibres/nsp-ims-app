@@ -1,11 +1,8 @@
 <template>
   <div>
-    <button class="button" @click="showDropdown = !showDropdown">
-      <font-awesome-icon :icon="['fas', 'filter']" />
-      Year
-    </button>
+    <Button label="Year" severity="secondary" icon="pi pi-filter" class="button" @click="showDropdown = !showDropdown" />
     <div class="card flex justify-content-center" v-if="showDropdown">
-      <Listbox v-model="selectedYear" :options="years" multiple optionLabel="name" class="w-full md:w-14rem" />
+      <Listbox v-model="selectedYear" :options="years" multiple optionLabel="name" class="w-full md:w-14rem custom-listbox" />
     </div>
   </div>
 </template>
@@ -13,6 +10,7 @@
 <script setup>
 import { ref } from "vue";
 import Listbox from 'primevue/listbox';
+import Button from 'primevue/button';
 
 const showDropdown = ref(false);
 const selectedYear = ref();
@@ -41,6 +39,11 @@ const years = ref([
   padding: 0.625rem;
   cursor: pointer;
   border-radius: 0.625rem;
-  width: 6.25rem;
+  width: 6rem;
+}
+
+/* New CSS class for Listbox highlight */
+.custom-listbox .p-highlight {
+  background-color: #265492;
 }
 </style>

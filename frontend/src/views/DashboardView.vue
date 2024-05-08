@@ -25,14 +25,14 @@
           widgetTitle="ACTIVE LEARNERS" 
           totalText="180" />
     </div>
+    <div class="charts">
       <LineChart 
-          :key="lineChartKey"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-line-chart' : 'line-chart'"
           :style="`--initial-x: 28.125rem; --initial-y: 0.9375rem; --translate-x: 53.125rem; --translate-y: 13.125rem;`" />
       <BarChart 
-          :key="barChartKey"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-bar-chart' : 'bar-chart'"
           :style="`--initial-x: 28.125rem; --initial-y: 2.125rem; --translate-x: 0.625rem; --translate-y: -6.9375rem;`" />
+    </div>
   </ContentPane>
 </template>
 
@@ -68,6 +68,9 @@ export default {
 </script>
 
 <style scoped>
+.charts{
+  overflow: visible;
+}
   .student-widget {
     margin-bottom: 1.25rem;
     margin-right: 1.25rem;
@@ -77,7 +80,7 @@ export default {
     position: absolute;
     display: block;
     top: 10rem;
-    left: 104.375rem;
+    left: 104.600rem;
     z-index: 3;
   }
 
@@ -89,11 +92,10 @@ export default {
 
   .dashboard-text {
     font-weight: bold;
-    font-size: 1.875rem;
-    margin-left: 0.625rem;
-  }
-  .middle-container {
     position: absolute;
+    font-size: 1.875rem;
+    margin-top: 3rem;
+    margin-left: 0.625rem;
   }
   
   .student-dashboard-panels {
@@ -104,14 +106,15 @@ export default {
   }
 
   .line-chart {
-    margin-top: 4.0625rem;
-    position: absolute;
+    width: 66.5%; /* Adjust this value to your needs */
+    margin-right: 20px auto; /* Horizontal centering */
+    margin-top: 45px;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
   
   .bar-chart {
-    margin-top: 24.0625rem;
-    position: absolute;
+    width: 66.5%; /* Adjust this value to your needs */
+    margin-right: 20px auto; /* Horizontal centering */
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
 
