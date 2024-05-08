@@ -2,8 +2,8 @@
 import Button from 'primevue/button'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
-import IdentityForm from './IdentityForm.vue'
-import BulkForm from './BulkForm.vue'
+import IdentityForm from '../../components/student_view/IdentityForm.vue'
+import BulkForm from '../../components/student_view/BulkForm.vue'
 </script>
 
 <template>
