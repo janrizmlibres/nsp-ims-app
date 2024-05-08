@@ -69,13 +69,6 @@ export const useTermsStore = defineStore('terms', {
                 end_date: 'May 31, 2024',
                 term_status: "Active"
             },
-        ],
-
-        dataColumns: [
-            { field: 'batch_number', header: 'Batch No.' },
-            { field: 'academic_year', header: 'Academic Year' },
-            { field: 'start_date', header: 'Start Date' },
-            { field: 'end_date', header: 'End Date' }
-    ],
+        ]
   }),
 })
