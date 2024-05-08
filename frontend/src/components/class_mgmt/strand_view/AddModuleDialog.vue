@@ -43,6 +43,13 @@ async function addModule() {
             distriDate: range.value[0],
             retriDate: range.value[1]
         })
+
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Module added successfully!',
+            life: 3000
+        })
     } catch(error) {
         toast.add({
             severity: 'error',
@@ -55,12 +62,12 @@ async function addModule() {
     await strandStore.getAllModules(route.query.id)
     value.value = null;
     dates.value = null;
-    strandStore.showHideDialog()
+    strandStore.showHideAddModuleDialog()
 }
 </script>
 
 <template>
-    <Dialog v-model:visible="strandStore.visibleDialog" modal header="Add Module" :style="{ width: '20rem' }">
+    <Dialog v-model:visible="strandStore.visibleAddModuleDialog" modal header="Add Module" :style="{ width: '20rem' }">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
             <label>Title</label>
@@ -69,12 +76,12 @@ async function addModule() {
         <div class="flex flex-col gap-4 mb-4">
             <div class="flex flex-col">
                 <label>Distribution Date - Retrieval Date</label>
-                <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" hideOnRangeSelection="true" :manualInput="false" />
+                <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
             </div>
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Add" @click="addModule"></Button>
-            <Button type="button" label="Cancel" severity="danger" @click="strandStore.showHideDialog"></Button>
+            <Button type="button" label="Cancel" severity="danger" @click="strandStore.showHideAddModuleDialog"></Button>
         </div>
     </Dialog>
 </template>
