@@ -2,10 +2,9 @@
 // Presets
 import Button from 'primevue/button'
 import PanelMenu from 'primevue/panelmenu'
-import Skeleton from 'primevue/skeleton'
 
 // Utils
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 
 // Stores
 import { useSidebarStore } from '@/stores/sidebar'
@@ -16,211 +15,202 @@ const sidebarStore = useSidebarStore()
 const termStore = useTermStore()
 const authStore = useAuthStore()
 
-const items = ref([])
-const isFetching = ref(true)
-const role = ref('')
-async function render(activeTerm) {
-  if (activeTerm != null) {
-    const gradeSchool = activeTerm.class_levels.find((obj) => {
-      return obj.school_level === 'Grade School'
-    })
+const gradeSchoolId = computed(() => termStore.activeTerm.class_levels.find((obj) => {
+    return obj.school_level === 'Grade School' 
+}).id)
 
-    const juniorHighSchool = activeTerm.class_levels.find((obj) => {
-      return obj.school_level === 'Junior High School'
-    })
+const juniorHighSchoolId = computed(() => termStore.activeTerm.class_levels.find((obj) => {
+    return obj.school_level === 'Junior High School' 
+}).id)
 
-    items.value = [
+const items = computed(() => [
+  {
+    key: '1',
+    label: 'Dashboard',
+    icon: 'fa fa-home',
+    route: { name: 'dashboard' }
+  },
+  {
+    key: '2',
+    label: 'Student Management',
+    icon: 'fa fa-id-card',
+    items: [
       {
-        key: '1',
-        label: 'Dashboard',
-        icon: 'fa fa-home',
+        key: '2-1',
+        label: 'Student Records',
+        icon: 'fa fa-address-book',
         route: { name: 'dashboard' }
       },
       {
-        key: '2',
-        label: 'Student Management',
-        icon: 'fa fa-id-card',
-        items: [
+        key: '2-2',
+        label: 'Student Requirements',
+        icon: 'fa fa-list-check',
+        route: { name: 'dashboard' }
+      },
+      {
+        key: '2-3',
+        label: 'Admit Students',
+        icon: 'fa fa-user-plus',
+        route: { name: 'dashboard' }
+      }
+    ]
+  },
+  {
+    key: '3',
+    label: 'Enrollment Management',
+    icon: 'fa fa-school',
+    items: [
+      {
+        key: '3-1',
+        label: 'Academic Year',
+        icon: 'fa fa-calendar-week',
+        route: { name: 'dashboard' }
+      },
+      {
+        key: '3-2',
+        label: 'Enrollment Records',
+        icon: 'fa fa-scroll',
+        route: { name: 'dashboard' }
+      },
+      {
+        key: '3-3',
+        label: 'Enroll Students',
+        icon: 'fa fa-school-flag',
+        route: { name: 'dashboard' }
+      }
+    ]
+  },
+  {
+    key: '4',
+    label: 'Volunteer Management',
+    icon: 'fa fa-users',
+    items: [
+      {
+        key: '4-1',
+        label: 'Volunteer Records',
+        icon: 'fa fa-address-book',
+        route: { name: 'dashboard' }
+      },
+      {
+        key: '4-2',
+        label: 'Admit Volunteers',
+        icon: 'fa fa-user-plus',
+        route: { name: 'dashboard' }
+      }
+    ]
+  },
+  {
+    key: '5',
+    label: 'Class Management',
+    icon: 'fa fa-book-open',
+    items: [
+      {
+        key: '5-1',
+        label: 'Active Classes',
+        icon: 'fa fa-book-bookmark',
+        items: termStore.activeTerm ? [
           {
-            key: '2-1',
-            label: 'Student Records',
-            icon: 'fa fa-address-book',
-            route: { name: 'dashboard' }
-          },
-          {
-            key: '2-2',
-            label: 'Student Requirements',
-            icon: 'fa fa-list-check',
-            route: { name: 'dashboard' }
-          },
-          {
-            key: '2-3',
-            label: 'Admit Students',
+            key: '5-1-1',
+            label: 'Grade School',
             icon: 'fa fa-user-plus',
-            route: { name: 'dashboard' }
-          }
-        ]
-      },
-      {
-        key: '3',
-        label: 'Enrollment Management',
-        icon: 'fa fa-school',
-        items: [
-          {
-            key: '3-1',
-            label: 'Academic Year',
-            icon: 'fa fa-calendar-week',
-            route: { name: 'dashboard' }
+            route: {
+              name: 'class',
+              query: { id: gradeSchoolId }
+            }
           },
           {
-            key: '3-2',
-            label: 'Enrollment Records',
-            icon: 'fa fa-scroll',
-            route: { name: 'dashboard' }
-          },
-          {
-            key: '3-3',
-            label: 'Enroll Students',
-            icon: 'fa fa-school-flag',
-            route: { name: 'dashboard' }
-          }
-        ]
-      },
-      {
-        key: '4',
-        label: 'Volunteer Management',
-        icon: 'fa fa-users',
-        items: [
-          {
-            key: '4-1',
-            label: 'Volunteer Records',
-            icon: 'fa fa-address-book',
-            route: { name: 'dashboard' }
-          },
-          {
-            key: '4-2',
-            label: 'Admit Volunteers',
+            key: '5-1-2',
+            label: 'Junior High School',
             icon: 'fa fa-user-plus',
-            route: { name: 'dashboard' }
+            route: {
+              name: 'class',
+              query: { id: juniorHighSchoolId }
+            }
           }
-        ]
+        ] :null
       },
       {
-        key: '5',
-        label: 'Class Management',
-        icon: 'fa fa-book-open',
-        items: [
-          {
-            key: '5-1',
-            label: 'Active Classes',
-            icon: 'fa fa-book-bookmark',
-            items: [
-              {
-                key: '5-1-1',
-                label: 'Grade School',
-                icon: 'fa fa-user-plus',
-                route: {
-                  name: 'class',
-                  query: { id: gradeSchool.id }
-                }
-              },
-              {
-                key: '5-1-2',
-                label: 'Junior High School',
-                icon: 'fa fa-user-plus',
-                route: {
-                  name: 'class',
-                  query: { id: juniorHighSchool.id }
-                }
-              }
-            ]
-          },
-          {
-            key: '5-2',
-            label: 'Class Records',
-            icon: 'fa fa-scroll',
-            route: { name: 'class-records' }
-          }
-        ]
+        key: '5-2',
+        label: 'Class Records',
+        icon: 'fa fa-scroll',
+        route: { name: 'class-records' }
+      }
+    ]
+  },
+  {
+    key: '6',
+    label: 'Term Management',
+    icon: 'fa fa-calendar-days',
+    route: { name: 'term-management' }
+  },
+  {
+    key: '7',
+    label: 'Staff Management',
+    icon: 'fa fa-user',
+    items: [
+      {
+        key: '7-1',
+        label: 'Staff Records',
+        icon: 'fa fa-address-book',
+        route: { name: 'staff-records' }
       },
       {
-        key: '6',
-        label: 'Term Management',
-        icon: 'fa fa-calendar-days',
-        route: { name: 'term-management' }
+        key: '7-2',
+        label: 'Staff Permissions',
+        icon: 'fa fa-shield-halved',
+        route: { name: 'staff-permissions' }
       },
       {
-        key: '7',
-        label: 'Staff Management',
-        icon: 'fa fa-user',
-        items: [
-          {
-            key: '7-1',
-            label: 'Staff Records',
-            icon: 'fa fa-address-book',
-            route: { name: 'staff-records' }
-          },
-          {
-            key: '7-2',
-            label: 'Staff Permissions',
-            icon: 'fa fa-shield-halved',
-            route: { name: 'staff-permissions' }
-          },
-          {
-            key: '7-3',
-            label: 'Add Staff',
-            icon: 'fa fa-user-plus',
-            route: { name: 'add-staff' }
-          }
-        ]
+        key: '7-3',
+        label: 'Add Staff',
+        icon: 'fa fa-user-plus',
+        route: { name: 'add-staff' }
+      }
+    ]
+  },
+  {
+    key: '8',
+    label: 'Utilities & Configurations',
+    icon: 'fa fa-gear',
+    items: [
+      {
+        key: '8-1',
+        label: 'Learning Strand Config',
+        icon: 'fa fa-book',
+        route: { name: 'learning-strand-management' }
       },
       {
-        key: '8',
-        label: 'Utilities & Configurations',
-        icon: 'fa fa-gear',
-        items: [
-          {
-            key: '8-1',
-            label: 'Learning Strand Config',
-            icon: 'fa fa-book',
-            route: { name: 'learning-strand-management' }
-          },
-          {
-            key: '8-2',
-            label: 'Student Requirements Config',
-            icon: 'fa fa-list',
-            route: { name: 'student-requirements-management' }
-          },
-          {
-            key: '8-3',
-            label: 'Generate Reports',
-            icon: 'fa fa-note-sticky',
-            route: { name: 'dashboard' }
-          },
-          {
-            key: '8-4',
-            label: 'Audit Trails',
-            icon: 'fa fa-clock-rotate-left',
-            route: { name: 'audit-trails' }
-          }
-        ]
+        key: '8-2',
+        label: 'Student Requirements Config',
+        icon: 'fa fa-list',
+        route: { name: 'student-requirements-management' }
+      },
+      {
+        key: '8-3',
+        label: 'Generate Reports',
+        icon: 'fa fa-note-sticky',
+        route: { name: 'dashboard' }
+      },
+      {
+        key: '8-4',
+        label: 'Audit Trails',
+        icon: 'fa fa-clock-rotate-left',
+        route: { name: 'audit-trails' }
       }
     ]
   }
+])
 
-  role.value = computed(() => {
-    if (authStore.staff.accessLevel === 1) {
-      return 'Admin'
-    } else if (authStore.staff.accessLevel === 2) {
-      return 'Sub-Admin'
-    } else {
-      return 'Staff'
-    }
-  })
-  isFetching.value = false
-}
+const role = computed(() => {
+  if (authStore.staff.accessLevel === 1) {
+    return 'Admin'
+  } else if (authStore.staff.accessLevel === 2) {
+    return 'Sub-Admin'
+  } else {
+    return 'Staff'
+  }
+})
 
-watch(() => termStore.activeTerm, render, { immediate: true })
 const buttonPt = {
   root: ({ props }) => ({
     class: [
@@ -319,7 +309,6 @@ const panelMenuPt = {
 
 const expandedKeys = ref({})
 
-// functions
 function collapseAll() {
   expandedKeys.value = {}
 }
@@ -391,11 +380,7 @@ const handleMouseLeave = () => {
     </div>
     <div class="border-t mx-6"></div>
 
-    <div v-if="isFetching" class="h-full p-4">
-      <Skeleton class="h-full" />
-    </div>
     <PanelMenu
-      v-else
       class="h-full overflow-y-auto overflow-x-hidden mb-4"
       v-model:expandedKeys="expandedKeys"
       :model="items"
