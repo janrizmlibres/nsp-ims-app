@@ -13,47 +13,32 @@ export const getAllCurrentEnrolled = async (req, res, next) => {
     )
 
     const classLevels = await ClassLevel.findAll({
-      where: { termId: currentTerm.id }
+      where: {termId: currentTerm.id},
+      include: {model: Learner, include: {model: Enrollment}},
+    })
+
+    const parsedData = classLevels.map(classLevel => {
+      return classLevel.learners.map(learner => {
+        return {
+          lrn: learner.lrn,
+          lastName: learner.lastName,
+          firstName: learner.firstName,
+          middleName: learner.middleName,
+          schoolLevel: classLevel.school_level,
+          dateEnrolled: learner.enrollment.dateEnrolled,
+          status: learner.enrollment.status
+        };
+      });
     });
 
-    // Get all enrollments for the current term
-    const enrollments = await Enrollment.findAll({
-      where: { classLevelId: classLevels.map(cl => cl.id) },
-      include: [
-        {
-          model: Learner,
-          attributes: ['lrn', 'firstName', 'lastName', 'middleName']
-        },
-        {
-          model: ClassLevel,
-          attributes: ['school_level'],
-          include: [
-            {
-              model: ClassLearningStrand,
-              attributes: ['id'] // Assuming this is the class code
-            }
-          ]
-        }
-      ]
-    });
+    // Flatten the array
+    const flattenedData = [].concat(...parsedData);
 
-    // Format the data
-    const students = enrollments.map(enrollment => ({
-      LRN: enrollment.Learner.lrn,
-      fullName: `${enrollment.Learner.firstName} ${enrollment.Learner.middleName} ${enrollment.Learner.lastName}`,
-      schoolLevel: enrollment.ClassLevel.school_level,
-      classCode: enrollment.ClassLevel.ClassLearningStrands[0].id,
-      dateEnrolled: enrollment.dateEnrolled
-    }));
-    
-    res.status(200).json({
-      message: "Fetched all students successfully.",
-      data: students,
-    });
+    res.status(200).json({ message: 'Fetched all active students successfully!', learners: flattenedData });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'An error occurred while fetching students.' });
-    
-    next(error)
+    next(error);
   }
 };
