@@ -70,13 +70,13 @@ async function render(activeTerm) {
             key: '3-1',
             label: 'Academic Year',
             icon: 'fa fa-calendar-week',
-            route: { name: 'active-enrollment' }
+            route: { name: 'current-enrollment' }
           },
           {
             key: '3-2',
             label: 'Enrollment Records',
             icon: 'fa fa-scroll',
-            route: { name: 'dashboard' }
+            route: { name: 'enrollment-history' }
           },
           {
             key: '3-3',
