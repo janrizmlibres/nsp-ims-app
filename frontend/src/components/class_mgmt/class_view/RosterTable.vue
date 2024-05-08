@@ -4,7 +4,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import { useConfirm } from "primevue/useconfirm";
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useClassStore } from '@/stores/class';
 import { useRoute } from 'vue-router';
 
@@ -15,21 +15,6 @@ const confirm = useConfirm()
 const route = useRoute()
 
 const classStore = useClassStore()
-const learners = ref([])
-
-function fetchData(data) {
-    if (data != null) {
-        learners.value.length = 0
-
-        for (const enrollment of data) {
-            const studentData = ref(enrollment.learner)
-            Object.assign(studentData.value, { status: enrollment.status })
-            learners.value.push(studentData.value)
-        }
-    }
-}
-
-watch(() => props.modelValue, fetchData, { immediate: true })
 
 const dataColumns = ref([
     { field: 'middleName', header: 'Middle Name' },
@@ -142,10 +127,10 @@ const dropStudent = (learnerId, studentLastName, studentFirstName) => {
 
 <template>
     <DataTable 
-        :value="learners" dataKey="id" 
-        sortField="lastName" :sortOrder="-1" removableSort 
+        :value="props.modelValue" dataKey="id" 
+        sortField="lastName" :sortOrder="1" removableSort 
         v-model:filters="filters" :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'category']"
-        paginator :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+        :paginator="props.modelValue.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
         ref="exportRef"  scrollable showGridlines
         @rowSelect="{}" @rowUnselect="{}"
         :ptOptions="{mergeProps:true}"
@@ -167,7 +152,7 @@ const dropStudent = (learnerId, studentLastName, studentFirstName) => {
         <Column v-for="col of dataColumns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
         <template #footer>
             <p>
-                Record(s) count: <span class="u-txt-red"> {{ learners.length }} </span>
+                Record(s) count: <span class="u-txt-red"> {{ props.modelValue.length }} </span>
             </p>
         </template>
         <template #paginatorstart>
