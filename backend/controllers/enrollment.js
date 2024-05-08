@@ -4,7 +4,9 @@ import ClassLearningStrand from "../models/class_level.js";
 import ClassLevel from "../models/class_level.js";
 import Learner from "../models/learner.js";
 
-export const getAllStudentsFromCurrentTerm = async (req, res, next) => {
+export const getAllCurrentEnrolled = async (req, res, next) => {
+  const termID = req.params.termID
+  
   try {
     // Get the current term
     const currentTerm = await Term.findOne(
