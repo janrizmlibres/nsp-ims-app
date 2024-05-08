@@ -7,13 +7,18 @@ import EnrollmentTable from '@/components/enrollment_view/EnrollmentTable.vue'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 
 const termStore = useTermStore()
+const enrollmentStore = useEnrollmentStore()
+
 const currentTerm = ref("")
 const toast = useToast()
 
-async function getCurrentActiveTerm()  {
+
+async function getActiveStudents()  {
   try {
     await termStore.getActiveTerm()
-    currentTerm.value = termStore.activeTerm.academic_year
+    currentTerm.value = termStore.activeTerm
+
+    await enrollmentStore.getAllEnrolledFromTerm(currentTerm.value.id)
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -24,7 +29,7 @@ async function getCurrentActiveTerm()  {
   }
 }
 
-getCurrentActiveTerm()
+getActiveStudents()
 </script>
 
 <template>
