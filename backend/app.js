@@ -1,6 +1,9 @@
 import express from "express";
 
 import sequelize from "./util/database.js";
+import { injectAll } from "./util/db_injector.js";
+import setAssociations from "./util/associations.js";
+
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
 import termRoutes from "./routes/term.js";
@@ -59,11 +62,7 @@ app.use((error, req, res, next) => {
 
 try {
   await sequelize.sync({ force: true });
-  await dbInjector.injectStaff();
-  await dbInjector.injectAcademicYear();
-  await dbInjector.injectLearningStrand();
-  await dbInjector.injectLearner();
-  await dbInjector.injectVolunteer();
+  await injectAll();
   app.listen(port);
   console.log("Listening on port " + port);
 } catch (error) {
