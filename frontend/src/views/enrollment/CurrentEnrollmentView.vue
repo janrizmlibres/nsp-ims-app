@@ -3,7 +3,8 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import { ref } from 'vue'
 import { useTermStore } from '@/stores/term.js'
 import { useToast } from 'primevue/usetoast'
-import ActiveEnrollmentTable from '@/components/enrollment_view/ActiveEnrollmentTable.vue'
+import EnrollmentTable from '@/components/enrollment_view/EnrollmentTable.vue'
+import { useEnrollmentStore } from '@/stores/enrollment.js'
 
 const termStore = useTermStore()
 const currentTerm = ref("")
@@ -27,8 +28,8 @@ getCurrentActiveTerm()
 </script>
 
 <template>
-  <ContentPane header="Enrollment" :subheader="'Academic Year ' + currentTerm">
-    <ActiveEnrollmentTable />
+  <ContentPane header="Enrollment" :subheader="'Academic Year ' + currentTerm.academic_year">
+    <EnrollmentTable />
   </ContentPane>
 </template>
 
