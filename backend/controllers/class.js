@@ -16,6 +16,8 @@ export async function getClass(req, res, next) {
         const classLevel = await ClassLevel.findByPk(classId, {
             include: [Term]
         });
+
+        console.log(classLevel);
         
         res.status(200).json({
         message: "Fetched class successfully.",
@@ -138,7 +140,8 @@ export async function getAllStrands(req, res, next) {
     try {
         const learningStrands = await ClassLearningStrand.findAll({
             where: {classLevelId: classId}, 
-            include: [LearningStrand, ClassSchedule]
+            include: [LearningStrand, ClassSchedule],
+            order: [[LearningStrand, 'name', 'ASC']]
         })
 
         res.status(201).json({ 
@@ -157,15 +160,17 @@ export async function getAllModules(req, res, next) {
     const classId = req.params.classId;
     
     try {
-        const modules = await Module.findAll({
-            where: {
-                retrieval_date: { [Op.gte]: new Date() }
+        const modules = await ClassLearningStrand.findAll({
+            where:{
+                classLevelid: classId
             },
-            include: {
-                model: ClassLearningStrand, where: {
-                    classLevelId: classId
-                }, include: [LearningStrand]
-            }
+            include: [{
+                model: Module,
+                where: {
+                    retrieval_date: { [Op.gte]: new Date() }
+                },
+                order: [['retrieval_date', 'ASC']]
+            }, LearningStrand]
         })
 
         res.status(201).json({ 
@@ -184,28 +189,25 @@ export async function getAllStudents(req, res, next) {
     const classId = req.params.classId;
     
     try {
-        const activeStudents = await ClassLevel.findByPk(classId, {
-            include: {model: Enrollment, 
-                where: {
-                    status: 'Active'
-                },
-                include: [Learner]}
+        const activeStudents = await Learner.findAll({
+            where: {
+                '$enrollments.classLevelId$': classId,
+                '$enrollments.status$': 'Active'
+            }, include: {model: Enrollment}
         })
 
-        const inactiveStudents = await ClassLevel.findByPk(classId, {
-            include: {model: Enrollment, 
-                where: {
-                    status: 'Inactive'
-                },
-                include: [Learner]}
+        const inactiveStudents = await Learner.findAll({
+            where: {
+                '$enrollments.classLevelId$': classId,
+                '$enrollments.status$': 'Inactive'
+            }, include: {model: Enrollment}
         })
 
-        const dropStudents = await ClassLevel.findByPk(classId, {
-            include: {model: Enrollment, 
-                where: {
-                    status: 'Drop'
-                },
-                include: [Learner]}
+        const dropStudents = await Learner.findAll({
+            where: {
+                '$enrollments.classLevelId$': classId,
+                '$enrollments.status$': 'Drop'
+            }, include: {model: Enrollment}
         })
         
         res.status(201).json({ 
