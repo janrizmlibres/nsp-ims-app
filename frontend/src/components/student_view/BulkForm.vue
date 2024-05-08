@@ -5,6 +5,7 @@ import TabPanel from 'primevue/tabpanel'
 import BaseCard from '@/components/UI/BaseCard.vue'
 import PersonalInfoForm from '@/components/student_view/PersonalInfoForm.vue'
 import ContactInfoForm from '@/components/student_view/ContactInfoForm.vue'
+import ParentalInfoForm from '@/components/student_view/ParentalInfoForm.vue'
 </script>
 
 <template>
@@ -18,8 +19,12 @@ import ContactInfoForm from '@/components/student_view/ContactInfoForm.vue'
         <ContactInfoForm />
       </TabPanel>
 
-      <TabPanel header="Parental Information"> </TabPanel>
+      <TabPanel header="Parental Information">
+        <ParentalInfoForm />
+      </TabPanel>
+
       <TabPanel header="Previous School"> </TabPanel>
+
       <TabPanel header="Others"> </TabPanel>
     </TabView>
   </BaseCard>
