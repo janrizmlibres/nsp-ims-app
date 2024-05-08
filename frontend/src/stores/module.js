@@ -16,6 +16,18 @@ export const useModuleStore = defineStore('module', () => {
         module.value = result.data.data
     }
 
+    async function updateModule(moduleId, form) {
+        const authStore = useAuthStore()
+    
+        await axios.patch(
+            `http://localhost:8080/module/${moduleId}/update`,
+            form,
+            {
+            headers: { Authorization: 'Bearer ' + authStore.token }
+            }
+        )
+    }
+
     async function updateModuleSubmission(moduleId, form) {
         const authStore = useAuthStore()
     
@@ -28,7 +40,7 @@ export const useModuleStore = defineStore('module', () => {
         )
     }
 
-    return { module, getModule, updateModuleSubmission }
+    return { module, getModule, updateModule, updateModuleSubmission }
 })
 
 
