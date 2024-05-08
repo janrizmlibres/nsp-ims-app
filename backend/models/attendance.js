@@ -18,11 +18,10 @@ const Attendance = sequelize.define("attendance", {
       key: "id",
     },
   },
-  date: {
-    type: DATE,
-    allowNull: false,
+  status: {
+    type: STRING,
+    defaultValue: 'Absent'
   },
-  status: STRING,
   remarks: TEXT,
 });
 
