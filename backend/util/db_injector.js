@@ -8,7 +8,6 @@ import Volunteer from "../models/volunteer.js";
 
 export async function injectAll() {
   await injectStaff();
-  await injectAcademicYear();
   await injectLearningStrand();
   await injectLearner();
   await injectVolunteer();
