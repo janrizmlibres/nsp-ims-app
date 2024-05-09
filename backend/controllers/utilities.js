@@ -3,6 +3,7 @@ import Term from "../models/term.js";
 import ClassLevel from "../models/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
 import ClassLearningStrand from "../models/class_learning_strand.js"
+import StudentRequirement from "../models/student_requirement.js";
 
 export async function addTerm(req, res, next) {
   const {
@@ -133,5 +134,32 @@ export async function getLearningStrands(req, res, next) {
         error.statusCode = 500;
       }
       next(error);
+  }
+}
+
+export async function addRequirement(req, res, next) {
+  try {
+    const requirement = await StudentRequirement.findOne({
+      where: {
+        requirement_name: req.body.requirement_name
+      }
+    })
+
+    if (requirement) {
+      const error = new Error("Student Requirement already exists.");
+      error.statusCode = 422;
+      throw error;
+    }
+    
+    await StudentRequirement.create(req.body)
+
+    res.status(201).json({ 
+      message: "New Student Requirement Created!"
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 }
