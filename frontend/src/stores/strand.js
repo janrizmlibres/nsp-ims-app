@@ -26,14 +26,6 @@ export const useStrandStore = defineStore('strand', () => {
         })
     }
 
-    async function addSession(classLearningStrandId, form) {
-        const authStore = useAuthStore()
-
-        await axios.post(`http://localhost:8080/strand/${classLearningStrandId}/session/add`, form, {
-            headers: {Authorization: 'Bearer ' + authStore.token},
-        })
-    }
-
     async function getAllModules(classLearningStrandId) {
         const authStore = useAuthStore()
 
@@ -44,14 +36,12 @@ export const useStrandStore = defineStore('strand', () => {
         return result.data.data
     }
 
-    async function getAllGrades(classLearningStrandId) {
+    async function addSession(classLearningStrandId, form) {
         const authStore = useAuthStore()
 
-        const result = await axios.get(`http://localhost:8080/strand/${classLearningStrandId}/grades`, {
+        await axios.post(`http://localhost:8080/strand/${classLearningStrandId}/session/add`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
-        
-        return result.data.data
     }
 
     async function getAllSessions(classLearningStrandId) {
@@ -64,10 +54,10 @@ export const useStrandStore = defineStore('strand', () => {
         sessions.value = result.data.data
     }
 
-    async function updateTeacher(classLearningStrandId, form) {
+    async function addSchedule(classLearningStrandId, form) {
         const authStore = useAuthStore()
 
-        await axios.patch(`http://localhost:8080/strand/${classLearningStrandId}/teacher/update`, form, {
+        await axios.post(`http://localhost:8080/strand/${classLearningStrandId}/schedule/add`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
     }
@@ -76,6 +66,14 @@ export const useStrandStore = defineStore('strand', () => {
         const authStore = useAuthStore()
 
         await axios.patch(`http://localhost:8080/strand/schedule/${scheduleId}/update`, form, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+    }
+
+    async function updateTeacher(classLearningStrandId, form) {
+        const authStore = useAuthStore()
+
+        await axios.patch(`http://localhost:8080/strand/${classLearningStrandId}/teacher/update`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
     }
@@ -102,7 +100,7 @@ export const useStrandStore = defineStore('strand', () => {
         this.visibleAddSessionDialog = !this.visibleAddSessionDialog
     }
 
-    return { sessions, visibleAddModuleDialog, visibleAddSessionDialog, getStrand, showHideAddModuleDialog, showHideAddSessionDialog, addModule, addSession, getAllModules, getAllGrades, getAllSessions, updateTeacher, updateSchedule, updateGrades }
+    return { sessions, visibleAddModuleDialog, visibleAddSessionDialog, getStrand, addModule, getAllModules, addSession, getAllSessions, addSchedule, updateSchedule, updateTeacher, updateGrades, showHideAddModuleDialog, showHideAddSessionDialog}
 })
 
 
