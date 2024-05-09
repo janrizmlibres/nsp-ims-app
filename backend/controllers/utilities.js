@@ -22,6 +22,7 @@ export async function addTerm(req, res, next) {
       academic_year: academic_year,
       start_date: start_date,
       end_date: end_date,
+      status: true
     });
 
     res.status(201).json({ message: "New Academic Term Created!", termId: term.id });
