@@ -4,7 +4,6 @@ import { ref } from 'vue'
 import { useAuthStore } from './auth'
 
 export const useModuleStore = defineStore('module', () => {
-    const module = ref()
 
     async function getModule(moduleId) {
         const authStore = useAuthStore()
@@ -13,7 +12,7 @@ export const useModuleStore = defineStore('module', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
 
-        module.value = result.data.data
+        return result.data.data
     }
 
     async function updateModule(moduleId, form) {
@@ -40,7 +39,7 @@ export const useModuleStore = defineStore('module', () => {
         )
     }
 
-    return { module, getModule, updateModule, updateModuleSubmission }
+    return { getModule, updateModule, updateModuleSubmission }
 })
 
 
