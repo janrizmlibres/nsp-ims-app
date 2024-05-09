@@ -2,7 +2,7 @@ import { validationResult } from "express-validator";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 
-export async function createTerm(req, res, next) {
+export async function addTerm(req, res, next) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
