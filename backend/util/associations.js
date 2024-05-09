@@ -46,8 +46,12 @@ function setAssociations() {
   ClassLearningStrand.belongsTo(ClassLevel);
 
   // Class Learning Strand-Schedule Relationship
-  ClassLearningStrand.hasMany(ClassSchedule);
-  ClassSchedule.belongsTo(ClassLearningStrand);
+  ClassLearningStrand.belongsToMany(Volunteer, { through: ClassSchedule});
+  Volunteer.belongsToMany(ClassLearningStrand, { through: ClassSchedule });
+  Volunteer.hasMany(ClassSchedule)
+  ClassSchedule.belongsTo(Volunteer)
+  ClassLearningStrand.hasMany(ClassSchedule)
+  ClassSchedule.belongsTo(ClassLearningStrand)
 
   // Class Learning Strand-Module Relationship
   ClassLearningStrand.hasMany(Module)
