@@ -94,7 +94,7 @@ onMounted(async () => {
           key: '4-1',
           label: 'Volunteer Records',
           icon: 'fa fa-address-book',
-          route: { name: 'dashboard' }
+          route: { name: 'volunteer-records' }
         },
         {
           key: '4-2',
