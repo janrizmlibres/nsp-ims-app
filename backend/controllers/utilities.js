@@ -37,6 +37,21 @@ export async function addTerm(req, res, next) {
       status: true
     });
 
+    const classLevelData = [
+      {
+        school_level: "Grade School",
+      },
+      {
+        school_level: "Junior High School",
+      },
+    ];
+
+    classLevelData.map(async (class_level) => {
+      await term.createClass_level({
+        school_level: class_level.school_level
+      });
+    })
+
     res.status(201).json({ message: "New Academic Term Created!" });
   } catch (error) {
     if (!error.statusCode) {
