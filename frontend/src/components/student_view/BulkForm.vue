@@ -3,9 +3,12 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 import BaseCard from '@/components/UI/BaseCard.vue'
+
 import PersonalInfoForm from '@/components/student_view/PersonalInfoForm.vue'
 import ContactInfoForm from '@/components/student_view/ContactInfoForm.vue'
 import ParentalInfoForm from '@/components/student_view/ParentalInfoForm.vue'
+import PrevSchoolForm from '@/components/student_view/PrevSchoolForm.vue'
+import OthersForm from '@/components/student_view/OthersForm.vue'
 </script>
 
 <template>
@@ -23,9 +26,13 @@ import ParentalInfoForm from '@/components/student_view/ParentalInfoForm.vue'
         <ParentalInfoForm />
       </TabPanel>
 
-      <TabPanel header="Previous School"> </TabPanel>
+      <TabPanel header="Previous School">
+        <PrevSchoolForm />
+      </TabPanel>
 
-      <TabPanel header="Others"> </TabPanel>
+      <TabPanel header="Others">
+        <OthersForm />
+      </TabPanel>
     </TabView>
   </BaseCard>
 </template>
