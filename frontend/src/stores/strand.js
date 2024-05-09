@@ -4,9 +4,6 @@ import { ref } from 'vue'
 import { useAuthStore } from './auth'
 
 export const useStrandStore = defineStore('strand', () => {
-    const strand = ref()
-    const modules = ref()
-    const grades = ref()
     const sessions = ref()
     const visibleAddModuleDialog = ref(false)
     const visibleAddSessionDialog = ref(false)
@@ -18,7 +15,7 @@ export const useStrandStore = defineStore('strand', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
 
-        strand.value = result.data.data
+        return result.data.data
     }
 
     async function addModule(classLearningStrandId, form) {
@@ -44,7 +41,7 @@ export const useStrandStore = defineStore('strand', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        modules.value = result.data.data
+        return result.data.data
     }
 
     async function getAllGrades(classLearningStrandId) {
@@ -54,7 +51,7 @@ export const useStrandStore = defineStore('strand', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        grades.value = result.data.data
+        return result.data.data
     }
 
     async function getAllSessions(classLearningStrandId) {
@@ -105,7 +102,7 @@ export const useStrandStore = defineStore('strand', () => {
         this.visibleAddSessionDialog = !this.visibleAddSessionDialog
     }
 
-    return { strand, modules, grades, sessions, visibleAddModuleDialog, visibleAddSessionDialog, getStrand, showHideAddModuleDialog, showHideAddSessionDialog, addModule, addSession, getAllModules, getAllGrades, getAllSessions, updateTeacher, updateSchedule, updateGrades }
+    return { sessions, visibleAddModuleDialog, visibleAddSessionDialog, getStrand, showHideAddModuleDialog, showHideAddSessionDialog, addModule, addSession, getAllModules, getAllGrades, getAllSessions, updateTeacher, updateSchedule, updateGrades }
 })
 
 
