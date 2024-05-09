@@ -69,6 +69,7 @@ export default {
 
 <style scoped>
 .charts{
+  margin-top: 45px;
   overflow: visible;
 }
   .student-widget {
