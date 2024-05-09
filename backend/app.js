@@ -13,7 +13,6 @@ import moduleRoutes from "./routes/module.js"
 import gradeRoutes from "./routes/grade.js"
 import utilitiesRoutes from "./routes/utilities.js"
 import volunteerRoutes from "./routes/volunteer.js"
-import setAssociations from "./util/relations.js";
 import bcrypt from "bcryptjs";
 
 import * as dbInjector from "./util/db_injector.js";
