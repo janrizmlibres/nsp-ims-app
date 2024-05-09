@@ -24,7 +24,7 @@ export async function addTerm(req, res, next) {
       end_date: end_date,
     });
 
-    res.status(201).json({ message: "New Term Created!", termId: term.id });
+    res.status(201).json({ message: "New Academic Term Created!", termId: term.id });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
