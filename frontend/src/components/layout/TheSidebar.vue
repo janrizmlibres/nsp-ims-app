@@ -76,7 +76,7 @@ const items = computed(() => [
         key: '3-3',
         label: 'Enroll Students',
         icon: 'fa fa-school-flag',
-        route: { name: 'dashboard' }
+        route: { name: 'enroll-learners' }
       }
     ]
   },
