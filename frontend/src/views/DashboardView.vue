@@ -106,15 +106,14 @@ export default {
   }
 
   .line-chart {
-    width: 66.5%; /* Adjust this value to your needs */
-    margin-right: 20px auto; /* Horizontal centering */
-    margin-top: 45px;
+    margin-top: 4.0625rem;
+    position: absolute;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
   
   .bar-chart {
-    width: 66.5%; /* Adjust this value to your needs */
-    margin-right: 20px auto; /* Horizontal centering */
+    margin-top: 24.0625rem;
+    position: absolute;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
 
