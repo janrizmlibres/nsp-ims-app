@@ -7,7 +7,7 @@ import Row from 'primevue/row';
 import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 // Custom
 import { useVolunteerStore } from '@/stores/volunteer';
@@ -21,15 +21,19 @@ const strandStore = useStrandStore()
 const classStore = useClassStore()
 
 const toast = useToast()
-const props = defineProps(['classData'])
+const props = defineProps(['modelValue'])
 const emit = defineEmits(['updateSchedule'])
-const classData = ref(props.classData)
 
+const classData = ref([])
 const volunteers = ref([])
+
 onMounted(async () => {
-    await volunteerStore.getAllVolunteers()
-    volunteerStore.volunteers.forEach((data) => volunteers.value.push(data.fullname))
+    volunteerStore.getAllVolunteers().then((data) => {
+        data.forEach((volunteer) => volunteers.value.push(volunteer.fullname))
+    })
 })
+
+watch(() => props.modelValue, (data) => classData.value = data, {immediate: false})
 
 const customPt = {
     root: {

@@ -10,53 +10,33 @@ import LearningStrandsTable from '@/components/class_mgmt/create_class_view/Lear
 
 //  stores
 import { useClassStore } from '@/stores/class';
+import { useStrandStore } from '@/stores/strand';
 
 const toast = useToast()
 
 const classStore = useClassStore()
+const strandStore = useStrandStore()
 
-const learningStrandData = ref()
 const tableData = ref([])
 
-async function addStrand(strandData, strandScheduleData, id, state) {
-    const scheduleData = ref([])
-    for (const schedule of strandScheduleData) {
-
+async function addSchedule(learningStrand, scheduleData) {
+    const schedules = ref([])
+    for (const schedule of scheduleData) {
         const start_time = to24hr(schedule.start_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
         const end_time = to24hr(schedule.end_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
 
-        if (state) {
-            scheduleData.value.push({
-                name: strandData.strand.name,
-                days: schedule.school_days.toString(),
-                start_time: start_time,
-                end_time: end_time,
-            })
-        } else {
-            scheduleData.value.push({
-                name: strandData.strand.learning_strand.name,
-                days: schedule.school_days.toString(),
-                start_time: start_time,
-                end_time: end_time,
-            })
-        }
-    }
-
-    learningStrandData.value = {
-        classLevelId: strandData.classLevel.id,
-        name: strandData.strand.name,
-        teacher: strandData.volunteer,
-        schedule: scheduleData.value
+        schedules.value.push({
+            volunteer: schedule.volunteer,
+            days: schedule.school_days.toString(),
+            start_time: start_time,
+            end_time: end_time,
+        })
     }
 
     try {
-        if (state) {
-            await classStore.addLearningStrand(learningStrandData.value.classLevelId, learningStrandData.value)
-        }
-
-        for (var schedule of learningStrandData.value.schedule) {
+        for (const schedule of schedules) {
             try {
-                await classStore.addSchedule(learningStrandData.value.classLevelId, schedule)
+                await strandStore.addSchedule(learningStrand.id, schedule)
             } catch (error) {
                 toast.add({
                     severity: 'error',
@@ -68,7 +48,7 @@ async function addStrand(strandData, strandScheduleData, id, state) {
         }
 
         try {
-            updateScheduleTable(id)
+            updateScheduleTable(learningStrand.classLevelId)
 
             toast.add({
                 severity: 'success',
@@ -93,14 +73,13 @@ async function addStrand(strandData, strandScheduleData, id, state) {
         })
         console.log(error.response.data.message);
     }
-
-    learningStrandData.value.length = 0
 }
 
 function updateScheduleTable(id) {
     tableData.value.length = 0
 
     classStore.getAllStrands(id).then((data) => {
+        console.log(data);
         for (const learningStrand of data) {
             for (const schedule of learningStrand.class_schedules) {
                 const start_time = to12hr(schedule.start_time)
@@ -108,10 +87,11 @@ function updateScheduleTable(id) {
 
                 tableData.value.push({
                     id: learningStrand.id,
-                    name: learningStrand.learning_strand.name,
-                    teacher: learningStrand.teacher,
                     classLevelId: learningStrand.classLevelId,
                     scheduleId: schedule.id,
+                    volunteerId:  schedule.volunteer.id,
+                    name: learningStrand.learning_strand.name,
+                    teacher: learningStrand.volunteer.fullname,
                     school_days: schedule.days,
                     start_time: start_time,
                     end_time: end_time
@@ -158,11 +138,11 @@ function to24hr(time12h) {
 </script>
 
 <template>
-    <ContentPane header="Manage" subheader="Class Schedules">
-        <CreateClassForm @submit="addStrand" @chooseLevel="updateScheduleTable" />
- 
+    <ContentPane header="Add" subheader="Class Schedules">
+        <CreateClassForm @submit="addSchedule" @chooseLevel="updateScheduleTable" />
+
         <div class="bg-white rounded-md shadow-xl flex flex-col p-7 pt-4 flex-1" >            
-            <LearningStrandsTable :classData="tableData" @updateSchedule="updateScheduleTable" />
+            <LearningStrandsTable v-model="tableData" @updateSchedule="updateScheduleTable" />
         </div>
     </ContentPane>
 </template>

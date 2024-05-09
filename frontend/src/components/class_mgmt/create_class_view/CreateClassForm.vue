@@ -11,10 +11,9 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Panel from 'primevue/panel';
 import { useToast } from 'primevue/usetoast';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 // stores
-import { useUtilitiesStore } from '@/stores/utilities';
 import { useVolunteerStore } from '@/stores/volunteer';
 import { useTermStore } from '@/stores/term';
 import { useClassStore } from '@/stores/class';
@@ -22,7 +21,6 @@ import { useClassStore } from '@/stores/class';
 const emit = defineEmits(['submit', 'chooseLevel'])
 const toast = useToast()
 
-const utilitiesStore = useUtilitiesStore()
 const volunteerStore = useVolunteerStore()
 const termStore = useTermStore()
 const classStore = useClassStore()
@@ -31,30 +29,30 @@ const term = ref()
 const classes = ref()
 const learningStrands = ref([]);
 const volunteers = ref([])
+const classLevelInput = ref()
 
-onMounted(async () => {
-    await termStore.getActiveTerm()
-
-    term.value = termStore.activeTerm.academic_year
-    classes.value = termStore.activeTerm.class_levels
+onMounted(() => {
+    volunteerStore.getAllVolunteers().then((data) => data.forEach((data) => volunteers.value = data))
 })
 
-const category = ref(null)
+watch(() => termStore.activeTerm, (data) => {
+    term.value = data.academic_year
+    classes.value = data.class_levels
+})
+
+watch(() => classLevelInput, (data) => {
+    classStore.getAllStrands(data.id).then((strands) => learningStrands.value = strands)
+})
+
 const state = ref(null)
 const active = ref(0)
-const strandData = ref(null)
-const strandScheduleData = ref([])
+const learningStrandInput = ref()
+const scheduleData = ref([])
 const strandDataTable = ref([])
-const strandSchedDataTable = ref([])
+const scheduleDataTable = ref([])
 
-const strandTempData = ref({
-    term: term,
-    classLevel: null,
-    strand: null,
-    volunteer: null
-})
-
-const strandScheduleTempData = ref({
+const scheduleInputData = ref({
+    volunteer: null,
     school_days: null,
     start_time: null,
     end_time: null
@@ -69,13 +67,8 @@ const days = ref([
     {name: "S", key: "6"},
 ]);
 
-const categories = ref([
-    {category: 'Learning Strand', state: true},
-    {category: 'Schedule', state: false},
-])
-
-function tempAddStrand(next, state) {
-    if (Object.values(strandTempData.value).some(o => o === null)) {
+function tempAddStrand(next) {
+    if (!learningStrandInput.value || !scheduleInputData.value.volunteer) {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
@@ -86,25 +79,16 @@ function tempAddStrand(next, state) {
         return
     }
 
-    strandData.value = strandTempData.value
-
-    if (state) {
-        strandDataTable.value.push({
-            name: strandTempData.value.strand.name,
-            teacher: strandTempData.value.volunteer
-        })
-    } else {
-        strandDataTable.value.push({
-            name: strandTempData.value.strand.learning_strand.name,
-            teacher: strandTempData.value.volunteer
-        })
-    }
+    strandDataTable.value.push({
+        name: learningStrandInput.value.strand.name,
+        teacher: scheduleInputData.value.volunteer
+    })
 
     next()
 }
 
-function tempAddSched() {
-    if (Object.values(strandScheduleTempData.value).some(o => o === null)) {
+function tempAddSchedule() {
+    if (Object.values(scheduleInputData.value).some(o => o === null)) {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
@@ -115,17 +99,11 @@ function tempAddSched() {
         return
     }
     
-    strandScheduleData.value.push(strandScheduleTempData.value)
-
-    const schedule = {
-        school_days: strandScheduleTempData.value.school_days.toString(),
-        start_time: strandScheduleTempData.value.start_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-        end_time: strandScheduleTempData.value.end_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-    }
-
-    strandSchedDataTable.value.push(schedule)
+    scheduleData.value.push(scheduleInputData.value)
+    scheduleDataTable.value.push(scheduleInputData.value)
     
-    strandScheduleTempData.value = {
+    scheduleInputData.value = {
+        volunteer: null,
         school_days: null,
         start_time: null,
         end_time: null
@@ -133,51 +111,39 @@ function tempAddSched() {
 }
 
 function resetTemp(func) {
-    strandData.value = null
-    strandScheduleData.value.length = 0
+    learningStrandInput.value = null
+    scheduleData.value.length = 0
     strandDataTable.value.length = 0
-    strandSchedDataTable.value.length = 0
+    scheduleDataTable.value.length = 0
 
     func()
 }
 
-function addStrand(boolean) {
-    if (strandData.value === null || strandScheduleData.value.length === 0) {
-        toast.add({
-            severity: 'error',
-            summary: 'Incomplete Form',
-            detail: "Please fill all necessary information",
-            life: 3000
-        })
-
-        return
-    }
-
-    emit('submit', strandData.value, strandScheduleData.value, strandTempData.value.classLevel.id, boolean)
+function addSchedule() {
+    emit('submit', learningStrandInput.value, scheduleData.value)
     resetForm()
     active.value = 0
 }
 
 function resetForm() {
-    strandData.value = null
-    strandScheduleData.value.length = 0
-
-    strandTempData.value.strand = null
-    strandTempData.value.volunteer = null
-
-    strandScheduleTempData.value = {
+    learningStrandInput.value = null
+    scheduleData.value.length = 0
+    scheduleInputData.value = {
+        volunteer: null,
         school_days: null,
         start_time: null,
         end_time: null
     }
-
     strandDataTable.value.length = 0
-    strandSchedDataTable.value.length = 0
+    scheduleDataTable.value.length = 0
 }
 
-async function getAllStrands() {
-    const classLevelId = strandTempData.value.classLevel.id
-    emit('chooseLevel',  classLevelId)
+async function updateState() {
+    active.value = 0
+    state.value = true
+    
+    emit('chooseLevel',  classLevelInput.value.id)
+    resetForm()
 }
 
 const customPt = {
@@ -215,34 +181,6 @@ const customPt = {
         ]
     })
 }
-
-async function updateState() {
-    active.value = 0
-    state.value = category.value.state
-    
-    resetForm()
-    learningStrands.value.length = 0
-    volunteers.value.length = 0
-    
-    if (state.value) {
-        await utilitiesStore.getLearningStrands()
-        learningStrands.value.push(...utilitiesStore.learningStrands)
-
-        await volunteerStore.getAllVolunteers()
-        volunteerStore.volunteers.forEach((data) => volunteers.value.push(data.fullname))
-    } else {
-        const classLevelId = strandTempData.value.classLevel.id
-        await classStore.getAllStrands(classLevelId)
-        
-        for (const classLearningStrand of classStore.strands) {
-            learningStrands.value.push(classLearningStrand)
-        }
-    }
-}
-
-function autofillTeacher() {
-    strandTempData.value.volunteer = strandTempData.value.strand.teacher
-}
 </script>
 
 <template>
@@ -256,13 +194,7 @@ function autofillTeacher() {
         <div>
             <span class="mr-3 u-txt-active">School Level</span>
             <span class="relative">
-                <Dropdown v-model="strandTempData.classLevel" :options="classes" optionLabel="school_level" placeholder="Select a Level" class="w-full md:w-[14rem]" @update:modelValue="getAllStrands" />
-            </span>
-        </div>
-        <div>
-            <span class="mr-3 u-txt-active">Add a</span>
-            <span class="relative">
-                <Dropdown v-model="category" :options="categories" optionLabel="category" placeholder="Select Category" :disabled="strandTempData.classLevel == null" class="w-full md:w-[14rem]" @update:modelValue="updateState" />
+                <Dropdown v-model="classLevelInput" :options="classes" optionLabel="school_level" placeholder="Select a Level" class="w-full md:w-[14rem]" @update:modelValue="updateState" />
             </span>
         </div>
     </div>
@@ -275,7 +207,7 @@ function autofillTeacher() {
             </div>
         </template>
         <p class="m-0">
-            Please choose a class level and a category of action in order to continue. Thank you!
+            Please choose a class level in order to continue. Thank you!
         </p>
     </Panel>
     <div v-else class="flex flex-row gap-4 h-[27rem]">
@@ -291,27 +223,25 @@ function autofillTeacher() {
                     </template>
                     <template #content="{ nextCallback }">
                         <div class="flex flex-col gap-2">
-                            <div class="text-center mt-3 mb-3 text-xl font-semibold u-txt-active">Choose a Learning Strand</div>
+                            <div class="text-center mt-3 mb-3 text-xl font-semibold u-txt-active">Fill Necessary Information</div>
                             <div class="flex flex-col justify-center mx-auto">
                                 <div class="flex flex-col mb-4">
                                     <span class="mr-3 u-txt-active">Learning Strand</span>
                                     <span class="relative">
-                                        <Dropdown v-if="state" v-model="strandTempData.strand" :options="learningStrands" optionLabel="name" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
-                                        <Dropdown v-else v-model="strandTempData.strand" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full md:w-[14rem]" @update:modelValue="autofillTeacher" />
+                                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="name" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
                                     </span>
                                 </div>
 
                                 <div class="flex flex-col">
                                     <span class="mr-3 u-txt-active">Teacher</span>
                                     <span class="relative">
-                                        <Dropdown v-if="state" v-model="strandTempData.volunteer" :options="volunteers" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
-                                        <Dropdown v-else v-model="strandTempData.volunteer" :placeholder="strandTempData.volunteer" disabled class="w-full md:w-[14rem]" />
+                                        <Dropdown v-model="scheduleInputData.volunteer" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div class="flex pt-8 justify-end bg-transparent">
-                            <Button label="Next" icon="pi pi-arrow-right" iconPos="right" @click="tempAddStrand(nextCallback, state)" />
+                            <Button label="Next" icon="pi pi-arrow-right" iconPos="right" @click="tempAddStrand(nextCallback)" />
                         </div>
                     </template>
                 </StepperPanel>
@@ -329,7 +259,7 @@ function autofillTeacher() {
                                 <span class="mr-3 u-txt-active">School Days</span>
                                 <div class="grid grid-cols-3 card gap-3">
                                     <div v-for="day of days" :key="day.key" class="flex items-center">
-                                        <Checkbox v-model="strandScheduleTempData.school_days" :inputId="day.key" name="day" :value="day.name" class="mr-2"/>
+                                        <Checkbox v-model="scheduleInputData.school_days" :inputId="day.key" name="day" :value="day.name" class="mr-2"/>
                                         <label :for="day.key">{{ day.name }}</label>
                                     </div>
                                 </div>
@@ -339,21 +269,21 @@ function autofillTeacher() {
                                 <div>
                                     <span class="mr-3 u-txt-active">Start Time</span>
                                     <div>
-                                        <Calendar id="calendar-timeonly" v-model="strandScheduleTempData.start_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+                                        <Calendar id="calendar-timeonly" v-model="scheduleInputData.start_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
                                     </div>
                                 </div>
                                 <div>
                                     <span class="mr-3 u-txt-active">End Time</span>
                                     <div>
-                                        <Calendar id="calendar-timeonly" v-model="strandScheduleTempData.end_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+                                        <Calendar id="calendar-timeonly" v-model="scheduleInputData.end_time" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="flex pt-12 justify-between bg-transparent">
                             <Button label="Back" severity="secondary" icon="pi pi-arrow-left" @click="resetTemp(prevCallback)" />
-                            <Button icon="fa fa-plus" label="Add Schedule" class="col-start-2 inset-y-0 right-0 self-end" @click="tempAddSched()" />
-                            <Button label="Submit" icon="pi pi-arrow-right" iconPos="right" @click="addStrand(state)" />
+                            <Button icon="fa fa-plus" label="Add Schedule" class="col-start-2 inset-y-0 right-0 self-end" @click="tempAddSchedule" />
+                            <Button label="Submit" icon="pi pi-arrow-right" iconPos="right" :disabled="scheduleData.value.length === 0" @click="addSchedule" />
                         </div>
                     </template>
                 </StepperPanel>
@@ -368,7 +298,7 @@ function autofillTeacher() {
                 <Column field="name" header="Learning Strand" />
                 <Column field="teacher" header="Teacher" />
             </DataTable>
-            <DataTable :value="strandSchedDataTable"
+            <DataTable :value="scheduleDataTable"
                 :ptOptions="{mergeProps:true}"
                 :pt="customPt"
             >
