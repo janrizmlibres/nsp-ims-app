@@ -3,19 +3,31 @@ import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 
 export async function addTerm(req, res, next) {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    const error = new Error("Validation failed, entered data is incorrect.");
-    error.statusCode = 422;
-    next(error);
-  }
-
   const {
     academic_year,
     start_date,
     end_date,
   } = req.body;
+
+  const termTemp = await Term.findOne({
+    where: {academic_year: academic_year}
+  })
+
+  if (termTemp) {
+    const error = new Error("Academic Term already exists.");
+    error.statusCode = 422;
+    throw error;
+  }
+
+  const activeTerm = await Term.findOne({
+    where: {status: true}
+  })
+
+  if (activeTerm) {
+    activeTerm.update({
+      status: false
+    })
+  }
 
   try {
     const term = await Term.create({
@@ -25,7 +37,7 @@ export async function addTerm(req, res, next) {
       status: true
     });
 
-    res.status(201).json({ message: "New Academic Term Created!", termId: term.id });
+    res.status(201).json({ message: "New Academic Term Created!" });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
