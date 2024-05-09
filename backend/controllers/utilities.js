@@ -2,6 +2,7 @@ import { validationResult } from "express-validator";
 import Term from "../models/term.js";
 import ClassLevel from "../models/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
+import ClassLearningStrand from "../models/class_learning_strand.js"
 
 export async function addTerm(req, res, next) {
   const {
@@ -63,13 +64,32 @@ export async function addTerm(req, res, next) {
         classLevel.addLearning_strand(learningStrand)
       }
     }
-    
+
     res.status(201).json({ message: "New Academic Term Created!" });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
     }
     next(error);
+  }
+}
+
+export async function getTerms(req, res, next) {
+  try {
+      const terms = await Term.findAll({
+        include: [{model: ClassLevel, include: [ClassLearningStrand]}],
+        order: [['id', 'ASC']]
+      });
+
+      res.status(200).json({
+          message: "Academic Terms Fetched Successfully!",
+          data: terms,
+      });
+  } catch (error) {
+      if (!error.statusCode) {
+          error.statusCode = 500;
+      }
+      next(error);
   }
 }
 
