@@ -93,6 +93,32 @@ export async function getTerms(req, res, next) {
   }
 }
 
+export async function addLearningStrand(req, res, next) {
+  try {
+    const strand = await LearningStrand.findOne({
+      where: {
+        name: req.body.name
+      }
+    })
+
+    if (strand) {
+      const error = new Error("Learning Strand already exists.");
+      error.statusCode = 422;
+      throw error;
+    }
+    
+    await LearningStrand.create(req.body)
+
+    res.status(201).json({ 
+      message: "New Learning Strand Created!"
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
 export async function getLearningStrands(req, res, next) {
   try {
       const strands = await LearningStrand.findAll()
