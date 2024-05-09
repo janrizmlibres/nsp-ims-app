@@ -1,25 +1,30 @@
 import { createRouter, createWebHistory } from 'vue-router'
+// Dashboard View
 import DashboardView from '../views/DashboardView.vue'
-import LoginView from '../views/login_view/LoginView.vue'
+import LoginView from '../views/login/LoginView.vue'
 import TheRootView from '@/views/TheRootView.vue'
 
+// Class Management Views
 import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
-import CreateClassesView from '../views/class_mgmt/CreateClassesView.vue'
 
-import StudentRequirementView from '../views/requirement_view/StudentRequirementView.vue'
-import LearningStrandView from '../views/strand_view/LearningStrandView.vue'
-import TermView from '../views/term_view/TermView.vue'
+// Utilities Views
+import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
+import LearningStrandView from '@/views/utilities/LearningStrandView.vue'
+import TermView from '@/views/utilities/TermView.vue'
 
-import RecordsView from '@/views/staff_view/RecordsView.vue'
-import PermissionsView from '@/views/staff_view/PermissionsView.vue'
-import StaffFormView from '@/views/staff_view/StaffFormView.vue'
+// Staff Management Views
+import RecordsView from '@/views/staff_mgmt/RecordsView.vue'
+import PermissionsView from '@/views/staff_mgmt/PermissionsView.vue'
+import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
+import AuditView from '@/views/staff_mgmt/AuditView.vue'
 
 import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue' // Add this line
 
 import { useAuthStore } from '@/stores/auth'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,33 +52,27 @@ const router = createRouter({
           },
           children: [
             {
-              path: ':term/class',
-              name: 'class-info',
+              path: '/class',
+              name: 'class',
               component: ClassView,
-              query: { id: Number },
-              children: [
-                {
-                  path: 'add_learning_strand',
-                  name: 'class-info',
-                  component: CreateClassesView
-                },
-                {
-                  path: '',
-                  name: 'strand-info',
-                  component: StrandView,
-                  query: Number,
-                  children: [
-                    {
-                      path: '',
-                      name: 'module-info',
-                      component: ModuleView,
-                      query: {
-                        module: Number
-                      }
-                    }
-                  ]
-                }
-              ]
+              query: {
+                id: Number, action: String
+              },
+              beforeEnter: (to) => {
+                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
+              }
+            },
+            {
+              path: '/strand',
+              name: 'strand-info',
+              component: StrandView,
+              query: {id: Number},
+            },
+            {
+              path: '/module',
+              name: 'module-info',
+              component: ModuleView,
+              query: {id: Number}
             },
             {
               path: 'classes',
@@ -141,6 +140,16 @@ const router = createRouter({
               name: 'edit-staff',
               component: StaffFormView,
               props: true
+            }
+          ]
+        },
+        {
+          path: 'utilities',
+          children: [
+            {
+              path: 'audit-trails',
+              name: 'audit-trails',
+              component: AuditView
             }
           ]
         }

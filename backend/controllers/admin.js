@@ -1,15 +1,22 @@
 import { validationResult } from "express-validator";
+import bcrypt from "bcrypt";
+
 import Staff from "../models/staff.js";
 import Permission from "../models/permission.js";
-import bcrypt from "bcrypt";
+import Audit from "../models/audit.js";
 
 export async function getStaffs(req, res, next) {
   try {
-    let { includePerms } = req.query;
+    let { includePerms, includeAudit } = req.query;
+    let associations = [];
 
-    const staffs = await Staff.findAll(
-      includePerms === "true" ? { include: Permission } : {}
-    );
+    if (includePerms) associations.push(Permission);
+    if (includeAudit) associations.push(Audit);
+
+    const staffs = await Staff.findAll({
+      include: associations,
+      where: { accessLevel: [2, 3] },
+    });
 
     res.status(200).json({
       message: "Fetched all staff successfully.",
@@ -127,6 +134,28 @@ export async function updatePassword(req, res, next) {
 
     await staff.update({ hashedPw });
     res.status(200).json({ message: "Password updated!" });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
+export async function addAudit(req, res, next) {
+  try {
+    const { userId, description, date } = req.body;
+    const staff = await Staff.findByPk(userId);
+
+    if (!staff) {
+      const error = new Error("Staff not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await staff.createAudit({ description, date });
+    res.status(200).json({ message: "Audit created." });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;

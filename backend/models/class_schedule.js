@@ -1,6 +1,5 @@
 import { INTEGER, STRING, TIME } from "sequelize";
 import sequelize from "../util/database.js";
-import ClassLearningStrand from "./class_learning_strand.js";
 
 const ClassSchedule = sequelize.define('class_schedule', {
     id: {
@@ -9,7 +8,7 @@ const ClassSchedule = sequelize.define('class_schedule', {
         allowNull: false,
         primaryKey: true,
     },
-    day: {
+    days: {
         type: STRING,
         allowNull: false
     },
