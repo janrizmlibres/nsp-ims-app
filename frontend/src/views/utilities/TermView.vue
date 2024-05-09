@@ -1,6 +1,6 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue';
-import AddTermDialog from '@/components/term_view/AddTermDialog.vue';
+import AddTermDialog from '@/components/utilities_view/AddTermDialog.vue';
 
 import Button from 'primevue/button';
 import Calendar from 'primevue/calendar';
