@@ -1,15 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { ref } from 'vue'
 import { useAuthStore } from './auth'
 
 export const useClassStore = defineStore('class', () => {
-    const classLevel = ref()
-    const strands = ref()
-    const modules = ref()
-    const students = ref()
-    const grades = ref()
-
     async function getClass(classId) {
         const authStore = useAuthStore()
 
@@ -17,7 +10,7 @@ export const useClassStore = defineStore('class', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
 
-        classLevel.value = result.data.data
+        return result.data.data
     }
     
 
@@ -44,7 +37,7 @@ export const useClassStore = defineStore('class', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        strands.value = result.data.data
+        return result.data.data
     }
 
     async function getAllModules(classId) {
@@ -54,7 +47,7 @@ export const useClassStore = defineStore('class', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        modules.value = result.data.data
+        return result.data.data
     }
 
     async function getAllStudents(classId) {
@@ -64,7 +57,7 @@ export const useClassStore = defineStore('class', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        students.value = result.data.data
+        return result.data.data
     }
 
     async function updateStudentStatus(classId, learnerId, newStatus) {
@@ -86,10 +79,10 @@ export const useClassStore = defineStore('class', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        grades.value = result.data.data
+        return result.data.data
     }
 
-    return { classLevel, strands, modules, students, grades, getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules, getAllStudents, updateStudentStatus, getAllGrades }
+    return { getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules, getAllStudents, updateStudentStatus, getAllGrades }
 })
 
 
