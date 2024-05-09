@@ -163,3 +163,19 @@ export async function addRequirement(req, res, next) {
     next(error);
   }
 }
+
+export async function getRequirements(req, res, next) {
+  try {
+    const requirements = await StudentRequirement.findAll()
+
+    res.status(201).json({ 
+      message: "Student Requirements Fetched Successfully!",
+      data: requirements
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
