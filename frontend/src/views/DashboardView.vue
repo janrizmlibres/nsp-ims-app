@@ -69,6 +69,7 @@ export default {
 
 <style scoped>
 .charts{
+  margin-top: 45px;
   overflow: visible;
 }
   .student-widget {
@@ -108,7 +109,6 @@ export default {
   .line-chart {
     width: 66.5%; /* Adjust this value to your needs */
     margin-right: 20px auto; /* Horizontal centering */
-    margin-top: 45px;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
   
