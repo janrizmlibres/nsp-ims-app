@@ -119,12 +119,13 @@ export async function addLearningStrand(req, res, next) {
     next(error);
   }
 }
+
 export async function getLearningStrands(req, res, next) {
   try {
       const strands = await LearningStrand.findAll()
 
       res.status(201).json({ 
-        message: "New Term Created!", 
+        message: "Learning Strands Fetched Successfully!", 
         data: strands
       });
   } catch (error) {
