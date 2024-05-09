@@ -12,14 +12,14 @@ export async function addTerm(req, res, next) {
   }
 
   const {
-    batch_number,
+    academic_year,
     start_date,
     end_date,
   } = req.body;
 
   try {
     const term = await Term.create({
-      batch_number: batch_number,
+      academic_year: academic_year,
       start_date: start_date,
       end_date: end_date,
     });
