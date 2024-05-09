@@ -24,6 +24,7 @@ const moduleStore = useModuleStore()
 
 const route = useRoute()
 const toast = useToast()
+
 const cols = ref([
     {field: 'no_submissions', header: 'No Submissions'},
     {field: 'lacking', header: 'Lacking'},
@@ -107,34 +108,39 @@ const customPt = {
 const isFetching = ref(false)
 const allModules = ref([])
 
-async function fetchModules(data) {
+function updateModuleTable(modules) {
     isFetching.value = true
     allModules.value.length = 0
-    try {
-        for (const module of data) {
-            let distribution_date = new Date( module.distribution_date)
-            let retrieval_date = new Date( module.retrieval_date)
 
-            const temp = ref({
-                id: module.id,
-                title: module.title,
-                distribution_date: distribution_date,
-                retrieval_date: retrieval_date,
-                no_submissions: module.noSubmissions,
-                lacking: module.lacking,
-                complete: module.complete,
-                total: module.total
-            })
-            allModules.value.push(temp.value)
-        }
-    } catch(error) {
-        console.log(error)
+    for (const module of modules) {
+        let distribution_date = new Date(module.distribution_date)
+        let retrieval_date = new Date(module.retrieval_date)
+
+        allModules.value.push({
+            id: module.id,
+            title: module.title,
+            distribution_date: distribution_date,
+            retrieval_date: retrieval_date,
+            no_submissions: module.noSubmissions,
+            lacking: module.lacking,
+            complete: module.complete,
+            total: module.total
+        })
     }
-    
     isFetching.value = false
 }
 
-watch(() => strandStore.modules, fetchModules, {immediate: false})
+watch(() => route.query, (query) => {
+    isFetching.value = true
+    try {
+        strandStore.getAllModules(query.id).then((data) => {
+            updateModuleTable(data)
+        })
+    } catch (error) {
+        console.log(error)
+    }
+    isFetching.value = false
+}, {immediate: true})
 
 const editingRows = ref([]);
 
@@ -149,7 +155,9 @@ const onRowEditSave = async (event) => {
                 retrieval_date: newData.retrieval_date
             })
 
-            await strandStore.getAllModules(route.query.id)
+            strandStore.getAllModules(route.query.id).then((data) => {
+                updateModuleTable(data)
+            })
 
             toast.add({
                 severity: 'success',
@@ -221,7 +229,7 @@ const onRowEditSave = async (event) => {
             <Column :rowEditor="true" bodyStyle="text-align:center" frozen class="sticky right-0" />
             <template #footer> 
                 <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="strandStore.showHideAddModuleDialog"/>
-                <AddModuleDialog /> 
+                <AddModuleDialog @onUpdate="updateModuleTable" /> 
             </template>
         </DataTable>
     </div>

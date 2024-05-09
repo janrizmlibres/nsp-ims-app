@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter()
 const props = defineProps(['data', 'subdata'])
+
 const data = ref(props.data)
 const subdata = ref(props.subdata)
 
@@ -22,6 +23,7 @@ if (data.value != null) {
     title.value = data.value.title
     learningStrand.value = subdata.value.name
 }
+
 const customPt = {
     root: {
         class: ['mx-12 rounded-md', 'shadow-md', 'bg-surface-0', 'u-txt-active',

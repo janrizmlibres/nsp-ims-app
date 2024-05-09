@@ -15,13 +15,13 @@ const sidebarStore = useSidebarStore()
 const termStore = useTermStore()
 const authStore = useAuthStore()
 
-const gradeSchoolId = computed(() => termStore.activeTerm.class_levels.find((obj) => {
+const gradeSchool = computed(() => termStore.activeTerm.class_levels.find((obj) => {
     return obj.school_level === 'Grade School' 
-}).id)
+}))
 
-const juniorHighSchoolId = computed(() => termStore.activeTerm.class_levels.find((obj) => {
+const juniorHighSchool = computed(() => termStore.activeTerm.class_levels.find((obj) => {
     return obj.school_level === 'Junior High School' 
-}).id)
+}))
 
 const items = computed(() => [
   {
@@ -115,7 +115,7 @@ const items = computed(() => [
             icon: 'fa fa-user-plus',
             route: {
               name: 'class',
-              query: { id: gradeSchoolId }
+              query: { id: gradeSchool.value.id }
             }
           },
           {
@@ -124,7 +124,7 @@ const items = computed(() => [
             icon: 'fa fa-user-plus',
             route: {
               name: 'class',
-              query: { id: juniorHighSchoolId }
+              query: { id: juniorHighSchool.value.id }
             }
           }
         ] :null
@@ -134,7 +134,13 @@ const items = computed(() => [
         label: 'Class Records',
         icon: 'fa fa-scroll',
         route: { name: 'class-records' }
-      }
+      },
+      {
+        key: '5-3',
+        label: 'Scheduling',
+        icon: 'fa fa-clock',
+        route: { name: 'schedule' }
+      },
     ]
   },
   {

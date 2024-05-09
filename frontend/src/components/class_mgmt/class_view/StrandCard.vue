@@ -5,18 +5,20 @@ import ProgressBar from 'primevue/progressbar';
 import { ref } from 'vue';
 
 const router = useRouter()
-const props = defineProps(['id', 'title', 'teacher', 'schedule'])
+const props = defineProps(['data'])
+
+const data = ref(props.data)
 
 function showStrand() {
-    router.push({ name: 'strand', query: { id: props.id} })
+    router.push({ name: 'strand', query: { id: data.value.id} })
 }
 
-const schedules = ref(props.schedule)
-const scheds = ref([])
+const class_schedules = data.value.class_schedules
+const schedules = ref([])
 
-for (const schedule of schedules.value) {
+for (const schedule of class_schedules) {
     const format = schedule.days + ' | ' + formatDate(schedule.start_time) + ' - ' + formatDate(schedule.end_time) 
-    scheds.value.push({data:format})
+    schedules.value.push({data:format})
 }
 
 function formatDate(time) {
@@ -67,13 +69,13 @@ const customPt = {
     @click="showStrand"
     :pt-options="{mergeProps:true}"
     :pt="customPt">
-        <template #title> {{ props.title }} </template>
+        <template #title> {{ data.learning_strand.name }} </template>
         <template #subtitle><ProgressBar :value="50"></ProgressBar></template>
         <template #content>
-            <h3> {{ props.teacher }} </h3>
+            <h3> {{ data.teacher }} </h3>
             <div class="flex flex-col justify-center">
-                <p v-for="sched of scheds" :key="sched.data" class="m-0 max-h">
-                    {{ sched.data }}
+                <p v-for="schedule of schedules" :key="schedule.data" class="m-0 max-h">
+                    {{ schedule.data }}
                 </p>
             </div>
             

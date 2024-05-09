@@ -4,27 +4,26 @@ import Divider from 'primevue/divider';
 import StrandCard from './StrandCard.vue';
 import ProgressSpinner from 'primevue/progressspinner';
 import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 // stores
 import { useClassStore } from '@/stores/class';
+
+const route = useRoute()
 const classStore = useClassStore()
 
 const isFetching = ref(true)
-const allStrands = ref([])
+const strands = ref([])
 
-async function fetchStrands(data) {
+watch(() => route.query, (query) => {
     isFetching.value = true
-    
     try {
-        allStrands.value = data
-    } catch(error) {
+        classStore.getAllStrands(query.id).then((data) => strands.value = data)
+    } catch (error) {
         console.log(error.response.data.message)
     }
-
     isFetching.value = false
-}
-
-watch(() => classStore.strands, fetchStrands, {immediate: false})
+}, {immediate: true})
 </script>
 
 <template>
@@ -35,10 +34,10 @@ watch(() => classStore.strands, fetchStrands, {immediate: false})
         </div>
         <Divider class="before:border-t before:border-surface-400"/>
         
-        <ProgressSpinner v-if="isFetching && allStrands.length === 0" class="flex justify-center" />
-        <span v-else-if="!isFetching && allStrands.length === 0" class="flex flex-col text-center">No learning strands created.</span>
+        <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+        <span v-else-if="strands.length === 0" class="flex flex-col text-center">No learning strands created.</span>
         <div v-else class="grid lg:grid-cols-3 md:grid-cols-1 gap-12">
-            <StrandCard v-for="learningStrand of allStrands" :key="learningStrand.teacher" :id="learningStrand.id" :title="learningStrand.learning_strand.name" :teacher="learningStrand.teacher" :schedule="learningStrand.class_schedules" />
+            <StrandCard v-for="learningStrand of strands" :key="learningStrand.teacher" :data="learningStrand" />
         </div>
     </div>
 </template>

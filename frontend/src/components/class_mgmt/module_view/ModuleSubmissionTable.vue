@@ -14,8 +14,10 @@ import { useRoute } from 'vue-router';
 // stores
 import { useModuleStore } from '@/stores/module';
 
-
 const moduleStore = useModuleStore()
+
+const props = defineProps(['modelValue'])
+const emit = defineEmits(['onUpdate'])
 
 const route = useRoute()
 
@@ -96,7 +98,8 @@ const customPt = {
 
 const isFetching = ref(false)
 const learners = ref([])
-async function fetchModule(data) {
+
+watch(() => props.modelValue, (data) => {
     isFetching.value = true
     learners.value.length = 0
 
@@ -133,9 +136,7 @@ async function fetchModule(data) {
     }
     
     isFetching.value = false
-}
-
-watch(() => moduleStore.module, fetchModule, {immediate: false})
+}, {immediate: false})
 
 const getStatusLabel = (status) => {
     switch (status) {
@@ -177,7 +178,9 @@ const onRowEditSave = async (event) => {
             newRemarks: newData.remarks
         })
 
-        await moduleStore.getModule(route.query.id)
+        moduleStore.getModule(route.query.id).then((data) => {
+            emit('onUpdate', data)
+        })
     }
 };
 

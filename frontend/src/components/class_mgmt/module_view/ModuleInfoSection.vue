@@ -5,14 +5,14 @@ import Panel from 'primevue/panel';
 import { ref, watch } from 'vue';
 
 // stores
-import { useModuleStore } from '@/stores/module';
 
-const moduleStore = useModuleStore()
+const props = defineProps(['modelValue'])
 
 const isFetching = ref(true)
 const distriDate = ref()
 const retriDate = ref()
-function fetchModuleInfo(data) {
+
+watch(() => props.modelValue, (data) => {
     isFetching.value = true
     try {
         let tempDistriDate = new Date(data.distribution_date)
@@ -25,9 +25,7 @@ function fetchModuleInfo(data) {
     }
 
     isFetching.value = false
-}
-
-watch(() => moduleStore.module, fetchModuleInfo, {immediate: false})
+}, {immediate: false})
 </script>
 
 <template>

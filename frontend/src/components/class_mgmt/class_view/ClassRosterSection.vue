@@ -6,6 +6,7 @@ import TabPanel from 'primevue/tabpanel';
 import ProgressSpinner from 'primevue/progressspinner';
 import { FilterMatchMode } from 'primevue/api';
 import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 // Custom Components
 import RosterTabHeader from './RosterTabHeader.vue';
@@ -14,33 +15,31 @@ import RosterTable from './RosterTable.vue';
 // stores
 import { useClassStore } from '@/stores/class';
 
+const route = useRoute()
 const classStore = useClassStore()
-
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
-})
 
 const isFetching = ref(true)
 const active = ref([])
 const inactive = ref([])
 const drop = ref([])
 
-function fetchStudents(data) {
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+})
+
+watch(() => route.query, (query) => {
     isFetching.value = true
-    
     try {
-        active.value = data.active
-        inactive.value = data.inactive
-        drop.value = data.drop
-
-    } catch(error) {
-        console.log(error)
+        classStore.getAllStudents(query.id).then((data) => {
+            active.value = data.active
+            inactive.value = data.inactive
+            drop.value = data.drop
+        })
+    } catch (error) {
+        console.log(error.response.data.message)
     }
-    
     isFetching.value = false
-}
-
-watch(() => classStore.students, fetchStudents, {immediate: false})
+}, {immediate: true})
 </script>
 
 <template>

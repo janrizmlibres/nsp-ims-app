@@ -177,13 +177,7 @@ function resetForm() {
 
 async function getAllStrands() {
     const classLevelId = strandTempData.value.classLevel.id
-    try {
-        await classStore.getAllStrands(classLevelId)
-    } catch(error) {
-        console.log(error.response.data.message);
-    }
-
-    emit('chooseLevel', classStore.strands)
+    emit('chooseLevel',  classLevelId)
 }
 
 const customPt = {

@@ -11,6 +11,8 @@ import { ref } from 'vue';
 //  stores
 import { useStrandStore } from '@/stores/strand';
 
+const emit = defineEmits(['onUpdate'])
+
 const toast = useToast()
 const route = useRoute()
 const strandStore = useStrandStore()
@@ -58,8 +60,10 @@ async function addModule() {
             life: 3000
         })
     }
-
-    await strandStore.getAllModules(route.query.id)
+    strandStore.getAllModules(route.query.id).then((data) => {
+        emit('onUpdate', data)
+    })
+    
     value.value = null;
     dates.value = null;
     strandStore.showHideAddModuleDialog()

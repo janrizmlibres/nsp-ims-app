@@ -55,7 +55,6 @@ async function addStrand(strandData, strandScheduleData, id, state) {
         }
 
         for (var schedule of learningStrandData.value.schedule) {
-            console.log(learningStrandData.value.classLevelId, schedule);
             try {
                 await classStore.addSchedule(learningStrandData.value.classLevelId, schedule)
             } catch (error) {
@@ -69,9 +68,7 @@ async function addStrand(strandData, strandScheduleData, id, state) {
         }
 
         try {
-            await classStore.getAllStrands(id)
-
-            updateScheduleTable(classStore.strands)
+            updateScheduleTable(id)
 
             toast.add({
                 severity: 'success',
@@ -100,26 +97,28 @@ async function addStrand(strandData, strandScheduleData, id, state) {
     learningStrandData.value.length = 0
 }
 
-function updateScheduleTable(data) {
+function updateScheduleTable(id) {
     tableData.value.length = 0
 
-    for (const learningStrand of data) {
-        for (const schedule of learningStrand.class_schedules) {
-            const start_time = to12hr(schedule.start_time)
-            const end_time = to12hr(schedule.end_time)
+    classStore.getAllStrands(id).then((data) => {
+        for (const learningStrand of data) {
+            for (const schedule of learningStrand.class_schedules) {
+                const start_time = to12hr(schedule.start_time)
+                const end_time = to12hr(schedule.end_time)
 
-            tableData.value.push({
-                id: learningStrand.id,
-                name: learningStrand.learning_strand.name,
-                teacher: learningStrand.teacher,
-                classLevelId: learningStrand.classLevelId,
-                scheduleId: schedule.id,
-                school_days: schedule.days,
-                start_time: start_time,
-                end_time: end_time
-            })
+                tableData.value.push({
+                    id: learningStrand.id,
+                    name: learningStrand.learning_strand.name,
+                    teacher: learningStrand.teacher,
+                    classLevelId: learningStrand.classLevelId,
+                    scheduleId: schedule.id,
+                    school_days: schedule.days,
+                    start_time: start_time,
+                    end_time: end_time
+                })
+            }
         }
-    }
+    })
 }
 
 function to12hr(time) {

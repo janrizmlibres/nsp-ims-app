@@ -17,29 +17,21 @@ const strandStore = useStrandStore()
 const route = useRoute()
 
 const name = ref()
-const teacher = ref()
+const strand = ref()
 
-async function fetchStrand(query) {
-    try {
-        await strandStore.getStrand(query.id)
-        await strandStore.getAllModules(query.id)
-        
-        name.value = strandStore.strand.learning_strand.name
-        teacher.value = strandStore.strand.teacher
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-watch(() => route.query, fetchStrand, {immediate: true})
+watch(() => route.query, (query) => {
+    strandStore.getStrand(query.id).then((data) => {
+        strand.value = data
+        name.value = data.learning_strand.name
+    })
+}, {immediate: true})
 </script>
 
 <template>
     <ContentPane :header="name">
-        <StrandInfoSection />
+        <StrandInfoSection v-model="strand" />
         <Divider class="before:border-t before:border-surface-400 my-10"/>
-        <div class="grid grid-cols-2 gap-8 mb-6">
-            <OptionCard title="Grades " content="View Grades" action="viewGrades" />
+        <div class="mb-6">
             <OptionCard title="Attendance " content="View Attendance" action="viewAttendance" />
         </div>
         <ModuleTable />
