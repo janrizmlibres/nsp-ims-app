@@ -5,24 +5,15 @@ import TimelineCard from './TimelineCard.vue';
 import ProgressSpinner from 'primevue/progressspinner';
 import Badge from 'primevue/badge';
 import { ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
 
-// stores
-import { useClassStore } from '@/stores/class';
-
-const route = useRoute()
-const classStore = useClassStore()
+const props = defineProps(['modelValue'])
 
 const isFetching = ref(true)
 const strands = ref([])
 
-watch(() => route.query, (query) => {
+watch(() => props.modelValue, (data) => {
     isFetching.value = true
-    try {
-        classStore.getAllModules(query.id).then((data) => strands.value = data)
-    } catch (error) {
-        console.log(error.response.data.message)
-    }
+    strands.value = data
     isFetching.value = false
 }, {immediate: true})
 </script>

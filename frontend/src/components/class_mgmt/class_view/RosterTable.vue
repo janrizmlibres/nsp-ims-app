@@ -4,17 +4,24 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import { useConfirm } from "primevue/useconfirm";
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useClassStore } from '@/stores/class';
 import { useRoute } from 'vue-router';
 
 const props = defineProps(['modelValue', 'filters'])
 const filters = ref(props.filters)
+const list = ref([])
+const listLength = ref()
 
 const confirm = useConfirm()
 const route = useRoute()
 
 const classStore = useClassStore()
+
+watch(() => props.modelValue, (data) => {
+    list.value = data
+    listLength.value = data.length
+}, {immediate: false})
 
 const dataColumns = ref([
     { field: 'middleName', header: 'Middle Name' },
@@ -127,10 +134,10 @@ const dropStudent = (learnerId, studentLastName, studentFirstName) => {
 
 <template>
     <DataTable 
-        :value="props.modelValue" dataKey="id" 
+        :value="list" dataKey="id" 
         sortField="lastName" :sortOrder="1" removableSort 
         v-model:filters="filters" :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'category']"
-        :paginator="props.modelValue.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+        :paginator="list.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
         ref="exportRef"  scrollable showGridlines
         @rowSelect="{}" @rowUnselect="{}"
         :ptOptions="{mergeProps:true}"
@@ -151,15 +158,12 @@ const dropStudent = (learnerId, studentLastName, studentFirstName) => {
         <Column field="firstName" header="First Name" frozen sortable />
         <Column v-for="col of dataColumns" :key="col.field" :field="col.field" :header="col.header" sortable></Column>
         <template #footer>
+            <div class="flex justify-between items-center">
             <p>
-                Record(s) count: <span class="u-txt-red"> {{ props.modelValue.length }} </span>
+                Record(s) count: <span class="u-txt-red"> {{ list.length }} </span>
             </p>
-        </template>
-        <template #paginatorstart>
-            
-        </template>
-        <template #paginatorend>
             <Button type="button" icon="pi pi-download" @click="exportCSV" text />
+        </div>
         </template>
     </DataTable>
 </template>
