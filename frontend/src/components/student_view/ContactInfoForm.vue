@@ -1,6 +1,22 @@
 <script setup>
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
+
+import { ref } from 'vue'
+
+const leftFields = ref([
+  { label: 'Contact Number', data: '' },
+  { label: 'Email Address', data: '' },
+  { label: 'Facebook', data: '' }
+])
+
+const rightFields = ref([
+  { label: 'Last Name', data: '' },
+  { label: 'First Name', data: '' },
+  { label: 'Middle Name', data: '' },
+  { label: 'Suffix', data: '' },
+  { label: 'Contact Number', data: '' }
+])
 </script>
 
 <template>
@@ -10,20 +26,12 @@ import InputText from 'primevue/inputtext'
         <h2 class="font-bold text-center">Personal Contact Information</h2>
 
         <div class="grid grid-cols-5 gap-3 mt-4">
-          <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>Contact Number</span>
-          </div>
-          <InputText class="h-10 col-span-3" type="text" v-model="value" />
-
-          <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>Email Address</span>
-          </div>
-          <InputText class="h-10 col-span-3" type="text" v-model="value" />
-
-          <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>Facebook</span>
-          </div>
-          <InputText class="h-10 col-span-3" type="text" v-model="value" />
+          <template v-for="field of leftFields" :key="field.label">
+            <div class="flex items-center justify-end pr-6 col-span-2">
+              <span>{{ field.label }}</span>
+            </div>
+            <InputText class="h-10 col-span-3" type="text" v-model="field.data" />
+          </template>
         </div>
       </div>
     </div>
@@ -33,30 +41,12 @@ import InputText from 'primevue/inputtext'
         <h2 class="font-bold text-center">Emergency Contact Person</h2>
 
         <div class="grid grid-cols-5 gap-3 mt-4">
-          <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>Last Name</span>
-          </div>
-          <InputText class="h-10 col-span-3" type="text" v-model="value" />
-
-          <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>First Name</span>
-          </div>
-          <InputText class="h-10 col-span-3" type="text" v-model="value" />
-
-          <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>Middle Name</span>
-          </div>
-          <InputText class="h-10 col-span-3" type="text" v-model="value" />
-
-          <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>Suffix</span>
-          </div>
-          <InputText class="h-10 col-span-3" type="text" v-model="value" />
-
-          <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>Contact Number</span>
-          </div>
-          <InputText class="h-10 col-span-3" type="text" v-model="value" />
+          <template v-for="field of rightFields" :key="field.label">
+            <div class="flex items-center justify-end pr-6 col-span-2">
+              <span>{{ field.label }}</span>
+            </div>
+            <InputText class="h-10 col-span-3" type="text" v-model="field.data" />
+          </template>
 
           <div class="flex items-center justify-end pr-6 col-span-2">
             <span>Relationship</span>
