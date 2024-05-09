@@ -4,26 +4,26 @@ import { useAuthStore } from './auth'
 import { ref } from 'vue'
 
 export const useTermStore = defineStore('term', () => {
+  const visibleAddTermDialog = ref(false)
   const activeTerm = ref()
+  const terms = ref([])
 
-  async function getAllTerms() {
+  async function getTerms() {
     const authStore = useAuthStore()
 
-    const result = await axios.get('http://localhost:8080/term/terms', {
+    const result = await axios.get('http://localhost:8080/utilities/terms', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    return result.data.data
+    terms.value = result.data.data
   }
 
-  async function addClass(formData) {
+  async function addTerm(dates) {
     const authStore = useAuthStore()
-
-    const result = await axios.post('http://localhost:8080/term/add_class', formData, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
+    
+    await axios.post('http://localhost:8080/utilities/term/create', dates, {
+      headers: {Authorization: 'Bearer ' + authStore.token}
     })
-
-    return result.data.data
   }
 
   async function getActiveTerm() {
@@ -36,5 +36,9 @@ export const useTermStore = defineStore('term', () => {
     activeTerm.value = result.data.data
   }
 
-  return { activeTerm, getAllTerms, addClass, getActiveTerm }
+  function showHideAddTermDialog() {
+    visibleAddTermDialog.value = !visibleAddTermDialog.value
+  }
+
+  return { terms, visibleAddTermDialog, activeTerm, getTerms, addTerm, getActiveTerm, showHideAddTermDialog }
 })
