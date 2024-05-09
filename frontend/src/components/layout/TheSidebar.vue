@@ -4,7 +4,7 @@ import Button from 'primevue/button'
 import PanelMenu from 'primevue/panelmenu'
 
 // Utils
-import { onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 // Stores
 import { useSidebarStore } from '@/stores/sidebar'
@@ -15,18 +15,13 @@ const sidebarStore = useSidebarStore()
 const termStore = useTermStore()
 const authStore = useAuthStore()
 
-const items = ref([])
+const gradeSchool = computed(() => termStore.activeTerm.class_levels.find((obj) => {
+    return obj.school_level === 'Grade School' 
+}))
 
-onMounted(async () => {
-  const activeTerm = await termStore.getActiveTerm()
-
-  const gradeSchool = activeTerm.class_levels.find((obj) => {
-    return obj.school_level === 'Grade School'
-  })
-
-  const juniorHighSchool = activeTerm.class_levels.find((obj) => {
-    return obj.school_level === 'Junior High School'
-  })
+const juniorHighSchool = computed(() => termStore.activeTerm.class_levels.find((obj) => {
+    return obj.school_level === 'Junior High School' 
+}))
 
   items.value = [
     {
@@ -307,7 +302,6 @@ const panelMenuPt = {
 
 const expandedKeys = ref({})
 
-// functions
 function collapseAll() {
   expandedKeys.value = {}
 }
@@ -339,12 +333,12 @@ function setVisibility(keyValue) {
 }
 
 const handleMouseOver = () => {
-  sidebarStore.handleMouseOver();
-};
+  sidebarStore.handleMouseOver()
+}
 
 const handleMouseLeave = () => {
-  sidebarStore.handleMouseLeave();
-};
+  sidebarStore.handleMouseLeave()
+}
 </script>
 
 <template>
@@ -429,8 +423,8 @@ const handleMouseLeave = () => {
         <span class="fa fa-circle-user text-surface-100" />
       </span>
       <div class="flex flex-col u-sidebar-footer-text">
-        <span>{{}}</span>
-        <span class="text-sm">{{}}</span>
+        <span>{{ authStore.staff.userName }}</span>
+        <span class="text-sm"> {{ role.value }}</span>
       </div>
     </div>
   </div>

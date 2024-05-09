@@ -1,4 +1,4 @@
-import { INTEGER, STRING, DATE } from "sequelize";
+import { INTEGER, STRING } from "sequelize";
 import sequelize from "../util/database.js";
 
 const ClassLevel = sequelize.define("class_level", {
@@ -11,7 +11,6 @@ const ClassLevel = sequelize.define("class_level", {
   school_level: {
     type: STRING,
     allowNull: false,
-    unique: true
   }
 });
 

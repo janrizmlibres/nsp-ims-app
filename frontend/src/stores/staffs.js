@@ -24,7 +24,9 @@ export const useStaffsStore = defineStore('staffs', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
+    await addAudit(`Created staff with ID: ${result.data.user.id}`)
     staffs.value.push(result.data.user)
+
     return result
   }
 
@@ -46,6 +48,7 @@ export const useStaffsStore = defineStore('staffs', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
+    await addAudit(`Updated staff with ID: ${userId}`)
     return result
   }
 
@@ -60,6 +63,13 @@ export const useStaffsStore = defineStore('staffs', () => {
       }
     )
 
+    const idList = []
+
+    updatedData.updatedData.forEach((staff) => {
+      idList.push(staff.id)
+    })
+
+    await addAudit(`Updated permissions for staffs with ID/s: ${idList.join(', ')}`)
     return result
   }
 
@@ -74,8 +84,32 @@ export const useStaffsStore = defineStore('staffs', () => {
       }
     )
 
+    await addAudit(`Updated password for staff with ID: ${userId}`)
     return result
   }
 
-  return { staffs, getAllStaff, addStaff, getStaff, updateStaff, updatePermissions, updatePw }
+  async function addAudit(description) {
+    const authStore = useAuthStore()
+
+    const result = await axios.post(
+      `http://localhost:8080/admin/staff/add-audit`,
+      { userId: authStore.staff.id, description, date: new Date() },
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
+
+    return result
+  }
+
+  return {
+    staffs,
+    getAllStaff,
+    addStaff,
+    getStaff,
+    updateStaff,
+    updatePermissions,
+    updatePw,
+    addAudit
+  }
 })

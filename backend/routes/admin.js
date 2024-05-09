@@ -42,4 +42,6 @@ router.patch(
   adminController.updatePassword
 );
 
+router.post("/staff/add-audit", isAuth, adminController.addAudit);
+
 export default router;

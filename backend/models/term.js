@@ -8,10 +8,6 @@ const Term = sequelize.define("term", {
     allowNull: false,
     primaryKey: true,
   },
-  batch_number: {
-    type: INTEGER,
-    allowNull: false
-  },
   academic_year: {
     type: STRING,
     allowNull: false
