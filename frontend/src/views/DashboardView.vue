@@ -7,19 +7,19 @@
     <div class="student-dashboard-panels">
         <StudentWidget class="student-widget-" :seriesData="[50, 50]" widgetTitle="LEARNERS" totalText="100" />
         <StudentWidget 
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
           :seriesData="[30, 70]" 
           widgetTitle="ELEMENTARY" 
           totalText="60" />
         <StudentWidget 
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 52.5rem; --translate-y: -21.25rem`"
           :seriesData="[80, 20]" 
           widgetTitle="JUNIOR HIGH" 
           totalText="120" />
         <StudentWidget
-        :class="!isSidebarHovering && !isSidebarPinned ? 'animate' : 'student-widget'" 
+        :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
         :style="`--translate-x: 78.75rem; --translate-y: -31.875rem`"
           :seriesData="[60, 40]" 
           widgetTitle="ACTIVE LEARNERS" 
@@ -70,7 +70,7 @@ export default {
 <style scoped>
 .charts{
   margin-top: 45px;
-  overflow: visible;
+  overflow: hidden;
 }
   .student-widget {
     margin-bottom: 1.25rem;
@@ -107,13 +107,12 @@ export default {
   }
 
   .line-chart {
-    margin-top: 4.0625rem;
     position: absolute;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
   
   .bar-chart {
-    margin-top: 24.0625rem;
+    margin-top: 20.0625rem;
     position: absolute;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
@@ -143,16 +142,20 @@ export default {
   }
 }
 
-  .animate {
+  .animate-student-widget {
     animation: slide 0.5s ease 0s 1 normal forwards;
   }
 
   .animate-line-chart {
+    position: absolute;
+    margin-top: 4.0625rem;
     animation: slide 0.5s ease 0s 1 normal forwards;
     width: 50.625rem;
   }
 
   .animate-bar-chart {
+    position: absolute;
+    margin-top: 24.0625rem;
     animation: slide 0.5s ease 0s 1 normal forwards;
     width: 50.625rem;
   }
