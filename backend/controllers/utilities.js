@@ -57,6 +57,13 @@ export async function addTerm(req, res, next) {
       where: {termId: term.id}
     })
 
+    const learningStrands = await LearningStrand.findAll()
+    for (const classLevel of classLevels) {
+      for (const learningStrand of learningStrands) {
+        classLevel.addLearning_strand(learningStrand)
+      }
+    }
+    
     res.status(201).json({ message: "New Academic Term Created!" });
   } catch (error) {
     if (!error.statusCode) {
