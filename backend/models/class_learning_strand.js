@@ -24,7 +24,6 @@ const ClassLearningStrand = sequelize.define('class_learning_strand', {
         key: 'id',
         },
     },
-    teacher: STRING
 });
 
 export default ClassLearningStrand;
