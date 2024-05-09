@@ -8,6 +8,7 @@ import Learner from "../models/learner.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
 import Session from "../models/session.js";
+import Volunteer from "../models/volunteer.js";
 
 export async function getStrand(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
@@ -145,28 +146,6 @@ export async function getAllGrades(req, res, next) {
     }
 }
 
-export async function getAllSessions(req, res, next) {
-    const classLearningStrandId = req.params.classLearningStrandId;
-
-    try {
-        const sessions = await Session.findAll({
-            where: {
-                classLearningStrandId: classLearningStrandId
-            }
-        })
-
-        res.status(201).json({ 
-            message: "Sessions fetched successfully!",
-            data: sessions
-        });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-
 export async function updateGrades(req, res, next) {
     try {
         for (const learner of req.body.updatedData) {
@@ -176,49 +155,12 @@ export async function updateGrades(req, res, next) {
                 }},
             });
             
-            console.log(learner.grades);
             await learnerInstance.grades[0].update(learner.grades);
         }
         
             res.status(200).json({ message: "Grade Updated!" });
         } catch (error) {
             if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-        return error;
-    }
-}
-
-export async function updateTeacher(req, res, next) {
-    try {
-        const classLearningStrandId = req.params.classLearningStrandId
-        await ClassLearningStrand.update(
-            req.body, 
-            { where: { id: classLearningStrandId }
-        });
-
-        res.status(200).json({ message: "Status updated!"});
-        } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-        return error;
-    }
-}
-
-export async function updateSchedule(req, res, next) {
-    try {
-        const scheduleId = req.params.scheduleId
-        await ClassSchedule.update(
-            req.body, 
-            { where: { id: scheduleId }
-        });
-
-        res.status(200).json({ message: "Status updated!" });
-        } catch (error) {
-        if (!error.statusCode) {
             error.statusCode = 500;
         }
         next(error);
@@ -267,5 +209,95 @@ export async function addSession(req, res, next) {
             error.statusCode = 500;
         }
         next(error);
+    }
+}
+
+export async function getAllSessions(req, res, next) {
+    const classLearningStrandId = req.params.classLearningStrandId;
+
+    try {
+        const sessions = await Session.findAll({
+            where: {
+                classLearningStrandId: classLearningStrandId
+            }
+        })
+
+        res.status(201).json({ 
+            message: "Sessions fetched successfully!",
+            data: sessions
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+export async function addSchedule(req, res, next) {
+    const classLearningStrandId = req.params.classLearningStrandId;
+
+    const {
+        volunteer,
+        days,
+        start_time,
+        end_time
+    } = req.body
+
+    try {
+        const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
+        const volunteer = await Volunteer.findByPk(volunteer.id)
+        await classLearningStrand.addVolunteer(volunteer, {
+            through: {
+                days: days,
+                start_time: start_time,
+                end_time: end_time
+            }
+        });
+
+        res.status(201).json({ 
+            message: "Class schedule added!",
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+export async function updateSchedule(req, res, next) {
+    try {
+        const scheduleId = req.params.scheduleId
+        await ClassSchedule.update(
+            req.body, 
+            { where: { id: scheduleId }
+        });
+
+        res.status(200).json({ message: "Status updated!" });
+        } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    }
+}
+
+export async function updateTeacher(req, res, next) {
+    try {
+        const classLearningStrandId = req.params.classLearningStrandId
+        await ClassLearningStrand.update(
+            req.body, 
+            { where: { id: classLearningStrandId }
+        });
+
+        res.status(200).json({ message: "Status updated!"});
+        } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
     }
 }
