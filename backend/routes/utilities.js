@@ -8,5 +8,6 @@ router.post("/term/create", isAuth, utilitiesController.addTerm);
 router.get("/terms", isAuth, utilitiesController.getTerms);
 router.post("/strand/create", isAuth, utilitiesController.addLearningStrand);
 router.get("/strands", isAuth, utilitiesController.getLearningStrands);
+router.post("/requirement/create", isAuth, utilitiesController.addRequirement);
 
 export default router;
