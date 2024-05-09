@@ -1,5 +1,6 @@
 import { validationResult } from "express-validator";
 import Term from "../models/term.js";
+import ClassLevel from "../models/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
 
 export async function addTerm(req, res, next) {
@@ -50,6 +51,10 @@ export async function addTerm(req, res, next) {
       await term.createClass_level({
         school_level: class_level.school_level
       });
+    })
+
+    const classLevels = await ClassLevel.findAll({
+      where: {termId: term.id}
     })
 
     res.status(201).json({ message: "New Academic Term Created!" });
