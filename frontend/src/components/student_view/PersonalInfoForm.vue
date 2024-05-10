@@ -10,11 +10,10 @@ const selectedSex = ref()
 const selectedBloodType = ref()
 const selectedCivilStat = ref()
 
-const selectedMonth = ref(null)
-const selectedDay = ref(null)
-const selectedYear = ref(null)
-
 const selectedReligion = ref()
+
+const birthday = ref({ month: null, day: null, year: null })
+const address = ref({ blk: '', barangay: '', city: '', province: '' })
 
 const sex = ['M', 'F']
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
@@ -23,8 +22,8 @@ const civilStatus = ['Married', 'Widowed', 'Separated', 'Divorced', 'Single']
 const months = ref([])
 const days = computed(() => {
   const dayCount = () => {
-    const year = selectedYear.value === null ? 1970 : getYear(new Date(selectedYear.value, 0))
-    return selectedMonth.value !== null ? getDaysInMonth(new Date(year, selectedMonth.value)) : 31
+    const year = birthday.value.year === null ? 1970 : getYear(new Date(birthday.value.year, 0))
+    return birthday.value.month !== null ? getDaysInMonth(new Date(year, birthday.value.month)) : 31
   }
 
   return Array.from({ length: dayCount() }, (_, i) => (i + 1).toString())
@@ -44,12 +43,12 @@ const religions = ref([
   'Church of Christ'
 ])
 
-watch([selectedMonth, selectedYear], ([newMonth, newYear]) => {
+watch([() => birthday.value.month, () => birthday.value.year], ([newMonth, newYear]) => {
   const year = newYear === null ? 1970 : getYear(new Date(newYear, 0))
   const newDayCount = getDaysInMonth(new Date(year, newMonth))
 
-  if (newDayCount < Number(selectedDay.value)) {
-    selectedDay.value = null
+  if (newDayCount < Number(birthday.value.day)) {
+    birthday.value.day = null
   }
 })
 
@@ -149,23 +148,28 @@ onMounted(() => {
         <div class="flex items-center justify-end pr-6">
           <span>Address</span>
         </div>
-        <InputText class="h-10 col-span-3" type="text" v-model="value" placeholder="Blk/Lt/St" />
+        <InputText
+          class="h-10 col-span-3"
+          type="text"
+          v-model="address.blk"
+          placeholder="Blk/Lt/St"
+        />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"
-          v-model="value"
+          v-model="address.barangay"
           placeholder="Barangay"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"
-          v-model="value"
+          v-model="address.city"
           placeholder="City"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"
-          v-model="value"
+          v-model="address.province"
           placeholder="Province"
         />
       </div>

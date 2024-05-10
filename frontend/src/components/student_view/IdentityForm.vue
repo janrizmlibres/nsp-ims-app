@@ -6,8 +6,16 @@ import BaseCard from '@/components/UI/BaseCard.vue'
 
 import { ref } from 'vue'
 
+const name = {
+  firstName: '',
+  middleName: '',
+  lastName: ''
+}
+
+const lrn = ref()
 const selectedSuffix = ref()
 const selectedCat = ref()
+
 const isAvatarHovered = ref(false)
 const uploader = ref(null)
 
@@ -66,12 +74,33 @@ function setAvatarHover() {
       </div>
 
       <div class="grid grid-cols-7 w-full gap-2">
-        <InputText class="h-9 col-span-2" type="text" v-model="value" placeholder="Last Name" />
-        <InputText class="h-9 col-span-2" type="text" v-model="value" placeholder="First Name" />
-        <InputText class="h-9 col-span-2" type="text" v-model="value" placeholder="Middle Name" />
-        <Dropdown class="h-9" v-model="selectedSuffix" :options="suffixes" placeholder="Suffix" />
+        <InputText
+          class="h-9 col-span-2"
+          type="text"
+          v-model="name.lastName"
+          placeholder="Last Name"
+        />
+        <InputText
+          class="h-9 col-span-2"
+          type="text"
+          v-model="name.firstName"
+          placeholder="First Name"
+        />
+        <InputText
+          class="h-9 col-span-2"
+          type="text"
+          v-model="name.middleName"
+          placeholder="Middle Name"
+        />
+        <Dropdown
+          class="h-9"
+          v-model="selectedSuffix"
+          showClear
+          :options="suffixes"
+          placeholder="Suffix"
+        />
 
-        <InputText class="h-9 col-span-2" type="text" v-model="value" placeholder="LRN" />
+        <InputText class="h-9 col-span-2" type="text" v-model="lrn" placeholder="LRN" />
         <Dropdown
           class="h-9 col-span-2 content-center"
           v-model="selectedCat"

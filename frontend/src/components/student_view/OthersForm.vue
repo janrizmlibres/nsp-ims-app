@@ -1,5 +1,6 @@
 <script setup>
 import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
 import Checkbox from 'primevue/checkbox'
 
 import { ref } from 'vue'
@@ -10,6 +11,9 @@ const boxData = ref([
   { label: 'Can Be Called', data: false },
   { label: 'Eligible for Night Classes', data: false }
 ])
+
+const flt = ref()
+const signature = ref()
 </script>
 
 <template>
@@ -32,12 +36,17 @@ const boxData = ref([
         <div class="flex items-center justify-end text-right pr-6 col-span-2">
           <span>FLT Pretest</span>
         </div>
-        <InputText class="h-10 col-span-3" type="text" v-model="value" />
+        <InputNumber
+          class="h-10 col-span-3"
+          v-model="flt"
+          inputId="withoutgrouping"
+          :useGrouping="false"
+        />
 
         <div class="flex items-center justify-end text-right pr-6 col-span-2">
           <span>Signature Specimen Photo Link</span>
         </div>
-        <InputText class="h-10 col-span-3" type="text" v-model="value" />
+        <InputText class="h-10 col-span-3" type="text" v-model="signature" />
       </div>
     </div>
   </div>

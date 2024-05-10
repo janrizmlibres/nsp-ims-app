@@ -1,5 +1,4 @@
 <script setup>
-import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 
 import { ref } from 'vue'
@@ -17,6 +16,8 @@ const rightFields = ref([
   { label: 'Suffix', data: '' },
   { label: 'Contact Number', data: '' }
 ])
+
+const selectedRelationship = ref()
 </script>
 
 <template>
@@ -51,7 +52,7 @@ const rightFields = ref([
           <div class="flex items-center justify-end pr-6 col-span-2">
             <span>Relationship</span>
           </div>
-          <Dropdown class="h-10 col-span-3" v-model="value" :options="value" />
+          <InputText class="h-10 col-span-3" type="text" v-model="selectedRelationship" />
         </div>
       </div>
     </div>
