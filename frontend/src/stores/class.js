@@ -61,7 +61,7 @@ export const useClassStore = defineStore('class', () => {
         return result.data.data
     }
 
-    return { getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules, getAllStudents, getAllGrades }
+    return { getClass, addSchedule, getAllStrands, getAllModules, getAllStudents, getAllGrades }
 })
 
 
