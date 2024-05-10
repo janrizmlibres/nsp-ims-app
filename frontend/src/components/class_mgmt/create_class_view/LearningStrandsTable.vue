@@ -13,27 +13,27 @@ import { onMounted, ref, watch } from 'vue';
 import { useVolunteerStore } from '@/stores/volunteer';
 import { useStrandStore } from '@/stores/strand';
 import { useToast } from 'primevue/usetoast';
-import { useClassStore } from '@/stores/class';
 
 // stores
 const volunteerStore = useVolunteerStore()
 const strandStore = useStrandStore()
-const classStore = useClassStore()
 
 const toast = useToast()
-const props = defineProps(['modelValue'])
+const props = defineProps(['modelValue', 'term'])
 const emit = defineEmits(['updateSchedule'])
 
 const classData = ref([])
 const volunteers = ref([])
+const termStatus = ref(true)
 
 onMounted(async () => {
     volunteerStore.getAllVolunteers().then((data) => {
-        data.forEach((volunteer) => volunteers.value.push(volunteer.fullname))
+        data.forEach((volunteer) => volunteers.value.push(volunteer))
     })
 })
 
-watch(() => props.modelValue, (data) => classData.value = data, {immediate: false})
+watch(() => props.modelValue, (data) => classData.value = data, {immediate: true})
+watch(() => props.term, (data) => termStatus.value = data.status, {immediate: false})
 
 const customPt = {
     root: {
@@ -96,15 +96,14 @@ const onRowEditSave = async (event) => {
         else newData.end_time = to24hr(newData.end_time)
 
         try {
-            await strandStore.updateTeacher(data.id, {teacher: newData.teacher})
             await strandStore.updateSchedule(data.scheduleId, {
+                volunteerId: newData.teacher.id,
                 days: newData.school_days,
                 start_time: newData.start_time,
                 end_time: newData.end_time
             })
-            await classStore.getAllStrands(data.classLevelId)
             
-            emit('updateSchedule', classStore.strands)
+            emit('updateSchedule', newData.classLevelId)
             toast.add({
                 severity: 'success',
                 summary: 'Success',
@@ -115,9 +114,10 @@ const onRowEditSave = async (event) => {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: error.response.data.message,
+                detail: error,
                 life: 3000
             })
+            console.log(error);
         }
     }
 };
@@ -164,12 +164,12 @@ function to24hr(time12h) {
         <Column field="name" />
         <Column field="teacher">
             <template #editor="{ data, field }">
-                <Dropdown v-model="data[field]" :options="volunteers" class="w-full md:w-[14rem]" />
+                <Dropdown v-model="data[field]" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
             </template>
         </Column>
         <Column field="school_days">
             <template #editor="{ data, field }">
-                <InputText v-model="data[field]" autofocus />
+                <InputText v-model="data[field]" placeholder="e.g. M, TH, F" />
             </template>
         </Column>
         <Column field="start_time">
@@ -182,7 +182,7 @@ function to24hr(time12h) {
                 <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
             </template>
         </Column>
-        <Column :rowEditor="true" bodyStyle="text-align:center"></Column>
+        <Column :rowEditor="termStatus" bodyStyle="text-align:center"></Column>
     </DataTable>
 </template>
 

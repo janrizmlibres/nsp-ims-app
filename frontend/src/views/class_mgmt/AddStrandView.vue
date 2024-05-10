@@ -11,12 +11,12 @@ import LearningStrandsTable from '@/components/class_mgmt/create_class_view/Lear
 //  stores
 import { useClassStore } from '@/stores/class';
 import { useStrandStore } from '@/stores/strand';
-
 const toast = useToast()
 
 const classStore = useClassStore()
 const strandStore = useStrandStore()
 
+const selectedTerm = ref()
 const tableData = ref([])
 
 async function addSchedule(learningStrand, scheduleData) {
@@ -34,52 +34,33 @@ async function addSchedule(learningStrand, scheduleData) {
     }
 
     try {
-        for (const schedule of schedules) {
-            try {
-                await strandStore.addSchedule(learningStrand.id, schedule)
-            } catch (error) {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: "Cannot add a schedule.",
-                    life: 3000
-                })
-            }
+        for (const schedule of schedules.value) {
+            await strandStore.addSchedule(learningStrand.id, schedule)
         }
 
-        try {
-            updateScheduleTable(learningStrand.classLevelId)
+        updateScheduleTable(learningStrand.classLevelId)
 
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Learning Strand Added Successfully',
-                life: 3000
-            })
-        } catch(error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Unexpected error while fetching data.',
-                life: 3000
-            })
-        }
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: "Added schedule successfully!",
+            life: 3000
+        })
     } catch (error) {
         toast.add({
             severity: 'error',
-            summary: 'Duplicated Learning Strand',
-            detail: error.response.data.message,
+            summary: 'Error',
+            detail: "Cannot add a schedule.",
             life: 3000
         })
-        console.log(error.response.data.message);
+        console.log(error);
     }
 }
 
-function updateScheduleTable(id) {
+function updateScheduleTable(classId) {
     tableData.value.length = 0
 
-    classStore.getAllStrands(id).then((data) => {
-        console.log(data);
+    classStore.getAllStrands(classId).then((data) => {
         for (const learningStrand of data) {
             for (const schedule of learningStrand.class_schedules) {
                 const start_time = to12hr(schedule.start_time)
@@ -89,9 +70,8 @@ function updateScheduleTable(id) {
                     id: learningStrand.id,
                     classLevelId: learningStrand.classLevelId,
                     scheduleId: schedule.id,
-                    volunteerId:  schedule.volunteer.id,
                     name: learningStrand.learning_strand.name,
-                    teacher: learningStrand.volunteer.fullname,
+                    teacher: schedule.volunteer.fullname,
                     school_days: schedule.days,
                     start_time: start_time,
                     end_time: end_time
@@ -99,6 +79,11 @@ function updateScheduleTable(id) {
             }
         }
     })
+}
+
+function resetTable(term) {
+    tableData.value.length = 0
+    selectedTerm.value = term
 }
 
 function to12hr(time) {
@@ -138,11 +123,11 @@ function to24hr(time12h) {
 </script>
 
 <template>
-    <ContentPane header="Add" subheader="Class Schedules">
-        <CreateClassForm @submit="addSchedule" @chooseLevel="updateScheduleTable" />
+    <ContentPane header="Manage" subheader="Class Schedules">
+        <CreateClassForm @submit="addSchedule" @chooseYear="resetTable" @chooseLevel="updateScheduleTable" />
 
         <div class="bg-white rounded-md shadow-xl flex flex-col p-7 pt-4 flex-1" >            
-            <LearningStrandsTable v-model="tableData" @updateSchedule="updateScheduleTable" />
+            <LearningStrandsTable v-model="tableData" :term="selectedTerm" @updateSchedule="updateScheduleTable" />
         </div>
     </ContentPane>
 </template>

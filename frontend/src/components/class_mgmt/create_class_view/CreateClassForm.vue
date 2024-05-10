@@ -3,7 +3,6 @@
 import Dropdown from 'primevue/dropdown';
 import Checkbox from 'primevue/checkbox';
 import Calendar from 'primevue/calendar';
-import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Stepper from 'primevue/stepper';
 import StepperPanel from 'primevue/stepperpanel';
@@ -11,39 +10,33 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Panel from 'primevue/panel';
 import { useToast } from 'primevue/usetoast';
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref } from 'vue';
 
 // stores
 import { useVolunteerStore } from '@/stores/volunteer';
 import { useTermStore } from '@/stores/term';
 import { useClassStore } from '@/stores/class';
 
-const emit = defineEmits(['submit', 'chooseLevel'])
+const emit = defineEmits(['submit', 'chooseYear', 'chooseLevel'])
 const toast = useToast()
 
 const volunteerStore = useVolunteerStore()
 const termStore = useTermStore()
 const classStore = useClassStore()
 
-const term = ref()
-const classes = ref()
+const terms = ref([])
+const classes = ref([])
 const learningStrands = ref([]);
 const volunteers = ref([])
+const termInput = ref()
 const classLevelInput = ref()
 
 onMounted(() => {
-    volunteerStore.getAllVolunteers().then((data) => data.forEach((data) => volunteers.value = data))
+    volunteerStore.getAllVolunteers().then((data) => volunteers.value = data)
+    termStore.getAllTerms().then((data) => terms.value = data)
 })
 
-watch(() => termStore.activeTerm, (data) => {
-    term.value = data.academic_year
-    classes.value = data.class_levels
-})
-
-watch(() => classLevelInput, (data) => {
-    classStore.getAllStrands(data.id).then((strands) => learningStrands.value = strands)
-})
-
+const enableSchoolLevelDropdown = ref(false)
 const state = ref(null)
 const active = ref(0)
 const learningStrandInput = ref()
@@ -80,7 +73,7 @@ function tempAddStrand(next) {
     }
 
     strandDataTable.value.push({
-        name: learningStrandInput.value.strand.name,
+        name: learningStrandInput.value.learning_strand.name,
         teacher: scheduleInputData.value.volunteer
     })
 
@@ -100,7 +93,12 @@ function tempAddSchedule() {
     }
     
     scheduleData.value.push(scheduleInputData.value)
-    scheduleDataTable.value.push(scheduleInputData.value)
+    scheduleDataTable.value.push({
+        volunteer: scheduleInputData.value.volunteer,
+        school_days: scheduleInputData.value.school_days.toString(),
+        start_time: to12hr(new Date(scheduleInputData.value.start_time).toLocaleTimeString()),
+        end_time: to12hr(new Date(scheduleInputData.value.end_time).toLocaleTimeString())
+    })
     
     scheduleInputData.value = {
         volunteer: null,
@@ -138,12 +136,20 @@ function resetForm() {
     scheduleDataTable.value.length = 0
 }
 
-async function updateState() {
+function updateState() {
     active.value = 0
     state.value = true
     
-    emit('chooseLevel',  classLevelInput.value.id)
+    classStore.getAllStrands(classLevelInput.value.id).then((strands) => learningStrands.value = strands)
+    emit('chooseLevel', classLevelInput.value.id)
     resetForm()
+}
+
+function updateIO() {
+    enableSchoolLevelDropdown.value = true; 
+    classLevelInput.value = null
+    termStore.getTerm(termInput.value.id).then((data) => classes.value = data.class_levels)
+    emit('chooseYear', termInput.value)
 }
 
 const customPt = {
@@ -181,6 +187,25 @@ const customPt = {
         ]
     })
 }
+
+function to12hr(time) {
+    let hms = time.split(':')
+    let hours = hms[0]
+    const minutes = hms[1]
+    const seconds = hms[2]
+    let dd = "AM"
+
+    if (hours >= 12) {
+        hours = hours - 12
+        dd = "PM"
+    }
+    if (hours === '00') {
+        hours = 12
+    }
+
+    const formattedTime = `${hours}:${minutes} ${dd}`
+    return time.replace(new RegExp(`${hms[0]}:${minutes}:${seconds}`), formattedTime)
+}
 </script>
 
 <template>
@@ -188,13 +213,13 @@ const customPt = {
         <div>
             <span class="mr-3 u-txt-active">School Year</span>
             <span class="relative">
-                <InputText disabled :placeholder="term" />
+                <Dropdown v-model="termInput" :options="terms" optionLabel="academic_year" placeholder="Select an Academic Year" class="w-full md:w-[14rem]" @update:modelValue="updateIO" />
             </span>
         </div>
         <div>
             <span class="mr-3 u-txt-active">School Level</span>
             <span class="relative">
-                <Dropdown v-model="classLevelInput" :options="classes" optionLabel="school_level" placeholder="Select a Level" class="w-full md:w-[14rem]" @update:modelValue="updateState" />
+                <Dropdown v-model="classLevelInput" :options="classes" optionLabel="school_level" placeholder="Select a Level" :disabled="!enableSchoolLevelDropdown" class="w-full md:w-[14rem]" @update:modelValue="updateState" />
             </span>
         </div>
     </div>
@@ -207,10 +232,10 @@ const customPt = {
             </div>
         </template>
         <p class="m-0">
-            Please choose a class level in order to continue. Thank you!
+            Please choose an academic year and class level in order to continue. Thank you!
         </p>
     </Panel>
-    <div v-else class="flex flex-row gap-4 h-[27rem]">
+    <div v-else-if="state && termInput.status" class="flex flex-row gap-4 h-[27rem]">
         <div class="flex-1 flex flex-col bg-white rounded-md shadow-xl p-8 pb-4 mb-8">
             <Stepper v-model:activeStep="active" linear>
                 <StepperPanel>
@@ -228,7 +253,7 @@ const customPt = {
                                 <div class="flex flex-col mb-4">
                                     <span class="mr-3 u-txt-active">Learning Strand</span>
                                     <span class="relative">
-                                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="name" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
+                                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full md:w-[14rem]" />
                                     </span>
                                 </div>
 
@@ -283,7 +308,7 @@ const customPt = {
                         <div class="flex pt-12 justify-between bg-transparent">
                             <Button label="Back" severity="secondary" icon="pi pi-arrow-left" @click="resetTemp(prevCallback)" />
                             <Button icon="fa fa-plus" label="Add Schedule" class="col-start-2 inset-y-0 right-0 self-end" @click="tempAddSchedule" />
-                            <Button label="Submit" icon="pi pi-arrow-right" iconPos="right" :disabled="scheduleData.value.length === 0" @click="addSchedule" />
+                            <Button label="Submit" icon="pi pi-arrow-right" iconPos="right" :disabled="scheduleData.length === 0" @click="addSchedule" />
                         </div>
                     </template>
                 </StepperPanel>
@@ -296,7 +321,11 @@ const customPt = {
             >
                 <template #empty> <div class="text-center">Nothing added.</div> </template>
                 <Column field="name" header="Learning Strand" />
-                <Column field="teacher" header="Teacher" />
+                <Column field="teacher" header="Teacher">
+                    <template #body="slotProps">
+                        {{ slotProps.data.teacher.fullname }}
+                    </template>
+                </Column>
             </DataTable>
             <DataTable :value="scheduleDataTable"
                 :ptOptions="{mergeProps:true}"
