@@ -1,5 +1,5 @@
 import { INTEGER, BOOLEAN } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 
 const Permission = sequelize.define("permission", {
   id: {

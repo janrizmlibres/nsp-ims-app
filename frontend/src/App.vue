@@ -1,25 +1,27 @@
 <script setup>
-import { RouterView, useRouter } from 'vue-router'
 import Toast from 'primevue/toast'
-import LogoutDialog from '@/components/dialog/LogoutDialog.vue'
 import ConfirmDialog from 'primevue/confirmdialog'
 import { useToast } from 'primevue/usetoast'
-import { useAuthStore } from '@/stores/auth'
-import axios from 'axios';
-import { useConfirm } from "primevue/useconfirm";
+import { useConfirm } from 'primevue/useconfirm'
 
-const confirm = useConfirm();
+import { RouterView, useRouter } from 'vue-router'
+import axios from 'axios'
+
+import LogoutDialog from './components/UI/LogoutDialog.vue'
+import { useAuthStore } from '@/stores/auth'
+
+const confirm = useConfirm()
 
 const authStore = useAuthStore()
 const router = useRouter()
 const toast = useToast()
 
 axios.interceptors.response.use(
-  response => {
+  (response) => {
     // If the request was successful, simply return the response
-    return response;
+    return response
   },
-  error => {
+  (error) => {
     // If the request had an error, check if it's the one we're looking for
     if (error.response && error.response.data.message === 'jwt expired') {
       confirm.require({
@@ -47,14 +49,14 @@ axios.interceptors.response.use(
           })
           router.replace({ name: 'login' })
         }
-      });
+      })
     }
 
     // Always reject the Promise with the error
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
-import ActionDialog from './components/dialog/ActionDialog.vue';
+)
+import ActionDialog from './components/UI/ActionDialog.vue'
 </script>
 
 <template>
