@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get("/:classId", isAuth, classController.getClass);
 router.get("/:classId/strands", isAuth, classController.getAllStrands);
+router.get("/:classId/modules", isAuth, classController.getAllModules);
 router.get("/:classId/students", isAuth, classController.getAllStudents);
 router.get("/:classId/grades", isAuth, classController.getAllGrades);
 
