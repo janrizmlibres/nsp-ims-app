@@ -18,6 +18,7 @@ const Student = sequelize.define("student", {
     allowNull: false,
   },
   middleName: STRING,
+  suffixName: STRING,
   lastName: {
     type: STRING,
     allowNull: false,
