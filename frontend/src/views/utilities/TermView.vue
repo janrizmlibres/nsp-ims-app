@@ -163,7 +163,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false})
         </Column>
         <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
         <template #footer> 
-            <Button class="u-txt-link" icon="fa fa-plus" label="Create an Academic Term" text raised rounded @click="termStore.showHideAddTermDialog"/>
+            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create an Academic Term" text raised rounded @click="termStore.showHideAddTermDialog"/>
             <AddTermDialog />
         </template>
         </DataTable>
