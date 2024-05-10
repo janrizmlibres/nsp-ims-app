@@ -97,27 +97,50 @@ export async function getAllStrands(req, res, next) {
     const classId = req.params.classId;
 
     try {
-        const learningStrands = await ClassLearningStrand.findAll({
+        const classLearningStrands = await ClassLearningStrand.findAll({
             where: {classLevelId: classId}, 
             include: [
                 LearningStrand, 
                 {
                     model: ClassSchedule,
                     include: [Volunteer]
-                }, {
-                    model: Module,
-                    where: {retrieval_date: {[Op.gte]: new Date()}},
-                    order: [['retrieval_date', 'ASC']]
                 }
             ],
-            order: [[LearningStrand, 'name', 'ASC']]
+            order: [[LearningStrand, 'code', 'ASC']]
         })
-
-        console.log(learningStrands);
 
         res.status(201).json({ 
             message: "Fetched all strands successfully!",
-            data: learningStrands
+            data: classLearningStrands
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+export async function getAllModules(req, res, next) {
+    const classId = req.params.classId;
+    
+    try {
+        const modules = await ClassLearningStrand.findAll({
+            where:{
+                classLevelid: classId
+            },
+            include: [{
+                model: Module,
+                where: {
+                    retrieval_date: { [Op.gte]: new Date() }
+                },
+                order: [['retrieval_date', 'ASC']]
+            }, LearningStrand]
+        })
+
+        res.status(201).json({ 
+            message: "Fetched all modules successfully!",
+            data: modules
         });
     } catch (error) {
         if (!error.statusCode) {
