@@ -21,7 +21,8 @@ import PermissionsView from '@/views/staff_mgmt/PermissionsView.vue'
 import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
 import AuditView from '@/views/staff_mgmt/AuditView.vue'
 
-import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue' // Add this line
+import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue'
+import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -112,6 +113,11 @@ const router = createRouter({
           path: '/volunteer-records', // Add this route object
           name: 'volunteer-records',
           component: VolunteerRecordsView
+        },
+        {
+          path: '/admit-volunteers', // New route object
+          name: 'admit-volunteers',
+          component: AdmitVolunteerView
         },
         {
           path: 'staffs',

@@ -89,13 +89,13 @@ const items = computed(() => [
         key: '4-1',
         label: 'Volunteer Records',
         icon: 'fa fa-address-book',
-        route: { name: 'dashboard' }
+        route: { name: 'volunteer-records' }
       },
       {
         key: '4-2',
         label: 'Admit Volunteers',
         icon: 'fa fa-user-plus',
-        route: { name: 'dashboard' }
+        route: { name: 'admit-volunteers' } // Update this line
       }
     ]
   },
