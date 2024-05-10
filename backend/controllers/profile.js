@@ -1,10 +1,10 @@
-import Student from "../models/student.js";
-import Application from "../models/application.js";
-import PersonalInfo from "../models/personal_info.js";
-import ContactInfo from "../models/contact_info.js";
-import PreviousSchool from "../models/previous_school.js";
-import ParentalInfo from "../models/parental_info.js";
-import EmergencyPerson from "../models/emergency_person.js";
+import Student from "../models/student/student.js";
+import Application from "../models/student/application.js";
+import PersonalInfo from "../models/student/personal_info.js";
+import ContactInfo from "../models/student/contact_info.js";
+import PreviousSchool from "../models/student/previous_school.js";
+import ParentalInfo from "../models/student/parental_info.js";
+import EmergencyPerson from "../models/student/emergency_person.js";
 
 export async function getStudents(_req, res, next) {
   try {

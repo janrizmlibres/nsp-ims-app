@@ -1,12 +1,12 @@
 import bcrypt from "bcryptjs";
 
-import Student from "../models/student.js";
+import Student from "../models/student/student.js";
+import Staff from "../models/staff/staff.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
-import Staff from "../models/staff.js";
 import ClassLevel from "../models/class_level.js";
 import Learner from "../models/learner.js";
-import Volunteer from "../models/volunteer.js";
+import Volunteer from "../models/volunteer/volunteer.js";
 
 export async function injectAll() {
   await injectStaff();
@@ -261,7 +261,7 @@ export async function injectAcademicYear() {
     })
   );
 }
-1242312145189;
+
 export async function injectLearner() {
   const learnerData = [
     {
