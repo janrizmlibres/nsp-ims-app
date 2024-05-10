@@ -2,10 +2,56 @@
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
+import { useToast } from 'primevue/usetoast';
+import { ref } from 'vue';
+
+import { useUtilitiesStore } from '@/stores/utilities';
+
+const toast = useToast()
+const requirementStore = useUtilitiesStore()
+
+const name = ref(null);
+
+async function addRequirement() {
+    if (!name.value) {
+        toast.add({
+            severity: 'error',
+            summary: 'Incomplete Form',
+            detail: "Please fill all necessary information",
+            life: 3000
+        })
+
+        return
+    }
+
+    try {
+        await requirementStore.addRequirement({
+            requirement_name: name.value
+        })
+
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Student Requirement added successfully!',
+            life: 3000
+        })
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Duplicated Student Requirement',
+            detail: error.response.data.message,
+            life: 3000
+        })
+    }
+
+    await requirementStore.getRequirements()
+    name.value = null;
+    requirementStore.showHideAddRequirementDialog()
+}
 </script>
 
 <template>
-    <Dialog modal header="Create a Student Requirement" :style="{ width: '25rem' }">
+    <Dialog v-model:visible="requirementStore.visibleAddRequirementDialog" modal header="Create a Student Requirement" :style="{ width: '25rem' }">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
             <label>Student Requirement</label>
@@ -16,6 +62,7 @@ import InputText from 'primevue/inputtext';
                 type="button"
                 label="Create"
                 icon="fa-solid fa-plus"
+                @click="addRequirement"
                 :pt="{
                     root: ({ props, context, parent }) => ({
                         class: [
