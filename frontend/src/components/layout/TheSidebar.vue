@@ -95,7 +95,7 @@ const items = computed(() => [
         key: '4-2',
         label: 'Admit Volunteers',
         icon: 'fa fa-user-plus',
-        route: { name: 'dashboard' }
+        route: { name: 'admit-volunteers' } // Update this line
       }
     ]
   },
