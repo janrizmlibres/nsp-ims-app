@@ -18,13 +18,6 @@ let formData = ref({
 
 <template>
   <div class="flex flex-col h-full">
-    <div>
-      <div>
-        <h3 class="font-medium u-txt-pcolor text-lg">Personal Information</h3>
-      </div>
-    </div>
-
-    <div class="h-[0.035rem] u-bg-active mt-3"></div>
 
     <div class="flex grow font-medium pt-10">
       <div class="basis-1/2 pr-16 pl-2">
@@ -146,19 +139,19 @@ let formData = ref({
               placeholder="City/Municipality"
             />
             <InputText
-      class="grow h-10 w-full mb-2"
-      type="text"
-      v-model="formData.address.barangay"
-      placeholder="Barangay"
-    />
-    <InputText
-      class="grow h-10 w-full mb-2"
-      type="text"
-      v-model="formData.address.province"
-      placeholder="Province"
-    />
-  </div>
-</div>
+              class="grow h-10 w-full mb-2"
+              type="text"
+              v-model="formData.address.barangay"
+              placeholder="Barangay"
+            />
+            <InputText
+              class="grow h-10 w-full mb-2"
+              type="text"
+              v-model="formData.address.province"
+              placeholder="Province"
+            />
+          </div>
+        </div>
 
       </div>
     </div>

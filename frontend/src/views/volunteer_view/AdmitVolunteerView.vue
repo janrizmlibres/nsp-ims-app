@@ -2,10 +2,20 @@
   <ContentPane header="Admit Volunteer">
     <div class="flex flex-col gap-3 h-full mr-1">
       <BaseCard>
-        <HeaderForm />
+        <AdmitVolunteerHeader />
       </BaseCard>
       <BaseCard class="grow">
-        <AdmitForm />
+        <TabView>
+          <TabPanel header="Personal Infromation">
+            <PersonalInformationForm />
+          </TabPanel>
+          <TabPanel header="Contact Infromation">
+            <ContactInformationForm />
+          </TabPanel>
+          <TabPanel header="Preferences">
+            <PreferencesForm />
+          </TabPanel>
+        </TabView>
       </BaseCard>
 
       <div class="flex-none text-right">
@@ -43,19 +53,28 @@
 <script>
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
-import AdmitForm from '@/components/volunteer_view/AdmitForm.vue'
-import HeaderForm from '@/components/volunteer_view/HeaderForm.vue'
+import PersonalInformationForm from '@/components/volunteer_view/PersonalInformationForm.vue'
+import ContactInformationForm from '@/components/volunteer_view/ContactInformationForm.vue'
+import PreferencesForm from '@/components/volunteer_view/PreferencesForm.vue'
+import AdmitVolunteerHeader from '@/components/volunteer_view/AdmitVolunteerHeader.vue'
 import Button from 'primevue/button'
 import ProgressSpinner from 'primevue/progressspinner'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+
 export default {
     name: "VolunteerRecordsView",
     components: {
         ContentPane,
-        AdmitForm,
+        PersonalInformationForm,
+        ContactInformationForm,
+        PreferencesForm,
         BaseCard,
         Button,
         ProgressSpinner,
-        HeaderForm,
+        AdmitVolunteerHeader,
+        TabPanel,
+        TabView,
     },
   data() {
     return {
