@@ -3,7 +3,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
-import StudentHeader from '@/components/student_view/StudentHeader.vue'
+import StudentHeader from '@/components/student_mgmt/StudentHeader.vue'
 import { useStudentsStore } from '@/stores/students'
 
 import { onMounted, ref } from 'vue'

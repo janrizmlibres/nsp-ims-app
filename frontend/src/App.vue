@@ -1,12 +1,14 @@
 <script setup>
-import { RouterView, useRouter } from 'vue-router'
 import Toast from 'primevue/toast'
-import LogoutDialog from '@/components/dialog/LogoutDialog.vue'
 import ConfirmDialog from 'primevue/confirmdialog'
 import { useToast } from 'primevue/usetoast'
-import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
 import { useConfirm } from 'primevue/useconfirm'
+
+import { RouterView, useRouter } from 'vue-router'
+import axios from 'axios'
+
+import LogoutDialog from './components/UI/LogoutDialog.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const confirm = useConfirm()
 

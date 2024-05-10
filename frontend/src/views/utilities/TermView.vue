@@ -1,7 +1,7 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue'
-import TermTable from '@/components/term_view/TermTable.vue'
-import TermTableHeader from '@/components/term_view/TermTableHeader.vue'
+import TermTable from '@/components/utilities/term_view/TermTable.vue'
+import TermTableHeader from '@/components/utilities/term_view/TermTableHeader.vue'
 
 import Button from 'primevue/button'
 import InputNumber from 'primevue/inputnumber'

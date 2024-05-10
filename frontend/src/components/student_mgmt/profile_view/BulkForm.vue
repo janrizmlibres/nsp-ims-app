@@ -4,11 +4,11 @@ import TabPanel from 'primevue/tabpanel'
 
 import BaseCard from '@/components/UI/BaseCard.vue'
 
-import PersonalInfoForm from '@/components/student_view/PersonalInfoForm.vue'
-import ContactInfoForm from '@/components/student_view/ContactInfoForm.vue'
-import ParentalInfoForm from '@/components/student_view/ParentalInfoForm.vue'
-import PrevSchoolForm from '@/components/student_view/PrevSchoolForm.vue'
-import OthersForm from '@/components/student_view/OthersForm.vue'
+import PersonalInfoForm from './bulk_form/PersonalInfoForm.vue'
+import ContactInfoForm from './bulk_form/ContactInfoForm.vue'
+import ParentalInfoForm from './bulk_form/ParentalInfoForm.vue'
+import PrevSchoolForm from './bulk_form/PrevSchoolForm.vue'
+import OthersForm from './bulk_form/OthersForm.vue'
 </script>
 
 <template>
