@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 // Dashboard View
 import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/login/LoginView.vue'
-import TheRootView from '@/views/TheRootView.vue'
+import TheRootView from '../views/TheRootView.vue'
 
 // Enrollment Views
 import CurrentEnrollmentView from '@/views/enrollment/CurrentEnrollmentView.vue'
@@ -26,8 +26,16 @@ import PermissionsView from '@/views/staff_mgmt/PermissionsView.vue'
 import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
 import AuditView from '@/views/staff_mgmt/AuditView.vue'
 
-import { useAuthStore } from '@/stores/auth'
+import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
+import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
 
+import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
+import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
+
+import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue'
+import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
+
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +54,25 @@ const router = createRouter({
           path: 'dashboard',
           name: 'dashboard',
           component: DashboardView
+        },
+        {
+          path: 'students',
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgStuds ? true : { name: 'dashboard' }
+          },
+          children: [
+            {
+              path: '',
+              name: 'student-records',
+              component: StudentRecordsView
+            },
+            {
+              path: 'add',
+              name: 'add-student',
+              component: StudentFormView
+            }
+          ]
         },
         {
           path: 'enrollment',
@@ -83,7 +110,8 @@ const router = createRouter({
               name: 'class',
               component: ClassView,
               query: {
-                id: Number, action: String
+                id: Number,
+                action: String
               },
               beforeEnter: (to) => {
                 return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
@@ -93,13 +121,13 @@ const router = createRouter({
               path: '/strand',
               name: 'strand-info',
               component: StrandView,
-              query: {id: Number},
+              query: { id: Number }
             },
             {
               path: '/module',
               name: 'module-info',
               component: ModuleView,
-              query: {id: Number}
+              query: { id: Number }
             },
             {
               path: 'classes',
@@ -134,6 +162,16 @@ const router = createRouter({
             const authStore = useAuthStore()
             return authStore.staff.permissions.canMgStudReq ? true : { name: 'dashboard' }
           }
+        },
+        {
+          path: '/volunteer-records', // Add this route object
+          name: 'volunteer-records',
+          component: VolunteerRecordsView
+        },
+        {
+          path: '/admit-volunteers', // New route object
+          name: 'admit-volunteers',
+          component: AdmitVolunteerView
         },
         {
           path: 'staffs',

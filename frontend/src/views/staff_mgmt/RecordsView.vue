@@ -4,8 +4,8 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
-import TheHeader from '@/components/staff_view/TheHeader.vue'
-import ChangePwDialog from '@/components/staff_view/ChangePwDialog.vue'
+import TheHeader from '@/components/staff_mgmt/TheHeader.vue'
+import ChangePwDialog from '@/components/staff_mgmt/ChangePwDialog.vue'
 
 import { useStaffsStore } from '@/stores/staffs'
 import { FilterMatchMode } from 'primevue/api'

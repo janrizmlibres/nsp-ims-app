@@ -1,17 +1,36 @@
+import bcrypt from "bcryptjs";
+
+import Student from "../models/student/student.js";
+import Staff from "../models/staff/staff.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
-import Staff from "../models/staff.js";
 import ClassLevel from "../models/class_level.js";
-import bcrypt from "bcryptjs";
 import Learner from "../models/learner.js";
-import Volunteer from "../models/volunteer.js";
+import Volunteer from "../models/volunteer/volunteer.js";
 
 export async function injectAll() {
   await injectStaff();
+  await injectStudent();
   await injectAcademicYear();
   await injectLearningStrand();
   await injectLearner();
   await injectVolunteer();
+}
+
+export async function injectStudent() {
+  await Student.create({
+    lrn: "198765150721",
+    category: "Out-of-School Youth",
+    firstName: "Juan",
+    lastName: "Dela Cruz",
+  });
+
+  await Student.create({
+    lrn: "127051567891",
+    category: "Out-of-School Youth",
+    firstName: "Pedro",
+    lastName: "Pascual",
+  });
 }
 
 export async function injectStaff() {
@@ -35,7 +54,6 @@ export async function injectStaff() {
         canMgStaff: true,
       },
       {
-        id: 7,
         description: "Added Staff with ID: 53725",
         date: new Date(),
       },
@@ -59,7 +77,6 @@ export async function injectStaff() {
         canMgStaff: true,
       },
       {
-        id: 2,
         description: "Added Staff with ID: 53697",
         date: new Date(),
       },
@@ -83,7 +100,6 @@ export async function injectStaff() {
         canMgStaff: true,
       },
       {
-        id: 3,
         description: "Added Staff with ID: 53698",
         date: new Date(),
       },
@@ -102,7 +118,6 @@ export async function injectStaff() {
         canMgClass: true,
       },
       {
-        id: 4,
         description: "Added Staff with ID: 53699",
         date: new Date(),
       },
@@ -123,7 +138,6 @@ export async function injectStaff() {
         canMgStaff: true,
       },
       {
-        id: 5,
         description: "Added Staff with ID: 53723",
         date: new Date(),
       },
@@ -142,7 +156,6 @@ export async function injectStaff() {
         canMgStudReq: true,
       },
       {
-        id: 6,
         description: "Added Staff with ID: 53724",
         date: new Date(),
       },
@@ -248,7 +261,7 @@ export async function injectAcademicYear() {
     })
   );
 }
-1242312145189;
+
 export async function injectLearner() {
   const learnerData = [
     {

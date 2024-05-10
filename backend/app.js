@@ -12,6 +12,7 @@ import classRoutes from "./routes/class.js";
 import strandRoutes from "./routes/strand.js";
 import utilitiesRoutes from "./routes/utilities.js";
 import volunteerRoutes from "./routes/volunteer.js";
+import profileRoutes from "./routes/profile.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -37,6 +38,7 @@ app.get("/", (_, res) => {
   res.send("Please enter a valid endpoint.");
 });
 
+app.use("/profile", profileRoutes);
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
 app.use("/enrollment", enrollmentRoutes)
@@ -46,7 +48,7 @@ app.use("/strand", strandRoutes);
 app.use("/utilities", utilitiesRoutes);
 app.use("/volunteer", volunteerRoutes);
 
-app.use((error, req, res, next) => {
+app.use((error, _req, res) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
