@@ -17,6 +17,7 @@ const classStore = useClassStore()
 
 const schoolLevel = ref()
 const term = ref()
+const modules = ref([])
 const strands = ref([])
 const students = ref([])
 
@@ -26,7 +27,12 @@ watch(() => route.query, (query) => {
             schoolLevel.value = data.school_level
             term.value = data.term.academic_year
         });
-        classStore.getAllStrands(query.id).then((data) => strands.value = data)
+        classStore.getAllModules(query.id).then((data) => {
+            modules.value = data
+        })
+        classStore.getAllStrands(query.id).then((data) => {
+            strands.value = data
+        })
         classStore.getAllStudents(query.id).then((data) => students.value = data)
     } catch (error) {
         console.log(error.response.data.message)
@@ -37,7 +43,7 @@ watch(() => route.query, (query) => {
 
 <template>
     <ContentPane :header="schoolLevel" :subheader="'Academic Year ' + term">
-        <ActivitiesTimelineSection v-model="strands" />
+        <ActivitiesTimelineSection v-model="modules" />
         <StrandsSection v-model="strands" />
         <ClassRosterSection v-model="students" />
     </ContentPane>
