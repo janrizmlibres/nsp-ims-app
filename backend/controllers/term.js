@@ -21,12 +21,30 @@ export async function getActiveTerm(req, res, next) {
     }
 }
 
+export async function getTerm(req, res, next) {
+    try {
+        const term = await Term.findOne({
+            where: {id: req.params.termId},
+            include: [ClassLevel]
+        })
+
+        res.status(200).json({
+            message: "Fetched academic year successfully.",
+            data: term,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
 export async function getAllTerms(req, res, next) {
     try {
         const terms = await Term.findAll({ 
             include: [ClassLevel]}
         );
-
 
         for (const term of terms) {
             for (const classLevel of term.class_levels) {
