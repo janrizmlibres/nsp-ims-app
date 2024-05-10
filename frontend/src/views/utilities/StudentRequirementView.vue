@@ -1,5 +1,6 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue';
+import AddRequirementDialog from '@/components/utilities_view/AddRequirementDialog.vue';
 
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -134,7 +135,8 @@ watch(() => requirementStore.requirements, fetchRequirements, { immediate: false
             </template>
         </Column>
         <template #footer> 
-            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Student Requirement" text raised rounded/>
+            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Student Requirement" text raised rounded @click="requirementStore.showHideAddRequirementDialog"/>
+            <AddRequirementDialog />
         </template>
         </DataTable>
     </div>
