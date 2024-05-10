@@ -6,17 +6,13 @@ import setAssociations from "./util/associations.js";
 
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
-import termRoutes from "./routes/term.js";
+import termRoutes from "./routes/term.js"
 import classRoutes from "./routes/class.js"
 import strandRoutes from "./routes/strand.js"
 import moduleRoutes from "./routes/module.js"
-import gradeRoutes from "./routes/grade.js"
 import utilitiesRoutes from "./routes/utilities.js"
 import volunteerRoutes from "./routes/volunteer.js"
 import bcrypt from "bcryptjs";
-
-import * as dbInjector from "./util/db_injector.js";
-import "./util/relations.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -48,7 +44,6 @@ app.use("/term", termRoutes);
 app.use("/class", classRoutes);
 app.use("/strand", strandRoutes);
 app.use("/module", moduleRoutes);
-app.use("/grade", gradeRoutes);
 app.use("/utilities", utilitiesRoutes);
 app.use("/volunteer", volunteerRoutes);
 
