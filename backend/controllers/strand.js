@@ -246,8 +246,8 @@ export async function addSchedule(req, res, next) {
 
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
-        const volunteer = await Volunteer.findByPk(volunteer.id)
-        await classLearningStrand.addVolunteer(volunteer, {
+        const teacher = await Volunteer.findByPk(volunteer.id)
+        await classLearningStrand.addVolunteer(teacher, {
             through: {
                 days: days,
                 start_time: start_time,
@@ -275,24 +275,6 @@ export async function updateSchedule(req, res, next) {
         });
 
         res.status(200).json({ message: "Status updated!" });
-        } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-        return error;
-    }
-}
-
-export async function updateTeacher(req, res, next) {
-    try {
-        const classLearningStrandId = req.params.classLearningStrandId
-        await ClassLearningStrand.update(
-            req.body, 
-            { where: { id: classLearningStrandId }
-        });
-
-        res.status(200).json({ message: "Status updated!"});
         } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
