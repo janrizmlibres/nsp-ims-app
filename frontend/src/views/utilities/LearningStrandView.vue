@@ -11,7 +11,7 @@ import Column from 'primevue/column'
 // import { ref } from 'vue'
 // import { useRouter } from 'vue-router'
 
-import { useStrandStore } from '@/stores/strands'
+import { useStrandStore } from '@/stores/strand.js'
 
 const strandStore = useStrandStore()
 // const router = useRouter()
