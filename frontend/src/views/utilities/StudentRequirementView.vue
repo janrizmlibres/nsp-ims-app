@@ -128,6 +128,11 @@ watch(() => requirementStore.requirements, fetchRequirements, { immediate: false
             </template>
         </Column>
         <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
+        <Column style="width: 2rem;">
+            <template #body>
+                <Button icon="fa fa-trash" text rounded severity="danger" />
+            </template>
+        </Column>
         <template #footer> 
             <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Student Requirement" text raised rounded/>
         </template>
