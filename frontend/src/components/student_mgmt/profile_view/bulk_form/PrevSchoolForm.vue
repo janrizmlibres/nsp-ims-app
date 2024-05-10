@@ -91,12 +91,7 @@ onMounted(() => {
         </div>
 
         <div class="grid grid-cols-5 gap-3">
-          <Dropdown
-            class="h-10 col-span-2"
-            v-model="selectedYearL"
-            :options="years.value.pop()"
-            filter
-          />
+          <Dropdown class="h-10 col-span-2" v-model="selectedYearL" :options="years.pop()" filter />
           <span class="flex items-center justify-center">-</span>
           <Dropdown class="h-10 col-span-2" v-model="selectedYearR" :options="years" filter />
         </div>
