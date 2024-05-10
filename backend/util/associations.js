@@ -1,10 +1,8 @@
 import Term from "../models/term.js";
 import ClassLevel from "../models/class_level.js";
-import Staff from "../models/staff.js";
-import Permission from "../models/permission.js";
-import Audit from "../models/audit.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
+import Grade from "../models/grade.js";
 import Learner from "../models/learner.js";
 import Enrollment from "../models/enrollment.js";
 import Attendance from "../models/attendance.js";
@@ -12,14 +10,16 @@ import ModuleSubmission from "../models/module_submission.js";
 import ClassLearningStrand from "../models/class_learning_strand.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Session from "../models/session.js";
-import Volunteer from "../models/volunteer.js";
-import StudentVolunteer from "../models/student_volunteer.js";
-import ProfessionalVolunteer from "../models/professional_volunteer.js";
-import VolunteerPersonalInformation from "../models/volunteer_personal_information.js";
-import VolunteerContactInformation from "../models/volunteer_contact_information.js";
-import VolunteerEmergency from "../models/volunteer_emergency_contact.js";
-import VolunteerSpecialization from "../models/volunteer_specialization.js";
-import Grade from "../models/grade.js";
+import Staff from "../models/staff/staff.js";
+import Permission from "../models/staff/permission.js";
+import Audit from "../models/staff/audit.js";
+import Volunteer from "../models/volunteer/volunteer.js";
+import StudentVolunteer from "../models/volunteer/student_volunteer.js";
+import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
+import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
+import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
+import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
+import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
 
 function setAssociations() {
   // Staff-Permission Relationship

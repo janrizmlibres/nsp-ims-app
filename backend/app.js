@@ -6,13 +6,13 @@ import setAssociations from "./util/associations.js";
 
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
-import termRoutes from "./routes/term.js"
-import classRoutes from "./routes/class.js"
-import strandRoutes from "./routes/strand.js"
+import termRoutes from "./routes/term.js";
+import classRoutes from "./routes/class.js";
+import strandRoutes from "./routes/strand.js";
 import moduleRoutes from "./routes/module.js"
-import utilitiesRoutes from "./routes/utilities.js"
-import volunteerRoutes from "./routes/volunteer.js"
-import bcrypt from "bcryptjs";
+import utilitiesRoutes from "./routes/utilities.js";
+import volunteerRoutes from "./routes/volunteer.js";
+import profileRoutes from "./routes/profile.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -38,6 +38,7 @@ app.get("/", (_, res) => {
   res.send("Please enter a valid endpoint.");
 });
 
+app.use("/profile", profileRoutes);
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
 app.use("/term", termRoutes);
@@ -47,7 +48,7 @@ app.use("/module", moduleRoutes);
 app.use("/utilities", utilitiesRoutes);
 app.use("/volunteer", volunteerRoutes);
 
-app.use((error, req, res, next) => {
+app.use((error, _req, res) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
