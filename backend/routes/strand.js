@@ -11,7 +11,6 @@ router.get("/:classLearningStrandId/sessions", isAuth, strandController.getAllSe
 router.post("/:classLearningStrandId/schedule/add", isAuth, strandController.addSchedule);
 router.post("/:classLearningStrandId/module/add", isAuth, strandController.addModule);
 router.post("/:classLearningStrandId/session/add", isAuth, strandController.addSession);
-router.patch("/:classLearningStrandId/teacher/update", isAuth, strandController.updateTeacher);
 router.patch("/schedule/:scheduleId/update", isAuth, strandController.updateSchedule);
 router.put("/grades/update", isAuth, strandController.updateGrades);
 export default router;
