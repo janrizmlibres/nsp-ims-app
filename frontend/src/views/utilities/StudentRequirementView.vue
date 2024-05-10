@@ -5,6 +5,60 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import { useToast } from 'primevue/usetoast';
+import { ref, watch, onMounted } from 'vue';
+
+import { useUtilitiesStore } from '@/stores/utilities';
+
+const requirementStore = useUtilitiesStore()
+const toast = useToast()
+
+const requirements = ref([])
+const editingRows = ref([])
+
+const onRowEditSave = async (event) => {
+    let { data, newData } = event;
+    console.log(newData);
+    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        try {
+            
+
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Student Requirement updated successfully!',
+                life: 3000
+            })
+        } catch(error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Unexpected error encountered.',
+                life: 3000
+            })
+        }
+    }
+};
+
+onMounted(async () => {
+    try {
+        await requirementStore.getRequirements()
+        requirements.value = requirementStore.requirements
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    } 
+})
+
+async function fetchRequirements(data) {
+    requirements.value = data
+}
+
+watch(() => requirementStore.requirements, fetchRequirements, { immediate: false})
 </script>
 
 <template>
@@ -14,6 +68,7 @@ import Column from 'primevue/column';
             v-model:value="requirements" dataKey="id" 
             sortField="requirement_name" :sortOrder="1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines scrollable 
+            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
             :ptOptions="{mergeProps:true}"
             :pt="{
                 root: {
@@ -45,6 +100,11 @@ import Column from 'primevue/column';
                         class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
                     }),
                     bodycell: {class: 'py-4 '},
+                    roweditorinitbutton: {
+                        class: ['relative', 'inline-flex items-center justify-center', 'text-left', 'w-8 h-8', 'border-0 rounded-full', 'u-txt-link', 'border-transparent', 
+                        'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-400/50', 'hover:text-surface-700 hover:bg-surface-300/20', 'transition duration-200', 
+                        'overflow-hidden', 'cursor-pointer select-none']
+                    },
                 },
                 bodyrow: ({ context, props }) => ({
                     class: [
@@ -67,6 +127,7 @@ import Column from 'primevue/column';
                 <InputText v-model="data[field]" autofocus />
             </template>
         </Column>
+        <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
         <template #footer> 
             <Button class="u-txt-link" icon="fa fa-plus" label="Create a Student Requirement" text raised rounded/>
         </template>
