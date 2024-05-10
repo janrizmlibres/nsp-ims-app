@@ -1,22 +1,14 @@
 import { INTEGER, STRING } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 
-const Student = sequelize.define("student", {
+const EmergencyPerson = sequelize.define("emergency_person", {
   id: {
     type: INTEGER,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
-  lrn: {
-    type: STRING,
-    allowNull: false,
-  },
-  category: {
-    type: STRING,
-    allowNull: false,
-  },
-  firstName: {
+  lastName: {
     type: STRING,
     allowNull: false,
   },
@@ -25,6 +17,15 @@ const Student = sequelize.define("student", {
     type: STRING,
     allowNull: false,
   },
+  suffixName: STRING,
+  contactNum: {
+    type: STRING,
+    allowNull: false,
+  },
+  relationship: {
+    type: STRING,
+    allowNull: false,
+  },
 });
 
-export default Student;
+export default EmergencyPerson;

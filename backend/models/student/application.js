@@ -1,5 +1,5 @@
 import { BOOLEAN, INTEGER, STRING } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 
 const Application = sequelize.define("application", {
   id: {

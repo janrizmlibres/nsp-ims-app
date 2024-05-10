@@ -1,5 +1,5 @@
 <script setup>
-import TheSidebar from '@/components/layout/TheSidebar.vue'
+import TheSidebar from '@/components/TheSidebar.vue'
 import { useTermStore } from '@/stores/term'
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'

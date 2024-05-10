@@ -1,5 +1,5 @@
 import { DATE, ENUM, INTEGER, STRING } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 
 const PersonalInfo = sequelize.define("personal_info", {
   id: {

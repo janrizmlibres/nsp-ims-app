@@ -3,16 +3,17 @@ import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, watch } from 'vue'
+import { getYear } from 'date-fns'
 
 const schoolName = ref()
 const discontinuationReason = ref()
 
 const address = ref({
-  blk: '',
-  barangay: '',
-  city: '',
-  province: ''
+  blk: { label: 'Blk/Lt/St', data: '' },
+  barangay: { label: 'Barangay', data: '' },
+  city: { label: 'City', data: '' },
+  province: { label: 'Province', data: '' }
 })
 
 const selectedType = ref()
@@ -24,6 +25,8 @@ const selectedYearR = ref()
 
 // eslint-disable-next-line no-unused-vars
 const lastYrAttended = computed(() => `${selectedYearL.value} - ${selectedYearR.value}`)
+
+const years = ref([])
 
 const types = [
   'Public Sectarian',
@@ -51,6 +54,22 @@ const levels = [
   'Grade 9',
   'Grade 10'
 ]
+
+watch(selectedYearL, (value) => {
+  selectedYearR.value = (Number(value) + 1).toString
+})
+
+watch(selectedYearR, (value) => {
+  selectedYearL.value = (Number(value) - 1).toString
+})
+
+onMounted(() => {
+  const currentYear = getYear(new Date())
+
+  for (let i = currentYear - 120; i <= currentYear + 1; i++) {
+    years.value.push(i.toString())
+  }
+})
 </script>
 
 <template>
@@ -72,21 +91,14 @@ const levels = [
         </div>
 
         <div class="grid grid-cols-5 gap-3">
-          <Calendar
+          <Dropdown
             class="h-10 col-span-2"
             v-model="selectedYearL"
-            view="year"
-            dateFormat="yy"
-            placeholder="Year"
+            :options="years.value.pop()"
+            filter
           />
           <span class="flex items-center justify-center">-</span>
-          <Calendar
-            class="h-10 col-span-2"
-            v-model="selectedYearR"
-            view="year"
-            dateFormat="yy"
-            placeholder="Year"
-          />
+          <Dropdown class="h-10 col-span-2" v-model="selectedYearR" :options="years" filter />
         </div>
 
         <div class="flex items-center justify-end pr-6">
@@ -112,28 +124,13 @@ const levels = [
           <span>Address</span>
         </div>
         <InputText
+          v-for="(value, key) of address"
+          :key="key"
           class="h-10 col-span-3"
+          :class="{ 'col-start-2': value.data !== 'Blk/Lt/St' }"
           type="text"
-          v-model="address.blk"
-          placeholder="Blk/Lt/St"
-        />
-        <InputText
-          class="h-10 col-span-3 col-start-2"
-          type="text"
-          v-model="address.barangay"
-          placeholder="Barangay"
-        />
-        <InputText
-          class="h-10 col-span-3 col-start-2"
-          type="text"
-          v-model="address.city"
-          placeholder="City"
-        />
-        <InputText
-          class="h-10 col-span-3 col-start-2"
-          type="text"
-          v-model="address.province"
-          placeholder="Province"
+          v-model="value.data"
+          :placeholder="value.label"
         />
       </div>
     </div>

@@ -1,7 +1,6 @@
 <script setup>
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
-import Calendar from 'primevue/calendar'
 
 import { ref, computed, watch, onMounted } from 'vue'
 import { getDaysInMonth, format, getYear } from 'date-fns'
@@ -13,7 +12,13 @@ const selectedCivilStat = ref()
 const selectedReligion = ref()
 
 const birthday = ref({ month: null, day: null, year: null })
-const address = ref({ blk: '', barangay: '', city: '', province: '' })
+const birthPlace = ref({ barangay: '', city: '', province: '' })
+const address = ref({
+  blk: { label: 'Blk/Lt/St', data: '' },
+  barangay: { label: 'Barangay', data: '' },
+  city: { label: 'City', data: '' },
+  province: { label: 'Province', data: '' }
+})
 
 const sex = ['M', 'F']
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
@@ -28,7 +33,7 @@ const days = computed(() => {
 
   return Array.from({ length: dayCount() }, (_, i) => (i + 1).toString())
 })
-// const years = ref([])
+const years = ref([])
 
 const religions = ref([
   'Roman Catholic',
@@ -57,11 +62,11 @@ onMounted(() => {
     months.value.push({ name: format(new Date(1970, i), 'LLLL'), code: i })
   }
 
-  // const currentYear = getYear(new Date())
+  const currentYear = getYear(new Date())
 
-  // for (let i = currentYear - 120; i <= currentYear; i++) {
-  //   years.value.push(i.toString())
-  // }
+  for (let i = currentYear - 120; i <= currentYear; i++) {
+    years.value.push(i.toString())
+  }
 })
 </script>
 
@@ -93,7 +98,7 @@ onMounted(() => {
         <div class="col-span-3 grid grid-cols-12 gap-3">
           <Dropdown
             class="h-10 col-span-5"
-            v-model="selectedMonth"
+            v-model="birthday.month"
             :options="months"
             optionLabel="name"
             optionValue="code"
@@ -101,15 +106,15 @@ onMounted(() => {
           />
           <Dropdown
             class="h-10 col-span-3"
-            v-model="selectedDay"
+            v-model="birthday.day"
             :options="days"
             placeholder="Day"
           />
-          <Calendar
+          <Dropdown
             class="h-10 col-span-4"
-            v-model="selectedYear"
-            view="year"
-            dateFormat="yy"
+            v-model="birthday.year"
+            :options="years"
+            filter
             placeholder="Year"
           />
         </div>
@@ -117,17 +122,22 @@ onMounted(() => {
         <div class="flex items-center justify-end pr-6">
           <span>Place of Birth</span>
         </div>
-        <InputText class="h-10 col-span-3" type="text" v-model="value" placeholder="Barangay" />
+        <InputText
+          class="h-10 col-span-3"
+          type="text"
+          v-model="birthPlace.barangay"
+          placeholder="Barangay"
+        />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"
-          v-model="value"
+          v-model="birthPlace.city"
           placeholder="City"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"
-          v-model="value"
+          v-model="birthPlace.province"
           placeholder="Province"
         />
       </div>
@@ -149,28 +159,13 @@ onMounted(() => {
           <span>Address</span>
         </div>
         <InputText
+          v-for="(value, key) of address"
+          :key="key"
           class="h-10 col-span-3"
+          :class="{ 'col-start-2': value.label !== 'Blk/Lt/St' }"
           type="text"
-          v-model="address.blk"
-          placeholder="Blk/Lt/St"
-        />
-        <InputText
-          class="h-10 col-span-3 col-start-2"
-          type="text"
-          v-model="address.barangay"
-          placeholder="Barangay"
-        />
-        <InputText
-          class="h-10 col-span-3 col-start-2"
-          type="text"
-          v-model="address.city"
-          placeholder="City"
-        />
-        <InputText
-          class="h-10 col-span-3 col-start-2"
-          type="text"
-          v-model="address.province"
-          placeholder="Province"
+          v-model="value.data"
+          :placeholder="value.label"
         />
       </div>
     </div>

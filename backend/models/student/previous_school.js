@@ -1,5 +1,5 @@
 import { INTEGER, STRING, TEXT } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 
 const PreviousSchool = sequelize.define("previous_school", {
   id: {
