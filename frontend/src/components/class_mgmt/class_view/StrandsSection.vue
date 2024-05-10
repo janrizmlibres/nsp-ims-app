@@ -27,7 +27,7 @@ watch(() => props.modelValue, (data) => {
         
         <ProgressSpinner v-if="isFetching" class="flex justify-center" />
         <span v-else-if="strands.length === 0" class="flex flex-col text-center">No learning strands created.</span>
-        <div v-else class="grid lg:grid-cols-3 md:grid-cols-1 gap-12">
+        <div v-else class="flex flex-col gap-4">
             <StrandCard v-for="learningStrand of strands" :key="learningStrand.teacher" :data="learningStrand" />
         </div>
     </div>

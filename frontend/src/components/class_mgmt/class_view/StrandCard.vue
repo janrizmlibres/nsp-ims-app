@@ -1,7 +1,8 @@
 <script setup>
-import Card from 'primevue/card';
 import { useRouter } from 'vue-router';
-import ProgressBar from 'primevue/progressbar';
+import MeterGroup from 'primevue/metergroup';
+import Button from 'primevue/button';
+import OverlayPanel from 'primevue/overlaypanel';
 import { ref } from 'vue';
 
 const router = useRouter()
@@ -39,38 +40,35 @@ function formatDate(time) {
     const formattedTime = `${hours}:${minutes} ${dd}`
     return time.replace(new RegExp(`${hms[0]}:${minutes}:${seconds}`), formattedTime)
 }
-
-const customPt = {
-    root: {
-        class: ['rounded-lg', 'shadow-md', 'bg-surface-0', 'u-txt-active', 
-            'hover:shadow-xl hover:cursor-pointer transition-all duration-500 hover:transform hover:scale-105' 
-        ]
-    },
-    body: {
-        class: '!p-0 flex flex-col h-full'
-    },
-    caption: {
-        class: 'px-8 pt-8 flex-[2]'
-    },
-    title: {
-        class: 'text-lg font-bold'
-    },
-    content: {
-        class: 'px-8 pb-8 flex-[2]'
-    },
-    footer: {
-        class: '!pt-0 u-bg-pcolor rounded-b-lg overflow-hidden'
-    }
+const op = ref();
+const toggle = (event) => {
+    op.value.toggle(event);
 }
 </script>
 
 <template>
-    <Card
+    <div class="flex flex-row justify-between bg-white u-txt-active shadow-md rounded-lg p-4">
+        <div class="flex flex-col font-semibold content-center flex-1 hover:cursor-pointer hover:underline  hover:u-txt-pcolor">
+            <p class="u-txt-inactive">{{ data.learning_strand.code }}</p>
+            <p class="text-lg"
+            @click="showStrand">
+                {{ data.learning_strand.name }}
+            </p>
+        </div>
+        <MeterGroup :value="[{label:'Complete', value: null}]" class="flex-[2]" />
+        <Button icon="fa fa-circle-info" text rounded aria-label="Filter" class="ml-4" @click="toggle" />
+        <OverlayPanel ref="op">
+            <div class="flex flex-col w-[16rem]">
+                Test
+            </div>
+        </OverlayPanel>
+    </div>
+    <!-- <Card
     @click="showStrand"
     :pt-options="{mergeProps:true}"
     :pt="customPt">
         <template #title> {{ data.learning_strand.name }} </template>
-        <template #subtitle><ProgressBar :value="50"></ProgressBar></template>
+        <template #subtitle></template>
         <template #content>
             <h3> {{ data.teacher }} </h3>
             <div class="flex flex-col justify-center">
@@ -83,5 +81,5 @@ const customPt = {
         <template #footer>
             <div class="u-bg-pcolor flex justify-center py-2 text-white font-semibold">View</div>
         </template>
-    </Card>
+    </Card> -->
 </template>
