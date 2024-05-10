@@ -22,8 +22,8 @@ export default {
                 chart: {
                     type: 'donut',
                     background: 'transparent',
-                    width: '50px', // adjust as needed
-                    height: '50px' // adjust as needed
+                    width: '3.125rem', // adjust as needed
+                    height: '3.125rem' // adjust as needed
                 },
                 plotOptions: {
                     pie: {

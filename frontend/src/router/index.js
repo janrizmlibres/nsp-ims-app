@@ -24,6 +24,8 @@ import AuditView from '@/views/staff_mgmt/AuditView.vue'
 import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
 import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
 
+import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue' // Add this line
+
 import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
@@ -127,6 +129,11 @@ const router = createRouter({
             const authStore = useAuthStore()
             return authStore.staff.permissions.canMgStudReq ? true : { name: 'dashboard' }
           }
+        },
+        {
+          path: '/volunteer-records', // Add this route object
+          name: 'volunteer-records',
+          component: VolunteerRecordsView
         },
         {
           path: 'staffs',

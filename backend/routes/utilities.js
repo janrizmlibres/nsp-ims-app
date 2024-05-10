@@ -4,7 +4,11 @@ import isAuth from "../middleware/is_auth.js";
 
 const router = express.Router();
 
-router.post("/terms/create", isAuth, utilitiesController.createTerm);
+router.post("/term/create", isAuth, utilitiesController.addTerm);
+router.get("/terms", isAuth, utilitiesController.getTerms);
+router.post("/strand/create", isAuth, utilitiesController.addLearningStrand);
 router.get("/strands", isAuth, utilitiesController.getLearningStrands);
+router.post("/requirement/create", isAuth, utilitiesController.addRequirement);
+router.get("/requirements", isAuth, utilitiesController.getRequirements);
 
 export default router;
