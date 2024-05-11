@@ -180,8 +180,10 @@ export async function logout(req, res, next) {
     error.statusCode = 401;
     throw error;
   }
-
-  if (jwt.verify(token, "HEHESECRET")) {
+  
+  try {
+    jwt.verify(token, "HEHESECRET")
+  } catch (error) {
     invalidatedTokens.push(token);
   }
 
