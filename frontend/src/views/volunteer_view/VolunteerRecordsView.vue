@@ -1,11 +1,7 @@
 <template>
   <ContentPane header="Volunteer Records">
-    <TheHeader />
-    <DataTable
-      :value="volunteers"
-      :globalFilterFields="columns.map(column => column.field)"
-      scrollable
-    >
+    <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+    <DataTable :value="filteredVolunteers" :filters="filters" scrollable >
       <template #empty> No volunteers found. </template>
       <template #loading> Loading volunteers data. Please wait. </template>
 
@@ -29,16 +25,16 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useVolunteerStore } from '@/stores/volunteer';
 import ContentPane from "@/components/UI/ContentPane.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import TheHeader from '@/components/volunteer_view/VolunteerHeader.vue';
 import Button from 'primevue/button';
+import { FilterMatchMode } from 'primevue/api';
 
 export default {
-  name: "VolunteerRecordsView",
   components: {
     ContentPane,
     DataTable,
@@ -46,31 +42,44 @@ export default {
     TheHeader,
     Button,
   },
-  
   setup() {
     const volunteerStore = useVolunteerStore();
     const volunteers = ref([]);
+    const filters = ref({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    });
     const columns = ref([
       { field: 'volunteerId', header: 'Volunteer ID' },
-      { field: 'affiliation', header: 'Affiliation' },
       { field: 'fullName', header: 'Full Name' },
+      { field: 'affiliation', header: 'Affiliation' },
     ]);
 
+    const updateGlobalFilter = (newValue) => {
+      filters.value.global.value = newValue;
+    };
+
     onMounted(async () => {
-      await volunteerStore.getAllVolunteers();
-      volunteers.value = volunteerStore.volunteers;
       await volunteerStore.getAllVolunteers();
       volunteers.value = volunteerStore.volunteers.map(volunteer => ({
         ...volunteer,
         fullName: `${volunteer.firstName} ${volunteer.middleName ? volunteer.middleName + ' ' : ''}${volunteer.lastName}${volunteer.suffix ? ' ' + volunteer.suffix : ''}`
       }));
     });
-    return { volunteers, columns };
-    },
-    computed: {
-      recordCount() {
-        return this.volunteers.length;
-      },
-    },
-  };
+
+    const recordCount = computed(() => volunteers.value.length);
+
+    const filteredVolunteers = computed(() => {
+      if (!filters.value.global.value) {
+        return volunteers.value;
+      }
+      return volunteers.value.filter(volunteer =>
+        Object.values(volunteer).some(value =>
+          value && value.toString().toLowerCase().includes(filters.value.global.value.toLowerCase())
+        )
+      );
+    });
+
+    return { filteredVolunteers, columns, filters, updateGlobalFilter, recordCount };
+  },
+};
 </script>
