@@ -8,7 +8,7 @@ import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
 import Term from "../models/term.js"
 import { Op } from "sequelize";
-import Volunteer from "../models/volunteer.js";
+import Volunteer from "../models/volunteer/volunteer.js";
 
 export async function getClass(req, res, next) {
     const classId = req.params.classId;
