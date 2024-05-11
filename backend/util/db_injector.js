@@ -5,13 +5,13 @@ import ClassLevel from "../models/class_level.js";
 import bcrypt from "bcryptjs";
 import Learner from "../models/learner.js";
 import Volunteer from "../models/volunteer.js";
+import VolunteerPersonalInformation from "../models/volunteer_personal_information.js";
 
 export async function injectAll() {
   await injectStaff();
   await injectLearningStrand();
   await injectLearner();
   await injectVolunteer();
-  await injectVolunteerPersonalInformation();
 }
 
 export async function injectStaff() {
@@ -464,40 +464,6 @@ export async function injectVolunteer() {
   await Promise.all(
     volunteerData.map(async (volunteer) => {
       await Volunteer.create(volunteer);
-    })
-  );
-}
-
-export async function injectVolunteerPersonalInformation() {
-  const volunteerPersonalInformationData = [
-    {
-      id: 1,
-      nickname: "John",
-      sex: "Male",
-      birthday: new Date(1980, 1, 1),
-      housing: "123 Main St",
-      barangay: "Barangay 1",
-      city: "City A",
-      province: "Province A",
-      volunteerId: 1,
-    },
-    {
-      id: 2,
-      nickname: "Jane",
-      sex: "Female",
-      birthday: new Date(1985, 1, 1),
-      housing: "456 Maple Ave",
-      barangay: "Barangay 2",
-      city: "City B",
-      province: "Province B",
-      volunteerId: 2,
-    },
-    // ... add more entries here ...
-  ];
-
-  await Promise.all(
-    volunteerPersonalInformationData.map(async (info) => {
-      await VolunteerPersonalInformation.create(info);
     })
   );
 }
