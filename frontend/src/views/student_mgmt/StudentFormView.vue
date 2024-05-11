@@ -5,7 +5,7 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import IdentityForm from '@/components/student_mgmt/profile_view/IdentityForm.vue'
 import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
 
-import FormParts from './forms_parts'
+import FormParts from './form_parts'
 
 const formData = {
   identity: {
