@@ -34,6 +34,10 @@ function onSelectedLearner() {
   const selectedLearner = enrollmentStore.learners.find(learner => learner.firstName === selectedFullName.value.firstName)
   selectedLRN.value = selectedLearner.lrn
 }
+
+function clearSelectedFullName() {
+  selectedLRN.value = "";
+}
 </script>
 
 <template>
