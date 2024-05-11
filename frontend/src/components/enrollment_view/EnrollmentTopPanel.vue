@@ -1,7 +1,8 @@
 ﻿<script setup>
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
-import { computed, ref } from 'vue'
+import AutoComplete from 'primevue/autocomplete'
+import { ref } from 'vue'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 
 const enrollmentStore = useEnrollmentStore()
@@ -62,66 +63,9 @@ const filteredMiddleNamesData = computed(() => {
           <span class="text-right">Middle Name</span>
         </div>
         <div class="flex flex-col gap-3">
-          <Dropdown v-model="selectedLRN" :options="filteredLearnersData" filter optionLabel="lrn" placeholder="Select a LRN" class="w-full md:w-14rem">
-            <template #value="slotProps">
-              <div v-if="slotProps.value" class="flex align-items-center">
-                <div>{{ slotProps.value.lrn }}</div>
-              </div>
-              <span v-else>
-                {{ slotProps.placeholder }}
-              </span>
-            </template>
-            <template #option="slotProps">
-              <div class="flex align-items-center">
-                <div>{{ slotProps.option.lrn }}</div>
-              </div>
-            </template>
-          </Dropdown>
-          <Dropdown v-model="selectedLastName" :options="filteredLearnersData" showClear filter optionLabel="lastName" placeholder="Select a Last Name" class="w-full md:w-14rem">
-            <template #value="slotProps">
-              <div v-if="slotProps.value" class="flex align-items-center">
-                <div>{{ slotProps.value.lastName }}</div>
-              </div>
-              <span v-else>
-                {{ slotProps.placeholder }}
-              </span>
-            </template>
-            <template #option="slotProps">
-              <div class="flex align-items-center">
-                <div>{{ slotProps.option.lastName }}</div>
-              </div>
-            </template>
-          </Dropdown>
-          <Dropdown v-model="selectedFirstName" :options="filteredLearnersData" showClear filter optionLabel="firstName" placeholder="Select a First Name" class="w-full md:w-14rem">
-            <template #value="slotProps">
-              <div v-if="slotProps.value" class="flex align-items-center">
-                <div>{{ slotProps.value.firstName }}</div>
-              </div>
-              <span v-else>
-                {{ slotProps.placeholder }}
-              </span>
-            </template>
-            <template #option="slotProps">
-              <div class="flex align-items-center">
-                <div>{{ slotProps.option.firstName }}</div>
-              </div>
-            </template>
-          </Dropdown>
-          <Dropdown v-model="selectedMiddleName" :options="filteredMiddleNamesData" showClear filter optionLabel="middleName" placeholder="Select a Middle Name" class="w-full md:w-14rem">
-            <template #value="slotProps">
-              <div v-if="slotProps.value" class="flex align-items-center">
-                <div>{{ slotProps.value.middleName }}</div>
-              </div>
-              <span v-else>
-                {{ slotProps.placeholder }}
-              </span>
-            </template>
-            <template #option="slotProps">
-              <div class="flex align-items-center">
-                <div>{{ slotProps.option.middleName }}</div>
-              </div>
-            </template>
-          </Dropdown>
+          <InputText v-model="selectedLRN" disabled class="w-full"/>
+          <AutoComplete v-model="selectedFullName" placeholder="Type a Learner" forceSelection dropdown optionLabel="firstName" :suggestions="filteredLearners" @complete="search" @item-select="onSelectedLearner" class="w-full h-11"/>
+          <Dropdown v-model="selectedSchoolLevel" showClear :options="schoolLevels" placeholder="Select a School Level" class="w-full md:w-14rem h-11" />
         </div>
       </div>
     </div>
