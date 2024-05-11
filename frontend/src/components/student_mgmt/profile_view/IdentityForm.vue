@@ -5,7 +5,7 @@ import Dropdown from 'primevue/dropdown'
 import BaseCard from '@/components/UI/BaseCard.vue'
 
 import { ref } from 'vue'
-import FormParts from '@/views/student_mgmt/form_parts'
+import FormParts from '@/util/student_form_parts'
 
 const emit = defineEmits(['dataChanged'])
 

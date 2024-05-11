@@ -3,7 +3,6 @@ import InputText from 'primevue/inputtext'
 import { ref } from 'vue'
 
 import FormParts from '@/views/student_mgmt/forms_parts'
-import { objectMap } from '@/util/helpers'
 
 const emit = defineEmits(['dataChanged'])
 
@@ -18,16 +17,13 @@ const parentData = ref([
   }
 ])
 
-const field = ['Last name', 'First Name', 'Middle Name', 'Suffix', 'Occupation']
+const fields = ['Last name', 'First Name', 'Middle Name', 'Suffix', 'Occupation']
 
 function handleUpdate() {
   const data = {}
 
   for (const parent of parentData.value) {
-    Object.assign(
-      data,
-      objectMap(parent.data, (field) => field)
-    )
+    Object.assign(data, parent.data)
   }
 
   emit('dataChanged', FormParts.Parental, data)
@@ -41,9 +37,9 @@ function handleUpdate() {
         <h2 class="font-bold text-center">{{ parent.header }}</h2>
 
         <div class="grid grid-cols-5 gap-3 mt-4">
-          <template v-for="n in field.length" :key="field[n]">
+          <template v-for="n in fields.length" :key="field[n]">
             <div class="flex items-center justify-end pr-6 col-span-2">
-              <span>{{ field[n] }}</span>
+              <span>{{ fields[n] }}</span>
             </div>
             <InputText
               class="h-10 col-span-3"
