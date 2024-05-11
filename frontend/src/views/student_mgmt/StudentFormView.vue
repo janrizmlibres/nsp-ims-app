@@ -4,25 +4,96 @@ import Button from 'primevue/button'
 import ContentPane from '@/components/UI/ContentPane.vue'
 import IdentityForm from '@/components/student_mgmt/profile_view/IdentityForm.vue'
 import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
+
+import FormParts from './forms_parts'
+
+const formData = {
+  identity: {
+    firstName: null,
+    middleName: null,
+    lastName: null,
+    suffixName: null,
+    lrn: null,
+    category: null,
+    photoUrl: null
+  },
+  personalInfo: {
+    birthday: null,
+    bloodType: null,
+    birthBarangay: null,
+    birthCity: null,
+    birthProvince: null,
+    religion: null,
+    sex: null,
+    civilStatus: null,
+    homeBlkLtSt: null,
+    homeBarangay: null,
+    homeCity: null,
+    homeProvince: null
+  },
+  contactInfo: {
+    email: null,
+    contactNum: null,
+    facebook: null
+  },
+  emergencyPerson: {
+    firstName: null,
+    middleName: null,
+    lastName: null,
+    suffixName: null,
+    contactNum: null,
+    relationship: null
+  },
+  parentalInfo: {
+    fatherLastName: null,
+    fatherMiddleName: null,
+    fatherFirstName: null,
+    fatherSuffixName: null,
+    fatherOccupation: null,
+    motherLastName: null,
+    motherMiddleName: null,
+    motherFirstName: null,
+    motherSuffixName: null,
+    motherOccupation: null
+  },
+  prevSchool: {
+    name: null,
+    schoolType: null,
+    schoolAffiliation: null,
+    lastSyAttended: null,
+    highestEducation: null,
+    gradeStopped: null,
+    reason: null,
+    street: null,
+    barangay: null,
+    city: null,
+    province: null
+  }
+}
+
+function updateFormData(part, data) {
+  const updateMapping = {
+    [FormParts.Identity]: () => (formData.identity = data),
+    [FormParts.Personal]: () => (formData.personalInfo = data),
+    [FormParts.Contact]: () => (formData.contactInfo = data),
+    [FormParts.Emergency]: () => (formData.emergencyPerson = data),
+    [FormParts.Parental]: () => (formData.parentalInfo = data),
+    [FormParts.PrevSchool]: () => (formData.prevSchool = data)
+  }
+
+  updateMapping[part]()
+}
 </script>
 
 <template>
   <ContentPane :header="`Students / Add Record`" subheader="Academic Year 2022 - 2023">
     <div class="flex flex-col gap-3 h-full mr-1">
-      <IdentityForm />
-      <BulkForm />
+      <IdentityForm @dataChanged="updateFormData" />
+      <BulkForm @dataChanged="updateFormData" />
 
       <div class="flex-none text-right">
         <div class="inline-block">
           <Button class="h-10 u-bg-green">
-            <!-- <ProgressSpinner
-              style="width: 50px; height: 50px"
-              strokeWidth="8"
-              class="fill-surface-0 dark:fill-surface-800"
-              animationDuration=".5s"
-              aria-label="Custom ProgressSpinner"
-            /> -->
-
             <div>
               <font-awesome-icon
                 icon="fa-solid fa-circle-check"

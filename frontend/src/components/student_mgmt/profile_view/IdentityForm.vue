@@ -5,11 +5,14 @@ import Dropdown from 'primevue/dropdown'
 import BaseCard from '@/components/UI/BaseCard.vue'
 
 import { ref } from 'vue'
+import FormParts from '@/views/student_mgmt/forms_parts'
+
+const emit = defineEmits(['dataChanged'])
 
 const name = {
+  lastName: '',
   firstName: '',
-  middleName: '',
-  lastName: ''
+  middleName: ''
 }
 
 const lrn = ref()
@@ -30,6 +33,18 @@ const categories = ref([
 
 function setAvatarHover() {
   isAvatarHovered.value = !isAvatarHovered.value
+}
+
+function handleUpdate() {
+  const data = {
+    ...name,
+    suffixName: selectedSuffix,
+    lrn,
+    category: selectedCat,
+    photoUrl: null
+  }
+
+  emit('dataChanged', FormParts.Identity, data)
 }
 </script>
 
@@ -79,18 +94,21 @@ function setAvatarHover() {
           type="text"
           v-model="name.lastName"
           placeholder="Last Name"
+          @update:modelValue="handleUpdate"
         />
         <InputText
           class="h-9 col-span-2"
           type="text"
           v-model="name.firstName"
           placeholder="First Name"
+          @update:modelValue="handleUpdate"
         />
         <InputText
           class="h-9 col-span-2"
           type="text"
           v-model="name.middleName"
           placeholder="Middle Name"
+          @update:modelValue="handleUpdate"
         />
         <Dropdown
           class="h-9"
@@ -98,14 +116,22 @@ function setAvatarHover() {
           showClear
           :options="suffixes"
           placeholder="Suffix"
+          @update:modelValue="handleUpdate"
         />
 
-        <InputText class="h-9 col-span-2" type="text" v-model="lrn" placeholder="LRN" />
+        <InputText
+          class="h-9 col-span-2"
+          type="text"
+          v-model="lrn"
+          placeholder="LRN"
+          @update:modelValue="handleUpdate"
+        />
         <Dropdown
           class="h-9 col-span-2 content-center"
           v-model="selectedCat"
           :options="categories"
           placeholder="Category"
+          @change="handleUpdate"
         />
       </div>
     </div>
