@@ -23,6 +23,7 @@ const Student = sequelize.define("student", {
     type: STRING,
     allowNull: false,
   },
+  photoUrl: STRING,
 });
 
 export default Student;

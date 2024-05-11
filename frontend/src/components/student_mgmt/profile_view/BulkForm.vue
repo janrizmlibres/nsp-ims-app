@@ -8,7 +8,6 @@ import PersonalInfoForm from './bulk_form/PersonalInfoForm.vue'
 import ContactInfoForm from './bulk_form/ContactInfoForm.vue'
 import ParentalInfoForm from './bulk_form/ParentalInfoForm.vue'
 import PrevSchoolForm from './bulk_form/PrevSchoolForm.vue'
-import OthersForm from './bulk_form/OthersForm.vue'
 </script>
 
 <template>
@@ -28,10 +27,6 @@ import OthersForm from './bulk_form/OthersForm.vue'
 
       <TabPanel header="Previous School">
         <PrevSchoolForm />
-      </TabPanel>
-
-      <TabPanel header="Others">
-        <OthersForm />
       </TabPanel>
     </TabView>
   </BaseCard>
