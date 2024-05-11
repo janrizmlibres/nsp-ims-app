@@ -17,5 +17,18 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     console.log(learners.value)
   }
   
+  async function enrollLearner(learnerID, classLevelID, modularity, remarks) {
+    const authStore = useAuthStore()
+
+    await axios.post('http://localhost:8080/enrollment/enroll-learner', {
+      learnerID,
+      classLevelID,
+      modularity,
+      remarks
+    }, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
+  
   return {learners, getAllEnrolledFromTerm}
 })
