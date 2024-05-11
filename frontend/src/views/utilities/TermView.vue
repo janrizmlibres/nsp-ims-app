@@ -84,7 +84,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
         v-model:value="terms"
         dataKey="id"
         sortField="id"
-        :sortOrder="1"
+        :sortOrder="-1"
         removableSort
         resizableColumns
         columnResizeMode="fit"
@@ -170,7 +170,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
           <div class="text-center">Loading academic terms records. Please wait.</div>
         </template>
 
-        <Column field="id" header="Batch No." />
+        <Column field="id" header="Batch No." sortable/>
         <Column field="academic_year" header="Academic Year" />
         <Column field="start_date" header="Start Date">
           <template #body="slotProps">
