@@ -5,6 +5,7 @@ import { useTermStore } from '@/stores/term.js'
 import { useToast } from 'primevue/usetoast'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import EnrollmentTopPanel from '@/components/enrollment_view/EnrollmentTopPanel.vue'
+import EnrollmentBottomPanel from '@/components/enrollment_view/EnrollmentBottomPanel.vue'
 
 const termStore = useTermStore()
 const enrollmentStore = useEnrollmentStore()
@@ -35,8 +36,10 @@ getActiveStudents()
 <template>
   <ContentPane header="Enrollment" :subheader="'Academic Year ' + currentTerm.academic_year">
     <div class="h-full flex justify-center bg-white rounded-md shadow-xl p-2 px-4">
-      <div class="flex flex-col">
+      <div class="flex flex-col w-full">
         <EnrollmentTopPanel class="h-fit mt-10"/>
+        <hr class="mt-10">
+        <EnrollmentBottomPanel class="h-fit mt-2"/>
       </div>
     </div>
   </ContentPane>
