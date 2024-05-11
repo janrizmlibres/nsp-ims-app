@@ -23,7 +23,7 @@ axios.interceptors.response.use(
   },
   (error) => {
     // If the request had an error, check if it's the one we're looking for
-    if (error.response && error.response.data.message === 'jwt expired') {
+    if (error.response && (error.response.data.message === 'jwt expired' || error.response.data.message === 'Not authenticated.')) {
       confirm.require({
         group: 'authenticationError',
         message: ' Do you want to extend your session? ',
