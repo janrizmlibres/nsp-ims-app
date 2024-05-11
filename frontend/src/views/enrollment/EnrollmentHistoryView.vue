@@ -8,6 +8,7 @@ import { useEnrollmentStore } from '@/stores/enrollment.js'
 
 const selectedTerm = ref(null)
 const termsOptions = ref([])
+const currentTerm = ref("")
 
 const termStore = useTermStore()
 const enrollmentStore = useEnrollmentStore()
@@ -16,6 +17,7 @@ async function getAllTerms()  {
   try {
     await termStore.getTerms()
     termsOptions.value = termStore.terms
+    selectedTerm.value = termsOptions.value[termsOptions.value.length - 1]
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -39,7 +41,24 @@ async function getAllStudentsFromTerm() {
   }
 }
 
+async function getCurrentEnrolled()  {
+  try {
+    await termStore.getActiveTerm()
+    currentTerm.value = termStore.activeTerm
+
+    await enrollmentStore.getAllEnrolledFromTerm(currentTerm.value.id)
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
+
 getAllTerms()
+getCurrentEnrolled()
 </script>
 
 <template>
