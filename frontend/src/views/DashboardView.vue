@@ -9,7 +9,7 @@
         class="student-widget-" 
         :seriesData="[50, 50]" 
         widgetTitle="LEARNERS" 
-        totalText="100" />
+        :totalText="totalStudents.toString()" />
         <StudentWidget 
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
@@ -47,7 +47,8 @@ import StudentWidget from "@/components/dashboard/StudentWidget.vue";
 import BarChart from "@/components/dashboard/BarChart.vue"; // import the StudentDashboardPanels component
 import LineChart from "@/components/dashboard/LineChart.vue";
 
-import { useSidebarStore } from '@/stores/sidebar.js'
+import { useSidebarStore } from '@/stores/sidebar.js';
+import { useStudentsStore } from '@/stores/students'
 
 export default {
   name: "DashboardView",
@@ -68,6 +69,34 @@ export default {
       return sidebarStore.isPinned
     },
   },
+
+  data() {
+    return {
+      totalStudents: 0
+    }
+  },
+  async created() {
+  const studentsStore = useStudentsStore()
+  await studentsStore.getStudents()
+  console.log('studentsStore:', studentsStore) // log the entire store
+  console.log('studentsStore.students:', studentsStore.students) // log the students property
+  if (studentsStore.students) {
+    this.totalStudents = studentsStore.students.length
+
+    // Count males and females
+    let maleCount = 0
+    let femaleCount = 0
+    for (let student of studentsStore.students) {
+      if (student.sex === 'male') {
+        maleCount++
+      } else if (student.sex === 'female') {
+        femaleCount++
+      }
+    }
+    console.log('Male students:', maleCount)
+    console.log('Female students:', femaleCount)
+  }
+}
 };
 </script>
 

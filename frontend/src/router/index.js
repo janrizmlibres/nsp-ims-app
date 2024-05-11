@@ -24,9 +24,6 @@ import AuditView from '@/views/staff_mgmt/AuditView.vue'
 import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
 import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
 
-import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
-import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
-
 import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue'
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
 
