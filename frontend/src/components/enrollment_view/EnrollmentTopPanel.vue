@@ -7,49 +7,34 @@ import { useEnrollmentStore } from '@/stores/enrollment.js'
 
 const enrollmentStore = useEnrollmentStore()
 
-const learnersData = computed(() =>
-  enrollmentStore.learners.filter(learner => learner.lrn !== null)
-)
+const filteredLearners = ref([])
 
 const schoolLevels = ref(['Grade School', 'Junior High School'])
 const regularity = ref(['Regular', 'Hybrid'])
 
 const selectedLRN = ref();
-const selectedLastName = ref();
-const selectedFirstName = ref();
-const selectedMiddleName = ref();
+const selectedFullName = ref();
 const selectedSchoolLevel = ref();
 const selectedRegularity = ref();
 const selectedRemarks = ref();
 
-// Computed property to filter learners based on the selected LRN, Last Name, First Name, and Middle Name
-const filteredLearnersData = computed(() => {
-  let filteredLearners = learnersData.value;
+const search = (event) => {
+  setTimeout(() => {
+    if (!event.query.trim().length && event.query === "Type a Learner") {
+      filteredLearners.value = enrollmentStore.learners.filter(learner => learner.lrn !== null)
+    } else {
+      console.log("Here!")
+      filteredLearners.value = enrollmentStore.learners.filter((learner) => {
+        return learner.lrn !== null && learner.firstName.toLowerCase().startsWith(event.query.toLowerCase());
+      });
+    }
+  }, 250);
+}
 
-  if (selectedLRN.value) {
-    filteredLearners = filteredLearners.filter(learner => learner.lrn === selectedLRN.value.lrn);
-  }
-
-  if (selectedLastName.value) {
-    filteredLearners = filteredLearners.filter(learner => learner.lastName === selectedLastName.value.lastName);
-  }
-
-  if (selectedFirstName.value) {
-    filteredLearners = filteredLearners.filter(learner => learner.firstName === selectedFirstName.value.firstName);
-  }
-
-  if (selectedMiddleName.value) {
-    filteredLearners = filteredLearners.filter(learner => learner.middleName === selectedMiddleName.value.middleName);
-  }
-
-  return filteredLearners;
-});
-
-// Computed property to filter middle names based on the filtered learners
-const filteredMiddleNamesData = computed(() => {
-  const filteredLearners = filteredLearnersData.value;
-  return filteredLearners.filter(learner => learner.middleName !== null);
-});
+function onSelectedLearner() {
+  const selectedLearner = enrollmentStore.learners.find(learner => learner.firstName === selectedFullName.value.firstName)
+  selectedLRN.value = selectedLearner.lrn
+}
 </script>
 
 <template>
