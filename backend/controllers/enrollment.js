@@ -3,7 +3,7 @@ import Enrollment from '../models/enrollment.js'
 import ClassLevel from "../models/class_level.js";
 import Learner from "../models/learner.js";
 
-export const getAllCurrentEnrolled = async (req, res, next) => {
+export const getAllEnrolledOnTerm = async (req, res, next) => {
   const termID = req.params.termID
   
   try {
