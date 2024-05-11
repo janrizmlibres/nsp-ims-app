@@ -4,10 +4,11 @@ import DataTable from 'primevue/datatable';
 import ColumnGroup from 'primevue/columngroup';
 import Column from 'primevue/column';
 import Row from 'primevue/row';
-import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
+import MultiSelect from 'primevue/multiselect';
 import { onMounted, ref, watch } from 'vue';
+import { format } from 'date-fns';
 
 // Custom
 import { useVolunteerStore } from '@/stores/volunteer';
@@ -18,9 +19,9 @@ import { useToast } from 'primevue/usetoast';
 const volunteerStore = useVolunteerStore()
 const strandStore = useStrandStore()
 
-const toast = useToast()
 const props = defineProps(['modelValue', 'term'])
 const emit = defineEmits(['updateSchedule'])
+const toast = useToast()
 
 const classData = ref([])
 const volunteers = ref([])
@@ -34,6 +35,8 @@ onMounted(async () => {
 
 watch(() => props.modelValue, (data) => classData.value = data, {immediate: true})
 watch(() => props.term, (data) => termStatus.value = data.status, {immediate: false})
+
+const days = ref(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]);
 
 const customPt = {
     root: {
@@ -75,30 +78,18 @@ const editingRows = ref([]);
 
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
-    let days = ["M", "T", "W", "TH", "F", "S"]
 
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
-        if (!newData.school_days.split(',').every(val => days.includes(val))) {
-            toast.add({
-                severity: 'error',
-                summary: 'Incorrect Days',
-                detail: "Please input correct information.",
-                life: 3000
-            })
-
-            return
-        }
-        
-        if (newData.start_time instanceof Date) newData.start_time = to24hr(newData.start_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
+        if (newData.start_time instanceof Date) newData.start_time = format(newData.start_time, "HH:mm")
         else newData.start_time = to24hr(newData.start_time)
 
-        if (newData.end_time instanceof Date) newData.end_time = to24hr(newData.end_time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}))
+        if (newData.end_time instanceof Date) newData.end_time = format(newData.end_time, "HH:mm")
         else newData.end_time = to24hr(newData.end_time)
-
+        
         try {
             await strandStore.updateSchedule(data.scheduleId, {
-                volunteerId: newData.teacher.id,
-                days: newData.school_days,
+                volunteerId: newData.volunteer.id,
+                days: newData.school_days.length === 0 ? data.school_days.toString() : newData.school_days.toString(),
                 start_time: newData.start_time,
                 end_time: newData.end_time
             })
@@ -140,50 +131,58 @@ function to24hr(time12h) {
 </script>
 
 <template>
-    <DataTable 
-        :value="classData" dataKey="scheduleId"
-        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-        :ptOptions="{mergeProps:true}"
-        :pt="customPt"
-    >
-        <template #empty> <div class="text-center">Nothing added.</div> </template>
+    <div class="bg-white rounded-md shadow-xl flex flex-col p-7 pt-4 flex-1">
+        <DataTable 
+            :value="classData" dataKey="scheduleId"
+            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+            :ptOptions="{mergeProps:true}"
+            :pt="customPt"
+        >
+            <template #empty> <div class="text-center">Nothing added.</div> </template>
 
-        <ColumnGroup type="header">
-            <Row>
-                <Column header="Learning Strand" :rowspan="2" />
-                <Column header="Teacher" :rowspan="2" />
-                <Column header="Schedule" :colspan="4" />
-            </Row>
-            <Row>
-                <Column header="Days" field="school_days"/>
-                <Column header="Start Time" field="start_time"/>
-                <Column header="End Time" field="end_time"/>
-                <Column header="" />
-            </Row>
-        </ColumnGroup>
-        <Column field="name" />
-        <Column field="teacher">
-            <template #editor="{ data, field }">
-                <Dropdown v-model="data[field]" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" class="w-full md:w-[14rem]" />
-            </template>
-        </Column>
-        <Column field="school_days">
-            <template #editor="{ data, field }">
-                <InputText v-model="data[field]" placeholder="e.g. M, TH, F" />
-            </template>
-        </Column>
-        <Column field="start_time">
-            <template #editor="{ data, field }">
-                <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-            </template>
-        </Column>
-        <Column field="end_time">
-            <template #editor="{ data, field }">
-                <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-            </template>
-        </Column>
-        <Column :rowEditor="termStatus" bodyStyle="text-align:center"></Column>
-    </DataTable>
+            <ColumnGroup type="header">
+                <Row>
+                    <Column header="Learning Strand" :rowspan="2" />
+                    <Column header="Teacher" :rowspan="2" />
+                    <Column header="Schedule" :colspan="4" />
+                </Row>
+                <Row>
+                    <Column header="Days" field="school_days"/>
+                    <Column header="Start Time" field="start_time"/>
+                    <Column header="End Time" field="end_time"/>
+                    <Column header="" />
+                </Row>
+            </ColumnGroup>
+            <Column field="name" />
+            <Column field="volunteer">
+                <template #body="slotProps">
+                    {{ slotProps.data.volunteer.fullname }}
+                </template>
+                <template #editor="{ data, field }">
+                    <Dropdown v-model="data[field]" :options="volunteers" optionLabel="fullname" placeholder="data[field].fullname" class="w-full md:w-[14rem]" />
+                </template>
+            </Column>
+            <Column field="school_days">
+                <template #body="slotProps">
+                    {{ slotProps.data.school_days.toString() }}
+                </template>
+                <template #editor="{ data, field }">
+                    <MultiSelect v-model="data[field]" :options="days" placeholder="Select Days" :maxSelectedLabels="2" class="w-full xl:w-[14rem]" />
+                </template>
+            </Column>
+            <Column field="start_time">
+                <template #editor="{ data, field }">
+                    <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+                </template>
+            </Column>
+            <Column field="end_time">
+                <template #editor="{ data, field }">
+                    <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+                </template>
+            </Column>
+            <Column :rowEditor="termStatus" bodyStyle="text-align:center"></Column>
+        </DataTable>
+    </div>
 </template>
 
 <style>
