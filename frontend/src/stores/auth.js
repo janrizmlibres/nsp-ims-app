@@ -7,7 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   const refreshToken = ref(sessionStorage.getItem('refreshToken') || null)
   const staff = ref(JSON.parse(sessionStorage.getItem('staff')) || null)
   const isAuthenticated = computed(() => token.value !== null)
-  
+
   async function login(userId, password) {
     const result = await axios.post('http://localhost:8080/auth/login', { userId, password })
 
@@ -36,7 +36,9 @@ export const useAuthStore = defineStore('auth', () => {
    */
   async function extendSession() {
     try {
-      const result = await axios.post('http://localhost:8080/auth/refresh-token', { refreshToken: refreshToken.value })
+      const result = await axios.post('http://localhost:8080/auth/refresh-token', {
+        refreshToken: refreshToken.value
+      })
 
       const newTokenData = result.data.token
       const newRefreshTokenData = result.data.refreshToken
@@ -48,25 +50,28 @@ export const useAuthStore = defineStore('auth', () => {
       refreshToken.value = newRefreshTokenData
     } catch (error) {
       console.error('Failed to refresh token', error)
-      logout()
+      await logout()
     }
   }
 
-  function logout() {
+  async function logout() {
     try {
-      const result = axios.post('http://localhost:8080/auth/logout', { token: token.value, refreshToken: refreshToken.value })
-    
+      await axios.post('http://localhost:8080/auth/logout', {
+        token: token.value,
+        refreshToken: refreshToken.value
+      })
     } catch (error) {
       console.error('Failed to logout', error)
     }
-    
+
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('refreshToken')
     sessionStorage.removeItem('staff')
+
     token.value = null
     refreshToken.value = null
     staff.value = null
   }
-  
+
   return { token, refreshToken, staff, isAuthenticated, login, logout, extendSession }
 })

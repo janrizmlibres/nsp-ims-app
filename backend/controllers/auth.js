@@ -1,10 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { validationResult } from "express-validator";
 import prand from "pure-rand";
+import { validationResult } from "express-validator";
 
-import Staff from "../models/staff.js";
-import Permission from "../models/permission.js";
+import Staff from "../models/staff/staff.js";
+import Permission from "../models/staff/permission.js";
 
 // This could be a database or in-memory data structure
 // This is a simple in-memory implementation
@@ -174,17 +174,19 @@ export async function logout(req, res, next) {
     error.statusCode = 401;
     throw error;
   }
-  
+
   if (!token) {
     const error = new Error("No token provided.");
     error.statusCode = 401;
     throw error;
   }
   
-  if (jwt.verify(token, "HEHESECRET")) {
+  try {
+    jwt.verify(token, "HEHESECRET")
+  } catch (error) {
     invalidatedTokens.push(token);
   }
-  
+
   invalidatedTokens.push(refreshToken);
 
   return res.status(200).json({ message: "Logout successful" });

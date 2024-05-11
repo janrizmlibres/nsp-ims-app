@@ -1,0 +1,62 @@
+import { DATE, ENUM, INTEGER, STRING } from "sequelize";
+import sequelize from "../../util/database.js";
+
+const PersonalInfo = sequelize.define("personal_info", {
+  id: {
+    type: INTEGER,
+    allowNull: false,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  birthday: {
+    type: DATE,
+    allowNull: false,
+  },
+  bloodType: {
+    type: ENUM,
+    values: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+  },
+  birthBarangay: {
+    type: STRING,
+    allowNull: false,
+  },
+  birthCity: {
+    type: STRING,
+    allowNull: false,
+  },
+  birthProvince: {
+    type: STRING,
+    allowNull: false,
+  },
+  religion: {
+    type: STRING,
+    allowNull: false,
+  },
+  sex: {
+    type: ENUM("M", "F"),
+    allowNull: false,
+  },
+  civilStatus: {
+    type: ENUM,
+    values: ["Married", "Widowed", "Separated", "Divorced", "Single"],
+    allowNull: false,
+  },
+  houseBlkLtSt: {
+    type: STRING,
+    allowNull: false,
+  },
+  homeBarangay: {
+    type: STRING,
+    allowNull: false,
+  },
+  homeCity: {
+    type: STRING,
+    allowNull: false,
+  },
+  homeProvince: {
+    type: STRING,
+    allowNull: false,
+  },
+});
+
+export default PersonalInfo;
