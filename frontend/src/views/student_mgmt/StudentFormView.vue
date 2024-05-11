@@ -45,16 +45,16 @@ const formData = {
     relationship: null
   },
   parentalInfo: {
-    fatherLastName: null,
-    fatherMiddleName: null,
-    fatherFirstName: null,
-    fatherSuffixName: null,
-    fatherOccupation: null,
-    motherLastName: null,
-    motherMiddleName: null,
-    motherFirstName: null,
-    motherSuffixName: null,
-    motherOccupation: null
+    LastNameF: null,
+    MiddleNameF: null,
+    FirstNameF: null,
+    SuffixNameF: null,
+    OccupationF: null,
+    LastNameM: null,
+    MiddleNameM: null,
+    FirstNameM: null,
+    SuffixNameM: null,
+    OccupationM: null
   },
   prevSchool: {
     name: null,

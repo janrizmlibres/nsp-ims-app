@@ -14,16 +14,16 @@ const field = ['Last name', 'First Name', 'Middle Name', 'Suffix', 'Occupation']
 
 function handleUpdate() {
   const data = {
-    fatherLastName: parentData.value[0].data[0],
-    fatherMiddleName: parentData.value[0].data[1],
-    fatherFirstName: parentData.value[0].data[2],
-    fatherSuffixName: parentData.value[0].data[3],
-    fatherOccupation: parentData.value[0].data[4],
-    motherLastName: parentData.value[1].data[0],
-    motherMiddleName: parentData.value[1].data[1],
-    motherFirstName: parentData.value[1].data[2],
-    motherSuffixName: parentData.value[1].data[3],
-    motherOccupation: parentData.value[1].data[4]
+    LastNameF: parentData.value[0].data[0],
+    MiddleNameF: parentData.value[0].data[1],
+    FirstNameF: parentData.value[0].data[2],
+    SuffixNameF: parentData.value[0].data[3],
+    OccupationF: parentData.value[0].data[4],
+    LastNameM: parentData.value[1].data[0],
+    MiddleNameM: parentData.value[1].data[1],
+    FirstNameM: parentData.value[1].data[2],
+    SuffixNameM: parentData.value[1].data[3],
+    OccupationM: parentData.value[1].data[4]
   }
 
   emit('dataChanged', FormParts.Parental, data)
