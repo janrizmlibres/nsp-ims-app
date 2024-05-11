@@ -9,7 +9,7 @@ import ClassesView from '../views/class_mgmt/ClassesView.vue'
 import ClassView from '../views/class_mgmt/ClassView.vue'
 import StrandView from '../views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
-import AddStrandView from '@/views/class_mgmt/AddStrandView.vue'
+import ManageScheduleView from '@/views/class_mgmt/ManageScheduleView.vue'
 
 // Utilities Views
 import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
@@ -21,9 +21,6 @@ import RecordsView from '@/views/staff_mgmt/RecordsView.vue'
 import PermissionsView from '@/views/staff_mgmt/PermissionsView.vue'
 import StaffFormView from '@/views/staff_mgmt/StaffFormView.vue'
 import AuditView from '@/views/staff_mgmt/AuditView.vue'
-
-import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
-import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
 
 import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
 import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
@@ -91,7 +88,7 @@ const router = createRouter({
             {
               path: '/schedule',
               name: 'schedule',
-              component: AddStrandView
+              component: ManageScheduleView
             },
             {
               path: '/strand',
