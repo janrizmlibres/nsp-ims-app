@@ -96,6 +96,7 @@ export async function addLearningStrand(req, res, next) {
   try {
     const strand = await LearningStrand.findOne({
       where: {
+        code: req.body.code,
         name: req.body.name
       }
     })
@@ -105,7 +106,7 @@ export async function addLearningStrand(req, res, next) {
       error.statusCode = 422;
       throw error;
     }
-    
+
     await LearningStrand.create(req.body)
 
     res.status(201).json({ 
@@ -121,17 +122,17 @@ export async function addLearningStrand(req, res, next) {
 
 export async function getLearningStrands(req, res, next) {
   try {
-      const strands = await LearningStrand.findAll()
+    const strands = await LearningStrand.findAll()
 
-      res.status(201).json({ 
-        message: "Learning Strands Fetched Successfully!", 
-        data: strands
-      });
+    res.status(201).json({ 
+      message: "Learning Strands Fetched Successfully!",
+      data: strands
+    });
   } catch (error) {
-      if (!error.statusCode) {
-        error.statusCode = 500;
-      }
-      next(error);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 }
 
