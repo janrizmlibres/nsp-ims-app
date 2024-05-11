@@ -47,7 +47,7 @@ axios.interceptors.response.use(
             detail: 'Session Expired. Please login again.',
             life: 3000
           })
-          router.replace({ name: 'login' })
+          router.push({ name: 'login' })
         }
       })
     }
