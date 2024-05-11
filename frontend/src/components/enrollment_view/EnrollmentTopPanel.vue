@@ -23,7 +23,6 @@ const search = (event) => {
     if (!event.query.trim().length && event.query === "Type a Learner") {
       filteredLearners.value = enrollmentStore.learners.filter(learner => learner.lrn !== null)
     } else {
-      console.log("Here!")
       filteredLearners.value = enrollmentStore.learners.filter((learner) => {
         return learner.lrn !== null && learner.firstName.toLowerCase().startsWith(event.query.toLowerCase());
       });
