@@ -1,6 +1,5 @@
 import Attendance from "../models/attendance.js";
 import ClassLearningStrand from "../models/class_learning_strand.js";
-import ClassLevel from "../models/class_level.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Enrollment from "../models/enrollment.js";
 import Grade from "../models/grade.js";
@@ -8,7 +7,7 @@ import Learner from "../models/learner.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
 import Session from "../models/session.js";
-import Volunteer from "../models/volunteer.js";
+import Volunteer from "../models/volunteer/volunteer.js";
 
 export async function getStrand(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
