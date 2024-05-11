@@ -53,8 +53,24 @@ function clearSelectedFullName() {
         
         <div class="flex flex-col gap-3">
           <InputText v-model="selectedLRN" disabled class="w-full"/>
-          <AutoComplete v-model="selectedFullName" placeholder="Type a Learner" forceSelection dropdown optionLabel="firstName" :suggestions="filteredLearners" @complete="search" @item-select="onSelectedLearner" class="w-full h-11"/>
-          <Dropdown v-model="selectedSchoolLevel" showClear :options="schoolLevels" placeholder="Select a School Level" class="w-full md:w-14rem h-11" />
+          <AutoComplete 
+            v-model="selectedFullName" 
+            placeholder="Type a Learner" 
+            forceSelection 
+            dropdown 
+            optionLabel="firstName" 
+            :suggestions="filteredLearners" 
+            @complete="search" @item-select="onSelectedLearner" 
+            class="w-full h-11" 
+            @clear="clearSelectedFullName"
+          />
+          <Dropdown 
+            v-model="selectedSchoolLevel"
+            showClear 
+            :options="schoolLevels" 
+            placeholder="Select a School Level" 
+            class="w-full md:w-14rem h-11" 
+          />
         </div>
       </div>
     </div>
@@ -67,7 +83,10 @@ function clearSelectedFullName() {
         </div>
         
         <div class="flex flex-col gap-3">
-          <Dropdown v-model="selectedRegularity" :options="regularity" placeholder="Select a Regularity" class="w-full md:w-14rem" />
+          <Dropdown v-model="selectedRegularity" 
+                    :options="regularity" 
+                    placeholder="Select a Regularity" 
+                    class="w-full md:w-14rem" />
           <InputText v-model="selectedRemarks" class="h-11"/>
         </div>
       </div>
