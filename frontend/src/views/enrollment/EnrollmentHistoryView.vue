@@ -14,7 +14,8 @@ const enrollmentStore = useEnrollmentStore()
 
 async function getAllTerms()  {
   try {
-    termsOptions.value = await termStore.getAllTerms()
+    await termStore.getTerms()
+    termsOptions.value = termStore.terms
   } catch (error) {
     toast.add({
       severity: 'error',
