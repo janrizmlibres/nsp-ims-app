@@ -10,22 +10,27 @@ import { useUtilitiesStore } from '@/stores/utilities';
 const toast = useToast()
 const strandStore = useUtilitiesStore()
 
+const code = ref(null);
 const name = ref(null);
 
 async function addLearningStrand() {
-    if (!name.value) {
+    if (!code.value || !name.value) {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
             detail: "Please fill all necessary information",
             life: 3000
         })
+
         return
     }
+
     try {
         await strandStore.addLearningStrand({
+            code: code.value,
             name: name.value
         })
+
         toast.add({
             severity: 'success',
             summary: 'Success',
@@ -40,7 +45,9 @@ async function addLearningStrand() {
             life: 3000
         })
     }
+
     await strandStore.getLearningStrands()
+    code.value = null;
     name.value = null;
     strandStore.showHideAddStrandDialog()
 }
@@ -50,7 +57,11 @@ async function addLearningStrand() {
     <Dialog v-model:visible="strandStore.visibleAddStrandDialog" modal header="Create a Learning Strand" :style="{ width: '25rem' }">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
-            <label>Learning Strand Descriptive Name</label>
+            <label>Learning Strand Code</label>
+            <InputText id="title" v-model="code" aria-describedby="title-help" />
+        </div>
+        <div class="flex flex-col mb-4">
+            <label>Learning Strand Name</label>
             <InputText id="title" v-model="name" aria-describedby="title-help" />
         </div>
         <div class="flex justify-end gap-2">
