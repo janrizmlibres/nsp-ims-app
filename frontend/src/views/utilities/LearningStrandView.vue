@@ -1,5 +1,6 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue';
+import AddStrandDialog from '@/components/utilities_view/AddStrandDialog.vue';
 
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -21,7 +22,6 @@ const onRowEditSave = async (event) => {
     console.log(newData);
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
         try {
-            
             toast.add({
                 severity: 'success',
                 summary: 'Success',
@@ -38,6 +38,7 @@ const onRowEditSave = async (event) => {
         }
     }
 };
+
 onMounted(async () => {
     try {
         await strandStore.getLearningStrands()
@@ -51,9 +52,11 @@ onMounted(async () => {
         })
     } 
 })
+
 async function fetchLearningStrands(data) {
     strands.value = data
 }
+
 watch(() => strandStore.strands, fetchLearningStrands, { immediate: false})
 </script>
 
@@ -62,7 +65,7 @@ watch(() => strandStore.strands, fetchLearningStrands, { immediate: false})
     <div class="bg-white shadow-xl rounded-md p-5">
         <DataTable  
             v-model:value="strands" dataKey="id" 
-            sortField="Learning Strand" :sortOrder="1" removableSort 
+            sortField="id" :sortOrder="1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines scrollable 
             v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
             :ptOptions="{mergeProps:true}"
@@ -118,6 +121,11 @@ watch(() => strandStore.strands, fetchLearningStrands, { immediate: false})
         <template #empty> <div class="text-center">No learning strand records found.</div> </template>
         <template #loading> <div class="text-center">Loading learning strand records. Please wait.</div> </template>
 
+        <Column field="code" header="Learning Strand Code" sortable>
+            <template #editor="{ data, field }">
+                <InputText v-model="data[field]" autofocus />
+            </template>
+        </Column>
         <Column field="name" header="Learning Strand Name" sortable>
             <template #editor="{ data, field }">
                 <InputText v-model="data[field]" autofocus />
@@ -130,7 +138,8 @@ watch(() => strandStore.strands, fetchLearningStrands, { immediate: false})
             </template>
         </Column>
         <template #footer> 
-            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Learning Strand" text raised rounded/>
+            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Learning Strand" text raised rounded @click="strandStore.showHideAddStrandDialog"/>
+            <AddStrandDialog/>
         </template>
         </DataTable>
     </div>
