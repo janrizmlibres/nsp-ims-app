@@ -24,6 +24,20 @@ const Student = sequelize.define("student", {
     allowNull: false,
   },
   photoUrl: STRING,
+  fullname: {
+    type: VIRTUAL,
+    get() {
+      return (
+        this.firstName +
+        (this.middleName === null ? " " : ` ${this.middleName} `) +
+        this.lastName +
+        (this.suffixName === null ? "" : ` ${this.suffixName}`)
+      );
+    },
+    set(_value) {
+      throw new Error("Do not try to set the `fullname` value!");
+    },
+  },
 });
 
 export default Student;
