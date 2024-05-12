@@ -3,7 +3,7 @@ import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 
-import { computed, ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { getYear } from 'date-fns'
 
 import { objectMap } from '@/util/helpers'
@@ -29,7 +29,7 @@ const selectedLevel = ref(null)
 
 const selectedYearL = ref(null)
 const selectedYearR = ref(null)
-const lastYrAttended = computed(() => `${selectedYearL.value} - ${selectedYearR.value}`)
+const lastYrAttended = ref(null)
 
 const years = ref([])
 
@@ -46,19 +46,30 @@ const educAttainment = [
 
 const levels = ref(['Kindergarten'])
 
-watch(selectedYearL, (value) => {
-  selectedYearR.value = (Number(value) + 1).toString
-})
+let isYearSet = false
 
-watch(selectedYearR, (value) => {
-  selectedYearL.value = (Number(value) - 1).toString
+watch([selectedYearL, selectedYearR], ([newYearL, newYearR], [oldYearL, oldYearR]) => {
+  if (isYearSet) {
+    isYearSet = false
+    return
+  }
+
+  if (newYearL !== oldYearL) {
+    selectedYearR.value = (Number(newYearL) + 1).toString()
+  } else if (newYearR !== oldYearR) {
+    selectedYearL.value = (Number(newYearR) - 1).toString()
+  }
+
+  lastYrAttended.value = `${selectedYearL.value} - ${selectedYearR.value}`
+  isYearSet = true
+  handleUpdate()
 })
 
 function handleUpdate() {
   const data = {
     name: schoolName.value,
     schoolType: selectedType.value,
-    schoolAffiliation: null,
+    schoolAffiliation: selectedAffiliation.value,
     lastSyAttended: lastYrAttended.value,
     highestEducation: selectedEduc.value,
     gradeStopped: selectedLevel.value,
@@ -85,68 +96,66 @@ onMounted(() => {
 <template>
   <div class="grid grid-cols-2">
     <div class="px-8">
-      <div class="grid grid-cols-2 gap-3">
-        <div class="flex items-center justify-end pr-6">
+      <div class="grid grid-cols-5 gap-3">
+        <div class="flex items-center justify-end pr-6 col-span-2">
           <span>School Name</span>
         </div>
         <InputText
-          class="h-10"
+          class="h-10 col-span-3"
           type="text"
           v-model="schoolName"
           @update:model-value="handleUpdate"
         />
 
-        <div class="flex items-center justify-end pr-6">
+        <div class="flex items-center justify-end pr-6 col-span-2">
           <span>Type</span>
         </div>
-        <Dropdown class="h-10" v-model="selectedType" :options="types" @change="handleUpdate" />
+        <Dropdown
+          class="h-10 col-span-3"
+          v-model="selectedType"
+          :options="types"
+          @change="handleUpdate"
+        />
 
-        <div class="flex items-center justify-end pr-6">
+        <div class="flex items-center justify-end pr-6 col-span-2">
           <span>Affiliation</span>
         </div>
         <Dropdown
-          class="h-10"
+          class="h-10 col-span-3"
           v-model="selectedAffiliation"
           :options="affiliations"
           @change="handleUpdate"
         />
 
-        <div class="flex items-center justify-end pr-6">
+        <div class="flex items-center justify-end text-right pr-6 col-span-2">
           <span>Last School Year Attended</span>
         </div>
 
-        <div class="grid grid-cols-5 gap-3">
-          <Dropdown
-            class="h-10 col-span-2"
-            v-model="selectedYearL"
-            :options="years"
-            filter
-            @change="handleUpdate"
-          />
+        <div class="grid grid-cols-5 gap-3 col-span-3">
+          <Dropdown class="h-10 col-span-2" v-model="selectedYearL" :options="years" filter />
           <span class="flex items-center justify-center">-</span>
-          <Dropdown
-            class="h-10 col-span-2"
-            v-model="selectedYearR"
-            :options="years"
-            filter
-            @change="handleUpdate"
-          />
+          <Dropdown class="h-10 col-span-2" v-model="selectedYearR" :options="years" filter />
         </div>
 
-        <div class="flex items-center justify-end pr-6">
+        <div class="flex items-center justify-end text-right pr-6 col-span-2">
           <span>Highest Educational Attainment</span>
         </div>
         <Dropdown
-          class="h-10"
+          class="h-10 col-span-3"
           v-model="selectedEduc"
           :options="educAttainment"
           @change="handleUpdate"
         />
 
-        <div class="flex items-center justify-end pr-6">
+        <div class="flex items-center justify-end text-right pr-6 col-span-2">
           <span>Grade Year/Level Stopped</span>
         </div>
-        <Dropdown class="h-10" v-model="selectedLevel" :options="levels" @change="handleUpdate" />
+        <Dropdown
+          class="h-10 col-span-3"
+          v-model="selectedLevel"
+          :options="levels"
+          @change="handleUpdate"
+        />
       </div>
     </div>
 

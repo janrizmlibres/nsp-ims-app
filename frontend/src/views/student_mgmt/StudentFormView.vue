@@ -1,11 +1,14 @@
 <script setup>
 import Button from 'primevue/button'
+import { useRouter } from 'vue-router'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import IdentityForm from '@/components/student_mgmt/profile_view/IdentityForm.vue'
 import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
 
 import FormParts from '../../util/student_form_parts'
+
+const router = useRouter()
 
 const formData = {
   identity: {
@@ -82,9 +85,13 @@ function updateFormData(part, data) {
   }
 
   updateMapping[part]()
-
-  console.log(formData)
 }
+
+async function goToStudentView() {
+  await router.push({ name: 'student-records' })
+}
+
+async function submitForm() {}
 </script>
 
 <template>
@@ -95,16 +102,21 @@ function updateFormData(part, data) {
 
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Button class="h-10 u-bg-green">
+          <Button class="h-10 u-bg-green" @click="submitForm">
             <div>
               <font-awesome-icon
                 icon="fa-solid fa-circle-check"
                 class="absolute top-2/4 -mt-2 left-3"
               />
-              <h2 class="pl-5 font-bold">Proceed</h2>
+              <h2 class="pl-5 font-bold">Submit</h2>
             </div>
           </Button>
-          <Button class="h-10 ml-2 u-bg-red" label="Cancel" icon="fa-solid fa-circle-xmark" />
+          <Button
+            class="h-10 ml-2 u-bg-red"
+            label="Cancel"
+            icon="fa-solid fa-circle-xmark"
+            @click="goToStudentView"
+          />
         </div>
       </div>
     </div>
