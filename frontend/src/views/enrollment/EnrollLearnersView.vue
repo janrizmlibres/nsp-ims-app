@@ -7,7 +7,7 @@ import { useStudentsStore } from '@/stores/students.js'
 import EnrollmentForm from '@/components/enrollment_view/EnrollmentForm.vue'
 
 const termStore = useTermStore()
-const enrollmentStore = useEnrollmentStore()
+const studentsStore = useStudentsStore()
 
 const currentTerm = ref("")
 const toast = useToast()
@@ -18,7 +18,7 @@ async function getActiveStudents()  {
     await termStore.getActiveTerm()
     currentTerm.value = termStore.activeTerm
 
-    await enrollmentStore.getAllEnrolledFromTerm(currentTerm.value.id)
+    await studentsStore.getStudents()
   } catch (error) {
     toast.add({
       severity: 'error',
