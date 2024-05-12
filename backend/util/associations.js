@@ -1,15 +1,15 @@
 import Term from "../models/term.js";
-import ClassLevel from "../models/class_level.js";
+import ClassLevel from "../models/class/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
-import Module from "../models/module.js";
-import Grade from "../models/grade.js";
+import Module from "../models/class/module.js";
+import Grade from "../models/class/grade.js";
 import Student from "../models/student/student.js";
 import Enrollment from "../models/enrollment.js";
-import Attendance from "../models/attendance.js";
-import ModuleSubmission from "../models/module_submission.js";
-import ClassLearningStrand from "../models/class_learning_strand.js";
-import ClassSchedule from "../models/class_schedule.js";
-import Session from "../models/session.js";
+import Attendance from "../models/class/attendance.js";
+import ModuleSubmission from "../models/class/module_submission.js";
+import ClassLearningStrand from "../models/class/class_learning_strand.js";
+import ClassSchedule from "../models/class/class_schedule.js";
+import Session from "../models/class/session.js";
 import Staff from "../models/staff/staff.js";
 import Permission from "../models/staff/permission.js";
 import Audit from "../models/staff/audit.js";
@@ -32,10 +32,7 @@ function setAssociations() {
   Audit.belongsTo(Staff);
 
   // Year-Class Relationship
-  Term.hasMany(ClassLevel, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  });
+  Term.hasMany(ClassLevel);
   ClassLevel.belongsTo(Term);
 
   // Class Learning Strand Relationship
@@ -71,28 +68,28 @@ function setAssociations() {
   Session.belongsTo(ClassLearningStrand)
 
   // Student-Session Relationship
-  Student.belongsToMany(Session, { through: Attendance });
-  Session.belongsToMany(Student, { through: Attendance });
+  Enrollment.belongsToMany(Session, { through: Attendance });
+  Session.belongsToMany(Enrollment, { through: Attendance });
   Session.hasMany(Attendance)
   Attendance.belongsTo(Session)
-  Student.hasMany(Attendance)
-  Attendance.belongsTo(Student)
+  Enrollment.hasMany(Attendance)
+  Attendance.belongsTo(Enrollment)
 
   // Student-Class Learning Strand Relationship
-  Student.belongsToMany(ClassLearningStrand, { through: Grade });
-  ClassLearningStrand.belongsToMany(Student, { through: Grade });
+  Enrollment.belongsToMany(ClassLearningStrand, { through: Grade });
+  ClassLearningStrand.belongsToMany(Enrollment, { through: Grade });
   ClassLearningStrand.hasMany(Grade)
   Grade.belongsTo(ClassLearningStrand)
-  Student.hasMany(Grade)
-  Grade.belongsTo(Student)
+  Enrollment.hasMany(Grade)
+  Grade.belongsTo(Enrollment)
 
   // Student-Module Relationship
-  Student.belongsToMany(Module, { through: ModuleSubmission });
-  Module.belongsToMany(Student, { through: ModuleSubmission });
+  Enrollment.belongsToMany(Module, { through: ModuleSubmission });
+  Module.belongsToMany(Enrollment, { through: ModuleSubmission });
   Module.hasMany(ModuleSubmission)
   ModuleSubmission.belongsTo(Module)
-  Student.hasMany(ModuleSubmission)
-  ModuleSubmission.belongsTo(Student)
+  Enrollment.hasMany(ModuleSubmission)
+  ModuleSubmission.belongsTo(Enrollment)
 
   // Volunteer-Affiliation Relationship
   Volunteer.hasOne(StudentVolunteer)
