@@ -11,26 +11,24 @@ import FormParts from '@/util/student_form_parts'
 
 const emit = defineEmits(['dataChanged'])
 
-const schoolName = ref()
-const discontinuationReason = ref()
+const schoolName = ref(null)
+const discontinuationReason = ref(null)
 
 const address = ref({
-  street: { label: 'Blk/Lt/St', data: '' },
-  barangay: { label: 'Barangay', data: '' },
-  city: { label: 'City', data: '' },
-  province: { label: 'Province', data: '' }
+  street: { label: 'Blk/Lt/St', data: null },
+  barangay: { label: 'Barangay', data: null },
+  city: { label: 'City', data: null },
+  province: { label: 'Province', data: null }
 })
 
-const selectedType = ref()
-const selectedAffiliation = ref()
+const selectedType = ref(null)
+const selectedAffiliation = ref(null)
 
-const selectedEduc = ref()
-const selectedLevel = ref()
+const selectedEduc = ref(null)
+const selectedLevel = ref(null)
 
-const selectedYearL = ref()
-const selectedYearR = ref()
-
-// eslint-disable-next-line no-unused-vars
+const selectedYearL = ref(null)
+const selectedYearR = ref(null)
 const lastYrAttended = computed(() => `${selectedYearL.value} - ${selectedYearR.value}`)
 
 const years = ref([])
@@ -59,7 +57,7 @@ watch(selectedYearR, (value) => {
 function handleUpdate() {
   const data = {
     name: schoolName.value,
-    schoolType: selectedType,
+    schoolType: selectedType.value,
     schoolAffiliation: null,
     lastSyAttended: lastYrAttended.value,
     highestEducation: selectedEduc.value,
@@ -121,7 +119,7 @@ onMounted(() => {
           <Dropdown
             class="h-10 col-span-2"
             v-model="selectedYearL"
-            :options="years.pop()"
+            :options="years"
             filter
             @change="handleUpdate"
           />
