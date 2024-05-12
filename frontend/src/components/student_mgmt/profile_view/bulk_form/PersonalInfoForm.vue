@@ -5,6 +5,11 @@ import InputText from 'primevue/inputtext'
 import { ref, computed, watch, onMounted } from 'vue'
 import { getDaysInMonth, format, getYear } from 'date-fns'
 
+import { objectMap } from '@/util/helpers'
+import FormParts from '@/util/student_form_parts'
+
+const emit = defineEmits(['dataChanged'])
+
 const selectedSex = ref()
 const selectedBloodType = ref()
 const selectedCivilStat = ref()
@@ -12,12 +17,12 @@ const selectedCivilStat = ref()
 const selectedReligion = ref()
 
 const birthday = ref({ month: null, day: null, year: null })
-const birthPlace = ref({ barangay: '', city: '', province: '' })
+const birthPlace = ref({ birthBarangay: '', birthCity: '', birthProvince: '' })
 const address = ref({
-  blk: { label: 'Blk/Lt/St', data: '' },
-  barangay: { label: 'Barangay', data: '' },
-  city: { label: 'City', data: '' },
-  province: { label: 'Province', data: '' }
+  homeBlkLtSt: { label: 'Blk/Lt/St', data: '' },
+  homeBarangay: { label: 'Barangay', data: '' },
+  homeCity: { label: 'City', data: '' },
+  homeProvince: { label: 'Province', data: '' }
 })
 
 const sex = ['M', 'F']
@@ -57,6 +62,22 @@ watch([() => birthday.value.month, () => birthday.value.year], ([newMonth, newYe
   }
 })
 
+function handleUpdate() {
+  const { year, month, day } = birthday.value
+
+  const data = {
+    birthday: new Date(year, month, day),
+    bloodType: selectedBloodType,
+    religion: selectedReligion,
+    sex: selectedSex,
+    civilStatus: selectedCivilStat,
+    ...birthPlace.value,
+    ...objectMap(address.value, (field) => field.data)
+  }
+
+  emit('dataChanged', FormParts.Personal, data)
+}
+
 onMounted(() => {
   for (let i = 0; i < 12; i++) {
     months.value.push({ name: format(new Date(1970, i), 'LLLL'), code: i })
@@ -79,18 +100,28 @@ onMounted(() => {
         </div>
 
         <div class="col-span-3 grid grid-cols-3 gap-6">
-          <Dropdown class="h-10" v-model="selectedSex" :options="sex" />
+          <Dropdown class="h-10" v-model="selectedSex" :options="sex" @change="handleUpdate" />
 
           <div class="flex items-center justify-end">
             <span>Blood Type</span>
           </div>
-          <Dropdown class="h-10" v-model="selectedBloodType" :options="bloodTypes" />
+          <Dropdown
+            class="h-10"
+            v-model="selectedBloodType"
+            :options="bloodTypes"
+            @change="handleUpdate"
+          />
         </div>
 
         <div class="flex items-center justify-end pr-6">
           <span>Civil Status</span>
         </div>
-        <Dropdown class="h-10 col-span-3" v-model="selectedCivilStat" :options="civilStatus" />
+        <Dropdown
+          class="h-10 col-span-3"
+          v-model="selectedCivilStat"
+          :options="civilStatus"
+          @change="handleUpdate"
+        />
 
         <div class="flex items-center justify-end pr-6">
           <span>Date of Birth</span>
@@ -103,12 +134,14 @@ onMounted(() => {
             optionLabel="name"
             optionValue="code"
             placeholder="Month"
+            @change="handleUpdate"
           />
           <Dropdown
             class="h-10 col-span-3"
             v-model="birthday.day"
             :options="days"
             placeholder="Day"
+            @change="handleUpdate"
           />
           <Dropdown
             class="h-10 col-span-4"
@@ -116,6 +149,7 @@ onMounted(() => {
             :options="years"
             filter
             placeholder="Year"
+            @change="handleUpdate"
           />
         </div>
 
@@ -125,20 +159,23 @@ onMounted(() => {
         <InputText
           class="h-10 col-span-3"
           type="text"
-          v-model="birthPlace.barangay"
+          v-model="birthPlace.birthBarangay"
           placeholder="Barangay"
+          @update:modelValue="handleUpdate"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"
-          v-model="birthPlace.city"
+          v-model="birthPlace.birthCity"
           placeholder="City"
+          @update:modelValue="handleUpdate"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"
-          v-model="birthPlace.province"
+          v-model="birthPlace.birthProvince"
           placeholder="Province"
+          @update:modelValue="handleUpdate"
         />
       </div>
     </div>
@@ -153,6 +190,7 @@ onMounted(() => {
           editable
           v-model="selectedReligion"
           :options="religions"
+          @change="handleUpdate"
         />
 
         <div class="flex items-center justify-end pr-6">
@@ -166,6 +204,7 @@ onMounted(() => {
           type="text"
           v-model="value.data"
           :placeholder="value.label"
+          @update:modelValue="handleUpdate"
         />
       </div>
     </div>
