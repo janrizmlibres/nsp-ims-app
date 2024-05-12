@@ -1,5 +1,5 @@
 import { INTEGER, STRING, TIME } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 
 const ClassSchedule = sequelize.define('class_schedule', {
     id: {

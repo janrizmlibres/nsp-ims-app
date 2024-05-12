@@ -1,7 +1,7 @@
 import { BOOLEAN, INTEGER, STRING } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 import ClassLearningStrand from "./class_learning_strand.js";
-import Learner from "./learner.js";
+import Enrollment from "../enrollment.js";
 
 const Grade = sequelize.define("grade", {
   id: {
@@ -10,10 +10,10 @@ const Grade = sequelize.define("grade", {
     allowNull: false,
     primaryKey: true,
   },
-  studentId: {
+  enrollmentId: {
       type: INTEGER,
       references: {
-      model: Learner,
+      model: Enrollment,
       key: 'id',
       },
   },

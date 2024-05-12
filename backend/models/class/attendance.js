@@ -1,13 +1,19 @@
 import { INTEGER, STRING, DATE, TEXT } from "sequelize";
-import sequelize from "../util/database.js";
-import Learner from "./learner.js";
+import sequelize from "../../util/database.js";
 import Session from "./session.js";
+import Enrollment from "../enrollment.js";
 
 const Attendance = sequelize.define("attendance", {
-  studentId: {
+  id: {
+      type: INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true,
+  },
+  enrollmentId: {
       type: INTEGER,
       references: {
-      model: Learner,
+      model: Enrollment,
       key: 'id',
       },
   },

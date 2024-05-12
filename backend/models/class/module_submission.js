@@ -1,7 +1,7 @@
 import { INTEGER, STRING, DATE } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 import Module from "./module.js";
-import Learner from "./learner.js";
+import Enrollment from "../enrollment.js";
 
 const ModuleSubmission = sequelize.define("module_submission", {
   id: {
@@ -10,10 +10,10 @@ const ModuleSubmission = sequelize.define("module_submission", {
     allowNull: false,
     primaryKey: true,
   },
-  learnerId: {
+  enrollmentId: {
       type: INTEGER,
       references: {
-      model: Learner,
+      model: Enrollment,
       key: 'id',
       },
   },

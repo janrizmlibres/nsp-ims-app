@@ -1,6 +1,6 @@
 import { INTEGER } from "sequelize";
-import sequelize from "../util/database.js";
-import LearningStrand from "./learning_strand.js";
+import sequelize from "../../util/database.js";
+import LearningStrand from "../learning_strand.js";
 import ClassLevel from "./class_level.js";
 
 const ClassLearningStrand = sequelize.define('class_learning_strand', {
