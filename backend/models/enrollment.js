@@ -25,7 +25,7 @@ const Enrollment = sequelize.define('enrollment', {
     bridger: BOOLEAN,
     dateEnrolled: DATE,
     status: STRING,
-    modularity: STRING,
+    regularity: STRING,
     remarks: TEXT
 });
 
