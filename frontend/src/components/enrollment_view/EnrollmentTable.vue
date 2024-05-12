@@ -107,7 +107,11 @@ function editEnrolled(data) {
         </Dropdown>
       </template>
     </column>
-    <column field="dateEnrolled" header="Date Enrolled" sortable></column>
+    <column field="dateEnrolled" header="Date Enrolled" sortable>
+      <template #body="{ data }">
+        {{ data.dateEnrolled ? new Date(data.dateEnrolled).toISOString().split('T')[0] : '' }}
+      </template>
+    </column>
     <Column header="Status" filterField="status" :showFilterMatchModes="false" :filterMenuStyle="{ width: '7rem' }" style="min-width: 7rem">
       <template #body="{ data }">
         <div class="flex align-items-center gap-2">
