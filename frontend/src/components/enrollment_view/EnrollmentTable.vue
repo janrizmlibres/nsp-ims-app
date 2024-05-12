@@ -4,6 +4,8 @@ import Column from 'primevue/column';
 import Tag from 'primevue/tag'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import ToggleButton from 'primevue/togglebutton'
 import { computed, ref } from 'vue'
 import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
@@ -113,6 +115,21 @@ const schoolLevels = ref(['Grade School', 'Junior High School'])
             </div>
           </template>
         </Dropdown>
+      </template>
+    </Column>
+    <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+      <template #body="{ data }">
+        <Button icon="pi pi-pencil" label="Edit" @click="editEnrolled(data)"/>
+      </template>
+    </Column>
+    <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+      <template #body>
+        <Button type="button" icon="pi pi-angle-down" label="Drop" />
+      </template>
+    </Column>
+    <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+      <template #body>
+        <ToggleButton onLabel="Activate" offLabel="Deactivate" icon="pi pi-angle-down" label="Drop" />
       </template>
     </Column>
   </DataTable>
