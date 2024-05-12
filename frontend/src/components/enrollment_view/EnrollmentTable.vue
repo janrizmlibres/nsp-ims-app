@@ -7,12 +7,15 @@ import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import ToggleButton from 'primevue/togglebutton'
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 
 const enrollmentStore = useEnrollmentStore()
 
 const learnersData = computed(() => enrollmentStore.learners)
+
+const router = useRouter()
 
 const getSeverity = (data) => {
   switch (data) {
@@ -42,6 +45,10 @@ const filters = ref({
 
 const statuses = ref(['Active', 'Inactive', 'Drop']);
 const schoolLevels = ref(['Grade School', 'Junior High School'])
+
+function editEnrolled(data) {
+  router.push({ name: 'edit-enrolled', query: { lrn: data.lrn, academicYear: data.term, classLevel: data.schoolLevel } })
+}
 
 </script>
 
