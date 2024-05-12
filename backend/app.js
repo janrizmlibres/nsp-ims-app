@@ -46,7 +46,7 @@ app.use("/classLearningStrand", classLearningStrandRoutes);
 app.use("/utilities", utilitiesRoutes);
 app.use("/volunteer", volunteerRoutes);
 
-app.use((error, _req, res) => {
+app.use((error, _req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;

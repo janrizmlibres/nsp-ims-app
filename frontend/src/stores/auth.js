@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
       refreshToken.value = newRefreshTokenData
     } catch (error) {
       console.error('Failed to refresh token', error)
-      logout()
+      await logout()
     }
   }
 
