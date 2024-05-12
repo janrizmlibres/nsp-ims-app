@@ -57,12 +57,12 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
         )
     }
 
-    async function updateModuleSubmissions(form) {
+    async function updateModuleSubmissions(updatedData) {
         const authStore = useAuthStore()
     
         await axios.put(
             `http://localhost:8080/classLearningStrand/module/moduleSubmissions/update`,
-            form,
+            updatedData,
             {
             headers: { Authorization: 'Bearer ' + authStore.token }
             }
@@ -97,12 +97,12 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
         return result.data.data
     }
 
-    async function updateAttendances(sessionId, form) {
+    async function updateAttendances(updatedData) {
         const authStore = useAuthStore()
     
-        await axios.patch(
-            `http://localhost:8080/classLearningStrand/session/${sessionId}/attendances/update`,
-            form,
+        await axios.put(
+            `http://localhost:8080/classLearningStrand/session/attendances/update`,
+            updatedData,
             {
             headers: { Authorization: 'Bearer ' + authStore.token }
             }
