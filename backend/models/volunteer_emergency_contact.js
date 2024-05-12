@@ -19,7 +19,7 @@ const VolunteerEmergency = sequelize.define("volunteer_emergency_contact", {
     middleName: STRING,
     suffix: STRING,
     contactNumber: {
-        type: INTEGER,
+        type: STRING,
         allowNull: false
     },
     relationship: {

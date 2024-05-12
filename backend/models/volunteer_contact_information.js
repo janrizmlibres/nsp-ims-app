@@ -1,7 +1,7 @@
 import { INTEGER, STRING } from "sequelize";
 import sequelize from "../util/database.js";
 
-const VolunteerContactInformation = sequelize.define("voluneer_contact_information", {
+const VolunteerContactInformation = sequelize.define("volunteer_contact_information", {
     id: {
         type: INTEGER,
         autoIncrement: true,
@@ -10,7 +10,7 @@ const VolunteerContactInformation = sequelize.define("voluneer_contact_informati
     },
     email: STRING,
     contactNumber: {
-        type: INTEGER,
+        type: STRING,
         allowNull: false
     },
     facebook: STRING

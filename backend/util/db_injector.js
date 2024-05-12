@@ -461,9 +461,202 @@ export async function injectVolunteer() {
     },
   ];
 
+  const volunteerPersonalInformationData = [
+    {
+      nickname: "John",
+      sex: "Male",
+      birthday: new Date(1980, 1, 1),
+      housing: "123 Main St",
+      barangay: "Barangay 1",
+      city: "City A",
+      province: "Province A"
+    },
+    {
+      nickname: "Jane",
+      sex: "Female",
+      birthday: new Date(1985, 1, 1),
+      housing: "456 Maple Ave",
+      barangay: "Barangay 2",
+      city: "City B",
+      province: "Province B"
+    },
+    {
+      nickname: "Bob",
+      sex: "Male",
+      birthday: new Date(1990, 1, 1),
+      housing: "789 Oak St",
+      barangay: "Barangay 3",
+      city: "City C",
+      province: "Province C"
+    },
+    {
+      nickname: "Alice",
+      sex: "Female",
+      birthday: new Date(1995, 1, 1),
+      housing: "1011 Pine Ave",
+      barangay: "Barangay 4",
+      city: "City D",
+      province: "Province D"
+    },
+    {
+      nickname: "Charlie",
+      sex: "Male",
+      birthday: new Date(1985, 1, 1),
+      housing: "1213 Birch Blvd",
+      barangay: "Barangay 5",
+      city: "City E",
+      province: "Province E"
+    },
+    {
+      nickname: "Diana",
+      sex: "Female",
+      birthday: new Date(1990, 1, 1),
+      housing: "1415 Cedar Ct",
+      barangay: "Barangay 6",
+      city: "City F",
+      province: "Province F"
+    },
+    {
+      nickname: "Ethan",
+      sex: "Male",
+      birthday: new Date(1995, 1, 1),
+      housing: "1617 Dogwood Dr",
+      barangay: "Barangay 7",
+      city: "City G",
+      province: "Province G"
+    },
+    {
+      nickname: "Fiona",
+      sex: "Female",
+      birthday: new Date(2000, 1, 1),
+      housing: "1819 Elm St",
+      barangay: "Barangay 8",
+      city: "City H",
+      province: "Province H"
+    },
+    {
+      nickname: "George",
+      sex: "Male",
+      birthday: new Date(1980, 1, 1),
+      housing: "2021 Fir St",
+      barangay: "Barangay 9",
+      city: "City I",
+      province: "Province I"
+    },
+    {
+      nickname: "Hannah",
+      sex: "Female",
+      birthday: new Date(1985, 1, 1),
+      housing: "2223 Grove St",
+      barangay: "Barangay 10",
+      city: "City J",
+      province: "Province J"
+    },
+    {
+      nickname: "Ian",
+      sex: "Male",
+      birthday: new Date(1990, 1, 1),
+      housing: "2425 Hickory St",
+      barangay: "Barangay 11",
+      city: "City K",
+      province: "Province K"
+    },
+    // ... add more entries here ...
+  ];
+
+  const volunteerEmergencyContacts = [
+    { firstName: "John", lastName: "Doe", contactNumber: 1234567890, relationship: "Brother" },
+    { firstName: "Jane", lastName: "Doe", contactNumber: 2345678901, relationship: "Sister" },
+    { firstName: "Jim", lastName: "Doe", contactNumber: 3456789012, relationship: "Brother" },
+    { firstName: "Jill", lastName: "Doe", contactNumber: 4567890123, relationship: "Sister" },
+    { firstName: "Joe", lastName: "Doe", contactNumber: 5678901234, relationship: "Brother" },
+    { firstName: "Jenny", lastName: "Doe", contactNumber: 6789012345, relationship: "Sister" },
+    { firstName: "Jerry", lastName: "Doe", contactNumber: 7890123456, relationship: "Brother" },
+    { firstName: "Jess", lastName: "Doe", contactNumber: 8901234567, relationship: "Sister" },
+    { firstName: "Jack", lastName: "Doe", contactNumber: 9012345678, relationship: "Brother" },
+    { firstName: "Jasmine", lastName: "Doe", contactNumber: 1234567890, relationship: "Sister" },
+    { firstName: "Jacob", lastName: "Doe", contactNumber: 2345678901, relationship: "Brother" }
+  ];
+
+  const volunteerContactInformationData = [
+    {
+      contactNumber: "09123456789",
+      facebook: "Shelly-Cruz",
+      email: "shelly-cruz@example.com"
+    },
+    {
+      contactNumber: "09123456788",
+      facebook: "Alonzo-Fuentes",
+      email: "alonzo-fuentes@example.com"
+    },
+    {
+      contactNumber: "09123456787",
+      facebook: "Alejandra-Firma",
+      email: "alejandra-firma@example.com"
+    },
+    {
+      contactNumber: "09123456786",
+      facebook: "Gabriel-Horticullado",
+      email: "Gabriel-Horticullado@example.com"
+    },
+    {
+      contactNumber: "09123456785",
+      facebook: "John-Santos",
+      email: "John-Santos@example.com"
+    },
+    {
+      contactNumber: "09123456784",
+      facebook: "Job-Dapin",
+      email: "Job-Dapin@example.com"
+    },
+    {
+      contactNumber: "09123456783",
+      facebook: "Wilson-Roa",
+      email: "Wilson-Roa@example.com"
+    },
+    {
+      contactNumber: "09123456782",
+      facebook: "Felixson-Dimagiba",
+      email: "Felixson-Dimagiba@example.com"
+    },
+    {
+      contactNumber: "09123456781",
+      facebook: "Fernan-Goma",
+      email: "Fernan-Goma@example.com"
+    },
+    {
+      contactNumber: "09123456780",
+      facebook: "Kenneth-Lopez",
+      email: "Kenneth-Lopez@example.com"
+    },
+    {
+      contactNumber: "09123456779",
+      facebook: "Daisy-Sayson",
+      email: "Daisy-Sayson@example.com"
+    },
+    // ... add more entries here ...
+  ];
+
+  function getRandomAvailability() {
+    let availability = ["M", "T", "W", "TH", "F", "S"];
+    return availability[Math.floor(Math.random() * 2)];
+  }
+
+  function getSpecialization() {
+    let area = ["LS1-E", "LS1-F", "LS2-S", "LS3-M", "LS4-CLS", "LS5-UTS", "LS6-DL", "Homeroom", ];
+    return area[Math.floor(Math.random() * 2)];
+  }
+
   await Promise.all(
-    volunteerData.map(async (volunteer) => {
-      await Volunteer.create(volunteer);
+    volunteerData.map(async (data, index) => {
+
+      const volunteer = await Volunteer.create(data);
+
+      volunteer.createVolunteer_personal_information(volunteerPersonalInformationData[index])
+      volunteer.createVolunteer_emergency_contact(volunteerEmergencyContacts[index])
+      volunteer.createVolunteer_contact_information(volunteerContactInformationData[index])
+      volunteer.createVolunteer_availability({day: getRandomAvailability()})
+      volunteer.createVolunteer_specialization({area: getSpecialization()})
     })
   );
 }

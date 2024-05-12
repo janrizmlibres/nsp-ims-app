@@ -1,7 +1,7 @@
 import { INTEGER, DATE, STRING, VIRTUAL} from "sequelize";
 import sequelize from "../util/database.js";
 
-const VolunteerPersonalInformation = sequelize.define("voluneer_personal_information", {
+const VolunteerPersonalInformation = sequelize.define("volunteer_personal_information", {
     id: {
         type: INTEGER,
         autoIncrement: true,

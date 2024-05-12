@@ -52,6 +52,14 @@ export default {
       { field: 'volunteerId', header: 'Volunteer ID' },
       { field: 'fullName', header: 'Full Name' },
       { field: 'affiliation', header: 'Affiliation' },
+      { field: 'personalInformation.nickname', header: 'Nickname' },
+      { field: 'personalInformation.sex', header: 'Sex' },
+      { field: 'personalInformation.birthday', header: 'Birthdate' },
+      { field: 'personalInformation.housing', header: 'Housing' },
+      { field: 'personalInformation.barangay', header: 'Barangay' },
+      { field: 'personalInformation.city', header: 'City' },
+      { field: 'personalInformation.province', header: 'Province' },
+      { field: 'personalInformation.address', header: 'Address' },
     ]);
 
     const updateGlobalFilter = (newValue) => {

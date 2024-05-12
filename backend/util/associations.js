@@ -19,6 +19,7 @@ import VolunteerPersonalInformation from "../models/volunteer_personal_informati
 import VolunteerContactInformation from "../models/volunteer_contact_information.js";
 import VolunteerEmergency from "../models/volunteer_emergency_contact.js";
 import VolunteerSpecialization from "../models/volunteer_specialization.js";
+import VolunteerAvailability from "../models/volunteer_availability.js";
 
 function setAssociations() {
   // Staff-Permission Relationship
@@ -92,8 +93,8 @@ function setAssociations() {
   VolunteerEmergency.belongsTo(Volunteer);
 
   // Volunteer-Availability Relationship
-  Volunteer.hasOne(VolunteerSpecialization);
-  VolunteerSpecialization.belongsTo(Volunteer);
+  Volunteer.hasOne(VolunteerAvailability);
+  VolunteerAvailability.belongsTo(Volunteer);
 
   // Volunteer-Specialization Relationship
   Volunteer.hasOne(VolunteerSpecialization);
