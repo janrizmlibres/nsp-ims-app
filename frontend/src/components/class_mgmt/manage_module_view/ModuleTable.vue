@@ -6,23 +6,20 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { useRoute } from 'vue-router';
 
 // Custom
 import AddModuleDialog from './AddModuleDialog.vue';
 
 // stores
 import { useClassesStore } from '@/stores/classes';
-import { useStrandStore } from '@/stores/strand';
-import { useModuleStore } from '@/stores/module';
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
 const classesStore = useClassesStore()
-const strandStore = useStrandStore()
-const moduleStore = useModuleStore()
+const classLearningStrandStore = useClassLearningStrandStore()
 
-const route = useRoute()
+const props = defineProps(['id', 'state', 'termStatus'])
 const toast = useToast()
 
 const cols = ref([
@@ -36,45 +33,18 @@ const customPt = {
     root: {
         class: ['flex flex-col pt-2 justify-between']
     },
-    table: {
-        class: 'bg-white border-spacing-0 border-separate',
-    },
-    thead: {
-        class: 'bg-surface-0 top-0 z-40 sticky'
-    },
-    tbody: {
-        class: 'sticky z-20'
-    },
     column: {
         headercell: ({ context, props }) => ({
             class: [
                 'font-medium',
-                {
-                'space-nowrap border-y bg-clip-padding': context.resizable
-                // Resizable
-                },
                 // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
-                {'hover:bg-surface-50': context.sorted}
+                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active'
             ]
         }),
             sorticon: ({ context }) => ({
                 class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
         }),
-            bodycell: {class: 'py-3 '}
     },
-    bodyrow: ({ context, props }) => ({
-        class: [
-            { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
-            { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
-            { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
-            // State
-            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
-            { 'hover:u-bg-pcolor hover:text-white': props.selectionMode && !context.selected },
-            // Misc
-            { 'cursor-pointer': props.selectionMode }
-        ]
-    }),
     paginator: {
         root: {
             class: ['flex items-center justify-center flex-wrap object-bottom', 'px-4 pt-4 pb-2', 'border-0 rounded-bl-xl rounded-br-xl', 'bg-transparent dark:bg-surface-800', 'text-surface-500 dark:text-white/60']
@@ -104,9 +74,11 @@ const customPt = {
     }
 }
 
-
+const state = computed(() => props.state)
+const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allModules = ref([])
+const classLearningStrandId = ref()
 
 function updateModuleTable(modules) {
     isFetching.value = true
@@ -130,32 +102,38 @@ function updateModuleTable(modules) {
     isFetching.value = false
 }
 
-watch(() => route.query, (query) => {
+watch(() => props.id, (id) => {
     isFetching.value = true
+    classLearningStrandId.value = id
     try {
-        strandStore.getAllModules(query.id).then((data) => {
+        classLearningStrandStore.getAllModules(id).then((data) => {
             updateModuleTable(data)
         })
     } catch (error) {
-        console.log(error)
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
     }
     isFetching.value = false
-}, {immediate: true})
+}, {immediate: false})
+
 
 const editingRows = ref([]);
 
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
-    console.log(newData);
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
         try {
-            await moduleStore.updateModule(newData.id, {
+            await classLearningStrandStore.updateModule(newData.id, {
                 title: newData.title,
                 distribution_date: newData.distribution_date,
                 retrieval_date: newData.retrieval_date
             })
 
-            strandStore.getAllModules(route.query.id).then((data) => {
+            classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
                 updateModuleTable(data)
             })
 
@@ -167,7 +145,7 @@ const onRowEditSave = async (event) => {
             })
         } catch(error) {
             toast.add({
-                severity: 'success',
+                severity: 'error',
                 summary: 'Error',
                 detail: 'Unexpected error encountered.',
                 life: 3000
@@ -178,7 +156,7 @@ const onRowEditSave = async (event) => {
 </script>
 
 <template>
-    <div class="bg-white shadow-xl rounded-md p-5">
+    <div v-if="state" class="bg-white shadow-xl rounded-md p-5">
         <div class="flex flex-row gap-4 items-center px-4">
             <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
             <span class="font-semibold text-3xl u-txt-active">Modules</span>
@@ -227,9 +205,9 @@ const onRowEditSave = async (event) => {
             </Column>
             <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
             <Column :rowEditor="true" bodyStyle="text-align:center" frozen class="sticky right-0" />
-            <template #footer> 
-                <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="strandStore.showHideAddModuleDialog"/>
-                <AddModuleDialog @onUpdate="updateModuleTable" /> 
+            <template #footer v-if="termStatus"> 
+                <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
+                <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
             </template>
         </DataTable>
     </div>

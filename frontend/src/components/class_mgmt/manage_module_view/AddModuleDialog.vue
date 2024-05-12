@@ -5,20 +5,20 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
 import { useToast } from 'primevue/usetoast';
-import { useRoute } from 'vue-router';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 //  stores
-import { useStrandStore } from '@/stores/strand';
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
 const emit = defineEmits(['onUpdate'])
+const props = defineProps(['id'])
 
 const toast = useToast()
-const route = useRoute()
-const strandStore = useStrandStore()
+const classLearningStrandStore = useClassLearningStrandStore()
 
 const value = ref(null);
 const dates = ref(null);
+const classLearningStrandId = computed(() => props.id)
 
 async function addModule() {
     if (!value.value || !dates.value || Object.values(dates.value).some((element) => element === null) ) {
@@ -40,7 +40,7 @@ async function addModule() {
             range.value.push(date)
         }
         
-        await strandStore.addModule(route.query.id, {
+        await classLearningStrandStore.addModule(classLearningStrandId.value, {
             title: value.value,
             distriDate: range.value[0],
             retriDate: range.value[1]
@@ -60,18 +60,18 @@ async function addModule() {
             life: 3000
         })
     }
-    strandStore.getAllModules(route.query.id).then((data) => {
+    classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
         emit('onUpdate', data)
     })
     
     value.value = null;
     dates.value = null;
-    strandStore.showHideAddModuleDialog()
+    classLearningStrandStore.showHideAddModuleDialog()
 }
 </script>
 
 <template>
-    <Dialog v-model:visible="strandStore.visibleAddModuleDialog" modal header="Add Module" :style="{ width: '20rem' }">
+    <Dialog v-model:visible="classLearningStrandStore.visibleAddModuleDialog" modal header="Add Module" :style="{ width: '20rem' }">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
             <label>Title</label>
@@ -85,7 +85,7 @@ async function addModule() {
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Add" @click="addModule"></Button>
-            <Button type="button" label="Cancel" severity="danger" @click="strandStore.showHideAddModuleDialog"></Button>
+            <Button type="button" label="Cancel" severity="danger" @click="classLearningStrandStore.showHideAddModuleDialog"></Button>
         </div>
     </Dialog>
 </template>
