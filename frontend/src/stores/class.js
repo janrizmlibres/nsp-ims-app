@@ -21,10 +21,10 @@ export const useClassStore = defineStore('class', () => {
         })
     }
 
-    async function getAllStrands(classId) {
+    async function getAllLearningStrands(classId) {
         const authStore = useAuthStore()
 
-        const result = await axios.get(`http://localhost:8080/class/${classId}/strands`, {
+        const result = await axios.get(`http://localhost:8080/class/${classId}/classLearningStrands`, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
@@ -61,7 +61,7 @@ export const useClassStore = defineStore('class', () => {
         return result.data.data
     }
 
-    return { getClass, addSchedule, getAllStrands, getAllModules, getAllStudents, getAllGrades }
+    return { getClass, addSchedule, getAllLearningStrands, getAllModules, getAllStudents, getAllGrades }
 })
 
 
