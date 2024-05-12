@@ -108,14 +108,155 @@ export const enrollLearner = async (req, res, next) => {
     }
     
     const classLevel = await ClassLevel.findByPk(classLevelID);
+    
+    if (!classLevel) {
+      const error = new Error("Class level not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+    
+    // Check if student is already enrolled in the class level
+    const isEnrolled = await classLevel.hasStudent(student);
+    
+    if (isEnrolled) {
+      const error = new Error("Student is already enrolled in this year class level.");
+      error.statusCode = 400;
+      throw error;
+    }
+    
+    await classLevel.addStudent(student, {
+      through: {
+        hasEnrollmentForm: hasEnrollmentForm,
+        digital_literacy: digital_literacy,
+        ftl_pretest: ftl_pretest,
+        callable: callable,
+        bridger: bridger,
+        dateEnrolled: new Date(),
+        status: "Active",
+        regularity: regularity,
+        remarks: remarks,
+      }
+    });
+    
+    res.status(201).json({ 
+      message: 'Enrolled learner successfully!' 
+    });
 
-    const enrollment = await Enrollment.create({
-      learnerId: learnerID,
-      classLevelId: classLevelID,
-      modularity: modularity,
-      remarks: remarks,
-      dateEnrolled: new Date(),
-      status: 'Active'
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+};
+
+export const updateEnrollment = async (req, res, next) => {
+  console.log("heloo")
+  const { 
+    lrn, 
+    classLevelID, 
+    hasEnrollmentForm, 
+    digital_literacy, 
+    ftl_pretest, 
+    callable, 
+    bridger,
+    regularity, 
+    remarks 
+  } = req.body;
+  
+  try {
+    //search for the Student ID from its lrn field
+    const student = await Student.findOne(
+      {where: {lrn: lrn}}
+    )
+    
+    if (!student) {
+      const error = new Error("Student not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+    
+    const classLevel = await ClassLevel.findByPk(classLevelID);
+    
+    if (!classLevel) {
+      const error = new Error("Class level not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+    
+    // Check if student is already enrolled in the class level
+    const isEnrolled = await classLevel.hasStudent(student);
+    
+    if (!isEnrolled) {
+      const error = new Error("Student is not enrolled in this year class level.");
+      error.statusCode = 400;
+      throw error;
+    }
+    
+    await classLevel.addStudent(student, {
+      through: {
+        hasEnrollmentForm: hasEnrollmentForm,
+        digital_literacy: digital_literacy,
+        ftl_pretest: ftl_pretest,
+        callable: callable,
+        bridger: bridger,
+        regularity: regularity,
+        remarks: remarks,
+      }
+    });
+    
+    res.status(201).json({ 
+      message: 'Updated learner enrollment successfully!' 
+    });
+
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
+export const getEnrolled = async (req, res, next) => {
+  const lrn = req.params.lrn;
+  const academicYear = req.params.academicYear;
+  const classLevel = req.params.classLevel;
+  
+  console.log("termID: " + academicYear)
+  
+  try {
+    const chosenTerm = await Term.findOne({
+      where: {academic_year: academicYear}
+    })
+    
+    const classLevels = await ClassLevel.findAll({
+      where: {termId: chosenTerm.id, school_level: classLevel},
+      include: {model: Student, where: {lrn: lrn}, include: {model: Enrollment}},
+    })
+    
+    if (classLevels.length === 0) {
+      const error = new Error("No enrolled student found.");
+      error.statusCode = 404;
+      throw error;
+    }
+    
+    const parsedData = classLevels.map(classLevel => {
+      return classLevel.students.map(student => {
+        return {
+          lrn: student.lrn,
+          firstName: student.firstName,
+          schoolLevel: classLevel.school_level,
+          regularity: student.enrollment.regularity,
+          remarks: student.enrollment.remarks,
+          digitalLiteracy: student.enrollment.digital_literacy,
+          ftlPretest: student.enrollment.ftl_pretest,
+          hasEnrollmentForm: student.enrollment.hasEnrollmentForm,
+          callable: student.enrollment.callable,
+          Bridger: student.enrollment.bridger,
+        };
+      });
     });
 
     res.status(201).json({ message: 'Enrolled learner successfully!', enrollment: enrollment });
