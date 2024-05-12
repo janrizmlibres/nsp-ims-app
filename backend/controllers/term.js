@@ -1,6 +1,5 @@
 import Term from "../models/term.js";
-import ClassLevel from "../models/class_level.js";
-import Learner from "../models/learner.js";
+import ClassLevel from "../models/class/class_level.js";
 
 export async function getActiveTerm(req, res, next) {
     try {
