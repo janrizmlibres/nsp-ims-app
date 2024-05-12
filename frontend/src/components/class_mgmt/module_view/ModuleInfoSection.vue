@@ -14,15 +14,12 @@ const retriDate = ref()
 
 watch(() => props.modelValue, (data) => {
     isFetching.value = true
-    try {
-        let tempDistriDate = new Date(data.distribution_date)
-        distriDate.value = tempDistriDate.toDateString()
+    
+    let tempDistriDate = new Date(data.distribution_date)
+    distriDate.value = tempDistriDate.toDateString()
 
-        let tempRetriDate = new Date(data.retrieval_date)
-        retriDate.value = tempRetriDate.toDateString()
-    } catch(error) {
-        console.log(error.response.data.message)
-    }
+    let tempRetriDate = new Date(data.retrieval_date)
+    retriDate.value = tempRetriDate.toDateString()
 
     isFetching.value = false
 }, {immediate: false})

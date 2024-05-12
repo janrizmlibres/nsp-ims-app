@@ -12,14 +12,13 @@ import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 // stores
-import { useModuleStore } from '@/stores/module';
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useToast } from 'primevue/usetoast';
 
-const moduleStore = useModuleStore()
-
-const props = defineProps(['modelValue'])
-const emit = defineEmits(['onUpdate'])
+const classLearningStrandStore = useClassLearningStrandStore()
 
 const route = useRoute()
+const toast = useToast()
 
 const customPt = {
     root: {
@@ -96,43 +95,41 @@ const customPt = {
     }
 }
 
+const props = defineProps(['modelValue'])
+const emit = defineEmits(['onUpdate'])
 const isFetching = ref(false)
 const learners = ref([])
+const noChanges = ref(true)
+const startingData = []
+const updatedData = new Set([])
 
 watch(() => props.modelValue, (data) => {
     isFetching.value = true
     learners.value.length = 0
 
-    try {
-        for (const moduleSubmission of data.module_submissions) {
-            let date1 = null
-            let date2 = null
-
-            if (moduleSubmission.date_submitted !== null) {
-                date1 = new Date(moduleSubmission.date_submitted)
-                date1 = date1.toDateString()
-            }
-
-            if (moduleSubmission.updatedAt !== null) {
-                date2 = new Date(moduleSubmission.updatedAt)
-                date2 = date2.toLocaleString()
-            }
-
-            const temp = {
-                id: moduleSubmission.id,
-                lastName: moduleSubmission.learner.lastName,
-                firstName: moduleSubmission.learner.firstName,
-                middleName: moduleSubmission.learner.middleName,
-                status: moduleSubmission.status,
-                date_submitted: date1,
-                remarks: moduleSubmission.remarks,
-                updatedAt: date2
-            }
-
-            learners.value.push(temp)
+    for (const moduleSubmission of data.module_submissions) {
+        if (moduleSubmission.date_submitted !== null) {
+            moduleSubmission.date_submitted = new Date(moduleSubmission.date_submitted)
         }
-    } catch(error) {
-        console.log(error)
+
+        const temp = {
+            id: moduleSubmission.id,
+            lastName: moduleSubmission.student.lastName,
+            firstName: moduleSubmission.student.firstName,
+            middleName: moduleSubmission.student.middleName,
+            status: moduleSubmission.status,
+            date_submitted: moduleSubmission.date_submitted,
+            remarks: moduleSubmission.remarks,
+            updatedAt: new Date(moduleSubmission.updatedAt)
+        }
+
+        const len = learners.value.push(temp)
+        startingData.push(structuredClone(temp))
+        
+        watch(learners.value[len - 1], (newData) => {
+            updatedData.add(newData)
+            noChanges.value = false
+        })
     }
     
     isFetching.value = false
@@ -160,29 +157,67 @@ const statuses = ref([
     { label: 'No Submission', value: 'No Submission' }
 ]);
 
-const editingRows = ref([]);
-
-const onRowEditSave = async (event) => {
-    let { data, newData } = event;
-
-    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
-        let date = null
-        if (newData.date_submitted) {
-            const offset = newData.date_submitted.getTimezoneOffset()
-            date = new Date(newData.date_submitted.getTime() - (offset*60*1000))
-        }
-
-        await moduleStore.updateModuleSubmission(newData.id, {
-            newStatus: newData.status,
-            newSubmissionDate: date,
-            newRemarks: newData.remarks
-        })
-
-        moduleStore.getModule(route.query.id).then((data) => {
+async function updateSubmissions() {
+    try {
+        await classLearningStrandStore.updateModuleSubmissions({ updatedData: Array.from(updatedData) })
+        classLearningStrandStore.getModule(route.query.id).then((data) => {
             emit('onUpdate', data)
         })
+
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Updated Grades Successfully',
+            life: 5000
+        })
+
+        noChanges.value = true
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
+        })
     }
-};
+}
+
+function resetData() {
+    learners.value = structuredClone(startingData)
+    updatedData.clear()
+
+    for (const datum of learners.value) {
+        watch(datum, (newData) => {
+        updatedData.add(newData)
+        noChanges.value = false
+        })
+    }
+
+    noChanges.value = true
+}
+// const editingRows = ref([]);
+
+// const onRowEditSave = async (event) => {
+//     let { data, newData } = event;
+
+//     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+//         let date = null
+//         if (newData.date_submitted) {
+//             const offset = newData.date_submitted.getTimezoneOffset()
+//             date = new Date(newData.date_submitted.getTime() - (offset*60*1000))
+//         }
+
+//         await classLearningStrandStore.updateModuleSubmissions(newData.id, {
+//             newStatus: newData.status,
+//             newSubmissionDate: date,
+//             newRemarks: newData.remarks
+//         })
+
+//         classLearningStrandStore.getModule(route.query.id).then((data) => {
+//             emit('onUpdate', data)
+//         })
+//     }
+// };
 
 const exportRef = ref()
 function exportCSV() {
@@ -202,7 +237,6 @@ function exportCSV() {
             sortField="lastName" :sortOrder="1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines ref="exportRef"
             :paginator="learners.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
             :ptOptions="{mergeProps:true}"
             :pt="customPt"
         >
@@ -213,29 +247,36 @@ function exportCSV() {
             <Column field="firstName" header="First Name" frozen sortable />
             <Column field="middleName" header="Middle Name" />
             <Column field="status" header="Status" sortable>
-                <template #editor="{ data, field }">
-                    <Dropdown v-model="data[field]" :options="statuses" optionLabel="label" optionValue="value" placeholder="Select a Status" autofocus >
+                <template #body="slotProps">
+                    <Dropdown v-model="slotProps.data.status" :options="statuses" optionLabel="label" optionValue="value" :placeholder="slotProps.data.status" autofocus >
+                        <template #value="slotProps">
+                            <Tag :value="slotProps.placeholder" :severity="getStatusLabel(slotProps.placeholder)" />
+                        </template>
                         <template #option="slotProps">
                             <Tag :value="slotProps.option.value" :severity="getStatusLabel(slotProps.option.value)" />
                         </template>
                     </Dropdown>
                 </template>
-                <template #body="slotProps">
-                    <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
-                </template>
             </Column>
             <Column field="date_submitted" header="Submission Date" sortable>
-                <template #editor="{ data, field }">
-                    <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
+                <template #body="slotProps">
+                    <Calendar v-model="slotProps.data.date_submitted" id="calendar" showIcon iconDisplay="input" autofocus>
+                        <template #value="slotProps">
+                            {{ slotProps.data.date_submitted.toDateString() }}
+                        </template>
+                    </Calendar>
                 </template>
             </Column>
             <Column field="remarks" header="Remarks">
-                <template #editor="{ data, field }">
-                    <InputText v-model="data[field]" autofocus />
+                <template #body="slotProps">
+                    <InputText v-model="slotProps.data.remarks" autofocus />
                 </template>
             </Column>
-            <Column field="updatedAt" header="Updated At" sortable />
-            <Column :rowEditor="true" bodyStyle="text-align:center" frozen class="sticky right-0"></Column>
+            <Column field="updatedAt" header="Updated At" sortable>
+                <template #body="slotProps">
+                    {{ slotProps.data.updatedAt.toLocaleString() }}
+                </template>
+            </Column>
             <template #paginatorstart>
             
             </template>
@@ -243,7 +284,11 @@ function exportCSV() {
                 <Button type="button" icon="pi pi-download" @click="exportCSV" text />
             </template>
         </DataTable>
+        <div class="flex justify-end gap-2 mt-4">
+            <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateSubmissions"></Button>
+            <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
         </div>
+    </div>
 </template>
 
 <style>
