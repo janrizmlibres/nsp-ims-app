@@ -6,8 +6,7 @@ import isAuth from "../middleware/is_auth.js";
 const router = express.Router();
 
 router.get("/retrieve-from-term/:termID", isAuth, enrollmentController.getAllEnrolledOnTerm);
-router.post("/enroll-learner", isAuth, enrollmentController.enrollLearner);
-
+router.get("/retrieve-enrolled/:lrn/:academicYear/:classLevel", isAuth, enrollmentController.getEnrolled);
 router.post("/update-learner", isAuth, enrollmentController.updateEnrollment);
 router.post(
   "/enroll-learner", 
