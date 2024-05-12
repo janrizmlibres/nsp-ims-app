@@ -8,25 +8,31 @@ import PersonalInfoForm from './bulk_form/PersonalInfoForm.vue'
 import ContactInfoForm from './bulk_form/ContactInfoForm.vue'
 import ParentalInfoForm from './bulk_form/ParentalInfoForm.vue'
 import PrevSchoolForm from './bulk_form/PrevSchoolForm.vue'
+
+const emit = defineEmits(['dataChanged'])
+
+function handleUpdate(part, data) {
+  emit('dataChanged', part, data)
+}
 </script>
 
 <template>
   <BaseCard isNotPadded="true" class="grow p-2">
     <TabView>
       <TabPanel header="Personal Information">
-        <PersonalInfoForm />
+        <PersonalInfoForm @dataChanged="handleUpdate" />
       </TabPanel>
 
       <TabPanel header="Contact Information">
-        <ContactInfoForm />
+        <ContactInfoForm @dataChanged="handleUpdate" />
       </TabPanel>
 
       <TabPanel header="Parental Information">
-        <ParentalInfoForm />
+        <ParentalInfoForm @dataChanged="handleUpdate" />
       </TabPanel>
 
       <TabPanel header="Previous School">
-        <PrevSchoolForm />
+        <PrevSchoolForm @dataChanged="handleUpdate" />
       </TabPanel>
     </TabView>
   </BaseCard>

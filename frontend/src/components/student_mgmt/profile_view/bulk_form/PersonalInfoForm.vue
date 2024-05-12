@@ -10,19 +10,27 @@ import FormParts from '@/util/student_form_parts'
 
 const emit = defineEmits(['dataChanged'])
 
-const selectedSex = ref()
-const selectedBloodType = ref()
-const selectedCivilStat = ref()
-
-const selectedReligion = ref()
+const selectedSex = ref(null)
+const selectedBloodType = ref(null)
+const selectedCivilStat = ref(null)
+const selectedReligion = ref(null)
 
 const birthday = ref({ month: null, day: null, year: null })
-const birthPlace = ref({ birthBarangay: '', birthCity: '', birthProvince: '' })
+const computedBirthday = computed(() => {
+  for (const key in birthday.value) {
+    if (birthday.value[key] === null) return null
+  }
+
+  const { year, month, day } = birthday.value
+  return new Date(year, month, day)
+})
+
+const birthPlace = ref({ birthBarangay: null, birthCity: null, birthProvince: null })
 const address = ref({
-  homeBlkLtSt: { label: 'Blk/Lt/St', data: '' },
-  homeBarangay: { label: 'Barangay', data: '' },
-  homeCity: { label: 'City', data: '' },
-  homeProvince: { label: 'Province', data: '' }
+  homeBlkLtSt: { label: 'Blk/Lt/St', data: null },
+  homeBarangay: { label: 'Barangay', data: null },
+  homeCity: { label: 'City', data: null },
+  homeProvince: { label: 'Province', data: null }
 })
 
 const sex = ['M', 'F']
@@ -63,14 +71,12 @@ watch([() => birthday.value.month, () => birthday.value.year], ([newMonth, newYe
 })
 
 function handleUpdate() {
-  const { year, month, day } = birthday.value
-
   const data = {
-    birthday: new Date(year, month, day),
-    bloodType: selectedBloodType,
-    religion: selectedReligion,
-    sex: selectedSex,
-    civilStatus: selectedCivilStat,
+    birthday: computedBirthday.value,
+    bloodType: selectedBloodType.value,
+    religion: selectedReligion.value,
+    sex: selectedSex.value,
+    civilStatus: selectedCivilStat.value,
     ...birthPlace.value,
     ...objectMap(address.value, (field) => field.data)
   }

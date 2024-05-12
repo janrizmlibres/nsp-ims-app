@@ -9,15 +9,15 @@ import FormParts from '@/util/student_form_parts'
 
 const emit = defineEmits(['dataChanged'])
 
-const name = {
-  lastName: '',
-  firstName: '',
-  middleName: ''
-}
+const name = ref({
+  lastName: null,
+  firstName: null,
+  middleName: null
+})
 
-const lrn = ref()
-const selectedSuffix = ref()
-const selectedCat = ref()
+const lrn = ref(null)
+const selectedSuffix = ref(null)
+const selectedCat = ref(null)
 
 const isAvatarHovered = ref(false)
 const uploader = ref(null)
@@ -37,10 +37,10 @@ function setAvatarHover() {
 
 function handleUpdate() {
   const data = {
-    ...name,
-    suffixName: selectedSuffix,
-    lrn,
-    category: selectedCat,
+    ...name.value,
+    lrn: lrn.value,
+    suffixName: selectedSuffix.value,
+    category: selectedCat.value,
     photoUrl: null
   }
 

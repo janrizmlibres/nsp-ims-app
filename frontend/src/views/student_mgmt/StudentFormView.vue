@@ -82,6 +82,8 @@ function updateFormData(part, data) {
   }
 
   updateMapping[part]()
+
+  console.log(formData)
 }
 </script>
 

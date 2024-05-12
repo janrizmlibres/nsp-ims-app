@@ -2,35 +2,35 @@
 import InputText from 'primevue/inputtext'
 import { ref } from 'vue'
 
-import FormParts from '@/views/student_mgmt/forms_parts'
+import FormParts from '@/util/student_form_parts'
 import { objectMap } from '@/util/helpers'
 
 const emit = defineEmits(['dataChanged'])
 
 const leftFields = ref({
-  contactNum: { label: 'Contact Number', data: '' },
-  email: { label: 'Email Address', data: '' },
-  facebook: { label: 'Facebook', data: '' }
+  contactNum: { label: 'Contact Number', data: null },
+  email: { label: 'Email Address', data: null },
+  facebook: { label: 'Facebook', data: null }
 })
 
 const rightFields = ref({
-  lastName: { label: 'Last Name', data: '' },
-  firstName: { label: 'First Name', data: '' },
-  middleName: { label: 'Middle Name', data: '' },
-  suffixName: { label: 'Suffix', data: '' },
-  contactNum: { label: 'Contact Number', data: '' }
+  lastName: { label: 'Last Name', data: null },
+  firstName: { label: 'First Name', data: null },
+  middleName: { label: 'Middle Name', data: null },
+  suffixName: { label: 'Suffix', data: null },
+  contactNum: { label: 'Contact Number', data: null }
 })
 
-const selectedRelationship = ref()
+const selectedRelationship = ref(null)
 
 function updateContactInfo() {
-  const data = objectMap(leftFields, (field) => field.data)
+  const data = objectMap(leftFields.value, (field) => field.data)
   emit('dataChanged', FormParts.Contact, data)
 }
 
 function updateEmergencyContact() {
-  const data = objectMap(rightFields, (field) => field.data)
-  data.relationship = selectedRelationship
+  const data = objectMap(rightFields.value, (field) => field.data)
+  data.relationship = selectedRelationship.value
   emit('dataChanged', FormParts.Emergency, data)
 }
 </script>

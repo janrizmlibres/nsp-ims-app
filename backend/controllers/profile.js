@@ -1,5 +1,4 @@
 import Student from "../models/student/student.js";
-import Application from "../models/student/application.js";
 import PersonalInfo from "../models/student/personal_info.js";
 import ContactInfo from "../models/student/contact_info.js";
 import PreviousSchool from "../models/student/previous_school.js";
@@ -37,7 +36,6 @@ export async function getStudent(req, res, next) {
   try {
     const student = Student.findByPk(req.body.id, {
       include: [
-        Application,
         PersonalInfo,
         ContactInfo,
         PreviousSchool,
