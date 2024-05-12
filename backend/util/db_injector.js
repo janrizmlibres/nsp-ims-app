@@ -12,8 +12,8 @@ import VolunteerSpecialization from "../models/volunteer/volunteer_specializatio
 import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
 import StudentVolunteer from "../models/volunteer/student_volunteer.js";
 import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
-import ClassLevel from "../models/class_level.js";
-import ClassLearningStrand from "../models/class_learning_strand.js";
+import ClassLevel from "../models/class/class_level.js";
+import ClassLearningStrand from "../models/class/class_learning_strand.js";
 
 export async function injectAll() {
   await injectStaff();
@@ -107,7 +107,7 @@ export async function injectStudent() {
       const class_levels = await ClassLevel.findAll();
       await Promise.all(
         class_levels.map(async (class_level) => {
-          class_level.addStudent(student, {
+          const enrollment = await class_level.addStudent(student, {
             through: {
               hasEnrollmentForm: true,
               status: getRandomStatus(),
@@ -121,7 +121,7 @@ export async function injectStudent() {
 
           await Promise.all(
             classLearningStrands.map(async (classLearningStrand) => {
-              classLearningStrand.addStudent(student)
+              classLearningStrand.addEnrollment(enrollment)
             })
           )
         })
