@@ -258,12 +258,17 @@ export const getEnrolled = async (req, res, next) => {
         };
       });
     });
-
-    res.status(201).json({ message: 'Enrolled learner successfully!', enrollment: enrollment });
-
+    
+    // Flatten the array
+    const flattenedData = [].concat(...parsedData);
+    
+    res.status(200).json({ message: 'Fetched enrolled student successfully!', enrolled: flattenedData });
+    
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'An error occurred while enrolling the learner.' });
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
     next(error);
+    return error;
   }
-};
+}
