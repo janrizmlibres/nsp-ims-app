@@ -2,19 +2,11 @@
 // Presets
 import Divider from 'primevue/divider';
 import StrandCard from './StrandCard.vue';
-import ProgressSpinner from 'primevue/progressspinner';
-import { ref, watch } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps(['modelValue'])
 
-const isFetching = ref(true)
-const strands = ref([])
-
-watch(() => props.modelValue, (data) => {
-    isFetching.value = true
-    strands.value = data
-    isFetching.value = false
-}, {immediate: true})
+const strands = computed(() => props.modelValue)
 </script>
 
 <template>
@@ -25,8 +17,7 @@ watch(() => props.modelValue, (data) => {
         </div>
         <Divider class="before:border-t before:border-surface-400"/>
         
-        <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-        <span v-else-if="strands.length === 0" class="flex flex-col text-center">No learning strands created.</span>
+        <span v-if="strands.length === 0" class="flex flex-col text-center">No learning strands created.</span>
         <div v-else class="flex flex-col gap-4">
             <StrandCard v-for="learningStrand of strands" :key="learningStrand.teacher" :data="learningStrand" />
         </div>

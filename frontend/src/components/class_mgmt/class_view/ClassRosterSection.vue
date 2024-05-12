@@ -3,9 +3,8 @@
 import Divider from 'primevue/divider';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import ProgressSpinner from 'primevue/progressspinner';
 import { FilterMatchMode } from 'primevue/api';
-import { ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
 // Custom Components
 import RosterTabHeader from './RosterTabHeader.vue';
@@ -13,22 +12,13 @@ import RosterTable from './RosterTable.vue';
 
 const props = defineProps(['modelValue'])
 
-const isFetching = ref(true)
-const active = ref([])
-const inactive = ref([])
-const drop = ref([])
+const active = computed(() => props.modelValue.active)
+const inactive = computed(() => props.modelValue.inactive)
+const drop = computed(() => props.modelValue.drop)
 
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 })
-
-watch(() => props.modelValue, (data) => {
-    isFetching.value = true
-    active.value = data.active
-    inactive.value = data.inactive
-    drop.value = data.drop
-    isFetching.value = false
-}, {immediate: true})
 </script>
 
 <template>
@@ -42,8 +32,7 @@ watch(() => props.modelValue, (data) => {
         </div>
         <Divider class="before:border-t before:border-surface-400"/>
 
-        <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-        <TabView v-else class="p-2 bg-white shadow-xl rounded-md u-border-bottom u-txt-active"
+        <TabView class="p-2 bg-white shadow-xl rounded-md u-border-bottom u-txt-active"
             :pt="{
                 tabpanel: {
                     headerTitle: {class:'u-txt-active'}

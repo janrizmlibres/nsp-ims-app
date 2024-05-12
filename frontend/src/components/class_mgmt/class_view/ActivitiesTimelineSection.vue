@@ -2,20 +2,12 @@
 // Presets
 import Divider from 'primevue/divider';
 import TimelineCard from './TimelineCard.vue';
-import ProgressSpinner from 'primevue/progressspinner';
 import Badge from 'primevue/badge';
-import { ref, watch } from 'vue';
+import { computed } from 'vue';
 
 const props = defineProps(['modelValue'])
 
-const isFetching = ref(true)
-const strands = ref([])
-
-watch(() => props.modelValue, (data) => {
-    isFetching.value = true
-    strands.value = data
-    isFetching.value = false
-}, {immediate: true})
+const strands = computed(() => props.modelValue)
 </script>
 
 <template>
@@ -27,8 +19,7 @@ watch(() => props.modelValue, (data) => {
         </div>
         <Divider />
 
-        <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-        <div v-else class="flex flex-col gap-12 px-auto pb-4 overflow-auto max-h-[24rem]">
+        <div class="flex flex-col gap-12 px-auto pb-4 overflow-auto max-h-[24rem]">
             <span v-if="strands.length === 0" class="text-center">No upcoming activities due</span>
             <div v-else v-for="strand of strands" :key="strand.id" class="flex flex-col gap-2 px-8">
                 <div class="flex flex-row gap-4 items-center u-txt-active">

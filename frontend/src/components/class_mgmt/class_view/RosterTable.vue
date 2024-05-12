@@ -3,20 +3,12 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import { useConfirm } from "primevue/useconfirm";
 import { ref, watch } from 'vue';
-import { useClassStore } from '@/stores/class';
-import { useRoute } from 'vue-router';
 
 const props = defineProps(['modelValue', 'filters'])
 const filters = ref(props.filters)
 const list = ref([])
 const listLength = ref()
-
-const confirm = useConfirm()
-const route = useRoute()
-
-const classStore = useClassStore()
 
 watch(() => props.modelValue, (data) => {
     list.value = data
@@ -109,27 +101,27 @@ const customPt = {
     }
 }
 
-async function changeStatus(learnerId, currentStatus) {
-    const newStatus = ref()
-    if (currentStatus === 'Active') newStatus.value = 'Inactive'
-    else if (currentStatus === 'Inactive') newStatus.value = 'Active'
+// async function changeStatus(learnerId, currentStatus) {
+//     const newStatus = ref()
+//     if (currentStatus === 'Active') newStatus.value = 'Inactive'
+//     else if (currentStatus === 'Inactive') newStatus.value = 'Active'
 
-    await classStore.updateStudentStatus(route.query.id, learnerId, newStatus.value)
-    await classStore.getAllStudents(route.query.id)
-}
+//     await classStore.updateStudentStatus(route.query.id, learnerId, newStatus.value)
+//     await classStore.getAllStudents(route.query.id)
+// }
 
-const dropStudent = (learnerId, studentLastName, studentFirstName) => {
-    confirm.require({
-        group: 'actionGuard',
-        message: 'Are you sure you want to drop ' + '"' + studentLastName + ', ' + studentFirstName + '"',
-        header: 'Confirmation',
-        accept: async () => {
-            await classStore.updateStudentStatus(route.query.id, learnerId, 'Drop')
-            await classStore.getAllStudents(route.query.id)
-        },
-        reject: () => {}
-    });
-};
+// const dropStudent = (learnerId, studentLastName, studentFirstName) => {
+//     confirm.require({
+//         group: 'actionGuard',
+//         message: 'Are you sure you want to drop ' + '"' + studentLastName + ', ' + studentFirstName + '"',
+//         header: 'Confirmation',
+//         accept: async () => {
+//             await classStore.updateStudentStatus(route.query.id, learnerId, 'Drop')
+//             await classStore.getAllStudents(route.query.id)
+//         },
+//         reject: () => {}
+//     });
+// };
 </script>
 
 <template>

@@ -48,7 +48,7 @@ const toggle = (event) => {
 
 <template>
     <div class="flex flex-row justify-between bg-white u-txt-active shadow-md rounded-lg p-4">
-        <div class="flex flex-col font-semibold content-center flex-1 hover:cursor-pointer hover:underline  hover:u-txt-pcolor">
+        <div class="flex flex-col font-semibold content-center flex-1 mr-8 hover:cursor-pointer hover:underline hover:u-txt-pcolor">
             <p class="u-txt-inactive">{{ data.learning_strand.code }}</p>
             <p class="text-lg"
             @click="showStrand">
