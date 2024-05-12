@@ -44,11 +44,16 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     remarks) {
     
     const authStore = useAuthStore()
-
+    
     await axios.post('http://localhost:8080/enrollment/enroll-learner', {
-      learnerID,
+      lrn,
       classLevelID,
-      modularity,
+      hasEnrollmentForm,
+      digital_literacy,
+      ftl_pretest,
+      callable,
+      bridger,
+      regularity,
       remarks
     }, {
       headers: { Authorization: 'Bearer ' + authStore.token }
