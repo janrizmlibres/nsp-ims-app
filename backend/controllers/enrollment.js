@@ -64,6 +64,24 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
   }
 };
 
+/**
+ * Enrolls a learner to a class level.
+ * 
+ * The request body must contain:
+ * - learnerID: The ID of the learner to be enrolled.
+ * - classLevelID: The ID of the class level to enroll the learner to.
+ * - hasEnrollmentForm: A boolean value indicating if the learner has an enrollment form.
+ * - digital_literacy: The digital literacy score of the learner.
+ * - ftl_pretest: The FTL pretest score of the learner.
+ * - callable: A boolean value indicating if the learner is callable.
+ * - bridger: A boolean value indicating if the learner is a bridger.
+ * - modularity: The modularity of the learner.
+ * - remarks: Additional remarks about the learner.
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ * @returns {Promise<*>}
+ */
 export const enrollLearner = async (req, res, next) => {
   const { learnerID, classLevelID, modularity, remarks } = req.body;
   
