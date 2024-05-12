@@ -10,7 +10,7 @@ const Grade = sequelize.define("grade", {
     allowNull: false,
     primaryKey: true,
   },
-  learnerId: {
+  studentId: {
       type: INTEGER,
       references: {
       model: Learner,

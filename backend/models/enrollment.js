@@ -4,7 +4,7 @@ import Learner from "./learner.js";
 import ClassLevel from "./class_level.js";
 
 const Enrollment = sequelize.define('enrollment', {
-    learnerId: {
+    studentId: {
         type: INTEGER,
         references: {
         model: Learner,

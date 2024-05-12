@@ -4,7 +4,7 @@ import Learner from "./learner.js";
 import Session from "./session.js";
 
 const Attendance = sequelize.define("attendance", {
-  learnerId: {
+  studentId: {
       type: INTEGER,
       references: {
       model: Learner,
