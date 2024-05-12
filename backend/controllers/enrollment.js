@@ -1,7 +1,7 @@
 ﻿import Term from "../models/term.js";
 import Enrollment from '../models/enrollment.js'
 import ClassLevel from "../models/class_level.js";
-import Learner from "../models/learner.js";
+import Student from '../models/student/student.js'
 
 export const getAllEnrolledOnTerm = async (req, res, next) => {
   const termID = req.params.termID
@@ -13,19 +13,20 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
 
     const classLevels = await ClassLevel.findAll({
       where: {termId: currentTerm.id},
-      include: {model: Learner, include: {model: Enrollment}},
+      include: {model: Student, include: {model: Enrollment}},
     })
 
     const parsedData = classLevels.map(classLevel => {
-      return classLevel.learners.map(learner => {
+      return classLevel.students.map(student => {
         return {
-          lrn: learner.lrn,
-          lastName: learner.lastName,
-          firstName: learner.firstName,
-          middleName: learner.middleName,
+          lrn: student.lrn,
+          lastName: student.lastName,
+          firstName: student.firstName,
+          middleName: student.middleName,
           schoolLevel: classLevel.school_level,
-          dateEnrolled: learner.enrollment.dateEnrolled,
-          status: learner.enrollment.status
+          dateEnrolled: student.enrollment.dateEnrolled,
+          status: student.enrollment.status,
+          term: currentTerm.academic_year,
         };
       });
     });
