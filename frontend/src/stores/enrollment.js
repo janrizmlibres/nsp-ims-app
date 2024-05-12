@@ -5,6 +5,7 @@ import { useAuthStore } from './auth'
 
 export const useEnrollmentStore = defineStore('enrollment', () => {
   const learners = ref([])
+  const learner = ref(null)
   
   async function getAllEnrolledFromTerm(termID) {
     const authStore = useAuthStore()
