@@ -3,7 +3,7 @@ import ClassLevel from "../models/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
 import Grade from "../models/grade.js";
-import Learner from "../models/learner.js";
+import Student from "../models/student/student.js";
 import Enrollment from "../models/enrollment.js";
 import Attendance from "../models/attendance.js";
 import ModuleSubmission from "../models/module_submission.js";
@@ -20,6 +20,7 @@ import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal
 import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
 import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
 import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
+import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
 
 function setAssociations() {
   // Staff-Permission Relationship
@@ -58,40 +59,40 @@ function setAssociations() {
   Module.belongsTo(ClassLearningStrand)
 
   // Student-ClassLevel Relationship
-  Learner.belongsToMany(ClassLevel, { through: Enrollment });
-  ClassLevel.belongsToMany(Learner, { through: Enrollment });
+  Student.belongsToMany(ClassLevel, { through: Enrollment });
+  ClassLevel.belongsToMany(Student, { through: Enrollment });
   ClassLevel.hasMany(Enrollment)
   Enrollment.belongsTo(ClassLevel)
-  Learner.hasMany(Enrollment)
-  Enrollment.belongsTo(Learner)
+  Student.hasMany(Enrollment)
+  Enrollment.belongsTo(Student)
 
   // Class Learning Strand-Session Relationship
   ClassLearningStrand.hasMany(Session)
   Session.belongsTo(ClassLearningStrand)
 
   // Student-Session Relationship
-  Learner.belongsToMany(Session, { through: Attendance });
-  Session.belongsToMany(Learner, { through: Attendance });
+  Student.belongsToMany(Session, { through: Attendance });
+  Session.belongsToMany(Student, { through: Attendance });
   Session.hasMany(Attendance)
   Attendance.belongsTo(Session)
-  Learner.hasMany(Attendance)
-  Attendance.belongsTo(Learner)
+  Student.hasMany(Attendance)
+  Attendance.belongsTo(Student)
 
   // Student-Class Learning Strand Relationship
-  Learner.belongsToMany(ClassLearningStrand, { through: Grade });
-  ClassLearningStrand.belongsToMany(Learner, { through: Grade });
+  Student.belongsToMany(ClassLearningStrand, { through: Grade });
+  ClassLearningStrand.belongsToMany(Student, { through: Grade });
   ClassLearningStrand.hasMany(Grade)
   Grade.belongsTo(ClassLearningStrand)
-  Learner.hasMany(Grade)
-  Grade.belongsTo(Learner)
+  Student.hasMany(Grade)
+  Grade.belongsTo(Student)
 
   // Student-Module Relationship
-  Learner.belongsToMany(Module, { through: ModuleSubmission });
-  Module.belongsToMany(Learner, { through: ModuleSubmission });
+  Student.belongsToMany(Module, { through: ModuleSubmission });
+  Module.belongsToMany(Student, { through: ModuleSubmission });
   Module.hasMany(ModuleSubmission)
   ModuleSubmission.belongsTo(Module)
-  Learner.hasMany(ModuleSubmission)
-  ModuleSubmission.belongsTo(Learner)
+  Student.hasMany(ModuleSubmission)
+  ModuleSubmission.belongsTo(Student)
 
   // Volunteer-Affiliation Relationship
   Volunteer.hasOne(StudentVolunteer)
@@ -112,8 +113,8 @@ function setAssociations() {
   VolunteerEmergency.belongsTo(Volunteer)
 
   // Volunteer-Availability Relationship
-  Volunteer.hasOne(VolunteerSpecialization)
-  VolunteerSpecialization.belongsTo(Volunteer)
+  Volunteer.hasOne(VolunteerAvailability)
+  VolunteerAvailability.belongsTo(Volunteer)
 
   // Volunteer-Specialization Relationship
   Volunteer.hasOne(VolunteerSpecialization)
