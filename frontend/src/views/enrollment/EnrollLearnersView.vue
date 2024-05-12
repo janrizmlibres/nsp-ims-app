@@ -3,9 +3,8 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import { ref } from 'vue'
 import { useTermStore } from '@/stores/term.js'
 import { useToast } from 'primevue/usetoast'
-import { useEnrollmentStore } from '@/stores/enrollment.js'
-import EnrollmentTopPanel from '@/components/enrollment_view/EnrollmentTopPanel.vue'
-import EnrollmentBottomPanel from '@/components/enrollment_view/EnrollmentBottomPanel.vue'
+import { useStudentsStore } from '@/stores/students.js'
+import EnrollmentForm from '@/components/enrollment_view/EnrollmentForm.vue'
 
 const termStore = useTermStore()
 const enrollmentStore = useEnrollmentStore()
