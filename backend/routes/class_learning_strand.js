@@ -16,7 +16,7 @@ router.post("/:classLearningStrandId/session/add", isAuth, classLearningStrandCo
 router.patch("/schedule/:scheduleId/update", isAuth, classLearningStrandController.updateSchedule);
 router.patch("/module/:moduleId/update", isAuth, classLearningStrandController.updateModule)
 router.put("/module/moduleSubmissions/update", isAuth, classLearningStrandController.updateModuleSubmissions);
-router.put("/session/:sessionId/attendances/update", isAuth, classLearningStrandController.updateAttendances);
+router.put("/session/attendances/update", isAuth, classLearningStrandController.updateAttendances);
 router.put("/grades/update", isAuth, classLearningStrandController.updateGrades);
 
 
