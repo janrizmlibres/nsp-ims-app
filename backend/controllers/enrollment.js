@@ -3,6 +3,25 @@ import Enrollment from '../models/enrollment.js'
 import ClassLevel from "../models/class_level.js";
 import Student from '../models/student/student.js'
 
+/**
+ * Retrieves all learners enrolled in a term.
+ * 
+ * The request must contain the termID as a parameter.
+ * 
+ * The response will contain an array of objects, each object representing a learner.
+ * The object will contain the following properties:
+ * - lrn: The LRN of the learner.
+ * - lastName: The last name of the learner.
+ * - firstName: The first name of the learner.
+ * - middleName: The middle name of the learner.
+ * - schoolLevel: The school level of the learner.
+ * - dateEnrolled: The date the learner was enrolled.
+ * - status: The status of the learner.
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ * @returns {Promise<*>}
+ */
 export const getAllEnrolledOnTerm = async (req, res, next) => {
   const termID = req.params.termID
   
