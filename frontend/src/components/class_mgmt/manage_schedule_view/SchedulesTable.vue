@@ -7,36 +7,46 @@ import Row from 'primevue/row';
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
 import MultiSelect from 'primevue/multiselect';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { format } from 'date-fns';
 
 // Custom
 import { useVolunteerStore } from '@/stores/volunteer';
-import { useStrandStore } from '@/stores/strand';
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useToast } from 'primevue/usetoast';
 
 // stores
 const volunteerStore = useVolunteerStore()
-const strandStore = useStrandStore()
+const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['modelValue', 'term'])
+const props = defineProps(['modelValue', 'term', 'state'])
 const emit = defineEmits(['updateSchedule'])
 const toast = useToast()
 
 const classData = ref([])
 const volunteers = ref([])
 const termStatus = ref(true)
+const state = computed(() => props.state)
 
 onMounted(async () => {
-    volunteerStore.getAllVolunteers().then((data) => {
-        data.forEach((volunteer) => volunteers.value.push(volunteer))
-    })
+    try {
+        volunteerStore.getAllVolunteers().then((data) => {
+            data.forEach((volunteer) => volunteers.value.push(volunteer))
+        })
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    }
 })
 
 watch(() => props.modelValue, (data) => classData.value = data, {immediate: true})
 watch(() => props.term, (data) => termStatus.value = data.status, {immediate: false})
 
-const days = ref(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]);
+const days = ref(["M", "T", "W", "TH", "F", "S"]);
 
 const customPt = {
     root: {
@@ -87,7 +97,7 @@ const onRowEditSave = async (event) => {
         else newData.end_time = to24hr(newData.end_time)
         
         try {
-            await strandStore.updateSchedule(data.scheduleId, {
+            await classLearningStrandStore.updateSchedule(data.scheduleId, {
                 volunteerId: newData.volunteer.id,
                 days: newData.school_days.length === 0 ? data.school_days.toString() : newData.school_days.toString(),
                 start_time: newData.start_time,
@@ -108,7 +118,6 @@ const onRowEditSave = async (event) => {
                 detail: error,
                 life: 3000
             })
-            console.log(error);
         }
     }
 };
@@ -131,7 +140,7 @@ function to24hr(time12h) {
 </script>
 
 <template>
-    <div class="bg-white rounded-md shadow-xl flex flex-col p-7 pt-4 flex-1">
+    <div v-if="state" class="bg-white rounded-md shadow-xl flex flex-col p-7 pt-4 flex-1">
         <DataTable 
             :value="classData" dataKey="scheduleId"
             v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
