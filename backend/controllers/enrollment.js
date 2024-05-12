@@ -56,9 +56,11 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
     res.status(200).json({ message: 'Fetched all active students successfully!', learners: flattenedData });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'An error occurred while fetching students.' });
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
     next(error);
+    return error;
   }
 };
 
