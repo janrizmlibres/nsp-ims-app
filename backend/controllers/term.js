@@ -43,35 +43,9 @@ export async function getTerm(req, res, next) {
 export async function getAllTerms(req, res, next) {
     try {
         const terms = await Term.findAll({ 
-            include: [ClassLevel]}
-        );
-
-        for (const term of terms) {
-            for (const classLevel of term.class_levels) {
-                const activeCount = await classLevel.countEnrollments({
-                    where: {
-                        status: 'Active'
-                    }
-                })
-    
-                const inactiveCount = await classLevel.countEnrollments({
-                    where: {
-                        status: 'Inactive'
-                    }
-                })
-    
-                const dropCount = await classLevel.countEnrollments({
-                    where: {
-                        status: 'Drop'
-                    }
-                })
-    
-                classLevel.dataValues.activeCount = activeCount
-                classLevel.dataValues.inactiveCount = inactiveCount
-                classLevel.dataValues.dropCount = dropCount
-                classLevel.dataValues.total = activeCount + inactiveCount + dropCount
-            }
-        }
+            include: [ClassLevel],
+            order: [['id', 'DESC']]
+        });
         
         res.status(200).json({
             message: "Fetched all terms successfully.",
