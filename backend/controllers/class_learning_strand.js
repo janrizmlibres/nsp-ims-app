@@ -1,34 +1,14 @@
-import Attendance from "../models/attendance.js";
-import ClassLearningStrand from "../models/class_learning_strand.js";
-import ClassSchedule from "../models/class_schedule.js";
+import Attendance from "../models/class/attendance.js";
+import ClassLearningStrand from "../models/class/class_learning_strand.js";
+import ClassSchedule from "../models/class/class_schedule.js";
 import Enrollment from "../models/enrollment.js";
-import Grade from "../models/grade.js";
+import Grade from "../models/class/grade.js";
 import LearningStrand from "../models/learning_strand.js";
-import Module from "../models/module.js";
-import Session from "../models/session.js";
+import Module from "../models/class/module.js";
+import Session from "../models/class/session.js";
 import Student from "../models/student/student.js";
 import Volunteer from "../models/volunteer/volunteer.js";
-import ModuleSubmission from "../models/module_submission.js";
-
-// export async function getStrand(req, res, next) {
-//     const classLearningStrandId = req.params.classLearningStrandId;
-
-//     try {
-//         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId, {
-//             include: [LearningStrand, {model:Volunteer, include: [ClassSchedule]}]
-//         })
-        
-//         res.status(200).json({
-//         message: "Fetched class successfully.",
-//         data: classLearningStrand,
-//         });
-//     } catch (error) {
-//         if (!error.statusCode) {
-//         error.statusCode = 500;
-//         }
-//         next(error);
-//     }
-// }
+import ModuleSubmission from "../models/class/module_submission.js";
 
 export async function addModule(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
@@ -59,12 +39,11 @@ export async function addModule(req, res, next) {
         })
 
         const enrollments = await Enrollment.findAll({
-            where: {classLevelId: classLearningStrand.classLevelId}, 
-            include: [Student]
+            where: {classLevelId: classLearningStrand.classLevelId}
         })
 
         for (const enrollment of enrollments) {
-            await module.addStudent(enrollment.student)
+            await module.addEnrollment(enrollment)
         }
 
         res.status(201).json({ 
@@ -125,7 +104,7 @@ export async function getModule(req, res, next) {
     try {
         const module = await Module.findByPk(moduleId, {
             include: [{
-                model: ModuleSubmission, include: [Student]
+                model: ModuleSubmission, include: [{model: Enrollment, include:[Student]}]
             }, {
                 model: ClassLearningStrand, include: [LearningStrand]
             }]
@@ -193,7 +172,7 @@ export async function getAllGrades(req, res, next) {
         const grades = await Grade.findAll({
             where: {classLearningStrandId: classLearningStrandId}, 
             include: [{
-                model: Student, include: {model: Enrollment, where: {classLevelId: classLearningStrand.classLevelId}}
+                model: Enrollment, where: {classLevelId: classLearningStrand.classLevelId}, include: [Student]
             }, {
                 model: ClassLearningStrand, include: [LearningStrand]
             }]
@@ -213,14 +192,14 @@ export async function getAllGrades(req, res, next) {
 
 export async function updateGrades(req, res, next) {
     try {
-        for (const student of req.body.updatedData) {
-            const studentInstance = await Student.findByPk(student.studentId, {
+        for (const enrollment of req.body.updatedData) {
+            const enrollmentInstance = await Enrollment.findByPk(enrollment.enrollmentId, {
                 include: {model: Grade, where: {
-                    classLearningStrandId: student.classLearningStrandId
+                    classLearningStrandId: enrollment.classLearningStrandId
                 }},
             });
 
-            await studentInstance.grades[0].update(student.grades);
+            await enrollmentInstance.grades[0].update(enrollment.grades);
         }
         
             res.status(200).json({ message: "Grade Updated!" });
@@ -263,7 +242,7 @@ export async function addSession(req, res, next) {
         })
 
         for (const enrollment of enrollments) {
-            await session.addStudent(enrollment.student)
+            await session.addEnrollment(enrollment)
         }
 
         res.status(201).json({ 
@@ -321,7 +300,7 @@ export async function getSession(req, res, next) {
     try {
         const module = await Session.findByPk(sessionId, {
             include: [{
-                model: Attendance, include: [Student]
+                model: Attendance, include: [{model: Enrollment, include: [Student]}]
             }, {
                 model: ClassLearningStrand, include: [LearningStrand]
             }]
@@ -342,14 +321,13 @@ export async function getSession(req, res, next) {
 
 export async function updateAttendances(req, res, next) {
     try {
-        for (const student of req.body.updatedData) {
-            const learnerInstance = await Student.findByPk(student.id, {
-                include: {model: Grade, where: {
-                    classLearningStrandId: student.classLearningStrandId
-                }},
+        for (const attendance of req.body.updatedData) {
+            const attendanceInstance = await Attendance.findByPk(attendance.id);
+
+            await attendanceInstance.update({
+                status: attendance.status,
+                remarks: attendance.remarks
             });
-            
-            await learnerInstance.grades[0].update(student.grades);
         }
         
             res.status(200).json({ message: "Grade Updated!" });
