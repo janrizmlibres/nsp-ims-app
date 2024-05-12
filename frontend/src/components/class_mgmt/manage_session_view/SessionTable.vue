@@ -143,39 +143,6 @@ watch(() => props.id, (id) => {
     isFetching.value = false
 }, {immediate: false})
 
-// const editingRows = ref([]);
-
-// const onRowEditSave = async (event) => {
-//     let { data, newData } = event;
-//     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
-//         try {
-//             await moduleStore.updateModule(newData.id, {
-//                 title: newData.title,
-//                 distribution_date: newData.distribution_date,
-//                 retrieval_date: newData.retrieval_date
-//             })
-
-//             classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
-//                 updateSessionTable(data)
-//             })
-
-//             toast.add({
-//                 severity: 'success',
-//                 summary: 'Success',
-//                 detail: 'Session updated successfully!',
-//                 life: 3000
-//             })
-//         } catch(error) {
-//             toast.add({
-//                 severity: 'success',
-//                 summary: 'Error',
-//                 detail: 'Unexpected error encountered.',
-//                 life: 3000
-//             })
-//         }
-//     }
-// };
-
 async function addSession() {
     const date = new Date()
     const offset = date.getTimezoneOffset()

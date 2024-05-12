@@ -107,11 +107,11 @@ watch(() => props.modelValue, (data) => {
     for (const datum of data) {
         const temp = {
             id: datum.id,
-            studentId: datum.studentId,
+            enrollmentId: datum.enrollment.id,
             classLearningStrandId: datum.classLearningStrandId,
-            lastName: datum.student.lastName,
-            firstName: datum.student.firstName,
-            middleName: datum.student.middleName,
+            lastName: datum.enrollment.student.lastName,
+            firstName: datum.enrollment.student.firstName,
+            middleName: datum.enrollment.student.middleName,
             grades: {
                 first_quarter: datum.first_quarter,
                 second_quarter: datum.second_quarter,

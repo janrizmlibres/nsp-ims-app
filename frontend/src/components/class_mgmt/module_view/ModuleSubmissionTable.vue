@@ -114,9 +114,9 @@ watch(() => props.modelValue, (data) => {
 
         const temp = {
             id: moduleSubmission.id,
-            lastName: moduleSubmission.student.lastName,
-            firstName: moduleSubmission.student.firstName,
-            middleName: moduleSubmission.student.middleName,
+            lastName: moduleSubmission.enrollment.student.lastName,
+            firstName: moduleSubmission.enrollment.student.firstName,
+            middleName: moduleSubmission.enrollment.student.middleName,
             status: moduleSubmission.status,
             date_submitted: moduleSubmission.date_submitted,
             remarks: moduleSubmission.remarks,

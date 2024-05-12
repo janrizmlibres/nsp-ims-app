@@ -37,7 +37,7 @@ function updateGradesData(data) {
     const dropTemp = []
 
     for (const grade of data) {
-        const enrollment = grade.student.enrollments[0]
+        const enrollment = grade.enrollment
 
         if (enrollment.status == 'Active') actTemp.push(grade)
         else if (enrollment.status == 'Inactive') inactTemp.push(grade)
@@ -55,7 +55,7 @@ watch(() => props.id, (id) => {
     isFetching.value = true
     classLearningStrandId.value = id
     try {
-        classLearningStrandStore.getAllGrades(id).then((data) => {   
+        classLearningStrandStore.getAllGrades(id).then((data) => {  
             updateGradesData(data)
         })
     } catch (error) {

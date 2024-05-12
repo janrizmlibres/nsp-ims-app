@@ -109,9 +109,9 @@ watch(() => props.modelValue, (data) => {
 
         const temp = {
             id: attendance.id,
-            lastName: attendance.student.lastName,
-            firstName: attendance.student.firstName,
-            middleName: attendance.student.middleName,
+            lastName: attendance.enrollment.student.lastName,
+            firstName: attendance.enrollment.student.firstName,
+            middleName: attendance.enrollment.student.middleName,
             status: attendance.status,
             remarks: attendance.remarks,
             updatedAt: new Date(attendance.updatedAt)
@@ -172,29 +172,6 @@ function resetData() {
 
     noChanges.value = true
 }
-// const editingRows = ref([]);
-
-// const onRowEditSave = async (event) => {
-//     let { data, newData } = event;
-
-//     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
-//         let date = null
-//         if (newData.date_submitted) {
-//             const offset = newData.date_submitted.getTimezoneOffset()
-//             date = new Date(newData.date_submitted.getTime() - (offset*60*1000))
-//         }
-
-//         await classLearningStrandStore.updateModuleSubmissions(newData.id, {
-//             newStatus: newData.status,
-//             newSubmissionDate: date,
-//             newRemarks: newData.remarks
-//         })
-
-//         classLearningStrandStore.getModule(route.query.id).then((data) => {
-//             emit('onUpdate', data)
-//         })
-//     }
-// };
 
 const exportRef = ref()
 function exportCSV() {
