@@ -83,7 +83,17 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
  * @returns {Promise<*>}
  */
 export const enrollLearner = async (req, res, next) => {
-  const { learnerID, classLevelID, modularity, remarks } = req.body;
+  const { 
+    lrn, 
+    classLevelID, 
+    hasEnrollmentForm, 
+    digital_literacy, 
+    ftl_pretest, 
+    callable, 
+    bridger,
+    regularity, 
+    remarks 
+  } = req.body;
   
   try {
     const learner = await Learner.findByPk(learnerID);
