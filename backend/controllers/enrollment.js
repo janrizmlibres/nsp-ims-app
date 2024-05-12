@@ -96,7 +96,17 @@ export const enrollLearner = async (req, res, next) => {
   } = req.body;
   
   try {
-    const learner = await Learner.findByPk(learnerID);
+    //search for the Student ID from its lrn field
+    const student = await Student.findOne(
+      {where: {lrn: lrn}}
+    )
+    
+    if (!student) {
+      const error = new Error("Student not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+    
     const classLevel = await ClassLevel.findByPk(classLevelID);
 
     const enrollment = await Enrollment.create({
