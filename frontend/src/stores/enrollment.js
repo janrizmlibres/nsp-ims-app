@@ -20,7 +20,29 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     console.log(learners.value)
   }
   
-  async function enrollLearner(learnerID, classLevelID, modularity, remarks) {
+  async function getEnrolled(lrn, termID, classLevel) {
+    const authStore = useAuthStore()
+
+    const result = await axios.get(
+      `http://localhost:8080/enrollment/retrieve-enrolled/${lrn}/${termID}/${classLevel}`, 
+      {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    learner.value = result.data.enrolled
+  }
+  
+  async function enrollLearner(
+    lrn, 
+    classLevelID, 
+    hasEnrollmentForm, 
+    digital_literacy, 
+    ftl_pretest, 
+    callable, 
+    bridger, 
+    regularity, 
+    remarks) {
+    
     const authStore = useAuthStore()
 
     await axios.post('http://localhost:8080/enrollment/enroll-learner', {
