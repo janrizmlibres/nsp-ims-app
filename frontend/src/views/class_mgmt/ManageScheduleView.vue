@@ -11,20 +11,20 @@ import SchedulesTable from '@/components/class_mgmt/manage_schedule_view/Schedul
 
 //  stores
 import { useClassStore } from '@/stores/class';
-import { useStrandStore } from '@/stores/strand';
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
 const toast = useToast()
 
 const classStore = useClassStore()
-const strandStore = useStrandStore()
+const classLearningStrandStore = useClassLearningStrandStore()
 
 const selectedTerm = ref()
 const tableData = ref([])
+const state = ref(false)
 
 async function addSchedule(learningStrand, form) {
-    console.log(form);
     try {
-        await strandStore.addSchedule(learningStrand.id, {
+        await classLearningStrandStore.addSchedule(learningStrand.id, {
             volunteer: form.volunteer,
             days: form.school_days.toString(),
             start_time: format(new Date(form.start_time), "HH:mm"),
@@ -46,14 +46,16 @@ async function addSchedule(learningStrand, form) {
             detail: "Unexpected error encountered.",
             life: 3000
         })
-        console.log(error);
     }
 }
 
 function updateScheduleTable(classId) {
+    if (classId) state.value = true
+    else state.value = false
+
     tableData.value.length = 0
 
-    classStore.getAllStrands(classId).then((data) => {
+    classStore.getAllLearningStrands(classId).then((data) => {
         for (const learningStrand of data) {
             for (const schedule of learningStrand.class_schedules) {
                 const start_time = format(new Date("01/01/0001 " + schedule.start_time), "hh:mm aaa")
@@ -81,8 +83,8 @@ function resetTable(term) {
 </script>
 
 <template>
-    <ContentPane header="Manage" subheader="Class Schedules">
-        <ManageScheduleForm @submit="addSchedule" @chooseYear="resetTable" @chooseLevel="updateScheduleTable" />
-        <SchedulesTable v-model="tableData" :term="selectedTerm" @updateSchedule="updateScheduleTable" />
+    <ContentPane header="Class Schedules" subheader="Management">
+        <ManageScheduleForm @chooseYear="resetTable" @chooseLevel="updateScheduleTable" @submit="addSchedule" :state="state" />
+        <SchedulesTable v-model="tableData" :term="selectedTerm" @updateSchedule="updateScheduleTable" :state="state" />
     </ContentPane>
 </template>
