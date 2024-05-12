@@ -10,7 +10,9 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   async function getAllEnrolledFromTerm(termID) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(`http://localhost:8080/enrollment/retrieve-from-term/${termID}`, {
+    const result = await axios.get(
+      `http://localhost:8080/enrollment/retrieve-from-term/${termID}`, 
+      {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
