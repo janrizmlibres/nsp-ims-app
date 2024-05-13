@@ -2,7 +2,7 @@ import { expect } from "chai";
 import * as adminController from "../controllers/admin.js";
 import { resetDb, resCopy } from "./helpers.js";
 
-let res = structuredClone(resCopy);
+let res = { ...resCopy };
 
 function expectError(result, message, code) {
   expect(result).to.be.an("error");
@@ -21,7 +21,7 @@ describe("Admin Controller (Staffs)", () => {
   before(async () => await resetDb());
   after(async () => await resetDb());
 
-  beforeEach(() => (res = structuredClone(resCopy)));
+  beforeEach(() => (res = { ...resCopy }));
 
   it("should be able to get staffs from the database", async () => {
     const req = { query: { includePerms: false, includeAudit: false } };
@@ -78,5 +78,20 @@ describe("Admin Controller (Staffs)", () => {
 
     await adminController.updateStaff(req, res, () => {});
     expectStaffFound(res, "Staff updated!", 200, test_id);
+  });
+
+  it("should create an audit trail when staff is found", async () => {
+    const req = {
+      body: {
+        userId: 91267,
+        description: "Testing",
+        date: new Date(),
+      },
+    };
+
+    await adminController.addAudit(req, res, () => {});
+
+    expect(res.statusCode).to.be.equal(200);
+    expect(res.body.message).to.be.equal("Audit created.");
   });
 });

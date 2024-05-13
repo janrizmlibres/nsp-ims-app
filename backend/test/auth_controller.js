@@ -3,27 +3,16 @@ import { expect } from "chai";
 
 import { login } from "../controllers/auth.js";
 import { signup } from "../controllers/auth.js";
+import { resCopy, resetDb } from "./helpers.js";
 
-import sequelize from "../util/database.js";
-import setAssociations from "../util/associations.js";
-import { injectAll } from "../util/db_injector.js";
+let res = { ...resCopy };
 
 describe("Auth Controller", () => {
   before(async () => await resetDb());
   after(async () => await resetDb());
 
   beforeEach(() => {
-    res = {
-      statusCode: null,
-      body: null,
-      status: function (code) {
-        this.statusCode = code;
-        return this;
-      },
-      json: function (data) {
-        this.body = data;
-      },
-    };
+    res = { ...resCopy };
   });
 
   it("should return an error if the user is not found", async () => {
@@ -94,24 +83,3 @@ describe("Auth Controller", () => {
     expect(res.body.user).to.be.an("object");
   });
 });
-
-let res = {
-  statusCode: null,
-  body: null,
-  status: function (code) {
-    this.statusCode = code;
-    return this;
-  },
-  json: function (data) {
-    this.body = data;
-  },
-};
-
-async function resetDb() {
-  await sequelize.query("SET FOREIGN_KEY_CHECKS=0");
-  await sequelize.drop();
-  await sequelize.query("SET FOREIGN_KEY_CHECKS=1");
-  setAssociations();
-  await sequelize.sync({ force: true });
-  await injectAll();
-}

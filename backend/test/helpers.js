@@ -1,6 +1,6 @@
-import sequelize from "../util/database";
-import { injectAll } from "../util/db_injector";
-import setAssociations from "../util/associations";
+import sequelize from "../util/database.js";
+import { injectAll } from "../util/db_injector.js";
+import setAssociations from "../util/associations.js";
 
 export async function resetDb() {
   await sequelize.query("SET FOREIGN_KEY_CHECKS=0");

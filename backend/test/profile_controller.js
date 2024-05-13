@@ -1,12 +1,12 @@
 import { expect } from "chai";
 import * as profileController from "../controllers/profile.js";
-import { resetDb } from "./helpers.js";
+import { resCopy, resetDb } from "./helpers.js";
 
 describe("Profile Controller (Students)", () => {
   before(async () => await resetDb());
   after(async () => await resetDb());
 
-  it("should create a new student if all input fields are valid", async () => {
+  it("should create a new student given that all input fields are valid", async () => {
     const req = {
       body: {
         identity: {
@@ -60,7 +60,7 @@ describe("Profile Controller (Students)", () => {
         prevSchool: {
           name: "St. Larlar Musician School",
           schoolType: "Private",
-          schoolAffiliation: "Non-Secular",
+          schoolAffiliation: "Non-Sectarian",
           lastSyAttended: "1901 - 1902",
           highestEducation: "Secondary Education",
           gradeStopped: "Grade 10",
@@ -73,8 +73,7 @@ describe("Profile Controller (Students)", () => {
       },
     };
 
-    let res = structuredClone(resCopy);
-
+    const res = { ...resCopy };
     await profileController.addStudent(req, res, () => {});
 
     expect(res).to.have.property("statusCode", 200);

@@ -24,13 +24,33 @@ export async function getStudents(_req, res, next) {
 export async function addStudent(req, res, next) {
   try {
     const student = await Student.create(req.body.identity);
-    await student.createPersonalInfo(req.body.personalInfo);
-    await student.createContactInfo(req.body.contactInfo);
-    await student.createEmergencyPerson(req.body.emergencyPerson);
-    await student.createParentalInfo(req.body.parentalInfo);
-    await student.createPreviousSchool(req.body.prevSchool);
 
-    res.status(200).json({ message: "Student created." });
+    await PersonalInfo.create({
+      ...req.body.personalInfo,
+      studentId: student.id,
+    });
+
+    await ContactInfo.create({
+      ...req.body.contactInfo,
+      studentId: student.id,
+    });
+
+    await EmergencyPerson.create({
+      ...req.body.emergencyPerson,
+      studentId: student.id,
+    });
+
+    await ParentalInfo.create({
+      ...req.body.parentalInfo,
+      studentId: student.id,
+    });
+
+    await PreviousSchool.create({
+      ...req.body.prevSchool,
+      studentId: student.id,
+    });
+
+    res.status(200).json({ message: "Student record created." });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
