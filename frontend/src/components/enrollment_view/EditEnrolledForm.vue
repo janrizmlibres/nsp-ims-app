@@ -63,7 +63,8 @@ const fltPretestScore = ref();
 const hasEnrollmentForm = ref();
 const callable = ref();
 const bridger = ref();
-async function submitEvent() {
+
+async function updateEnrolled() {
   try {
     await enrollmentStore.updateLearner(
       selectedLRN.value,
