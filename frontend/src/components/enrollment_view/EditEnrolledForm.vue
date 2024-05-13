@@ -146,7 +146,6 @@ getStudent()
         </div>
         <Dropdown
           v-model="selectedSchoolLevel"
-          showClear
           :options="schoolLevels"
           optionLabel="school_level"
           placeholder="Select a School Level"
