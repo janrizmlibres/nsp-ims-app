@@ -41,9 +41,9 @@ const VolunteerPersonalInformation = sequelize.define("volunteer_personal_inform
         type: VIRTUAL,
         get() {
             return (
-            this.housing +
-            this.barangay +
-            this.city +
+            this.housing + ", " +
+            this.barangay + ", " +
+            this.city + " " +
             this.province
             );
         },

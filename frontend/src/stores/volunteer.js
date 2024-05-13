@@ -7,14 +7,25 @@ export const useVolunteerStore = defineStore('volunteer', () => {
     const volunteers = ref()
 
     async function getAllVolunteers() {
-        const authStore = useAuthStore()
+    const authStore = useAuthStore()
+    
+    const response = await axios.get('http://localhost:8080/volunteer/volunteers', {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}` // replace 'authStore.token' with your actual token path
+      }
+    });
+  
+    if (Array.isArray(response.data.data)) {
+      volunteers.value = response.data.data.map(volunteer => ({
+        ...volunteer
+      }));
 
-        const result = await axios.get('http://localhost:8080/volunteer/volunteers', {
-        headers: { Authorization: 'Bearer ' + authStore.token }
-        })
-
-        volunteers.value = result.data.data
+      // Log the volunteers array to the console
+      console.log(volunteers.value);
+    } else {
+      console.error('Unexpected response data:', response.data);
     }
+  }
 
-    return { volunteers, getAllVolunteers }
+  return { volunteers, getAllVolunteers }
 })
