@@ -17,7 +17,13 @@ async function getAllTerms()  {
   try {
     await termStore.getTerms()
     termsOptions.value = termStore.terms
-    selectedTerm.value = termsOptions.value[termsOptions.value.length - 1]
+    
+    if (enrollmentStore.editedTerm) {
+      selectedTerm.value = termStore.terms.find(term => term.academic_year === enrollmentStore.editedTerm)
+      enrollmentStore.setEditedTerm(null)
+    } else  {
+      selectedTerm.value = termStore.terms[termStore.terms.length - 1]
+    }
   } catch (error) {
     toast.add({
       severity: 'error',
