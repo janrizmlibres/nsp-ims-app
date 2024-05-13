@@ -42,6 +42,7 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
           lastName: student.lastName,
           firstName: student.firstName,
           middleName: student.middleName,
+          fullName: student.fullname,
           schoolLevel: classLevel.school_level,
           dateEnrolled: student.enrollment.dateEnrolled,
           status: student.enrollment.status,
@@ -243,7 +244,7 @@ export const getEnrolled = async (req, res, next) => {
       return classLevel.students.map(student => {
         return {
           lrn: student.lrn,
-          firstName: student.firstName,
+          fullName: student.fullname,
           schoolLevel: classLevel.school_level,
           regularity: student.enrollment.regularity,
           remarks: student.enrollment.remarks,
