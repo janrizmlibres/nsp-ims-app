@@ -59,6 +59,7 @@ export default {
       { field: 'contactInformation.email', header: 'Email' },
       { field: 'contactInformation.facebook', header: 'Facebook' },
       { field: 'specialization.area', header: 'Specialization' },
+      { field: 'availability.day', header: 'Availability' },
     ]);
 
     const updateGlobalFilter = (newValue) => {
@@ -73,6 +74,7 @@ export default {
         personalInformation: volunteer.volunteer_personal_information,
         contactInformation: volunteer.volunteer_contact_information,
         specialization: volunteer.volunteer_specialization,
+        availability: volunteer.volunteer_availability,
       }));
     });
 
