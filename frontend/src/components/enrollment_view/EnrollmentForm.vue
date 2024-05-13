@@ -49,14 +49,14 @@ const search = (event) => {
       filteredLearners.value = studentsStore.students.filter(student => student.lrn !== null)
     } else {
       filteredLearners.value = studentsStore.students.filter((student) => {
-        return student.lrn !== null && student.firstName.toLowerCase().startsWith(event.query.toLowerCase());
+        return student.lrn !== null && student.fullname.toLowerCase().startsWith(event.query.toLowerCase());
       });
     }
   }, 250);
 }
 
 function onSelectedLearner() {
-  const selectedLearner = studentsStore.students.find(student => student.firstName === selectedFullName.value.firstName)
+  const selectedLearner = studentsStore.students.find(student => student.fullname === selectedFullName.value.fullname)
   selectedLRN.value = selectedLearner.lrn
 }
 
