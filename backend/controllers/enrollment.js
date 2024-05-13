@@ -152,7 +152,6 @@ export const enrollLearner = async (req, res, next) => {
 };
 
 export const updateEnrollment = async (req, res, next) => {
-  console.log("heloo")
   const { 
     lrn, 
     classLevelID, 
@@ -223,8 +222,6 @@ export const getEnrolled = async (req, res, next) => {
   const lrn = req.params.lrn;
   const academicYear = req.params.academicYear;
   const classLevel = req.params.classLevel;
-  
-  console.log("termID: " + academicYear)
   
   try {
     const chosenTerm = await Term.findOne({
