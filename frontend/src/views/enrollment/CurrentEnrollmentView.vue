@@ -17,8 +17,9 @@ async function getActiveStudents()  {
   try {
     await termStore.getActiveTerm()
     currentTerm.value = termStore.activeTerm
-
+    
     await enrollmentStore.getAllEnrolledFromTerm(currentTerm.value.id)
+    enrollmentStore.setEditedTerm(null)
   } catch (error) {
     toast.add({
       severity: 'error',
