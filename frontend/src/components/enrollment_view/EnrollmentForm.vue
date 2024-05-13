@@ -127,7 +127,6 @@ async function submitEvent() {
         </div>
         <Dropdown
           v-model="selectedSchoolLevel"
-          showClear
           :options="schoolLevels"
           optionLabel="school_level"
           placeholder="Select a Class Level"
