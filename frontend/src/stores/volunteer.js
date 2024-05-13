@@ -19,11 +19,6 @@ export const useVolunteerStore = defineStore('volunteer', () => {
       volunteers.value = response.data.data.map(volunteer => ({
         ...volunteer
       }));
-
-      // Log the volunteers array to the console
-      console.log(volunteers.value);
-    } else {
-      console.error('Unexpected response data:', response.data);
     }
   }
 

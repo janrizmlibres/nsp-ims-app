@@ -7,7 +7,6 @@ import LearningStrand from "../models/learning_strand.js";
 import ClassLevel from "../models/class_level.js";
 import Learner from "../models/learner.js";
 import Volunteer from "../models/volunteer/volunteer.js";
-import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
 
 export async function injectAll() {
   await injectStaff();
