@@ -32,7 +32,8 @@ async function getStudent()  {
     schoolLevels.value = chosenYear.class_levels
     
     selectedLRN.value = enrollmentStore.learner[0].lrn
-    selectedFullName.value = enrollmentStore.learner[0].firstName
+    console.log("Full Name: ", enrollmentStore.learner[0].fullName)
+    selectedFullName.value = enrollmentStore.learner[0].fullName
     selectedSchoolLevel.value = chosenYear.class_levels.find(level => level.school_level === props.classLevel)
     selectedRegularity.value = { regularity: enrollmentStore.learner[0].regularity, code: enrollmentStore.learner[0].regularity }
     selectedRemarks.value = enrollmentStore.learner[0].remarks
