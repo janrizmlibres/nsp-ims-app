@@ -2,26 +2,56 @@
 import InputText from 'primevue/inputtext'
 import { ref } from 'vue'
 
-const parents = [
-  { header: "Father's Information", data: ['', '', '', '', ''] },
-  { header: "Mother's Information", data: ['', '', '', '', ''] }
-]
+import FormParts from '@/util/student_form_parts'
 
-const formData = ref(['Last name', 'First Name', 'Middle Name', 'Suffix', 'Occupation'])
+const emit = defineEmits(['dataChanged'])
+
+const formData = ref({
+  fatherData: {
+    LastNameF: null,
+    FirstNameF: null,
+    MiddleNameF: null,
+    SuffixNameF: null,
+    OccupationF: null
+  },
+  motherData: {
+    LastNameM: null,
+    FirstNameM: null,
+    MiddleNameM: null,
+    SuffixNameM: null,
+    OccupationM: null
+  }
+})
+
+const headers = ["Father's Information", "Mother's Information"]
+const fields = ['Last name', 'First Name', 'Middle Name', 'Suffix', 'Occupation']
+
+const parentKeys = Object.keys(formData.value)
+const dataKeys = [Object.keys(formData.value.fatherData), Object.keys(formData.value.motherData)]
+
+function handleUpdate() {
+  const data = { ...formData.value.fatherData, ...formData.value.motherData }
+  emit('dataChanged', FormParts.Parental, data)
+}
 </script>
 
 <template>
   <div class="grid grid-cols-2">
-    <div v-for="parent of parents" :key="parent.header" class="px-8">
+    <div v-for="(header, idx) of headers" :key="header" class="px-8">
       <div>
-        <h2 class="font-bold text-center">{{ parent.header }}</h2>
+        <h2 class="font-bold text-center">{{ header }}</h2>
 
         <div class="grid grid-cols-5 gap-3 mt-4">
-          <template v-for="n in formData.length" :key="formData[n]">
+          <template v-for="n of Array(fields.length).keys()" :key="n">
             <div class="flex items-center justify-end pr-6 col-span-2">
-              <span>{{ formData[n] }}</span>
+              <span>{{ fields[n] }}</span>
             </div>
-            <InputText class="h-10 col-span-3" type="text" v-model="parent.data[n]" />
+            <InputText
+              class="h-10 col-span-3"
+              type="text"
+              v-model="formData[parentKeys[idx]][dataKeys[idx][n]]"
+              @update:model-value="handleUpdate"
+            />
           </template>
         </div>
       </div>

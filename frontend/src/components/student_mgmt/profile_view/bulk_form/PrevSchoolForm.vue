@@ -3,37 +3,39 @@ import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 
-import { computed, ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { getYear } from 'date-fns'
 
-const schoolName = ref()
-const discontinuationReason = ref()
+import { objectMap } from '@/util/helpers'
+import FormParts from '@/util/student_form_parts'
+
+const emit = defineEmits(['dataChanged'])
+
+const schoolName = ref(null)
+const discontinuationReason = ref(null)
 
 const address = ref({
-  blk: { label: 'Blk/Lt/St', data: '' },
-  barangay: { label: 'Barangay', data: '' },
-  city: { label: 'City', data: '' },
-  province: { label: 'Province', data: '' }
+  street: { label: 'Blk/Lt/St', data: null },
+  barangay: { label: 'Barangay', data: null },
+  city: { label: 'City', data: null },
+  province: { label: 'Province', data: null }
 })
 
-const selectedType = ref()
-const selectedEduc = ref()
-const selectedLevel = ref()
+const selectedType = ref(null)
+const selectedAffiliation = ref(null)
 
-const selectedYearL = ref()
-const selectedYearR = ref()
+const selectedEduc = ref(null)
+const selectedLevel = ref(null)
 
-// eslint-disable-next-line no-unused-vars
-const lastYrAttended = computed(() => `${selectedYearL.value} - ${selectedYearR.value}`)
+const selectedYearL = ref(null)
+const selectedYearR = ref(null)
+const lastYrAttended = ref(null)
 
 const years = ref([])
 
-const types = [
-  'Public Sectarian',
-  'Public Non-Sectarian',
-  'Private Sectarian',
-  'Private Non-Sectarian'
-]
+const types = ['Public', 'Private']
+const affiliations = ['Sectarian', 'Non-Sectarian']
+
 const educAttainment = [
   'No formal education',
   'Primary education',
@@ -41,27 +43,42 @@ const educAttainment = [
   'GED',
   'Vocational qualification'
 ]
-const levels = [
-  'Kindergarten',
-  'Grade 1',
-  'Grade 2',
-  'Grade 3',
-  'Grade 4',
-  'Grade 5',
-  'Grade 6',
-  'Grade 7',
-  'Grade 8',
-  'Grade 9',
-  'Grade 10'
-]
 
-watch(selectedYearL, (value) => {
-  selectedYearR.value = (Number(value) + 1).toString
+const levels = ref(['Kindergarten'])
+
+let isYearSet = false
+
+watch([selectedYearL, selectedYearR], ([newYearL, newYearR], [oldYearL, oldYearR]) => {
+  if (isYearSet) {
+    isYearSet = false
+    return
+  }
+
+  if (newYearL !== oldYearL) {
+    selectedYearR.value = (Number(newYearL) + 1).toString()
+  } else if (newYearR !== oldYearR) {
+    selectedYearL.value = (Number(newYearR) - 1).toString()
+  }
+
+  lastYrAttended.value = `${selectedYearL.value} - ${selectedYearR.value}`
+  isYearSet = true
+  handleUpdate()
 })
 
-watch(selectedYearR, (value) => {
-  selectedYearL.value = (Number(value) - 1).toString
-})
+function handleUpdate() {
+  const data = {
+    name: schoolName.value,
+    schoolType: selectedType.value,
+    schoolAffiliation: selectedAffiliation.value,
+    lastSyAttended: lastYrAttended.value,
+    highestEducation: selectedEduc.value,
+    gradeStopped: selectedLevel.value,
+    reason: discontinuationReason.value,
+    ...objectMap(address.value, (field) => field.data)
+  }
+
+  emit('dataChanged', FormParts.PrevSchool, data)
+}
 
 onMounted(() => {
   const currentYear = getYear(new Date())
@@ -69,42 +86,76 @@ onMounted(() => {
   for (let i = currentYear - 120; i <= currentYear + 1; i++) {
     years.value.push(i.toString())
   }
+
+  for (let i = 1; i <= 10; i++) {
+    levels.value.push(`Grade ${i}`)
+  }
 })
 </script>
 
 <template>
   <div class="grid grid-cols-2">
     <div class="px-8">
-      <div class="grid grid-cols-2 gap-3">
-        <div class="flex items-center justify-end pr-6">
+      <div class="grid grid-cols-5 gap-3">
+        <div class="flex items-center justify-end pr-6 col-span-2">
           <span>School Name</span>
         </div>
-        <InputText class="h-10" type="text" v-model="schoolName" />
+        <InputText
+          class="h-10 col-span-3"
+          type="text"
+          v-model="schoolName"
+          @update:model-value="handleUpdate"
+        />
 
-        <div class="flex items-center justify-end pr-6">
+        <div class="flex items-center justify-end pr-6 col-span-2">
           <span>Type</span>
         </div>
-        <Dropdown class="h-10" v-model="selectedType" :options="types" />
+        <Dropdown
+          class="h-10 col-span-3"
+          v-model="selectedType"
+          :options="types"
+          @change="handleUpdate"
+        />
 
-        <div class="flex items-center justify-end pr-6">
+        <div class="flex items-center justify-end pr-6 col-span-2">
+          <span>Affiliation</span>
+        </div>
+        <Dropdown
+          class="h-10 col-span-3"
+          v-model="selectedAffiliation"
+          :options="affiliations"
+          @change="handleUpdate"
+        />
+
+        <div class="flex items-center justify-end text-right pr-6 col-span-2">
           <span>Last School Year Attended</span>
         </div>
 
-        <div class="grid grid-cols-5 gap-3">
-          <Dropdown class="h-10 col-span-2" v-model="selectedYearL" :options="years.pop()" filter />
+        <div class="grid grid-cols-5 gap-3 col-span-3">
+          <Dropdown class="h-10 col-span-2" v-model="selectedYearL" :options="years" filter />
           <span class="flex items-center justify-center">-</span>
           <Dropdown class="h-10 col-span-2" v-model="selectedYearR" :options="years" filter />
         </div>
 
-        <div class="flex items-center justify-end pr-6">
+        <div class="flex items-center justify-end text-right pr-6 col-span-2">
           <span>Highest Educational Attainment</span>
         </div>
-        <Dropdown class="h-10" v-model="selectedEduc" :options="educAttainment" />
+        <Dropdown
+          class="h-10 col-span-3"
+          v-model="selectedEduc"
+          :options="educAttainment"
+          @change="handleUpdate"
+        />
 
-        <div class="flex items-center justify-end pr-6">
+        <div class="flex items-center justify-end text-right pr-6 col-span-2">
           <span>Grade Year/Level Stopped</span>
         </div>
-        <Dropdown class="h-10" v-model="selectedLevel" :options="levels" />
+        <Dropdown
+          class="h-10 col-span-3"
+          v-model="selectedLevel"
+          :options="levels"
+          @change="handleUpdate"
+        />
       </div>
     </div>
 
@@ -113,7 +164,13 @@ onMounted(() => {
         <div class="flex justify-end pr-6">
           <span>Reason for Discontinuation</span>
         </div>
-        <Textarea class="col-span-3" v-model="discontinuationReason" rows="5" cols="30" />
+        <Textarea
+          class="col-span-3"
+          v-model="discontinuationReason"
+          rows="5"
+          cols="30"
+          @update:model-value="handleUpdate"
+        />
 
         <div class="flex items-center justify-end pr-6">
           <span>Address</span>
@@ -126,6 +183,7 @@ onMounted(() => {
           type="text"
           v-model="value.data"
           :placeholder="value.label"
+          @update:model-value="handleUpdate"
         />
       </div>
     </div>

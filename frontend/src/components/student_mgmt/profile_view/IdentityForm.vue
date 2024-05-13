@@ -5,16 +5,19 @@ import Dropdown from 'primevue/dropdown'
 import BaseCard from '@/components/UI/BaseCard.vue'
 
 import { ref } from 'vue'
+import FormParts from '@/util/student_form_parts'
 
-const name = {
-  firstName: '',
-  middleName: '',
-  lastName: ''
-}
+const emit = defineEmits(['dataChanged'])
 
-const lrn = ref()
-const selectedSuffix = ref()
-const selectedCat = ref()
+const name = ref({
+  lastName: null,
+  firstName: null,
+  middleName: null
+})
+
+const lrn = ref(null)
+const selectedSuffix = ref(null)
+const selectedCat = ref(null)
 
 const isAvatarHovered = ref(false)
 const uploader = ref(null)
@@ -30,6 +33,18 @@ const categories = ref([
 
 function setAvatarHover() {
   isAvatarHovered.value = !isAvatarHovered.value
+}
+
+function handleUpdate() {
+  const data = {
+    ...name.value,
+    lrn: lrn.value,
+    suffixName: selectedSuffix.value,
+    category: selectedCat.value,
+    photoUrl: null
+  }
+
+  emit('dataChanged', FormParts.Identity, data)
 }
 </script>
 
@@ -75,37 +90,48 @@ function setAvatarHover() {
 
       <div class="grid grid-cols-7 w-full gap-2">
         <InputText
-          class="h-9 col-span-2"
+          class="h-10 col-span-2"
           type="text"
           v-model="name.lastName"
           placeholder="Last Name"
+          @update:modelValue="handleUpdate"
         />
         <InputText
-          class="h-9 col-span-2"
+          class="h-10 col-span-2"
           type="text"
           v-model="name.firstName"
           placeholder="First Name"
+          @update:modelValue="handleUpdate"
         />
         <InputText
-          class="h-9 col-span-2"
+          class="h-10 col-span-2"
           type="text"
           v-model="name.middleName"
           placeholder="Middle Name"
+          @update:modelValue="handleUpdate"
         />
         <Dropdown
-          class="h-9"
+          class="h-10"
           v-model="selectedSuffix"
           showClear
           :options="suffixes"
           placeholder="Suffix"
+          @update:modelValue="handleUpdate"
         />
 
-        <InputText class="h-9 col-span-2" type="text" v-model="lrn" placeholder="LRN" />
+        <InputText
+          class="h-10 col-span-2"
+          type="text"
+          v-model="lrn"
+          placeholder="LRN"
+          @update:modelValue="handleUpdate"
+        />
         <Dropdown
-          class="h-9 col-span-2 content-center"
+          class="h-10 col-span-2 content-center"
           v-model="selectedCat"
           :options="categories"
           placeholder="Category"
+          @change="handleUpdate"
         />
       </div>
     </div>
