@@ -6,14 +6,12 @@ import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { ref } from 'vue'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
-import { useStudentsStore } from '@/stores/students.js'
 import { useTermStore } from '@/stores/term.js'
 import { useToast } from 'primevue/usetoast'
 import { defineProps } from 'vue'
 
 const enrollmentStore = useEnrollmentStore()
 const termStore = useTermStore()
-const studentsStore = useStudentsStore()
 
 const toast = useToast()
 
