@@ -100,13 +100,13 @@ async function submitEvent() {
     <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pl-16">
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
-          <span>LRN</span>
+          <span>LRN<span class="text-red-500">*</span></span>
         </div>
         <InputText v-model="selectedLRN" disabled class="w-full"/>
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
-          <span>Full Name</span>
+          <span>Full Name<span class="text-red-500">*</span></span>
         </div>
         <AutoComplete
           v-model="selectedFullName"
@@ -123,14 +123,14 @@ async function submitEvent() {
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
-          <span>School Level</span>
+          <span>Class Level<span class="text-red-500">*</span></span>
         </div>
         <Dropdown
           v-model="selectedSchoolLevel"
           showClear
           :options="schoolLevels"
           optionLabel="school_level"
-          placeholder="Select a School Level"
+          placeholder="Select a Class Level"
           class="w-full md:w-14rem h-11"
         />
       </div>
