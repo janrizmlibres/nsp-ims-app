@@ -2,7 +2,7 @@ import { INTEGER, STRING } from "sequelize";
 import sequelize from "../../util/database.js";
 
 const VolunteerContactInformation = sequelize.define(
-  "voluneer_contact_information",
+  "volunteer_contact_information",
   {
     id: {
       type: INTEGER,

@@ -28,6 +28,7 @@ import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal
 import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
 import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
 import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
+import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
 
 function setAssociations() {
   // Student-PersonalInfo Relationship

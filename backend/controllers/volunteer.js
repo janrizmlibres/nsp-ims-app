@@ -1,9 +1,9 @@
-import Volunteer from "../models/volunteer.js"
-import VolunteerPersonalInformation from "../models/volunteer_personal_information.js";
-import VolunteerContactInformation from "../models/volunteer_contact_information.js";
-import VolunteerSpecialization from "../models/volunteer_specialization.js";
-import VolunteerAvailability from "../models/volunteer_availability.js";
-import VolunteerEmergency from "../models/volunteer_emergency_contact.js";
+import Volunteer from "../models/volunteer/volunteer.js"
+import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
+import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
+import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
+import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
+import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
 
 export async function getAllVolunteers(req, res, next) {
   try {
