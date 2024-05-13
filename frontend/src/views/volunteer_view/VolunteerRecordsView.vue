@@ -85,15 +85,21 @@ export default {
     const recordCount = computed(() => volunteers.value.length);
 
     const filteredVolunteers = computed(() => {
-      if (!filters.value.global.value) {
-        return volunteers.value;
+  if (!filters.value.global.value) {
+    return volunteers.value;
+  }
+  const searchValue = filters.value.global.value.toLowerCase();
+  return volunteers.value.filter(volunteer =>
+    Object.values(volunteer).some(value => {
+      if (typeof value === 'object' && value !== null) {
+        return Object.values(value).some(nestedValue =>
+          nestedValue && nestedValue.toString().toLowerCase().includes(searchValue)
+        );
       }
-      return volunteers.value.filter(volunteer =>
-        Object.values(volunteer).some(value =>
-          value && value.toString().toLowerCase().includes(filters.value.global.value.toLowerCase())
-        )
-      );
-    });
+      return value && value.toString().toLowerCase().includes(searchValue);
+    })
+  );
+});
 
     return { filteredVolunteers, columns, filters, updateGlobalFilter, recordCount };
   },
