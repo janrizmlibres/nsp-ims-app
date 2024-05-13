@@ -1,23 +1,38 @@
 <script setup>
 import InputText from 'primevue/inputtext'
-
 import { ref } from 'vue'
 
-const leftFields = ref([
-  { label: 'Contact Number', data: '' },
-  { label: 'Email Address', data: '' },
-  { label: 'Facebook', data: '' }
-])
+import FormParts from '@/util/student_form_parts'
+import { objectMap } from '@/util/helpers'
 
-const rightFields = ref([
-  { label: 'Last Name', data: '' },
-  { label: 'First Name', data: '' },
-  { label: 'Middle Name', data: '' },
-  { label: 'Suffix', data: '' },
-  { label: 'Contact Number', data: '' }
-])
+const emit = defineEmits(['dataChanged'])
 
-const selectedRelationship = ref()
+const leftFields = ref({
+  contactNum: { label: 'Contact Number', data: null },
+  email: { label: 'Email Address', data: null },
+  facebook: { label: 'Facebook', data: null }
+})
+
+const rightFields = ref({
+  lastName: { label: 'Last Name', data: null },
+  firstName: { label: 'First Name', data: null },
+  middleName: { label: 'Middle Name', data: null },
+  suffixName: { label: 'Suffix', data: null },
+  contactNum: { label: 'Contact Number', data: null }
+})
+
+const selectedRelationship = ref(null)
+
+function updateContactInfo() {
+  const data = objectMap(leftFields.value, (field) => field.data)
+  emit('dataChanged', FormParts.Contact, data)
+}
+
+function updateEmergencyContact() {
+  const data = objectMap(rightFields.value, (field) => field.data)
+  data.relationship = selectedRelationship.value
+  emit('dataChanged', FormParts.Emergency, data)
+}
 </script>
 
 <template>
@@ -27,11 +42,16 @@ const selectedRelationship = ref()
         <h2 class="font-bold text-center">Personal Contact Information</h2>
 
         <div class="grid grid-cols-5 gap-3 mt-4">
-          <template v-for="field of leftFields" :key="field.label">
+          <template v-for="field of Object.values(leftFields)" :key="field.label">
             <div class="flex items-center justify-end pr-6 col-span-2">
               <span>{{ field.label }}</span>
             </div>
-            <InputText class="h-10 col-span-3" type="text" v-model="field.data" />
+            <InputText
+              class="h-10 col-span-3"
+              type="text"
+              v-model="field.data"
+              @update:modelValue="updateContactInfo"
+            />
           </template>
         </div>
       </div>
@@ -42,17 +62,27 @@ const selectedRelationship = ref()
         <h2 class="font-bold text-center">Emergency Contact Person</h2>
 
         <div class="grid grid-cols-5 gap-3 mt-4">
-          <template v-for="field of rightFields" :key="field.label">
+          <template v-for="field of Object.values(rightFields)" :key="field.label">
             <div class="flex items-center justify-end pr-6 col-span-2">
               <span>{{ field.label }}</span>
             </div>
-            <InputText class="h-10 col-span-3" type="text" v-model="field.data" />
+            <InputText
+              class="h-10 col-span-3"
+              type="text"
+              v-model="field.data"
+              @update:modelValue="updateEmergencyContact"
+            />
           </template>
 
           <div class="flex items-center justify-end pr-6 col-span-2">
             <span>Relationship</span>
           </div>
-          <InputText class="h-10 col-span-3" type="text" v-model="selectedRelationship" />
+          <InputText
+            class="h-10 col-span-3"
+            type="text"
+            v-model="selectedRelationship"
+            @update:modelValue="updateEmergencyContact"
+          />
         </div>
       </div>
     </div>

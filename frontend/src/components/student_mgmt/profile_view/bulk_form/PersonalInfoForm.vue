@@ -5,19 +5,32 @@ import InputText from 'primevue/inputtext'
 import { ref, computed, watch, onMounted } from 'vue'
 import { getDaysInMonth, format, getYear } from 'date-fns'
 
-const selectedSex = ref()
-const selectedBloodType = ref()
-const selectedCivilStat = ref()
+import { objectMap } from '@/util/helpers'
+import FormParts from '@/util/student_form_parts'
 
-const selectedReligion = ref()
+const emit = defineEmits(['dataChanged'])
+
+const selectedSex = ref(null)
+const selectedBloodType = ref(null)
+const selectedCivilStat = ref(null)
+const selectedReligion = ref(null)
 
 const birthday = ref({ month: null, day: null, year: null })
-const birthPlace = ref({ barangay: '', city: '', province: '' })
+const computedBirthday = computed(() => {
+  for (const key in birthday.value) {
+    if (birthday.value[key] === null) return null
+  }
+
+  const { year, month, day } = birthday.value
+  return new Date(year, month, day)
+})
+
+const birthPlace = ref({ birthBarangay: null, birthCity: null, birthProvince: null })
 const address = ref({
-  blk: { label: 'Blk/Lt/St', data: '' },
-  barangay: { label: 'Barangay', data: '' },
-  city: { label: 'City', data: '' },
-  province: { label: 'Province', data: '' }
+  homeBlkLtSt: { label: 'Blk/Lt/St', data: null },
+  homeBarangay: { label: 'Barangay', data: null },
+  homeCity: { label: 'City', data: null },
+  homeProvince: { label: 'Province', data: null }
 })
 
 const sex = ['M', 'F']
@@ -57,6 +70,20 @@ watch([() => birthday.value.month, () => birthday.value.year], ([newMonth, newYe
   }
 })
 
+function handleUpdate() {
+  const data = {
+    birthday: computedBirthday.value,
+    bloodType: selectedBloodType.value,
+    religion: selectedReligion.value,
+    sex: selectedSex.value,
+    civilStatus: selectedCivilStat.value,
+    ...birthPlace.value,
+    ...objectMap(address.value, (field) => field.data)
+  }
+
+  emit('dataChanged', FormParts.Personal, data)
+}
+
 onMounted(() => {
   for (let i = 0; i < 12; i++) {
     months.value.push({ name: format(new Date(1970, i), 'LLLL'), code: i })
@@ -79,18 +106,28 @@ onMounted(() => {
         </div>
 
         <div class="col-span-3 grid grid-cols-3 gap-6">
-          <Dropdown class="h-10" v-model="selectedSex" :options="sex" />
+          <Dropdown class="h-10" v-model="selectedSex" :options="sex" @change="handleUpdate" />
 
           <div class="flex items-center justify-end">
             <span>Blood Type</span>
           </div>
-          <Dropdown class="h-10" v-model="selectedBloodType" :options="bloodTypes" />
+          <Dropdown
+            class="h-10"
+            v-model="selectedBloodType"
+            :options="bloodTypes"
+            @change="handleUpdate"
+          />
         </div>
 
         <div class="flex items-center justify-end pr-6">
           <span>Civil Status</span>
         </div>
-        <Dropdown class="h-10 col-span-3" v-model="selectedCivilStat" :options="civilStatus" />
+        <Dropdown
+          class="h-10 col-span-3"
+          v-model="selectedCivilStat"
+          :options="civilStatus"
+          @change="handleUpdate"
+        />
 
         <div class="flex items-center justify-end pr-6">
           <span>Date of Birth</span>
@@ -103,12 +140,14 @@ onMounted(() => {
             optionLabel="name"
             optionValue="code"
             placeholder="Month"
+            @change="handleUpdate"
           />
           <Dropdown
             class="h-10 col-span-3"
             v-model="birthday.day"
             :options="days"
             placeholder="Day"
+            @change="handleUpdate"
           />
           <Dropdown
             class="h-10 col-span-4"
@@ -116,6 +155,7 @@ onMounted(() => {
             :options="years"
             filter
             placeholder="Year"
+            @change="handleUpdate"
           />
         </div>
 
@@ -125,20 +165,23 @@ onMounted(() => {
         <InputText
           class="h-10 col-span-3"
           type="text"
-          v-model="birthPlace.barangay"
+          v-model="birthPlace.birthBarangay"
           placeholder="Barangay"
+          @update:modelValue="handleUpdate"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"
-          v-model="birthPlace.city"
+          v-model="birthPlace.birthCity"
           placeholder="City"
+          @update:modelValue="handleUpdate"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"
-          v-model="birthPlace.province"
+          v-model="birthPlace.birthProvince"
           placeholder="Province"
+          @update:modelValue="handleUpdate"
         />
       </div>
     </div>
@@ -153,6 +196,7 @@ onMounted(() => {
           editable
           v-model="selectedReligion"
           :options="religions"
+          @change="handleUpdate"
         />
 
         <div class="flex items-center justify-end pr-6">
@@ -166,6 +210,7 @@ onMounted(() => {
           type="text"
           v-model="value.data"
           :placeholder="value.label"
+          @update:modelValue="handleUpdate"
         />
       </div>
     </div>
