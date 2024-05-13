@@ -92,5 +92,18 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     })
   }
   
-  return {learners, learner, getAllEnrolledFromTerm, enrollLearner, getEnrolled, updateLearner}
+  async function changeEnrolledStatus(lrn, academicYear, classLevel, statusToChange) {
+    const authStore = useAuthStore()
+
+    await axios.post('http://localhost:8080/enrollment/change-enrollment-status', {
+      lrn,
+      academicYear,
+      classLevel,
+      statusToChange
+    }, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
+  
+  return {learners, learner, editedTerm, changeEnrolledStatus, setEditedTerm, getAllEnrolledFromTerm, enrollLearner, getEnrolled, updateLearner}
 })
