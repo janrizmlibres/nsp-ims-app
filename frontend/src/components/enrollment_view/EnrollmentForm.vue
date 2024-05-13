@@ -113,7 +113,7 @@ async function submitEvent() {
           placeholder="Type a Learner"
           forceSelection
           dropdown
-          optionLabel="firstName"
+          optionLabel="fullname"
           :suggestions="filteredLearners"
           @complete="search" @item-select="onSelectedLearner"
           inputStyle="width: 100%"
