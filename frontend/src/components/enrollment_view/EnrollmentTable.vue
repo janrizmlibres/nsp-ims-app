@@ -204,8 +204,8 @@ function editEnrolled(data) {
       </template>
     </Column>
     <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-      <template #body>
-        <Button type="button" icon="pi pi-angle-down" label="Drop" />
+      <template #body="{ data }">
+        <Button label="Drop" @click="confirmDrop(data)" :disabled="data.status === 'Drop'"/>
       </template>
     </Column>
     <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
