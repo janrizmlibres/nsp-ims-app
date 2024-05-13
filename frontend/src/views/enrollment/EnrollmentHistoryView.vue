@@ -68,7 +68,7 @@ getCurrentEnrolled()
 </script>
 
 <template>
-  <ContentPane header="Enrollment">
+  <ContentPane header="Enrollment History">
     <div class="h-fit flex place-items-center bg-white rounded-md shadow-xl p-2 px-4 mb-2 gap-5">
       <p>A.Y.</p>
       <Dropdown v-model="selectedTerm" :options="termsOptions" optionLabel="academic_year" placeholder="Select an Academic Year" class="w-auto" @change="getAllStudentsFromTerm"/>
