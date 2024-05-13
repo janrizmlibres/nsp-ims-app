@@ -16,5 +16,16 @@ export const useStudentsStore = defineStore('students', () => {
     students.value = result.data.students
   }
 
-  return { students, getStudents }
+  async function addStudent(formData) {
+    const authStore = useAuthStore()
+
+    const result = await axios.post('http://localhost:8080/profile/add-student', formData, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    students.value.push(result.data.student)
+    return result
+  }
+
+  return { students, getStudents, addStudent }
 })

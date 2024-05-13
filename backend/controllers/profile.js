@@ -50,7 +50,10 @@ export async function addStudent(req, res, next) {
       studentId: student.id,
     });
 
-    res.status(200).json({ message: "Student record created." });
+    res.status(200).json({
+      message: "Student record created.",
+      student: student,
+    });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;

@@ -1,14 +1,19 @@
 <script setup>
 import Button from 'primevue/button'
+import { useToast } from 'primevue/usetoast'
+
 import { useRouter } from 'vue-router'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import IdentityForm from '@/components/student_mgmt/profile_view/IdentityForm.vue'
 import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
+import { useStudentsStore } from '@/stores/students'
 
 import FormParts from '../../util/student_form_parts'
 
 const router = useRouter()
+const studentsStore = useStudentsStore()
+const toast = useToast()
 
 const formData = {
   identity: {
@@ -88,10 +93,30 @@ function updateFormData(part, data) {
 }
 
 async function goToStudentView() {
-  await router.push({ name: 'student-records' })
+  await router.replace({ name: 'student-records' })
 }
 
-async function submitForm() {}
+async function submitForm() {
+  try {
+    const result = await studentsStore.addStudent(formData)
+
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: result.data.message,
+      life: 5000
+    })
+
+    await goToStudentView()
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
 </script>
 
 <template>

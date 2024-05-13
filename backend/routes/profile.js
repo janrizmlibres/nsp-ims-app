@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/students", isAuth, profileController.getStudents);
 
-router.post("/student/add", isAuth, profileController.addStudent);
+router.post("/add-student", isAuth, profileController.addStudent);
 
 router.get("/student/:id", isAuth, profileController.getStudent);
 
