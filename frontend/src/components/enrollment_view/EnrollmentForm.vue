@@ -5,7 +5,7 @@ import Dropdown from 'primevue/dropdown'
 import AutoComplete from 'primevue/autocomplete'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useStudentsStore } from '@/stores/students.js'
 import { useTermStore } from '@/stores/term.js'
@@ -22,6 +22,10 @@ const filteredLearners = ref([])
 const schoolLevels = ref([])
 
 schoolLevels.value = termStore.activeTerm.class_levels
+
+const isValid = computed(() => {
+  return selectedLRN.value && selectedFullName.value && selectedSchoolLevel.value && selectedRegularity.value
+})
 
 const regularity = ref([
   { name: 'Regular', code: 'Regular' },
@@ -182,7 +186,7 @@ async function submitEvent() {
         </div>
         <Checkbox v-model="bridger" :binary="true" />
       </div>
-      <Button @click="submitEvent" label="Enroll Learner" class="mt-4 place-self-end"/>
+      <Button @click="submitEvent" label="Enroll Learner" class="mt-4 place-self-end" :disabled="!isValid"/>
     </div>
     
   </div>
