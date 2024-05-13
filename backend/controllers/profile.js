@@ -1,3 +1,5 @@
+import { validationResult } from "express-validator";
+
 import Student from "../models/student/student.js";
 import PersonalInfo from "../models/student/personal_info.js";
 import ContactInfo from "../models/student/contact_info.js";
@@ -64,6 +66,14 @@ export async function addStudent(req, res, next) {
 
 export async function getStudent(req, res, next) {
   try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
+      error.statusCode = 422;
+      throw error;
+    }
+
     const student = Student.findByPk(req.body.id, {
       include: [
         PersonalInfo,
