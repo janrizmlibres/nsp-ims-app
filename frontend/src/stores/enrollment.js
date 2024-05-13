@@ -18,7 +18,6 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     })
 
     learners.value = result.data.learners
-    console.log(learners.value)
   }
   
   async function getEnrolled(lrn, termID, classLevel) {
