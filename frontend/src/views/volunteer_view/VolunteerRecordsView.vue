@@ -1,7 +1,7 @@
 <template>
   <ContentPane header="Volunteer Records">
     <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
-    <DataTable :value="filteredVolunteers" :filters="filters" scrollable >
+    <DataTable :value="filteredVolunteers" :filters="filters" scrollable style=" overflow: auto;">
       <template #empty> No volunteers found. </template>
       <template #loading> Loading volunteers data. Please wait. </template>
 
@@ -60,6 +60,9 @@ export default {
       { field: 'contactInformation.facebook', header: 'Facebook' },
       { field: 'specialization.area', header: 'Specialization' },
       { field: 'availability.day', header: 'Availability' },
+      { field: 'emergencyContact.fullname', header: 'Emergency Contact' },
+      { field: 'emergencyContact.contactNumber', header: 'Emergency Contact Number' },
+      { field: 'emergencyContact.relationship', header: 'Emergency Contact Relationship' },
     ]);
 
     const updateGlobalFilter = (newValue) => {
@@ -75,6 +78,7 @@ export default {
         contactInformation: volunteer.volunteer_contact_information,
         specialization: volunteer.volunteer_specialization,
         availability: volunteer.volunteer_availability,
+        emergencyContact: volunteer.volunteer_emergency_contact,
       }));
     });
 
