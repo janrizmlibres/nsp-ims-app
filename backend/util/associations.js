@@ -9,7 +9,6 @@ import Term from "../models/term.js";
 import ClassLevel from "../models/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
-import Learner from "../models/learner.js";
 import Enrollment from "../models/enrollment.js";
 import Attendance from "../models/attendance.js";
 import ModuleSubmission from "../models/module_submission.js";
