@@ -6,6 +6,7 @@ import { useAuthStore } from './auth'
 export const useEnrollmentStore = defineStore('enrollment', () => {
   const learners = ref([])
   const learner = ref(null)
+  const editedTerm = ref(null)
   
   async function getAllEnrolledFromTerm(termID) {
     const authStore = useAuthStore()
@@ -30,6 +31,10 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     })
 
     learner.value = result.data.enrolled
+  }
+  
+  function setEditedTerm(term) {
+    editedTerm.value = term
   }
   
   async function enrollLearner(
