@@ -5,6 +5,7 @@ import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useTermStore } from '@/stores/term.js'
 import { useToast } from 'primevue/usetoast'
@@ -14,8 +15,7 @@ const enrollmentStore = useEnrollmentStore()
 const termStore = useTermStore()
 
 const toast = useToast()
-
-const filteredLearners = ref([])
+const router = useRouter()
 
 const schoolLevels = ref([])
 
@@ -91,6 +91,14 @@ async function updateEnrolled() {
       life: 3000
     })
   }
+  
+  enrollmentStore.setEditedTerm(props.academicYear)
+  router.go(-1)
+}
+
+function cancelEdit() {
+  enrollmentStore.setEditedTerm(props.academicYear)
+  router.go(-1)
 }
 
 const props = defineProps({
