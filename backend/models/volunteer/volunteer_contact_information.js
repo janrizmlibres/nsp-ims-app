@@ -12,7 +12,7 @@ const VolunteerContactInformation = sequelize.define(
     },
     email: STRING,
     contactNumber: {
-      type: INTEGER,
+      type: STRING,
       allowNull: false,
     },
     facebook: STRING,
