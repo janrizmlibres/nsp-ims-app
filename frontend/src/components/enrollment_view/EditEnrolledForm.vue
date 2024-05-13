@@ -4,7 +4,7 @@ import InputNumber from 'primevue/inputnumber'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useTermStore } from '@/stores/term.js'
@@ -18,6 +18,10 @@ const toast = useToast()
 const router = useRouter()
 
 const schoolLevels = ref([])
+
+const isValid = computed(() => {
+  return selectedSchoolLevel.value && selectedRegularity.value.regularity
+})
 
 async function getStudent()  {
   try {
@@ -201,7 +205,7 @@ getStudent()
         <Checkbox v-model="bridger" :binary="true" />
       </div>
       <div class="flex gap-4 mb-2 items-center place-self-end">
-        <Button @click="updateEnrolled" label="Update Learner" class="mt-4"/>
+        <Button @click="updateEnrolled" label="Update Learner" class="mt-4" :disabled="!isValid"/>
         <Button @click="cancelEdit" label="Cancel" class="mt-4"/>
       </div>
     </div>
