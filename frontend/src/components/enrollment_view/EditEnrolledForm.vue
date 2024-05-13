@@ -200,7 +200,10 @@ getStudent()
         </div>
         <Checkbox v-model="bridger" :binary="true" />
       </div>
-      <Button @click="submitEvent" label="Update Learner" class="mt-4 place-self-end"/>
+      <div class="flex gap-4 mb-2 items-center place-self-end">
+        <Button @click="updateEnrolled" label="Update Learner" class="mt-4"/>
+        <Button @click="cancelEdit" label="Cancel" class="mt-4"/>
+      </div>
     </div>
 
   </div>
