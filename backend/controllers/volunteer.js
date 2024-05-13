@@ -1,10 +1,11 @@
 import Volunteer from "../models/volunteer.js"
 import VolunteerPersonalInformation from "../models/volunteer_personal_information.js";
+import VolunteerContactInformation from "../models/volunteer_contact_information.js";
 
 export async function getAllVolunteers(req, res, next) {
   try {
     const volunteers = await Volunteer.findAll({
-      include: [VolunteerPersonalInformation]
+      include: [VolunteerPersonalInformation, VolunteerContactInformation]
     });
 
     res.status(201).json({ 

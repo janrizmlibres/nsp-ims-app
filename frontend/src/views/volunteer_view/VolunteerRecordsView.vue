@@ -55,6 +55,9 @@ export default {
       { field: 'personalInformation.nickname', header: 'Nickname' },
       { field: 'personalInformation.sex', header: 'Sex' },
       { field: 'personalInformation.address', header: 'Address' },
+      { field: 'ContactInformation.contactNumber', header: 'Contact Number' },
+      { field: 'ContactInformation.email', header: 'Email' },
+      { field: 'ContactInformation.facebook', header: 'Facebook' },
     ]);
 
     const updateGlobalFilter = (newValue) => {
@@ -67,6 +70,7 @@ export default {
         ...volunteer,
         fullName: `${volunteer.firstName} ${volunteer.middleName ? volunteer.middleName + ' ' : ''}${volunteer.lastName}${volunteer.suffix ? ' ' + volunteer.suffix : ''}`,
         personalInformation: volunteer.volunteer_personal_information,
+        ContactInformation: volunteer.volunteer_contact_information,
       }));
     });
 
