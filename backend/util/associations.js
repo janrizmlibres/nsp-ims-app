@@ -1,8 +1,12 @@
+import Student from "../models/student/student.js";
+import PersonalInfo from "../models/student/personal_info.js";
+import ContactInfo from "../models/student/contact_info.js";
+import EmergencyPerson from "../models/student/emergency_person.js";
+import ParentalInfo from "../models/student/parental_info.js";
+import PreviousSchool from "../models/student/previous_school.js";
+
 import Term from "../models/term.js";
 import ClassLevel from "../models/class_level.js";
-import Staff from "../models/staff.js";
-import Permission from "../models/permission.js";
-import Audit from "../models/audit.js";
 import LearningStrand from "../models/learning_strand.js";
 import Module from "../models/module.js";
 import Learner from "../models/learner.js";
@@ -12,16 +16,40 @@ import ModuleSubmission from "../models/module_submission.js";
 import ClassLearningStrand from "../models/class_learning_strand.js";
 import ClassSchedule from "../models/class_schedule.js";
 import Session from "../models/session.js";
-import Volunteer from "../models/volunteer.js";
-import StudentVolunteer from "../models/student_volunteer.js";
-import ProfessionalVolunteer from "../models/professional_volunteer.js";
-import VolunteerPersonalInformation from "../models/volunteer_personal_information.js";
-import VolunteerContactInformation from "../models/volunteer_contact_information.js";
-import VolunteerEmergency from "../models/volunteer_emergency_contact.js";
-import VolunteerSpecialization from "../models/volunteer_specialization.js";
-import VolunteerAvailability from "../models/volunteer_availability.js";
+
+import Staff from "../models/staff/staff.js";
+import Permission from "../models/staff/permission.js";
+import Audit from "../models/staff/audit.js";
+
+import Volunteer from "../models/volunteer/volunteer.js";
+import StudentVolunteer from "../models/volunteer/student_volunteer.js";
+import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
+import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
+import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
+import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
+import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
 
 function setAssociations() {
+  // Student-PersonalInfo Relationship
+  Student.hasOne(PersonalInfo);
+  PersonalInfo.belongsTo(Student);
+
+  // Student-ContactInfo Relationship
+  Student.hasOne(ContactInfo);
+  ContactInfo.belongsTo(Student);
+
+  // Student-EmergencyPerson Relationship
+  Student.hasOne(EmergencyPerson);
+  EmergencyPerson.belongsTo(Student);
+
+  // Student-ParentalInfo Relationship
+  Student.hasOne(ParentalInfo);
+  ParentalInfo.belongsTo(Student);
+
+  // Student-PreviousSchool Relationship
+  Student.hasOne(PreviousSchool);
+  PreviousSchool.belongsTo(Student);
+
   // Staff-Permission Relationship
   Staff.hasOne(Permission);
   Permission.belongsTo(Staff);

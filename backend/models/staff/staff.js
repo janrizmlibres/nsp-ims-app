@@ -1,5 +1,5 @@
 import { INTEGER, DATE, STRING, VIRTUAL } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 
 const Staff = sequelize.define("staff", {
   id: {

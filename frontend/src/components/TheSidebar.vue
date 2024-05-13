@@ -15,13 +15,17 @@ const sidebarStore = useSidebarStore()
 const termStore = useTermStore()
 const authStore = useAuthStore()
 
-const gradeSchool = computed(() => termStore.activeTerm.class_levels.find((obj) => {
-    return obj.school_level === 'Grade School' 
-}))
+const gradeSchool = computed(() =>
+  termStore.activeTerm.class_levels.find((obj) => {
+    return obj.school_level === 'Grade School'
+  })
+)
 
-const juniorHighSchool = computed(() => termStore.activeTerm.class_levels.find((obj) => {
-    return obj.school_level === 'Junior High School' 
-}))
+const juniorHighSchool = computed(() =>
+  termStore.activeTerm.class_levels.find((obj) => {
+    return obj.school_level === 'Junior High School'
+  })
+)
 
 const items = computed(() => [
   {
@@ -39,7 +43,7 @@ const items = computed(() => [
         key: '2-1',
         label: 'Student Records',
         icon: 'fa fa-address-book',
-        route: { name: 'dashboard' }
+        route: { name: 'student-records' }
       },
       {
         key: '2-2',
@@ -51,7 +55,7 @@ const items = computed(() => [
         key: '2-3',
         label: 'Admit Students',
         icon: 'fa fa-user-plus',
-        route: { name: 'dashboard' }
+        route: { name: 'add-student' }
       }
     ]
   },
@@ -108,26 +112,28 @@ const items = computed(() => [
         key: '5-1',
         label: 'Active Classes',
         icon: 'fa fa-book-bookmark',
-        items: termStore.activeTerm ? [
-          {
-            key: '5-1-1',
-            label: 'Grade School',
-            icon: 'fa fa-user-plus',
-            route: {
-              name: 'class',
-              query: { id: gradeSchool.value.id }
-            }
-          },
-          {
-            key: '5-1-2',
-            label: 'Junior High School',
-            icon: 'fa fa-user-plus',
-            route: {
-              name: 'class',
-              query: { id: juniorHighSchool.value.id }
-            }
-          }
-        ] :null
+        items: termStore.activeTerm
+          ? [
+              {
+                key: '5-1-1',
+                label: 'Grade School',
+                icon: 'fa fa-user-plus',
+                route: {
+                  name: 'class',
+                  query: { id: gradeSchool.value.id }
+                }
+              },
+              {
+                key: '5-1-2',
+                label: 'Junior High School',
+                icon: 'fa fa-user-plus',
+                route: {
+                  name: 'class',
+                  query: { id: juniorHighSchool.value.id }
+                }
+              }
+            ]
+          : null
       },
       {
         key: '5-2',

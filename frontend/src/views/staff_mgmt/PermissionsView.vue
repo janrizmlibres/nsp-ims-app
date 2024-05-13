@@ -1,5 +1,4 @@
 <script setup>
-import ContentPane from '@/components/UI/ContentPane.vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
@@ -7,7 +6,9 @@ import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
 import { FilterMatchMode } from 'primevue/api'
 
-import TheHeader from '@/components/staff_view/TheHeader.vue'
+import ContentPane from '@/components/UI/ContentPane.vue'
+import TheHeader from '@/components/staff_mgmt/TheHeader.vue'
+
 import { useStaffsStore } from '@/stores/staffs'
 import { ref, onMounted, watch } from 'vue'
 
