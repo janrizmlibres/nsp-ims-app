@@ -90,28 +90,28 @@ function handleUpdate() {
 
       <div class="grid grid-cols-7 w-full gap-2">
         <InputText
-          class="h-9 col-span-2"
+          class="h-10 col-span-2"
           type="text"
           v-model="name.lastName"
           placeholder="Last Name"
           @update:modelValue="handleUpdate"
         />
         <InputText
-          class="h-9 col-span-2"
+          class="h-10 col-span-2"
           type="text"
           v-model="name.firstName"
           placeholder="First Name"
           @update:modelValue="handleUpdate"
         />
         <InputText
-          class="h-9 col-span-2"
+          class="h-10 col-span-2"
           type="text"
           v-model="name.middleName"
           placeholder="Middle Name"
           @update:modelValue="handleUpdate"
         />
         <Dropdown
-          class="h-9"
+          class="h-10"
           v-model="selectedSuffix"
           showClear
           :options="suffixes"
@@ -120,14 +120,14 @@ function handleUpdate() {
         />
 
         <InputText
-          class="h-9 col-span-2"
+          class="h-10 col-span-2"
           type="text"
           v-model="lrn"
           placeholder="LRN"
           @update:modelValue="handleUpdate"
         />
         <Dropdown
-          class="h-9 col-span-2 content-center"
+          class="h-10 col-span-2 content-center"
           v-model="selectedCat"
           :options="categories"
           placeholder="Category"

@@ -23,7 +23,6 @@ export const useStudentsStore = defineStore('students', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    students.value.push(result.data.student)
     return result
   }
 

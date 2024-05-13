@@ -27,7 +27,7 @@ router.post(
     body("identity.photoUrl").optional({ values: "null" }).trim().isURL(),
   ],
   [
-    body("personalInfo.birthday").isDate(),
+    body("personalInfo.birthday").isISO8601(),
     body("personalInfo.bloodType").exists({ values: "null" }),
     body("personalInfo.birthBarangay").trim().isAscii(),
     body("personalInfo.birthCity").trim().isAscii(),
