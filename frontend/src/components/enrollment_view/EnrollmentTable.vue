@@ -209,8 +209,8 @@ function editEnrolled(data) {
       </template>
     </Column>
     <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
-      <template #body>
-        <ToggleButton onLabel="Activate" offLabel="Deactivate" icon="pi pi-angle-down" label="Drop" />
+      <template #body="{ data }">
+        <Button :label="data.status === 'Active' ? 'Deactivate' : 'Activate'" @click="confirmStatusChange(data)" class="w-40" />
       </template>
     </Column>
   </DataTable>
