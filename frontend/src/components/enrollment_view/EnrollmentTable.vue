@@ -5,17 +5,87 @@ import Tag from 'primevue/tag'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import ToggleButton from 'primevue/togglebutton'
+import { useToast } from 'primevue/usetoast'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
+import { useTermStore } from '@/stores/term.js'
+import { useConfirm } from 'primevue/useconfirm'
 
 const enrollmentStore = useEnrollmentStore()
 
 const learnersData = computed(() => enrollmentStore.learners)
 
 const router = useRouter()
+const confirm = useConfirm();
+const toast = useToast()
+const termStore = useTermStore()
+
+const confirmDrop = (data) => {
+  confirm.require({
+    group: 'authenticationError',
+    message: ' Are you sure you want to Drop the Student from the Current School Level?',
+    header: 'Confirmation',
+    acceptButton: 'Yes',
+    rejectButton: 'Cancel',
+    accept: () => {
+      changeStatus(data, 'Drop')
+    },
+    reject: () => {}
+  });
+};
+
+const confirmStatusChange = (data) => {
+  const statusToChange = data.status === 'Active' ? 'Inactive' : 'Active'
+  confirm.require({
+    group: 'authenticationError',
+    message: ` Are you sure you want to set the status of the Student to ${statusToChange}?`,
+    header: 'Confirmation',
+    acceptButton: 'Yes',
+    rejectButton: 'Cancel',
+    accept: () => {
+      changeStatus(data, statusToChange)
+    },
+    reject: () => {}
+  });
+};
+
+async function changeStatus(data, statusToChange) {
+  try {
+    await enrollmentStore.changeEnrolledStatus(data.lrn, data.term, data.schoolLevel, statusToChange)
+    await refreshStudentTable()
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: `Student has been successfully set to ${statusToChange}`,
+      life: 3000
+    })
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
+
+async function refreshStudentTable() {
+  try {
+    await termStore.getActiveTerm()
+    const currentTerm = termStore.activeTerm
+
+    await enrollmentStore.getAllEnrolledFromTerm(currentTerm.id)
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
 
 const getSeverity = (data) => {
   switch (data) {
