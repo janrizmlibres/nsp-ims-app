@@ -24,15 +24,13 @@ const emit = defineEmits(['updateSchedule'])
 const toast = useToast()
 
 const classData = ref([])
-const volunteers = ref([])
+const volunteers = computed(() => volunteerStore.volunteers)
 const termStatus = ref(true)
 const state = computed(() => props.state)
 
 onMounted(async () => {
     try {
-        volunteerStore.getAllVolunteers().then((data) => {
-            data.forEach((volunteer) => volunteers.value.push(volunteer))
-        })
+        volunteerStore.getAllVolunteers()
     } catch(error) {
         toast.add({
             severity: 'error',

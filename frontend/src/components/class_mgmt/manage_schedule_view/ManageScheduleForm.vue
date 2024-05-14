@@ -24,19 +24,19 @@ const classStore = useClassStore()
 const terms = ref([])
 const classes = ref([])
 const learningStrands = ref([]);
-const volunteers = ref([])
+const volunteers = computed(() => volunteerStore.volunteers)
 const termInput = ref()
 const classLevelInput = ref()
 const learningStrandInput = ref()
 
 onMounted(() => {
     try {
-        volunteerStore.getAllVolunteers().then((data) => volunteers.value = data)
-    termStore.getAllTerms().then((data) => {
-        terms.value = data
-        termInput.value = data.find(term => term.status === true)
-        classes.value = termInput.value.class_levels
-    })
+        volunteerStore.getAllVolunteers()
+        termStore.getAllTerms().then((data) => {
+            terms.value = data
+            termInput.value = data.find(term => term.status === true)
+            classes.value = termInput.value.class_levels
+        })
     } catch(error) {
         toast.add({
             severity: 'error',
