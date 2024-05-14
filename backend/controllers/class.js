@@ -1,55 +1,46 @@
-import ClassLearningStrand from "../models/class_learning_strand.js";
-import ClassLevel from "../models/class_level.js";
-import ClassSchedule from "../models/class_schedule.js";
-import Enrollment from "../models/enrollment.js";
-import Learner from "../models/learner.js";
+import ClassLearningStrand from "../models/class/class_learning_strand.js";
+import ClassLevel from "../models/class/class_level.js";
+import ClassSchedule from "../models/class/class_schedule.js";
 import LearningStrand from "../models/learning_strand.js";
-import Module from "../models/module.js";
 import Term from "../models/term.js"
+import Volunteer from "../models/volunteer/volunteer.js";
 
-export async function getClass(req, res, next) {
-    const classId = req.params.classId;
-
+export async function getAllClasses(req, res, next) {
     try {
-        const classLevel = await ClassLevel.findByPk(classId, {
-            include: [Term]
-        });
+        const terms = await Term.findAll({ 
+            include: [ClassLevel]}
+        );
+
+        for (const term of terms) {
+            for (const classLevel of term.class_levels) {
+                const activeCount = await classLevel.countEnrollments({
+                    where: {
+                        status: 'Active'
+                    }
+                })
+    
+                const inactiveCount = await classLevel.countEnrollments({
+                    where: {
+                        status: 'Inactive'
+                    }
+                })
+    
+                const dropCount = await classLevel.countEnrollments({
+                    where: {
+                        status: 'Drop'
+                    }
+                })
+    
+                classLevel.dataValues.activeCount = activeCount
+                classLevel.dataValues.inactiveCount = inactiveCount
+                classLevel.dataValues.dropCount = dropCount
+                classLevel.dataValues.total = activeCount + inactiveCount + dropCount
+            }
+        }
         
         res.status(200).json({
-        message: "Fetched class successfully.",
-        data: classLevel,
-        });
-    } catch (error) {
-        if (!error.statusCode) {
-        error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-
-export async function addLearningStrand(req, res, next) {
-    const classId = req.params.classId;
-
-    const {
-        name,
-        teacher
-    } = req.body
-
-    try {
-        const classLevel = await ClassLevel.findByPk(classId);
-        const learningStrand = await LearningStrand.findOne({
-            where: {name:name}
-        })
-
-        const classLearningStrand = await classLevel.addLearning_strand(learningStrand, {
-            through: {
-                teacher: teacher
-            }
-        })
-
-        res.status(201).json({ 
-            message: "Learning strand added!",
-            data: classLearningStrand
+            message: "Fetched all classes successfully.",
+            data: terms,
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -59,152 +50,30 @@ export async function addLearningStrand(req, res, next) {
     }
 }
 
-export async function addSchedule(req, res, next) {
-    const classId = req.params.classId;
-
-    const {
-        name,
-        days,
-        start_time,
-        end_time
-    } = req.body
-
-    try {
-        const classLevel = await ClassLevel.findByPk(classId);
-        const learningStrand = await LearningStrand.findOne({
-            where: {name:name}
-        })
-
-        const class_learning_strand = await ClassLearningStrand.findOne({
-            where: {
-                classLevelId: classLevel.id,
-                learningStrandId: learningStrand.id
-            }
-        })
-        
-        await class_learning_strand.createClass_schedule({
-            days: days,
-            start_time: start_time,
-            end_time: end_time
-        });
-
-        res.status(201).json({ 
-            message: "Class schedule added!",
-        });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-
-export async function getAllStrands(req, res, next) {
+export async function getAllLearningStrands(req, res, next) {
     const classId = req.params.classId;
 
     try {
-        const learningStrands = await ClassLearningStrand.findAll({
+        const classLearningStrands = await ClassLearningStrand.findAll({
             where: {classLevelId: classId}, 
-            include: [LearningStrand, ClassSchedule]
+            include: [
+                LearningStrand, 
+                {
+                    model: ClassSchedule,
+                    include: [Volunteer]
+                }
+            ],
+            order: [[LearningStrand, 'code', 'ASC']]
         })
 
         res.status(201).json({ 
-            message: "Learning strand added!",
-            data: learningStrands
+            message: "Fetched all strands successfully!",
+            data: classLearningStrands
         });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
         }
         next(error);
-    }
-}
-
-export async function getAllModules(req, res, next) {
-    const classId = req.params.classId;
-    
-    try {
-        const classLevel = await ClassLevel.findByPk(classId, {
-            include: {model: ClassLearningStrand, include: [Module]}
-        })
-        
-        const modules = []
-        classLevel.class_learning_strands.forEach(learningStrand => {
-            modules.push(...learningStrand.modules)
-        });
-
-        res.status(201).json({ 
-            message: "Fetched all modules successfully!",
-            data: modules
-        });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-
-export async function getAllStudents(req, res, next) {
-    const classId = req.params.classId;
-    
-    try {
-        const activeStudents = await ClassLevel.findByPk(classId, {
-            include: {model: Enrollment, 
-                where: {
-                    status: 'Active'
-                },
-                include: [Learner]}
-        })
-
-        const inactiveStudents = await ClassLevel.findByPk(classId, {
-            include: {model: Enrollment, 
-                where: {
-                    status: 'Inactive'
-                },
-                include: [Learner]}
-        })
-
-        const dropStudents = await ClassLevel.findByPk(classId, {
-            include: {model: Enrollment, 
-                where: {
-                    status: 'Drop'
-                },
-                include: [Learner]}
-        })
-
-        res.status(201).json({ 
-            message: "Fetched all modules successfully!",
-            data: {
-                active: activeStudents, 
-                inactive: inactiveStudents, 
-                drop: dropStudents
-            }
-        });
-    } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-    }
-}
-
-export async function updateStudentStatus(req, res, next) {
-    try {
-        const classId = req.params.classId
-        const learnerId = req.params.learnerId;
-        console.log(classId);
-        await Enrollment.update(
-            { status: req.body.newStatus}, 
-            { where: { classLevelId: classId, learnerId: learnerId }
-        });
-
-        res.status(200).json({ message: "Status updated!" });
-        } catch (error) {
-        if (!error.statusCode) {
-            error.statusCode = 500;
-        }
-        next(error);
-        return error;
     }
 }
