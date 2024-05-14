@@ -1,12 +1,11 @@
 <script setup>
 // Presets
-import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import RadioButton from 'primevue/radiobutton';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 // stores
@@ -100,12 +99,14 @@ const learners = ref([])
 const noChanges = ref(true)
 const startingData = []
 const updatedData = new Set([])
+const termStatus = computed(() => route.query.status)
 
 watch(() => props.modelValue, (data) => {
     isFetching.value = true
     learners.value.length = 0
+    startingData.length = 0
 
-    for (const attendance of data.attendances) {
+    for (const attendance of data) {
 
         const temp = {
             id: attendance.id,
@@ -127,7 +128,7 @@ watch(() => props.modelValue, (data) => {
     }
     
     isFetching.value = false
-}, {immediate: false})
+}, {immediate: true})
 
 const statuses = ref([
     { label: 'Absent', value: 'Absent' },
@@ -180,57 +181,50 @@ function exportCSV() {
 </script>
 
 <template>
-    <div class="bg-white shadow-xl rounded-md p-5">
-        <div class="flex flex-row gap-4 items-center px-4">
-            <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
-            <span class="font-semibold text-3xl u-txt-active">Attendances</span>
-        </div>
-        <Divider />
-        <DataTable 
-            :value="learners" dataKey="id" 
-            sortField="lastName" :sortOrder="1" removableSort 
-            resizableColumns columnResizeMode="fit" showGridlines ref="exportRef"
-            :paginator="learners.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-            :ptOptions="{mergeProps:true}"
-            :pt="customPt"
-        >
-            <template #empty> <div class="text-center">No records found.</div> </template>
-            <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+    <DataTable 
+        :value="learners" dataKey="id" 
+        sortField="lastName" :sortOrder="1" removableSort 
+        resizableColumns columnResizeMode="fit" showGridlines ref="exportRef"
+        :paginator="learners.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+        :ptOptions="{mergeProps:true}"
+        :pt="customPt"
+    >
+        <template #empty> <div class="text-center">No records found.</div> </template>
+        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
-            <Column field="lastName" header="Last Name" frozen sortable />
-            <Column field="firstName" header="First Name" frozen sortable />
-            <Column field="middleName" header="Middle Name" />
-            <Column field="status" header="Status" style="max-width: 10rem;" sortable>
-                <template #body="slotProps">
-                    <div class="flex gap-4">
-                        <div v-for="status in statuses" :key="status.value" class="flex align-items-center">
-                            <RadioButton v-model="slotProps.data.status" :inputId="status.value" name="dynamic" :value="status.value" />
-                            <label :for="status.label" class="ml-2">{{ status.label }}</label>
-                        </div>
+        <Column field="lastName" header="Last Name" frozen sortable />
+        <Column field="firstName" header="First Name" frozen sortable />
+        <Column field="middleName" header="Middle Name" />
+        <Column field="status" header="Status" style="max-width: 10rem;" sortable>
+            <template #body="slotProps">
+                <div class="flex gap-4">
+                    <div v-for="status in statuses" :key="status.value" class="flex align-items-center">
+                        <RadioButton v-model="slotProps.data.status" :inputId="status.value" name="dynamic" :value="status.value" :disabled="termStatus === 'false'" />
+                        <label :for="status.label" class="ml-2">{{ status.label }}</label>
                     </div>
-                </template>
-            </Column>
-            <Column field="remarks" header="Remarks" style="max-width: 10rem;">
-                <template #body="slotProps">
-                    <InputText v-model="slotProps.data.remarks" autofocus />
-                </template>
-            </Column>
-            <Column field="updatedAt" header="Updated At" sortable>
-                <template #body="slotProps">
-                    {{ slotProps.data.updatedAt.toLocaleString() }}
-                </template>
-            </Column>
-            <template #paginatorstart>
-            
+                </div>
             </template>
-            <template #paginatorend>
-                <Button type="button" icon="pi pi-download" @click="exportCSV" text />
+        </Column>
+        <Column field="remarks" header="Remarks" style="max-width: 10rem;">
+            <template #body="slotProps">
+                <InputText v-model="slotProps.data.remarks" autofocus :disabled="termStatus === 'false'" />
             </template>
-        </DataTable>
-        <div class="flex justify-end gap-2 mt-4">
-            <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateAttendances"></Button>
-            <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
-        </div>
+        </Column>
+        <Column field="updatedAt" header="Updated At" sortable>
+            <template #body="slotProps">
+                {{ slotProps.data.updatedAt.toLocaleString() }}
+            </template>
+        </Column>
+        <template #paginatorstart>
+        
+        </template>
+        <template #paginatorend>
+            <Button type="button" icon="pi pi-download" @click="exportCSV" text />
+        </template>
+    </DataTable>
+    <div v-if="termStatus === 'true'" class="flex justify-end gap-2 mt-4">
+        <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateAttendances"></Button>
+        <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
     </div>
 </template>
 
