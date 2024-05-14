@@ -121,12 +121,12 @@ watch(() => strandStore.strands, fetchLearningStrands, { immediate: false})
         <template #empty> <div class="text-center">No learning strand records found.</div> </template>
         <template #loading> <div class="text-center">Loading learning strand records. Please wait.</div> </template>
 
-        <Column field="code" header="Learning Strand Code" sortable>
+        <Column field="code" header="Learning Strand Code">
             <template #editor="{ data, field }">
                 <InputText v-model="data[field]" autofocus />
             </template>
         </Column>
-        <Column field="name" header="Learning Strand Name" sortable>
+        <Column field="name" header="Learning Strand Name">
             <template #editor="{ data, field }">
                 <InputText v-model="data[field]" autofocus />
             </template>
