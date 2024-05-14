@@ -1,4 +1,4 @@
-import { INTEGER, STRING, TEXT } from "sequelize";
+import { ENUM, INTEGER, STRING, TEXT } from "sequelize";
 import sequelize from "../../util/database.js";
 
 const PreviousSchool = sequelize.define("previous_school", {
@@ -13,7 +13,11 @@ const PreviousSchool = sequelize.define("previous_school", {
     allowNull: false,
   },
   schoolType: {
-    type: STRING,
+    type: ENUM("Public", "Private"),
+    allowNull: false,
+  },
+  schoolAffiliation: {
+    type: ENUM("Sectarian", "Non-Sectarian"),
     allowNull: false,
   },
   lastSyAttended: {

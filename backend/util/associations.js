@@ -1,3 +1,10 @@
+import Student from "../models/student/student.js";
+import PersonalInfo from "../models/student/personal_info.js";
+import ContactInfo from "../models/student/contact_info.js";
+import EmergencyPerson from "../models/student/emergency_person.js";
+import ParentalInfo from "../models/student/parental_info.js";
+import PreviousSchool from "../models/student/previous_school.js";
+
 import Term from "../models/term.js";
 import ClassLevel from "../models/class/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
@@ -23,6 +30,26 @@ import VolunteerSpecialization from "../models/volunteer/volunteer_specializatio
 import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
 
 function setAssociations() {
+  // Student-PersonalInfo Relationship
+  Student.hasOne(PersonalInfo);
+  PersonalInfo.belongsTo(Student);
+
+  // Student-ContactInfo Relationship
+  Student.hasOne(ContactInfo);
+  ContactInfo.belongsTo(Student);
+
+  // Student-EmergencyPerson Relationship
+  Student.hasOne(EmergencyPerson);
+  EmergencyPerson.belongsTo(Student);
+
+  // Student-ParentalInfo Relationship
+  Student.hasOne(ParentalInfo);
+  ParentalInfo.belongsTo(Student);
+
+  // Student-PreviousSchool Relationship
+  Student.hasOne(PreviousSchool);
+  PreviousSchool.belongsTo(Student);
+
   // Staff-Permission Relationship
   Staff.hasOne(Permission);
   Permission.belongsTo(Staff);
