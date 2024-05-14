@@ -90,7 +90,7 @@ const router = createRouter({
               path: '/module',
               name: 'module-info',
               component: ModuleView,
-              query: { id: Number },
+              query: { id: Number, status: Boolean },
               beforeEnter: (to) => {
                 return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
               }
@@ -109,7 +109,7 @@ const router = createRouter({
               path: '/session',
               name: 'session-info',
               component: SessionView,
-              query: { id: Number },
+              query: { id: Number, status: Boolean },
               beforeEnter: (to) => {
                 return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
               }
