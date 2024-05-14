@@ -50,8 +50,10 @@ export default {
     });
     const columns = ref([
       { field: 'volunteerId', header: 'Volunteer ID' },
-      { field: 'fullName', header: 'Full Name' },
+      { field: 'fullname', header: 'Full Name' },
       { field: 'affiliation', header: 'Affiliation' },
+      { field: 'student.program', header: 'Program' },
+      { field: 'student.year', header: 'Year' },
       { field: 'personalInformation.nickname', header: 'Nickname' },
       { field: 'personalInformation.sex', header: 'Sex' },
       { field: 'personalInformation.address', header: 'Address' },
@@ -73,12 +75,12 @@ export default {
       await volunteerStore.getAllVolunteers();
       volunteers.value = volunteerStore.volunteers.map(volunteer => ({
         ...volunteer,
-        fullName: `${volunteer.firstName} ${volunteer.middleName ? volunteer.middleName + ' ' : ''}${volunteer.lastName}${volunteer.suffix ? ' ' + volunteer.suffix : ''}`,
         personalInformation: volunteer.volunteer_personal_information,
         contactInformation: volunteer.volunteer_contact_information,
         specialization: volunteer.volunteer_specialization,
         availability: volunteer.volunteer_availability,
         emergencyContact: volunteer.volunteer_emergency_contact,
+        student: volunteer.student_volunteer,
       }));
     });
 

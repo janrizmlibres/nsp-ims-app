@@ -591,6 +591,54 @@ export async function injectVolunteer() {
     { firstName: "Jacob", lastName: "Doe", contactNumber: 2345678901, relationship: "Brother" }
   ];
 
+  const StudentVolunteer = [
+    {
+      program: "BS PSY",
+      year: "1st",
+    },
+    {
+      program: "BS CS",
+      year: "2nd",
+    },
+    {
+      program: "BS IT",
+      year: "3rd",
+    },
+    {
+      program: "BS IS",
+      year: "4th",
+    },
+    {
+      program: "BS E",
+      year: "1st",
+    },
+    {
+      program: "BS CE",
+      year: "2nd",
+    },
+    {
+      program: "AB PHILO",
+      year: "3rd",
+    },
+    {
+      program: "BS PSY",
+      year: "4th",
+    },
+    {
+      program: "BS CS",
+      year: "1st",
+    },
+    {
+      program: "BS IT",
+      year: "1st",
+    },
+    {
+      program: "BS E",
+      year: "1st",
+    },
+  ];
+
+
   const volunteerContactInformationData = [
     {
       contactNumber: "09123456789",
@@ -665,6 +713,7 @@ export async function injectVolunteer() {
 
       const volunteer = await Volunteer.create(data);
 
+      volunteer.createStudent_volunteer(StudentVolunteer[index])
       volunteer.createVolunteer_personal_information(volunteerPersonalInformationData[index])
       volunteer.createVolunteer_emergency_contact(volunteerEmergencyContacts[index])
       volunteer.createVolunteer_contact_information(volunteerContactInformationData[index])

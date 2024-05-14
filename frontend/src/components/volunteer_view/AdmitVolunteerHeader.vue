@@ -15,7 +15,11 @@
         <div class="basis-32 text-right">
           <span>Category</span>
         </div>
-        <Dropdown v-model="selectedCategory" :options="category" optionLabel="name" class="grow h-10 flex-grow" />
+        <Dropdown 
+        v-model="selectedCategory" 
+        :options="category" 
+        optionLabel="name" 
+        class="grow h-10 flex-grow" />
       </div>
     </div>
   </template>

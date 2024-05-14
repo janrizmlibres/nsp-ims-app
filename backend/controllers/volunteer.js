@@ -4,6 +4,7 @@ import VolunteerContactInformation from "../models/volunteer/volunteer_contact_i
 import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
 import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
 import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
+import StudentVolunteer from "../models/volunteer/student_volunteer.js";
 
 export async function getAllVolunteers(req, res, next) {
   try {
@@ -12,7 +13,8 @@ export async function getAllVolunteers(req, res, next) {
                 VolunteerContactInformation, 
                 VolunteerSpecialization,
                 VolunteerAvailability,
-                VolunteerEmergency]
+                VolunteerEmergency,
+                StudentVolunteer]
     });
 
     res.status(201).json({ 
