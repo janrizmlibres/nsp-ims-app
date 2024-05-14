@@ -15,6 +15,14 @@ const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 })
 
+const columns = [
+  { field: 'lrn', header: 'LRN' },
+  { field: 'firstName', header: 'First Name' },
+  { field: 'lastName', header: 'Last Name' },
+  { field: 'sex', header: 'Sex' },
+  { field: 'contactNum', header: 'Contact Number' }
+]
+
 function updateGlobalFilter(newValue) {
   filters.value.global.value = newValue
 }
@@ -33,16 +41,19 @@ onMounted(async () => {
     <StudentHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
 
     <DataTable
-      :value="studentsStore.students"
+      :value="studentsStore.studentsNormalized"
       v-model:filters="filters"
-      :globalFilterFields="['firstName', 'lastName']"
+      :globalFilterFields="['lrn', 'firstName', 'lastName', 'facebook']"
       scrollable
       removableSort
     >
-      <Column field="lrn" header="LRN" sortable></Column>
-      <Column field="firstName" header="First Name" sortable></Column>
-      <Column field="lastName" header="Last Name" sortable></Column>
-      <Column field="category" header="Category" sortable></Column>
+      <Column
+        v-for="col of columns"
+        :key="col.field"
+        :field="col.field"
+        :header="col.header"
+        sortable
+      ></Column>
     </DataTable>
 
     <div class="pl-8 pt-2 font-medium">

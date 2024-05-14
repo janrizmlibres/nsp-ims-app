@@ -1,10 +1,21 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useAuthStore } from './auth'
 import axios from 'axios'
 
 export const useStudentsStore = defineStore('students', () => {
   const students = ref([])
+
+  const studentsNormalized = computed(() => {
+    return students.value.map((student) => {
+      const { personal_info, contact_info, ...identity } = student
+
+      delete Object.assign(personal_info, { ['personalInfoId']: personal_info['id'] })['id']
+      delete Object.assign(contact_info, { ['contactInfoId']: personal_info['id'] })['id']
+
+      return { ...identity, ...personal_info, ...contact_info }
+    })
+  })
 
   async function getStudents() {
     const authStore = useAuthStore()
@@ -26,5 +37,5 @@ export const useStudentsStore = defineStore('students', () => {
     return result
   }
 
-  return { students, getStudents, addStudent }
+  return { students, studentsNormalized, getStudents, addStudent }
 })

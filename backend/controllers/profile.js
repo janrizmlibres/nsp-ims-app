@@ -9,7 +9,9 @@ import PreviousSchool from "../models/student/previous_school.js";
 
 export async function getStudents(_req, res, next) {
   try {
-    const students = await Student.findAll();
+    const students = await Student.findAll({
+      include: [PersonalInfo, ContactInfo],
+    });
 
     res.status(200).json({
       message: "Fetched all students successfully.",

@@ -53,16 +53,16 @@ const formData = {
     relationship: null
   },
   parentalInfo: {
-    LastNameF: null,
-    MiddleNameF: null,
-    FirstNameF: null,
-    SuffixNameF: null,
-    OccupationF: null,
-    LastNameM: null,
-    MiddleNameM: null,
-    FirstNameM: null,
-    SuffixNameM: null,
-    OccupationM: null
+    lastNameF: null,
+    middleNameF: null,
+    firstNameF: null,
+    suffixNameF: null,
+    occupationF: null,
+    lastNameM: null,
+    middleNameM: null,
+    firstNameM: null,
+    suffixNameM: null,
+    occupationM: null
   },
   prevSchool: {
     name: null,

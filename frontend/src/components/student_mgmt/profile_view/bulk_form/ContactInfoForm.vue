@@ -1,5 +1,6 @@
 <script setup>
 import InputText from 'primevue/inputtext'
+import Dropdown from 'primevue/dropdown'
 import { ref } from 'vue'
 
 import FormParts from '@/util/student_form_parts'
@@ -22,6 +23,8 @@ const rightFields = ref({
 })
 
 const selectedRelationship = ref(null)
+
+const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 
 function updateContactInfo() {
   const data = objectMap(leftFields.value, (field) => field.data)
@@ -62,14 +65,23 @@ function updateEmergencyContact() {
         <h2 class="font-bold text-center">Emergency Contact Person</h2>
 
         <div class="grid grid-cols-5 gap-3 mt-4">
-          <template v-for="field of Object.values(rightFields)" :key="field.label">
+          <template v-for="(field, key) in rightFields" :key="field.label">
             <div class="flex items-center justify-end pr-6 col-span-2">
               <span>{{ field.label }}</span>
             </div>
             <InputText
+              v-if="key !== 'suffixName'"
               class="h-10 col-span-3"
               type="text"
               v-model="field.data"
+              @update:modelValue="updateEmergencyContact"
+            />
+            <Dropdown
+              v-else
+              class="h-10 col-span-3"
+              v-model="field.data"
+              showClear
+              :options="suffixes"
               @update:modelValue="updateEmergencyContact"
             />
           </template>

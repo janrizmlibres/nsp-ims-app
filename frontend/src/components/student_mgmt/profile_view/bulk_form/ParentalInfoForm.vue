@@ -1,5 +1,6 @@
 <script setup>
 import InputText from 'primevue/inputtext'
+import Dropdown from 'primevue/dropdown'
 import { ref } from 'vue'
 
 import FormParts from '@/util/student_form_parts'
@@ -8,23 +9,24 @@ const emit = defineEmits(['dataChanged'])
 
 const formData = ref({
   fatherData: {
-    LastNameF: null,
-    FirstNameF: null,
-    MiddleNameF: null,
-    SuffixNameF: null,
-    OccupationF: null
+    lastNameF: null,
+    firstNameF: null,
+    middleNameF: null,
+    suffixNameF: null,
+    occupationF: null
   },
   motherData: {
-    LastNameM: null,
-    FirstNameM: null,
-    MiddleNameM: null,
-    SuffixNameM: null,
-    OccupationM: null
+    lastNameM: null,
+    firstNameM: null,
+    middleNameM: null,
+    suffixNameM: null,
+    occupationM: null
   }
 })
 
 const headers = ["Father's Information", "Mother's Information"]
 const fields = ['Last name', 'First Name', 'Middle Name', 'Suffix', 'Occupation']
+const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 
 const parentKeys = Object.keys(formData.value)
 const dataKeys = [Object.keys(formData.value.fatherData), Object.keys(formData.value.motherData)]
@@ -47,10 +49,19 @@ function handleUpdate() {
               <span>{{ fields[n] }}</span>
             </div>
             <InputText
+              v-if="!['suffixNameF', 'suffixNameM'].includes(dataKeys[idx][n])"
               class="h-10 col-span-3"
               type="text"
               v-model="formData[parentKeys[idx]][dataKeys[idx][n]]"
               @update:model-value="handleUpdate"
+            />
+            <Dropdown
+              v-else
+              class="h-10 col-span-3"
+              v-model="formData[parentKeys[idx]][dataKeys[idx][n]]"
+              showClear
+              :options="suffixes"
+              @update:modelValue="handleUpdate"
             />
           </template>
         </div>

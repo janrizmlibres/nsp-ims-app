@@ -3,7 +3,7 @@ import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { getYear } from 'date-fns'
 
 import { objectMap } from '@/util/helpers'
@@ -31,7 +31,12 @@ const selectedYearL = ref(null)
 const selectedYearR = ref(null)
 const lastYrAttended = ref(null)
 
-const years = ref([])
+const yearsR = ref([])
+const yearsL = computed(() => {
+  const yearList = [...yearsR.value]
+  yearList.pop()
+  return yearList
+})
 
 const types = ['Public', 'Private']
 const affiliations = ['Sectarian', 'Non-Sectarian']
@@ -84,7 +89,7 @@ onMounted(() => {
   const currentYear = getYear(new Date())
 
   for (let i = currentYear - 120; i <= currentYear + 1; i++) {
-    years.value.push(i.toString())
+    yearsR.value.push(i.toString())
   }
 
   for (let i = 1; i <= 10; i++) {
@@ -132,9 +137,9 @@ onMounted(() => {
         </div>
 
         <div class="grid grid-cols-5 gap-3 col-span-3">
-          <Dropdown class="h-10 col-span-2" v-model="selectedYearL" :options="years" filter />
+          <Dropdown class="h-10 col-span-2" v-model="selectedYearL" :options="yearsL" filter />
           <span class="flex items-center justify-center">-</span>
-          <Dropdown class="h-10 col-span-2" v-model="selectedYearR" :options="years" filter />
+          <Dropdown class="h-10 col-span-2" v-model="selectedYearR" :options="yearsR" filter />
         </div>
 
         <div class="flex items-center justify-end text-right pr-6 col-span-2">
@@ -161,7 +166,7 @@ onMounted(() => {
 
     <div class="px-8">
       <div class="grid grid-cols-4 gap-3">
-        <div class="flex justify-end pr-6">
+        <div class="flex justify-end text-right pr-6">
           <span>Reason for Discontinuation</span>
         </div>
         <Textarea

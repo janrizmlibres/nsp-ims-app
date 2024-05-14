@@ -7,6 +7,10 @@ import LearningStrand from "../models/learning_strand.js";
 import ClassLevel from "../models/class_level.js";
 import Learner from "../models/learner.js";
 import Volunteer from "../models/volunteer/volunteer.js";
+import PersonalInfo from "../models/student/personal_info.js";
+import ContactInfo from "../models/student/contact_info.js";
+import EmergencyPerson from "../models/student/emergency_person.js";
+import PreviousSchool from "../models/student/previous_school.js";
 
 export async function injectAll() {
   await injectStaff();
@@ -18,18 +22,106 @@ export async function injectAll() {
 }
 
 export async function injectStudent() {
-  await Student.create({
+  const student1 = await Student.create({
     lrn: "198765150721",
     category: "Out-of-School Youth",
     firstName: "Juan",
     lastName: "Dela Cruz",
   });
 
-  await Student.create({
-    lrn: "127051567891",
-    category: "Out-of-School Youth",
+  await PersonalInfo.create({
+    birthday: new Date(),
+    bloodType: "O+",
+    birthBarangay: "Iponan",
+    birthCity: "New York City",
+    birthProvince: "Misamis Oriental",
+    religion: "Roman Catholic",
+    sex: "M",
+    civilStatus: "Single",
+    homeBlkLtSt: "Lackadaisy Hotel",
+    homeBarangay: "St. Missouri",
+    homeCity: "New York City",
+    homeProvince: "Misamis Oriental",
+    studentId: student1.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09123456789",
+    studentId: student1.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Mitzi",
+    lastName: "May",
+    contactNum: "09987654321",
+    relationship: "Spouse",
+    studentId: student1.id,
+  });
+
+  await PreviousSchool.create({
+    name: "St. Larlar Musician School",
+    schoolType: "Private",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "1901 - 1902",
+    highestEducation: "Secondary Education",
+    gradeStopped: "Grade 10",
+    reason: "Sleeps anywhere",
+    street: "Marigold St.",
+    barangay: "Balulang",
+    city: "Cagayan de Oro City",
+    province: "Misamis Oriental",
+    studentId: student1.id,
+  });
+
+  const student2 = await Student.create({
+    lrn: "123456789012345",
+    category: "In-School Youth",
+    firstName: "Maria",
+    lastName: "Santos",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date("1998-05-14"),
+    bloodType: "A-",
+    birthBarangay: "Carmen",
+    birthCity: "Cagayan de Oro City",
+    birthProvince: "Misamis Oriental",
+    religion: "Islam",
+    sex: "F",
+    civilStatus: "Single",
+    homeBlkLtSt: "123 Happy Street",
+    homeBarangay: "Agora",
+    homeCity: "Cagayan de Oro City",
+    homeProvince: "Misamis Oriental",
+    studentId: student2.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09051234567",
+    studentId: student2.id,
+  });
+
+  await EmergencyPerson.create({
     firstName: "Pedro",
-    lastName: "Pascual",
+    lastName: "Cruz",
+    contactNum: "09187654321",
+    relationship: "Father",
+    studentId: student2.id,
+  });
+
+  await PreviousSchool.create({
+    name: "Saint Ignatius School",
+    schoolType: "Private",
+    schoolAffiliation: "Sectarian",
+    lastSyAttended: "2022-2023",
+    highestEducation: "Senior High School",
+    gradeStopped: "Grade 12",
+    reason: "Graduated",
+    street: "Mabini Street",
+    barangay: "Macabalan",
+    city: "Cagayan de Oro City",
+    province: "Misamis Oriental",
+    studentId: student2.id,
   });
 }
 
