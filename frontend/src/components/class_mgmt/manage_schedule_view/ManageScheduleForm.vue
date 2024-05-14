@@ -5,17 +5,21 @@ import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Panel from 'primevue/panel';
 import MultiSelect from 'primevue/multiselect';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm'
 
 // stores
 import { useVolunteerStore } from '@/stores/volunteer';
 import { useTermStore } from '@/stores/term';
 import { useClassStore } from '@/stores/class';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
 const toast = useToast()
 const emit = defineEmits(['submit', 'chooseYear', 'chooseLevel'])
 const props = defineProps(['state'])
+const confirm = useConfirm()
+const router = useRouter()
 
 const volunteerStore = useVolunteerStore()
 const termStore = useTermStore()
@@ -48,6 +52,7 @@ onMounted(() => {
 })
 
 const enableSchoolLevelDropdown = ref(true)
+const leave = ref(true)
 const disableSubmitButton = computed(() => {
     if(Object.values(formData.value).some(o => o === null) || formData.value.school_days.length === 0) return true
     else return false
@@ -57,7 +62,7 @@ const state = computed(() => props.state)
 const active = ref(0)
 const formData = ref({
     volunteer: null,
-    school_days: null,
+    school_days: [],
     start_time: null,
     end_time: null
 })
@@ -74,7 +79,7 @@ function resetForm() {
     learningStrandInput.value = null
     formData.value = {
         volunteer: null,
-        school_days: null,
+        school_days: [],
         start_time: null,
         end_time: null
     }
@@ -94,6 +99,31 @@ function updateIO() {
     termStore.getTerm(termInput.value.id).then((data) => classes.value = data.class_levels)
     emit('chooseYear', termInput.value)
 }
+
+watch(() => Object.values(formData.value), (data) => {
+    if(data[0] != null || data[2] != null || data[3] != null || data[1].length != 0) {
+        leave.value = false
+    } else leave.value = true
+})
+
+onBeforeRouteLeave((to) => {
+    if (leave.value) {
+        return true
+    }
+
+    if(Object.values(formData.value).some(o => o === null) || formData.value.school_days.length === 0) {
+        confirm.require({
+            message: 'Do you really want to leave? you have unsaved changes!',
+            header: 'Redirect Confirmation',
+            accept: async () => {
+                leave.value = true
+                await router.push(to)
+            }
+        })
+    }
+
+    return false
+})
 </script>
 
 <template>
