@@ -170,7 +170,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
           <div class="text-center">Loading academic terms records. Please wait.</div>
         </template>
 
-        <Column field="id" header="Batch No." sortable/>
+        <Column field="id" header="Batch No."/>
         <Column field="academic_year" header="Academic Year" />
         <Column field="start_date" header="Start Date">
           <template #body="slotProps">
