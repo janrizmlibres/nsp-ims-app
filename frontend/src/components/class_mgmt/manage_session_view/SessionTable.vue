@@ -4,7 +4,7 @@ import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import Calendar from 'primevue/calendar';
+import InputText from 'primevue/inputtext';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
@@ -104,6 +104,7 @@ const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allSessions = ref([])
 const classLearningStrandId = ref()
+const editingRows = ref([]);
 
 function updateSessionTable(sessions) {
     isFetching.value = true
@@ -117,7 +118,8 @@ function updateSessionTable(sessions) {
             date: date,
             absent: session.absent,
             present: session.present,
-            total: session.total
+            total: session.total,
+            remarks: session.remarks
         })
         allSessions.value.push(temp.value)
     }
@@ -169,6 +171,32 @@ async function addSession() {
         })
     }
 }
+
+const onRowEditSave = async (event) => {
+    let { data, newData } = event;
+
+    if (Object.values(data) != Object.values(newData)) {
+        try {
+            await classLearningStrandStore.updateSession(newData.id, {remarks: newData.remarks})
+            classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
+                updateSessionTable(data)
+            })
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Session updated successfully',
+                life: 3000
+            })
+        } catch(error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail:"Unexpected error encountered.",
+                life: 3000
+            })
+        }
+    }
+};
 </script>
 
 <template>
@@ -182,6 +210,7 @@ async function addSession() {
             :value="allSessions" dataKey="id" 
             :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines
+            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
             :paginator="allSessions.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
             :ptOptions="{mergeProps:true}"
             :pt="customPt"
@@ -191,20 +220,23 @@ async function addSession() {
 
             <Column header="" class="u-txt-active text-center" style="width: 2rem">
                 <template #body="slotProps">
-                    <RouterLink :to="{ name: 'session-info', query: { id: slotProps.data.id} }">
+                    <RouterLink :to="{ name: 'session-info', query: { id: slotProps.data.id, status: termStatus } }">
                         <i class="fa fa-eye" />
                     </RouterLink>
                 </template>
             </Column>
-            <Column field="session_date" header="Session Date">
+            <Column field="date" header="Session Date">
                 <template #body="slotProps">
                     {{ slotProps.data.date.toDateString() }}
                 </template>
-                <template #editor="{ data, field }">
-                    <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-                </template>
             </Column>
             <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
+            <Column field="remarks" header="Remarks" style="max-width: 10rem;">
+                <template #editor="{ data, field }">
+                    <InputText v-model="data[field]" autofocus />
+                </template>
+            </Column>
+            <Column :rowEditor="true" style="max-width: 2rem" bodyStyle="text-align:center"></Column>
             <template #footer v-if="termStatus"> 
                 <Button icon="fa fa-plus" label="Add Session" text raised rounded aria-label="Submit" @click="addSession"/>
             </template>
