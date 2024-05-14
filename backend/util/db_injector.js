@@ -485,8 +485,8 @@ export async function injectVolunteer() {
 
   const volunteerPersonalInformationData = [
     {
-      nickname: "John",
-      sex: "Male",
+      nickname: "Shelly",
+      sex: "Female",
       birthday: new Date(1980, 1, 1),
       housing: "123 Main St",
       barangay: "Barangay 1",
@@ -494,8 +494,8 @@ export async function injectVolunteer() {
       province: "Province A"
     },
     {
-      nickname: "Jane",
-      sex: "Female",
+      nickname: "Alonzo",
+      sex: "Male",
       birthday: new Date(1985, 1, 1),
       housing: "456 Maple Ave",
       barangay: "Barangay 2",
@@ -503,8 +503,8 @@ export async function injectVolunteer() {
       province: "Province B"
     },
     {
-      nickname: "Bob",
-      sex: "Male",
+      nickname: "Alejandra",
+      sex: "Female",
       birthday: new Date(1990, 1, 1),
       housing: "789 Oak St",
       barangay: "Barangay 3",
@@ -512,8 +512,8 @@ export async function injectVolunteer() {
       province: "Province C"
     },
     {
-      nickname: "Alice",
-      sex: "Female",
+      nickname: "Gabriel",
+      sex: "Male",
       birthday: new Date(1995, 1, 1),
       housing: "1011 Pine Ave",
       barangay: "Barangay 4",
@@ -521,7 +521,7 @@ export async function injectVolunteer() {
       province: "Province D"
     },
     {
-      nickname: "Charlie",
+      nickname: "John",
       sex: "Male",
       birthday: new Date(1985, 1, 1),
       housing: "1213 Birch Blvd",
@@ -530,8 +530,8 @@ export async function injectVolunteer() {
       province: "Province E"
     },
     {
-      nickname: "Diana",
-      sex: "Female",
+      nickname: "Job",
+      sex: "Male",
       birthday: new Date(1990, 1, 1),
       housing: "1415 Cedar Ct",
       barangay: "Barangay 6",
@@ -539,7 +539,7 @@ export async function injectVolunteer() {
       province: "Province F"
     },
     {
-      nickname: "Ethan",
+      nickname: "Wilson",
       sex: "Male",
       birthday: new Date(1995, 1, 1),
       housing: "1617 Dogwood Dr",
@@ -548,8 +548,8 @@ export async function injectVolunteer() {
       province: "Province G"
     },
     {
-      nickname: "Fiona",
-      sex: "Female",
+      nickname: "Felixson",
+      sex: "Male",
       birthday: new Date(2000, 1, 1),
       housing: "1819 Elm St",
       barangay: "Barangay 8",
@@ -557,8 +557,8 @@ export async function injectVolunteer() {
       province: "Province H"
     },
     {
-      nickname: "George",
-      sex: "Male",
+      nickname: "Fernan",
+      sex: "Female",
       birthday: new Date(1980, 1, 1),
       housing: "2021 Fir St",
       barangay: "Barangay 9",
@@ -566,8 +566,8 @@ export async function injectVolunteer() {
       province: "Province I"
     },
     {
-      nickname: "Hannah",
-      sex: "Female",
+      nickname: "Kenneth",
+      sex: "Male",
       birthday: new Date(1985, 1, 1),
       housing: "2223 Grove St",
       barangay: "Barangay 10",
@@ -575,8 +575,8 @@ export async function injectVolunteer() {
       province: "Province J"
     },
     {
-      nickname: "Ian",
-      sex: "Male",
+      nickname: "Daisy",
+      sex: "Female",
       birthday: new Date(1990, 1, 1),
       housing: "2425 Hickory St",
       barangay: "Barangay 11",
@@ -600,6 +600,113 @@ export async function injectVolunteer() {
     { firstName: "Jacob", lastName: "Doe", contactNumber: 2345678901, relationship: "Brother" }
   ];
 
+  const StudentVolunteer = [
+    {
+      program: "BS PSY",
+      year: "1st",
+    },
+    {
+      program: "BS CS",
+      year: "2nd",
+    },
+    {
+      program: "BS IT",
+      year: "3rd",
+    },
+    {
+      program: "BS IS",
+      year: "4th",
+    },
+    {
+      program: "BS E",
+      year: "1st",
+    },
+    {
+      program: "BS CE",
+      year: "2nd",
+    },
+    {
+      program: "AB PHILO",
+      year: "3rd",
+    },
+    {
+      program: "BS PSY",
+      year: "4th",
+    },
+    {
+      program: "BS CS",
+      year: "1st",
+    },
+    {
+      program: "BS IT",
+      year: "1st",
+    },
+    {
+      program: "BS E",
+      year: "1st",
+    },
+  ];
+
+
+  const volunteerContactInformationData = [
+    {
+      contactNumber: "09123456789",
+      facebook: "Shelly-Cruz",
+      email: "shelly-cruz@example.com"
+    },
+    {
+      contactNumber: "09123456788",
+      facebook: "Alonzo-Fuentes",
+      email: "alonzo-fuentes@example.com"
+    },
+    {
+      contactNumber: "09123456787",
+      facebook: "Alejandra-Firma",
+      email: "alejandra-firma@example.com"
+    },
+    {
+      contactNumber: "09123456786",
+      facebook: "Gabriel-Horticullado",
+      email: "Gabriel-Horticullado@example.com"
+    },
+    {
+      contactNumber: "09123456785",
+      facebook: "John-Santos",
+      email: "John-Santos@example.com"
+    },
+    {
+      contactNumber: "09123456784",
+      facebook: "Job-Dapin",
+      email: "Job-Dapin@example.com"
+    },
+    {
+      contactNumber: "09123456783",
+      facebook: "Wilson-Roa",
+      email: "Wilson-Roa@example.com"
+    },
+    {
+      contactNumber: "09123456782",
+      facebook: "Felixson-Dimagiba",
+      email: "Felixson-Dimagiba@example.com"
+    },
+    {
+      contactNumber: "09123456781",
+      facebook: "Fernan-Goma",
+      email: "Fernan-Goma@example.com"
+    },
+    {
+      contactNumber: "09123456780",
+      facebook: "Kenneth-Lopez",
+      email: "Kenneth-Lopez@example.com"
+    },
+    {
+      contactNumber: "09123456779",
+      facebook: "Daisy-Sayson",
+      email: "Daisy-Sayson@example.com"
+    },
+    // ... add more entries here ...
+  ];
+
   function getRandomAvailability() {
     let availability = ["M", "T", "W", "TH", "F", "S"];
     return availability[Math.floor(Math.random() * 2)];
@@ -612,10 +719,13 @@ export async function injectVolunteer() {
 
   await Promise.all(
     volunteerData.map(async (data, index) => {
+
       const volunteer = await Volunteer.create(data);
 
+      volunteer.createStudent_volunteer(StudentVolunteer[index])
       volunteer.createVolunteer_personal_information(volunteerPersonalInformationData[index])
       volunteer.createVolunteer_emergency_contact(volunteerEmergencyContacts[index])
+      volunteer.createVolunteer_contact_information(volunteerContactInformationData[index])
       volunteer.createVolunteer_availability({day: getRandomAvailability()})
       volunteer.createVolunteer_specialization({area: getSpecialization()})
     })

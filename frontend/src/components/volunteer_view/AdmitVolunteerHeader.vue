@@ -13,9 +13,13 @@
   
       <div class="flex gap-10 mb-2 items-center flex-grow">
         <div class="basis-32 text-right">
-          <span>Category</span>
+          <span>Affiliation</span>
         </div>
-        <Dropdown v-model="selectedCategory" :options="category" optionLabel="name" class="grow h-10 flex-grow" />
+        <Dropdown 
+        v-model="selectedAffiliation" 
+        :options="affiliation" 
+        optionLabel="name" 
+        class="grow h-10 flex-grow" />
       </div>
     </div>
   </template>
@@ -36,16 +40,16 @@
         id: '',
       })
   
-      const selectedCategory = ref();
-      const category = ref([
+      const selectedAffiliation = ref();
+      const affiliation = ref([
         { name: 'Student', code: 'stdnt' },
         { name: 'Professional', code: 'pro' }
       ]);
   
       return {
         formData,
-        selectedCategory,
-        category
+        selectedAffiliation,
+        affiliation
       }
     }
   }
