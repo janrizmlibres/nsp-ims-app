@@ -49,7 +49,7 @@ onMounted(() => {
 
 const enableSchoolLevelDropdown = ref(true)
 const disableSubmitButton = computed(() => {
-    if(Object.values(formData.value).some(o => o === null) || Object.values(formData.value)[1].length === 0) return true
+    if(Object.values(formData.value).some(o => o === null) || formData.value.school_days.length === 0) return true
     else return false
 })
 
