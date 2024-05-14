@@ -177,7 +177,7 @@ const onRowEditSave = async (event) => {
 
             <Column header="" class="u-txt-active text-center">
                 <template #body="slotProps">
-                    <RouterLink :to="{ name: 'module-info', query: { id: slotProps.data.id} }">
+                    <RouterLink :to="{ name: 'module-info', query: {id: slotProps.data.id, status: termStatus} }">
                         <i class="fa fa-eye" />
                     </RouterLink>
                 </template>
@@ -204,7 +204,7 @@ const onRowEditSave = async (event) => {
                 </template>
             </Column>
             <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
-            <Column :rowEditor="true" bodyStyle="text-align:center" frozen class="sticky right-0" />
+            <Column :rowEditor="termStatus" bodyStyle="text-align:center" frozen class="sticky right-0" />
             <template #footer v-if="termStatus"> 
                 <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
                 <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
