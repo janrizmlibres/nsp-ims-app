@@ -4,16 +4,6 @@ import Calendar from 'primevue/calendar';
 import { ref } from 'vue'
 
 const date = ref();
-
-let formData = ref({
-  firstName: '',
-  address: {
-    housing: '',
-    city: '',
-    barangay: '',
-    province: ''
-  }
-})
 </script>
 
 <template>
@@ -28,7 +18,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.firstName"
+            v-model="firstName"
           />
         </div>
 
@@ -39,7 +29,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.middleName"
+            v-model="middleName"
           />
         </div>
 
@@ -50,7 +40,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.lastName"
+            v-model="lastName"
           />
         </div>
 
@@ -61,7 +51,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.nickName"
+            v-model="nickName"
           />
         </div>
 
@@ -82,7 +72,7 @@ let formData = ref({
           <InputText
             class="w-20 h-10"
             type="text"
-            v-model="formData.suffixName"
+            v-model="suffixName"
           />
         </div>
       </div>
@@ -95,7 +85,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.course"
+            v-model="course"
           />
         </div>
 
@@ -106,7 +96,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.yearLevel"
+            v-model="yearLevel"
           />
         </div>
 
@@ -117,7 +107,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.work"
+            v-model="work"
           />
         </div>
 
@@ -129,25 +119,25 @@ let formData = ref({
             <InputText
               class="grow h-10 w-full mb-2"
               type="text"
-              v-model="formData.address.housing"
+              v-model="housing"
               placeholder="Housing Blk/Lt St."
             />
             <InputText
               class="grow h-10 w-full mb-2"
               type="text"
-              v-model="formData.address.city"
+              v-model="city"
               placeholder="City/Municipality"
             />
             <InputText
               class="grow h-10 w-full mb-2"
               type="text"
-              v-model="formData.address.barangay"
+              v-model="barangay"
               placeholder="Barangay"
             />
             <InputText
               class="grow h-10 w-full mb-2"
               type="text"
-              v-model="formData.address.province"
+              v-model="province"
               placeholder="Province"
             />
           </div>

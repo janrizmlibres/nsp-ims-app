@@ -7,7 +7,7 @@
         <InputText
           class="grow h-10 flex-grow"
           type="text"
-          v-model="formData.id"
+          v-model="id"
         />
       </div>
   
@@ -35,10 +35,6 @@
       Dropdown
     },
     setup() {
-      // Initialize formData with id and category properties
-      let formData = ref({
-        id: '',
-      })
   
       const selectedAffiliation = ref();
       const affiliation = ref([
@@ -47,7 +43,6 @@
       ]);
   
       return {
-        formData,
         selectedAffiliation,
         affiliation
       }

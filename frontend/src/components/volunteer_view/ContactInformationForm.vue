@@ -2,8 +2,6 @@
 import InputText from 'primevue/inputtext'
 import { ref } from 'vue'
 
-let formData = ref({
-})
 </script>
 
 <template>
@@ -18,7 +16,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.contactNumber"
+            v-model="contactNumber"
           />
         </div>
 
@@ -29,7 +27,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.emailAddress"
+            v-model="emailAddress"
           />
         </div>
 
@@ -40,7 +38,7 @@ let formData = ref({
           <InputText
             class="grow h-10"
             type="text"
-            v-model="formData.facebook"
+            v-model="facebook"
           />
         </div>
 

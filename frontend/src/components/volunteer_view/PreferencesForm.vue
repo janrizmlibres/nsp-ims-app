@@ -5,9 +5,6 @@ import Checkbox from 'primevue/checkbox';
 
 const day = ref();
 const aos = ref();
-
-let formData = ref({
-})
 </script>
 
 <template>
