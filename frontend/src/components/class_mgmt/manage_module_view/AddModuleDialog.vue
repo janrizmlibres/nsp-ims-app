@@ -6,15 +6,16 @@ import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
 import { useToast } from 'primevue/usetoast';
 import { computed, ref } from 'vue';
+import { useConfirm } from 'primevue/useconfirm';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
 const emit = defineEmits(['onUpdate'])
 const props = defineProps(['id'])
-
 const toast = useToast()
 const classLearningStrandStore = useClassLearningStrandStore()
+const confirm = useConfirm()
 
 const value = ref(null);
 const dates = ref(null);
@@ -68,6 +69,20 @@ async function addModule() {
     dates.value = null;
     classLearningStrandStore.showHideAddModuleDialog()
 }
+
+async function cancel() {
+    if (value.value === null && dates.value === null) {
+        classLearningStrandStore.showHideAddModuleDialog()
+    } else {
+        confirm.require({
+            message: 'Do you really want to leave? you have unsaved changes!',
+            header: 'Redirect Confirmation',
+            accept: async () => {
+                classLearningStrandStore.showHideAddModuleDialog()
+            }
+        })
+    }
+}
 </script>
 
 <template>
@@ -85,7 +100,7 @@ async function addModule() {
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Add" @click="addModule"></Button>
-            <Button type="button" label="Cancel" severity="danger" @click="classLearningStrandStore.showHideAddModuleDialog"></Button>
+            <Button type="button" label="Cancel" severity="danger" @click="cancel"></Button>
         </div>
     </Dialog>
 </template>
