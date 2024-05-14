@@ -1,10 +1,18 @@
 <script setup>
-import InputText from 'primevue/inputtext'
-import { ref } from 'vue'
-import Checkbox from 'primevue/checkbox';
+import { ref, watch } from 'vue'
+import Checkbox from 'primevue/checkbox'
 
-const day = ref();
-const aos = ref();
+const emit = defineEmits(['dataChanged', 'update'])
+
+const day = ref([])
+const aos = ref([])
+
+watch([day, aos], () => {
+  emit('update', {
+    availability: day.value,
+    areaOfSpecialization: aos.value
+  })
+})
 </script>
 
 <template>
@@ -17,27 +25,27 @@ const aos = ref();
             <span>Availability</span>
           </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="mon" name="mon" value="Monday" />
+                <Checkbox v-model="day" inputId="m" name="mon" value="Monday" />
                 <label for="mon" class="ml-2"> M </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="tue" name="tue" value="Tuesday" />
+                <Checkbox v-model="day" inputId="t" name="tue" value="Tuesday" />
                 <label for="tue" class="ml-2"> T </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="wed" name="wed" value="Wednesday" />
+                <Checkbox v-model="day" inputId="w" name="wed" value="Wednesday" />
                 <label for="wed" class="ml-2"> W </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="thu" name="thu" value="Thursday" />
+                <Checkbox v-model="day" inputId="th" name="thu" value="Thursday" />
                 <label for="thu" class="ml-2"> Th </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="fri" name="fri" value="Friday" />
+                <Checkbox v-model="day" inputId="f" name="fri" value="Friday" />
                 <label for="fri" class="ml-2"> F </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="sat" name="sat" value="Saturday" />
+                <Checkbox v-model="day" inputId="s" name="sat" value="Saturday" />
                 <label for="sat" class="ml-2"> S </label>
             </div>
         </div>

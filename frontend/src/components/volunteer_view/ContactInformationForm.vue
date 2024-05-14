@@ -1,7 +1,20 @@
 <script setup>
 import InputText from 'primevue/inputtext'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
+const emit = defineEmits(['dataChanged', 'update'])
+
+const contactNumber = ref(null)
+const emailAddress = ref(null)
+const facebook = ref(null)
+
+watch([contactNumber, emailAddress, facebook], () => {
+  emit('update', {
+    contactNumber: contactNumber.value,
+    emailAddress: emailAddress.value,
+    facebook: facebook.value
+  })
+})
 </script>
 
 <template>

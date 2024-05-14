@@ -26,7 +26,7 @@
   
   <script>
   import InputText from 'primevue/inputtext'
-  import { ref } from 'vue'
+  import { ref, watch } from 'vue'
   import Dropdown from 'primevue/dropdown';
   
   export default {
@@ -34,16 +34,22 @@
       InputText,
       Dropdown
     },
-    setup() {
-  
+    emits: ['update'],
+    setup(_, { emit }) {
       const selectedAffiliation = ref();
+      const id = ref();
       const affiliation = ref([
-        { name: 'Student', code: 'stdnt' },
-        { name: 'Professional', code: 'pro' }
+        { name: 'Student', code: 'Student' },
+        { name: 'Professional', code: 'Professional' }
       ]);
+  
+      watch([selectedAffiliation, id], () => {
+        emit('update', { selectedAffiliation: selectedAffiliation.value ? selectedAffiliation.value.code : '', id: id.value });
+      });
   
       return {
         selectedAffiliation,
+        id,
         affiliation
       }
     }

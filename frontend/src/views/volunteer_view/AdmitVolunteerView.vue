@@ -2,25 +2,25 @@
   <ContentPane header="Admit Volunteer">
     <div class="flex flex-col gap-3 h-full mr-1">
       <BaseCard>
-        <AdmitVolunteerHeader />
+        <AdmitVolunteerHeader @update="handleUpdate" />
       </BaseCard>
       <BaseCard class="grow">
         <TabView>
           <TabPanel header="Personal Infromation">
-            <PersonalInformationForm />
+            <PersonalInformationForm @update="handleUpdate" />
           </TabPanel>
           <TabPanel header="Contact Infromation">
-            <ContactInformationForm />
+            <ContactInformationForm @update="handleUpdate" />
           </TabPanel>
           <TabPanel header="Preferences">
-            <PreferencesForm />
+            <PreferencesForm @update="handleUpdate" />
           </TabPanel>
         </TabView>
       </BaseCard>
 
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Button class="h-10 u-bg-green" >
+          <Button class="h-10 u-bg-green" @click="handleSubmit">
               <font-awesome-icon
                 icon="fa-solid fa-circle-check"
                 class="absolute top-2/4 -mt-2 left-3"
@@ -49,6 +49,7 @@ import Button from 'primevue/button'
 import ProgressSpinner from 'primevue/progressspinner'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import { ref } from 'vue';
 
 export default {
     name: "VolunteerRecordsView",
@@ -64,5 +65,39 @@ export default {
         TabPanel,
         TabView,
     },
+    setup() {
+    const formData = ref({
+      selectedAffiliation: '', 
+      id: '',
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      nickname: '',
+      dateOfBirth: '',
+      suffix: '',
+      course: '',
+      yearLevel: '',
+      work: '',
+      housing: '',
+      city: '',
+      barangay: '',
+      province: '',
+      contactNumber: '',
+      emailAddress: '',
+      facebook: '',
+      availability: '',
+      areaOfSpecialization: ''
+    });
+
+    const handleUpdate = (data) => {
+      formData.value = { ...formData.value, ...data };
+    };
+
+    const handleSubmit = () => {
+      console.log(formData.value);
+    };
+
+    return { handleUpdate, handleSubmit };
+  },
 };
 </script>

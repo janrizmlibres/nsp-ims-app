@@ -1,9 +1,41 @@
 <script setup>
+import { ref, watch } from 'vue'
 import InputText from 'primevue/inputtext'
 import Calendar from 'primevue/calendar';
-import { ref } from 'vue'
 
-const date = ref();
+const emit = defineEmits(['dataChanged', 'update'])
+
+const firstName = ref(null)
+const middleName = ref(null)
+const lastName = ref(null)
+const nickname = ref(null)
+const dateOfBirth = ref(null)
+const suffix = ref(null)
+const course = ref(null)
+const yearLevel = ref(null)
+const work = ref(null)
+const housing = ref(null)
+const city = ref(null)
+const barangay = ref(null)
+const province = ref(null)
+
+watch([firstName, middleName, lastName, nickname, dateOfBirth, suffix, course, yearLevel, work, housing, city, barangay, province], () => {
+  emit('update', {
+    firstName: firstName.value,
+    middleName: middleName.value,
+    lastName: lastName.value,
+    nickname: nickname.value,
+    dateOfBirth: dateOfBirth.value,
+    suffix: suffix.value,
+    course: course.value,
+    yearLevel: yearLevel.value,
+    work: work.value,
+    housing: housing.value,
+    city: city.value,
+    barangay: barangay.value,
+    province: province.value
+  });
+});
 </script>
 
 <template>
@@ -51,7 +83,7 @@ const date = ref();
           <InputText
             class="grow h-10"
             type="text"
-            v-model="nickName"
+            v-model="nickname"
           />
         </div>
 
@@ -61,7 +93,7 @@ const date = ref();
           </div>
           <Calendar
             class="grow h-10"
-            v-model="date"
+            v-model="dateOfBirth"
           />
         </div>
 
@@ -72,7 +104,7 @@ const date = ref();
           <InputText
             class="w-20 h-10"
             type="text"
-            v-model="suffixName"
+            v-model="suffix"
           />
         </div>
       </div>
