@@ -77,6 +77,7 @@ function updateScheduleTable(classId) {
 }
 
 function resetTable(term) {
+    state.value = false
     tableData.value.length = 0
     selectedTerm.value = term
 }
