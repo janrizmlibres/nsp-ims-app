@@ -8,7 +8,7 @@ import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 // stores
@@ -97,6 +97,7 @@ const customPt = {
 
 const props = defineProps(['modelValue'])
 const emit = defineEmits(['onUpdate'])
+const status = computed(() => route.query.status)
 const isFetching = ref(false)
 const learners = ref([])
 const noChanges = ref(true)
@@ -104,6 +105,7 @@ const startingData = []
 const updatedData = new Set([])
 
 watch(() => props.modelValue, (data) => {
+    console.log(typeof route.query.status);
     isFetching.value = true
     learners.value.length = 0
 
@@ -248,7 +250,7 @@ function exportCSV() {
             <Column field="middleName" header="Middle Name" />
             <Column field="status" header="Status" sortable>
                 <template #body="slotProps">
-                    <Dropdown v-model="slotProps.data.status" :options="statuses" optionLabel="label" optionValue="value" :placeholder="slotProps.data.status" autofocus >
+                    <Dropdown v-model="slotProps.data.status" :options="statuses" optionLabel="label" optionValue="value" :placeholder="slotProps.data.status" :disabled="status === 'false'" autofocus >
                         <template #value="slotProps">
                             <Tag :value="slotProps.placeholder" :severity="getStatusLabel(slotProps.placeholder)" />
                         </template>
@@ -260,7 +262,7 @@ function exportCSV() {
             </Column>
             <Column field="date_submitted" header="Submission Date" sortable>
                 <template #body="slotProps">
-                    <Calendar v-model="slotProps.data.date_submitted" id="calendar" showIcon iconDisplay="input" autofocus>
+                    <Calendar v-model="slotProps.data.date_submitted" id="calendar" showIcon iconDisplay="input" :disabled="status === 'false'" autofocus>
                         <template #value="slotProps">
                             {{ slotProps.data.date_submitted.toDateString() }}
                         </template>
@@ -269,7 +271,7 @@ function exportCSV() {
             </Column>
             <Column field="remarks" header="Remarks">
                 <template #body="slotProps">
-                    <InputText v-model="slotProps.data.remarks" autofocus />
+                    <InputText v-model="slotProps.data.remarks" :disabled="status === 'false'" autofocus />
                 </template>
             </Column>
             <Column field="updatedAt" header="Updated At" sortable>
@@ -284,7 +286,7 @@ function exportCSV() {
                 <Button type="button" icon="pi pi-download" @click="exportCSV" text />
             </template>
         </DataTable>
-        <div class="flex justify-end gap-2 mt-4">
+        <div v-if="status === 'true'" class="flex justify-end gap-2 mt-4">
             <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateSubmissions"></Button>
             <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
         </div>
