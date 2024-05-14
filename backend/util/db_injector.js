@@ -101,6 +101,11 @@ export async function injectStudent() {
     return status[Math.floor(Math.random() * 2)];
   }
   
+  function getRegularity() {
+    let status = ["Regular", "Hybrid"];
+    return status[Math.floor(Math.random() * 2)];
+  }
+
   const students = await Student.findAll();
   await Promise.all(    
     students.map(async (student) => {
@@ -111,7 +116,7 @@ export async function injectStudent() {
             through: {
               hasEnrollmentForm: true,
               status: getRandomStatus(),
-              modularity: "Regular",
+              regularity: getRegularity(),
             },
           });
 
