@@ -25,12 +25,16 @@ const classLevelInput = ref()
 const learningStrandInput = ref()
 
 const state = computed(() => props.state)
-const enableSchoolLevelDropdown = ref(false)
+const enableSchoolLevelDropdown = ref(true)
 const enableLearningStrandDropdown = ref(false)
 
 onMounted(() => {
     try {
-        termStore.getAllTerms().then((data) => terms.value = data)
+        termStore.getAllTerms().then((data) => {
+            terms.value = data
+            termInput.value = data.find(term => term.status === true)
+            classes.value = termInput.value.class_levels
+        })
     } catch(error) {
         toast.add({
             severity: 'error',
