@@ -32,7 +32,11 @@ const learningStrandInput = ref()
 onMounted(() => {
     try {
         volunteerStore.getAllVolunteers().then((data) => volunteers.value = data)
-     termStore.getAllTerms().then((data) => terms.value = data)
+    termStore.getAllTerms().then((data) => {
+        terms.value = data
+        termInput.value = data.find(term => term.status === true)
+        classes.value = termInput.value.class_levels
+    })
     } catch(error) {
         toast.add({
             severity: 'error',
@@ -43,7 +47,7 @@ onMounted(() => {
     }
 })
 
-const enableSchoolLevelDropdown = ref(false)
+const enableSchoolLevelDropdown = ref(true)
 const disableSubmitButton = computed(() => {
     if(Object.values(formData.value).some(o => o === null) || Object.values(formData.value)[1].length === 0) return true
     else return false
