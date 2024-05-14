@@ -298,17 +298,34 @@ export async function getSession(req, res, next) {
     const sessionId = req.params.sessionId;
 
     try {
-        const module = await Session.findByPk(sessionId, {
-            include: [{
-                model: Attendance, include: [{model: Enrollment, include: [Student]}]
-            }, {
-                model: ClassLearningStrand, include: [LearningStrand]
-            }]
+        const classLearningStrand = await ClassLearningStrand.findOne({
+            include: [{model: Session, where: {
+                '$sessions.id$': sessionId
+            }}, LearningStrand]
+        })
+        
+        const regularAttendances = await Attendance.findAll({
+            where: {
+                '$enrollment.regularity$': 'Regular',
+            }, include: [{model: Enrollment, include: [Student]}]
+        })
+
+        const hybridAttendances = await Attendance.findAll({
+            where: {
+                '$enrollment.regularity$': 'Hybrid',
+            }, include: [{model: Enrollment, include: [Student]}]
         })
         
         res.status(200).json({
         message: "Fetched module successfully.",
-        data: module,
+        data: {
+            classLearningStrand: classLearningStrand,
+            session: classLearningStrand.sessions[0],
+            attendances: {
+                regular: regularAttendances,
+                hybrid: hybridAttendances
+            }
+        },
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -318,6 +335,25 @@ export async function getSession(req, res, next) {
     }
 }
 
+export async function updateSession(req, res, next) {
+    const sessionId = req.params.sessionId
+
+    try {
+        await Session.update({
+            remarks: req.body.remarks
+        }, {
+            where: {id: sessionId},
+        })
+        
+            res.status(200).json({ message: "Session Updated!" });
+        } catch (error) {
+            if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    }
+}
 
 export async function updateAttendances(req, res, next) {
     try {
