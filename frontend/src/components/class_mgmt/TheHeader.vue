@@ -5,14 +5,12 @@ import Panel from 'primevue/panel';
 import { computed, ref } from 'vue';
 
 // stores
-import { useClassStore } from '@/stores/class';
 import { useUtilitiesStore } from '@/stores/utilities';
 
 const emit = defineEmits(['chooseLearningStrand', 'updateState'])
 const props = defineProps(['state'])
 
 const utilitiesStore = useUtilitiesStore()
-const classStore = useClassStore()
 
 const terms = computed(() => utilitiesStore.terms)
 const classes = computed(() => utilitiesStore.terms.class_levels)
@@ -38,8 +36,7 @@ function updateClassLevel() {
     enableLearningStrandDropdown.value = true; 
     
     learningStrandInput.value = null
-
-    classStore.getAllLearningStrands(classLevelInput.value.id).then((data) => learningStrands.value = data)
+    learningStrands.value = classLevelInput.value.class_learning_strands
 }
 
 function updateLearningStand() {
