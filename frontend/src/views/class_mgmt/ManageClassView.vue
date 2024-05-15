@@ -21,12 +21,14 @@ const utilitiesStore = useUtilitiesStore()
 const isLoading = ref(true)
 const toast = useToast()
 const learningStrands = ref()
+const classLevel = ref()
 const state = ref(false)
 const termStatus = ref()
 
 function updateState(classLevelInput, status) {
     termStatus.value = status
     if (classLevelInput) { 
+        classLevel.value = classLevelInput
         learningStrands.value = classLevelInput.class_learning_strands
         state.value = true
     }
@@ -87,7 +89,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Schedules</span>
                     </div>
                 </template>
-                <ManageScheduleView :learningStrands="learningStrands" :termStatus="termStatus" />
+                <ManageScheduleView :classLevel="classLevel" :termStatus="termStatus" />
             </TabPanel>
         </TabView>
     </ContentPane>
