@@ -23,12 +23,10 @@ const classLevelInput = computed(() => termInput.value.class_levels)
 const learningStrandInput = ref()
 
 const state = computed(() => props.state)
-const enableSchoolLevelDropdown = ref(true)
 const enableLearningStrandDropdown = ref(false)
 
 function updateTerm() {
     enableLearningStrandDropdown.value = false; 
-    enableSchoolLevelDropdown.value = true;
 
     learningStrandInput.value = null
     classLevelInput.value = null
@@ -60,7 +58,7 @@ function updateLearningStand() {
         </div>
         <div class="flex flex-col gap-1">
             <label>Class Level</label>
-            <Dropdown v-model="classLevelInput" :options="classes" optionLabel="school_level" placeholder="Select a Level" :disabled="!enableSchoolLevelDropdown" class="w-full" @update:modelValue="updateClassLevel" />
+            <Dropdown v-model="classLevelInput" :options="classes" optionLabel="school_level" placeholder="Select a Level" class="w-full" @update:modelValue="updateClassLevel" />
         </div>
         <div class="flex flex-col gap-1">
             <label>Learning Strand</label>
