@@ -21,7 +21,7 @@ setAssociations();
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "images"),
-  filename: (req, file, cb) => cb(null, uuidv4()),
+  filename: (req, file, cb) => cb(null, uuidv4() + "-" + file.originalname),
 });
 
 const fileFilter = (req, file, cb) => {

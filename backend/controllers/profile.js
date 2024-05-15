@@ -35,30 +35,39 @@ export async function addStudent(req, res, next) {
       throw error;
     }
 
-    const student = await Student.create(req.body.identity);
+    if (!req.file) {
+      const error = new Error("No profile photo provided.");
+      error.statusCode = 422;
+      throw error;
+    }
+
+    const student = await Student.create({
+      ...JSON.parse(req.body.identity),
+      photoUrl: req.file.path,
+    });
 
     await PersonalInfo.create({
-      ...req.body.personalInfo,
+      ...JSON.parse(req.body.personalInfo),
       studentId: student.id,
     });
 
     await ContactInfo.create({
-      ...req.body.contactInfo,
+      ...JSON.parse(req.body.contactInfo),
       studentId: student.id,
     });
 
     await EmergencyPerson.create({
-      ...req.body.emergencyPerson,
+      ...JSON.parse(req.body.emergencyPerson),
       studentId: student.id,
     });
 
     await ParentalInfo.create({
-      ...req.body.parentalInfo,
+      ...JSON.parse(req.body.parentalInfo),
       studentId: student.id,
     });
 
     await PreviousSchool.create({
-      ...req.body.prevSchool,
+      ...JSON.parse(req.body.prevSchool),
       studentId: student.id,
     });
 
