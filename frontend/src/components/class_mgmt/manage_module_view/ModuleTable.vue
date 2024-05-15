@@ -183,56 +183,54 @@ onBeforeRouteLeave((to) => {
 
 <template>
     <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full mb-4" @update:modelValue="updateLearningStand" />
-    <div class="bg-white shadow-xl rounded-md p-5">
-        <DataTable 
-            :value="allModules" dataKey="id" 
-            :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
-            resizableColumns columnResizeMode="fit" showGridlines
-            v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
-            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-            :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-            :ptOptions="{mergeProps:true}"
-            :pt="customPt"
-        >
-            <template #empty> <div class="text-center">No records found.</div> </template>
-            <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+    <DataTable 
+        :value="allModules" dataKey="id" 
+        :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
+        resizableColumns columnResizeMode="fit" showGridlines
+        v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
+        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+        :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+        :ptOptions="{mergeProps:true}"
+        :pt="customPt"
+    >
+        <template #empty> <div class="text-center">No records found.</div> </template>
+        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
-            <Column header="" class="u-txt-active text-center">
-                <template #body="slotProps">
-                    <RouterLink :to="{ name: 'module-info', query: {id: slotProps.data.id, status: termStatus} }">
-                        <i class="fa fa-eye" />
-                    </RouterLink>
-                </template>
-            </Column>
-            <Column field="title" header="Title" sortable>
-                <template #editor="{ data, field }">
-                    <InputText v-model="data[field]" autofocus />
-                </template>
-            </Column>
-            <Column field="distribution_date" header="Distribution Date" sortable>
-                <template #body="slotProps">
-                    {{ slotProps.data.distribution_date.toDateString() }}
-                </template>
-                <template #editor="{ data, field }">
-                    <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-                </template>
-            </Column>
-            <Column field="retrieval_date" header="Retrieval Date" sortable>
-                <template #body="slotProps">
-                    {{ slotProps.data.retrieval_date.toDateString() }}
-                </template>
-                <template #editor="{ data, field }">
-                    <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-                </template>
-            </Column>
-            <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
-            <Column :rowEditor="termStatus" bodyStyle="text-align:center" frozen class="right-0" />
-            <template #footer v-if="termStatus"> 
-                <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
-                <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
+        <Column header="" class="u-txt-active text-center">
+            <template #body="slotProps">
+                <RouterLink :to="{ name: 'module-info', query: {id: slotProps.data.id, status: termStatus} }">
+                    <i class="fa fa-eye" />
+                </RouterLink>
             </template>
-        </DataTable>
-    </div>
+        </Column>
+        <Column field="title" header="Title" sortable>
+            <template #editor="{ data, field }">
+                <InputText v-model="data[field]" autofocus />
+            </template>
+        </Column>
+        <Column field="distribution_date" header="Distribution Date" sortable>
+            <template #body="slotProps">
+                {{ slotProps.data.distribution_date.toDateString() }}
+            </template>
+            <template #editor="{ data, field }">
+                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
+            </template>
+        </Column>
+        <Column field="retrieval_date" header="Retrieval Date" sortable>
+            <template #body="slotProps">
+                {{ slotProps.data.retrieval_date.toDateString() }}
+            </template>
+            <template #editor="{ data, field }">
+                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
+            </template>
+        </Column>
+        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
+        <Column :rowEditor="termStatus" bodyStyle="text-align:center" frozen class="right-0" />
+        <template #footer v-if="termStatus"> 
+            <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
+            <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
+        </template>
+    </DataTable>
 </template>
 
 <style>

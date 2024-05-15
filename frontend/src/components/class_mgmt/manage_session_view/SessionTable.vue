@@ -227,43 +227,41 @@ onBeforeRouteLeave((to) => {
 
 <template>
     <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full mb-4" @update:modelValue="updateLearningStand" />
-    <div class="bg-white shadow-xl rounded-md p-5">
-        <DataTable 
-            :value="allSessions" dataKey="id" 
-            :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
-            resizableColumns columnResizeMode="fit" showGridlines
-            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-            :paginator="allSessions.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-            :ptOptions="{mergeProps:true}"
-            :pt="customPt"
-        >
-            <template #empty> <div class="text-center">No records found.</div> </template>
-            <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+    <DataTable 
+        :value="allSessions" dataKey="id" 
+        :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
+        resizableColumns columnResizeMode="fit" showGridlines
+        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+        :paginator="allSessions.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+        :ptOptions="{mergeProps:true}"
+        :pt="customPt"
+    >
+        <template #empty> <div class="text-center">No records found.</div> </template>
+        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
-            <Column header="" class="u-txt-active text-center" style="width: 2rem">
-                <template #body="slotProps">
-                    <RouterLink :to="{ name: 'session-info', query: { id: slotProps.data.id, status: termStatus } }">
-                        <i class="fa fa-eye" />
-                    </RouterLink>
-                </template>
-            </Column>
-            <Column field="date" header="Session Date">
-                <template #body="slotProps">
-                    {{ slotProps.data.date.toDateString() }}
-                </template>
-            </Column>
-            <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
-            <Column field="remarks" header="Remarks" style="max-width: 10rem;">
-                <template #editor="{ data, field }">
-                    <InputText v-model="data[field]" autofocus />
-                </template>
-            </Column>
-            <Column :rowEditor="true" bodyStyle="text-align:center"></Column>
-            <template #footer v-if="termStatus"> 
-                <Button icon="fa fa-plus" label="Add Session" text raised rounded aria-label="Submit" @click="addSession"/>
+        <Column header="" class="u-txt-active text-center" style="width: 2rem">
+            <template #body="slotProps">
+                <RouterLink :to="{ name: 'session-info', query: { id: slotProps.data.id, status: termStatus } }">
+                    <i class="fa fa-eye" />
+                </RouterLink>
             </template>
-        </DataTable>
-    </div>
+        </Column>
+        <Column field="date" header="Session Date">
+            <template #body="slotProps">
+                {{ slotProps.data.date.toDateString() }}
+            </template>
+        </Column>
+        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
+        <Column field="remarks" header="Remarks" style="max-width: 10rem;">
+            <template #editor="{ data, field }">
+                <InputText v-model="data[field]" autofocus />
+            </template>
+        </Column>
+        <Column :rowEditor="true" bodyStyle="text-align:center"></Column>
+        <template #footer v-if="termStatus"> 
+            <Button icon="fa fa-plus" label="Add Session" text raised rounded aria-label="Submit" @click="addSession"/>
+        </template>
+    </DataTable>
 </template>
 
 <style>

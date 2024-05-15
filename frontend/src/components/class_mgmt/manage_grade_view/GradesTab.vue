@@ -73,7 +73,7 @@ watch(() => props.id, (id) => {
 
 <template>
     <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full mb-4" @update:modelValue="updateLearningStand" />
-    <TabView class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
+    <TabView>
         <TabPanel header="Active">
             <ProgressSpinner v-if="isFetching" class="flex justify-center" />
             <GradesTable v-else :isNotActive="!termStatus" v-model="active" :id="classLearningStrandId" @onUpdate="updateGradesData" />
