@@ -7,7 +7,7 @@ import { computed, ref } from 'vue';
 // stores
 import { useUtilitiesStore } from '@/stores/utilities';
 
-const emit = defineEmits(['chooseLearningStrand', 'updateState'])
+const emit = defineEmits(['updateState'])
 const props = defineProps(['state'])
 
 const utilitiesStore = useUtilitiesStore()
@@ -34,7 +34,7 @@ function updateClassLevel() {
 </script>
 
 <template>
-    <div class="flex gap-12 bg-white rounded-md shadow-xl p-4 px-6 mb-2">
+    <div class="flex gap-4 bg-white rounded-md shadow-xl p-4 px-6 mb-2">
         <div class="flex flex-col gap-1">
             <label>Academic Year</label>
             <Dropdown v-model="termInput" :options="terms" optionLabel="academic_year" placeholder="Select an Academic Year" class="w-full" @update:modelValue="updateTerm" />
