@@ -74,9 +74,7 @@ watch(() => props.id, (id) => {
 
 <template>
     <div v-if="state">
-        <div class="flex flex-col gap-1 mb-2">
-            <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full" @update:modelValue="updateLearningStand" />
-        </div>
+        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full mb-4" @update:modelValue="updateLearningStand" />
         <TabView class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
             <TabPanel header="Active">
                 <ProgressSpinner v-if="isFetching" class="flex justify-center" />
