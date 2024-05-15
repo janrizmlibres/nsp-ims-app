@@ -28,10 +28,7 @@ const PersonalInfo = sequelize.define("personal_info", {
     type: STRING,
     allowNull: false,
   },
-  religion: {
-    type: STRING,
-    allowNull: false,
-  },
+  religion: STRING,
   sex: {
     type: ENUM("M", "F"),
     allowNull: false,
@@ -41,7 +38,7 @@ const PersonalInfo = sequelize.define("personal_info", {
     values: ["Married", "Widowed", "Separated", "Divorced", "Single"],
     allowNull: false,
   },
-  houseBlkLtSt: {
+  homeBlkLtSt: {
     type: STRING,
     allowNull: false,
   },

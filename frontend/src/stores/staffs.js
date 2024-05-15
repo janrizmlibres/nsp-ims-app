@@ -25,8 +25,6 @@ export const useStaffsStore = defineStore('staffs', () => {
     })
 
     await addAudit(`Created staff with ID: ${result.data.user.id}`)
-    staffs.value.push(result.data.user)
-
     return result
   }
 

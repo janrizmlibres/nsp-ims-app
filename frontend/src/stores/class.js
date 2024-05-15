@@ -1,14 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { ref } from 'vue'
 import { useAuthStore } from './auth'
 
 export const useClassStore = defineStore('class', () => {
-    const classLevel = ref()
-    const strands = ref()
-    const modules = ref()
-    const students = ref()
-
     async function getClass(classId) {
         const authStore = useAuthStore()
 
@@ -16,16 +10,7 @@ export const useClassStore = defineStore('class', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
 
-        classLevel.value = result.data.data
-    }
-    
-
-    async function addLearningStrand(classId, form) {
-        const authStore = useAuthStore()
-
-        await axios.post(`http://localhost:8080/class/${classId}/learningStrand/add`, form, {
-            headers: {Authorization: 'Bearer ' + authStore.token},
-        })
+        return result.data.data
     }
 
     async function addSchedule(classId, form) {
@@ -36,14 +21,14 @@ export const useClassStore = defineStore('class', () => {
         })
     }
 
-    async function getAllStrands(classId) {
+    async function getAllLearningStrands(classId) {
         const authStore = useAuthStore()
 
-        const result = await axios.get(`http://localhost:8080/class/${classId}/strands`, {
+        const result = await axios.get(`http://localhost:8080/class/${classId}/classLearningStrands`, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        strands.value = result.data.data
+        return result.data.data
     }
 
     async function getAllModules(classId) {
@@ -53,7 +38,7 @@ export const useClassStore = defineStore('class', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        modules.value = result.data.data
+        return result.data.data
     }
 
     async function getAllStudents(classId) {
@@ -63,22 +48,20 @@ export const useClassStore = defineStore('class', () => {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
-        students.value = result.data.data
+        return result.data.data
     }
 
-    async function updateStudentStatus(classId, learnerId, newStatus) {
+    async function getAllGrades(classId) {
         const authStore = useAuthStore()
-    
-        await axios.patch(
-            `http://localhost:8080/class/${classId}/student/${learnerId}/changeStatus`,
-            { newStatus },
-            {
-            headers: { Authorization: 'Bearer ' + authStore.token }
-            }
-        )
+
+        const result = await axios.get(`http://localhost:8080/class/${classId}/grades`, {
+            headers: {Authorization: 'Bearer ' + authStore.token},
+        })
+        
+        return result.data.data
     }
 
-    return { classLevel, strands, modules, students, getClass, addLearningStrand, addSchedule, getAllStrands, getAllModules, getAllStudents, updateStudentStatus }
+    return { getClass, addSchedule, getAllLearningStrands, getAllModules, getAllStudents, getAllGrades }
 })
 
 

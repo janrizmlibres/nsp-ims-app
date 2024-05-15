@@ -1,8 +1,8 @@
 import { validationResult } from "express-validator";
 import Term from "../models/term.js";
-import ClassLevel from "../models/class_level.js";
+import ClassLevel from "../models/class/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
-import ClassLearningStrand from "../models/class_learning_strand.js"
+import ClassLearningStrand from "../models/class/class_learning_strand.js"
 import StudentRequirement from "../models/student_requirement.js";
 
 export async function addTerm(req, res, next) {
@@ -39,6 +39,8 @@ export async function addTerm(req, res, next) {
       end_date: end_date,
       status: true
     });
+
+    console.log(term);
 
     const classLevelData = [
       {school_level: "Grade School"},
