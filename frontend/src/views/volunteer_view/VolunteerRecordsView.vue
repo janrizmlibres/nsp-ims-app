@@ -1,50 +1,40 @@
 <template>
   <ContentPane header="Volunteer Records">
-    <TheHeader />
-    <DataTable
-  :value="teachers"
-  :globalFilterFields="['name', 'subject', 'dob', 'course', 'yearLevel', 'work', 'address', 'contactNumber', 'email', 'facebook']"
-  scrollable
->
-  <template #empty> No teachers found. </template>
-  <template #loading> Loading teachers data. Please wait. </template>
+    <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+    <DataTable :value="filteredVolunteers" :filters="filters" scrollable style=" overflow: auto;">
+      <template #empty> No volunteers found. </template>
+      <template #loading> Loading volunteers data. Please wait. </template>
 
-  <Column header="Actions">
-    <template #body="slotProps">
-      <div class="flex">
-        <Button class="h-8 mr-2" label="Edit" icon="fa-solid fa-user-pen" outlined />
-        <Button class="h-8" label="Delete" icon="pi pi-trash" outlined />
-      </div>
-    </template>
-  </Column>
-  <Column field="name" header="Name" sortable></Column>
-  <Column field="subject" header="Subject" sortable></Column>
-  <Column field="dob" header="Date of Birth" sortable></Column>
-  <Column field="course" header="Course" sortable></Column>
-  <Column field="yearLevel" header="Year Level" sortable></Column>
-  <Column field="work" header="Work" sortable></Column>
-  <Column field="address" header="Address" sortable></Column>
-  <Column field="contactNumber" header="Contact Number" sortable></Column>
-  <Column field="email" header="Email Address" sortable></Column>
-  <Column field="facebook" header="Facebook" sortable></Column>
-</DataTable>
-<div class="pl-8 pt-2 font-medium">
-  <p>
-    Total Record(s): <span class="u-txt-red">{{ recordCount }} </span>
-  </p>
-</div>
+      <Column header="Actions">
+        <template #body="slotProps">
+          <div class="flex">
+            <Button class="h-8 mr-2" label="Edit" icon="fa-solid fa-user-pen" outlined />
+            <Button class="h-8" label="Delete" icon="pi pi-trash" outlined />
+          </div>
+        </template>
+      </Column>
+
+      <Column v-for="(column, index) in columns" :key="index" :field="column.field" :header="column.header" sortable></Column>
+    </DataTable>
+    <div class="pl-8 pt-2 font-medium">
+      <p>
+        Total Record(s): <span class="u-txt-red">{{ recordCount }} </span>
+      </p>
+    </div>
   </ContentPane>
 </template>
 
 <script>
-import ContentPane from "@/components/UI/ContentPane.vue"
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import TheHeader from '@/components/volunteer_view/VolunteerHeader.vue'
-import Button from 'primevue/button'
+import { ref, onMounted, computed } from 'vue';
+import { useVolunteerStore } from '@/stores/volunteer';
+import ContentPane from "@/components/UI/ContentPane.vue";
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import TheHeader from '@/components/volunteer_view/VolunteerHeader.vue';
+import Button from 'primevue/button';
+import { FilterMatchMode } from 'primevue/api';
 
 export default {
-  name: "VolunteerRecordsView",
   components: {
     ContentPane,
     DataTable,
@@ -52,18 +42,68 @@ export default {
     TheHeader,
     Button,
   },
-  data() {
-    return {
-      teachers: [
-        { id: 1, name: 'John Doe', subject: 'Math', dob: '1980-01-01', course: 'Mathematics', yearLevel: '4', work: 'Teacher', address: '123 Street', contactNumber: '1234567890', email: 'johndoe@example.com', facebook: 'johndoe' },
-        { id: 2, name: 'Jane Smith', subject: 'English', dob: '1985-01-01', course: 'English', yearLevel: '3', work: 'Teacher', address: '456 Street', contactNumber: '0987654321', email: 'janesmith@example.com', facebook: 'janesmith' },
-      ]
+  setup() {
+    const volunteerStore = useVolunteerStore();
+    const volunteers = ref([]);
+    const filters = ref({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    });
+    const columns = ref([
+      { field: 'volunteerId', header: 'Volunteer ID' },
+      { field: 'fullname', header: 'Full Name' },
+      { field: 'affiliation', header: 'Affiliation' },
+      { field: 'student.program', header: 'Program' },
+      { field: 'student.year', header: 'Year' },
+      { field: 'personalInformation.nickname', header: 'Nickname' },
+      { field: 'personalInformation.sex', header: 'Sex' },
+      { field: 'personalInformation.address', header: 'Address' },
+      { field: 'contactInformation.contactNumber', header: 'Contact Number' },
+      { field: 'contactInformation.email', header: 'Email' },
+      { field: 'contactInformation.facebook', header: 'Facebook' },
+      { field: 'specialization.area', header: 'Specialization' },
+      { field: 'availability.day', header: 'Availability' },
+      { field: 'emergencyContact.fullname', header: 'Emergency Contact' },
+      { field: 'emergencyContact.contactNumber', header: 'Emergency Contact Number' },
+      { field: 'emergencyContact.relationship', header: 'Emergency Contact Relationship' },
+    ]);
+
+    const updateGlobalFilter = (newValue) => {
+      filters.value.global.value = newValue;
     };
-  },
-  computed: {
-    recordCount() {
-      return this.teachers.length;
-    },
+
+    onMounted(async () => {
+      await volunteerStore.getAllVolunteers();
+      volunteers.value = volunteerStore.volunteers.map(volunteer => ({
+        ...volunteer,
+        personalInformation: volunteer.volunteer_personal_information,
+        contactInformation: volunteer.volunteer_contact_information,
+        specialization: volunteer.volunteer_specialization,
+        availability: volunteer.volunteer_availability,
+        emergencyContact: volunteer.volunteer_emergency_contact,
+        student: volunteer.student_volunteer,
+      }));
+    });
+
+    const recordCount = computed(() => volunteers.value.length);
+
+    const filteredVolunteers = computed(() => {
+  if (!filters.value.global.value) {
+    return volunteers.value;
+  }
+  const searchValue = filters.value.global.value.toLowerCase();
+  return volunteers.value.filter(volunteer =>
+    Object.values(volunteer).some(value => {
+      if (typeof value === 'object' && value !== null) {
+        return Object.values(value).some(nestedValue =>
+          nestedValue && nestedValue.toString().toLowerCase().includes(searchValue)
+        );
+      }
+      return value && value.toString().toLowerCase().includes(searchValue);
+    })
+  );
+});
+
+    return { filteredVolunteers, columns, filters, updateGlobalFilter, recordCount };
   },
 };
 </script>

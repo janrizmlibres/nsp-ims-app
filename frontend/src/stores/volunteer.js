@@ -4,17 +4,23 @@ import { useAuthStore } from './auth'
 import { ref } from 'vue'
 
 export const useVolunteerStore = defineStore('volunteer', () => {
-    const volunteers = ref()
+  const volunteers = ref()
 
-    async function getAllVolunteers() {
-        const authStore = useAuthStore()
+  async function getAllVolunteers() {
+    const authStore = useAuthStore()
+    
+    const response = await axios.get('http://localhost:8080/volunteer/volunteers', {
+      headers: {
+        'Authorization': `Bearer ${authStore.token}` // replace 'authStore.token' with your actual token path
+      }
+    });
 
-        const result = await axios.get('http://localhost:8080/volunteer/volunteers', {
-        headers: { Authorization: 'Bearer ' + authStore.token }
-        })
-
-        volunteers.value = result.data.data
+    if (Array.isArray(response.data.data)) {
+      volunteers.value = response.data.data.map(volunteer => ({
+        ...volunteer
+      }));
     }
+  }
 
-    return { volunteers, getAllVolunteers }
+  return { volunteers, getAllVolunteers }
 })

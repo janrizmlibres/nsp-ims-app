@@ -1,8 +1,8 @@
 import { validationResult } from "express-validator";
 import Term from "../models/term.js";
-import ClassLevel from "../models/class_level.js";
+import ClassLevel from "../models/class/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
-import ClassLearningStrand from "../models/class_learning_strand.js"
+import ClassLearningStrand from "../models/class/class_learning_strand.js"
 import StudentRequirement from "../models/student_requirement.js";
 
 export async function addTerm(req, res, next) {
@@ -12,27 +12,27 @@ export async function addTerm(req, res, next) {
     end_date,
   } = req.body;
 
-  const termTemp = await Term.findOne({
-    where: {academic_year: academic_year}
-  })
-
-  if (termTemp) {
-    const error = new Error("Academic Term already exists.");
-    error.statusCode = 422;
-    throw error;
-  }
-
-  const activeTerm = await Term.findOne({
-    where: {status: true}
-  })
-
-  if (activeTerm) {
-    activeTerm.update({
-      status: false
-    })
-  }
-
   try {
+    const termTemp = await Term.findOne({
+      where: {academic_year: academic_year}
+    })
+  
+    if (termTemp) {
+      const error = new Error("Academic Term already exists.");
+      error.statusCode = 422;
+      throw error;
+    }
+  
+    const activeTerm = await Term.findOne({
+      where: {status: true}
+    })
+  
+    if (activeTerm) {
+      activeTerm.update({
+        status: false
+      })
+    }
+    
     const term = await Term.create({
       academic_year: academic_year,
       start_date: start_date,
@@ -40,31 +40,31 @@ export async function addTerm(req, res, next) {
       status: true
     });
 
+    console.log(term);
+
     const classLevelData = [
-      {
-        school_level: "Grade School",
-      },
-      {
-        school_level: "Junior High School",
-      },
+      {school_level: "Grade School"},
+      {school_level: "Junior High School"}
     ];
 
-    classLevelData.map(async (class_level) => {
-      await term.createClass_level({
-        school_level: class_level.school_level
-      });
-    })
+    await Promise.all(
+      classLevelData.map(async (class_level) => {
+        await term.createClass_level(class_level)
+      })
+    )
 
     const classLevels = await ClassLevel.findAll({
       where: {termId: term.id}
     })
-
     const learningStrands = await LearningStrand.findAll()
-    for (const classLevel of classLevels) {
-      for (const learningStrand of learningStrands) {
-        classLevel.addLearning_strand(learningStrand)
-      }
-    }
+
+    await Promise.all(
+      classLevels.map(async (classLevel) => {
+        learningStrands.map(async (learningStrand) => {
+          await classLevel.addLearning_strand(learningStrand)
+        })
+      })
+    )
 
     res.status(201).json({ message: "New Academic Term Created!" });
   } catch (error) {

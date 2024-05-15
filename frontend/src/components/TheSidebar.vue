@@ -8,24 +8,10 @@ import { computed, ref } from 'vue'
 
 // Stores
 import { useSidebarStore } from '@/stores/sidebar'
-import { useTermStore } from '@/stores/term'
 import { useAuthStore } from '@/stores/auth'
 
 const sidebarStore = useSidebarStore()
-const termStore = useTermStore()
 const authStore = useAuthStore()
-
-const gradeSchool = computed(() =>
-  termStore.activeTerm.class_levels.find((obj) => {
-    return obj.school_level === 'Grade School'
-  })
-)
-
-const juniorHighSchool = computed(() =>
-  termStore.activeTerm.class_levels.find((obj) => {
-    return obj.school_level === 'Junior High School'
-  })
-)
 
 const items = computed(() => [
   {
@@ -110,37 +96,28 @@ const items = computed(() => [
     items: [
       {
         key: '5-1',
-        label: 'Active Classes',
-        icon: 'fa fa-book-bookmark',
-        items: termStore.activeTerm
-          ? [
-              {
-                key: '5-1-1',
-                label: 'Grade School',
-                icon: 'fa fa-user-plus',
-                route: {
-                  name: 'class',
-                  query: { id: gradeSchool.value.id }
-                }
-              },
-              {
-                key: '5-1-2',
-                label: 'Junior High School',
-                icon: 'fa fa-user-plus',
-                route: {
-                  name: 'class',
-                  query: { id: juniorHighSchool.value.id }
-                }
-              }
-            ]
-          : null
+        label: 'Modules',
+        icon: 'fa fa-note-sticky',
+        route: { name: 'modules' }
       },
       {
         key: '5-2',
-        label: 'Class Records',
-        icon: 'fa fa-scroll',
-        route: { name: 'class-records' }
-      }
+        label: 'Grades',
+        icon: 'fa fa-star',
+        route: { name: 'grades' }
+      },
+      {
+        key: '5-3',
+        label: 'Sessions',
+        icon: 'fa fa-calendar-days',
+        route: { name: 'sessions' }
+      },
+      {
+        key: '5-4',
+        label: 'Schedules',
+        icon: 'fa fa-clock',
+        route: { name: 'schedules' }
+      },
     ]
   },
   {

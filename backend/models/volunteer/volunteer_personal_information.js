@@ -2,7 +2,7 @@ import { INTEGER, DATE, STRING, VIRTUAL } from "sequelize";
 import sequelize from "../../util/database.js";
 
 const VolunteerPersonalInformation = sequelize.define(
-  "voluneer_personal_information",
+  "volunteer_personal_information",
   {
     id: {
       type: INTEGER,
@@ -42,7 +42,7 @@ const VolunteerPersonalInformation = sequelize.define(
     address: {
       type: VIRTUAL,
       get() {
-        return this.housing + this.barangay + this.city + this.province;
+        return this.housing + ", " + this.barangay + ", " + this.city + " " + this.province
       },
       set(_value) {
         throw new Error("Do not try to set the `address` value!");
