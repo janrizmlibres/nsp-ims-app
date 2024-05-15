@@ -26,7 +26,10 @@ const termStatus = ref()
 
 function updateState(classLevelInput, status) {
     termStatus.value = status
-    if (classLevelInput) state.value = true
+    if (classLevelInput) { 
+        learningStrands.value = classLevelInput.class_learning_strands
+        state.value = true
+    }
     else state.value = false
 }
 
