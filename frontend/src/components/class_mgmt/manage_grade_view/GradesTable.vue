@@ -6,14 +6,18 @@ import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
 import { computed, ref, watch } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import { useConfirm } from 'primevue/useconfirm';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useToast } from 'primevue/usetoast';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
 const toast = useToast()
+const router = useRouter()
+const confirm = useConfirm()
 
 const customPt = {
     root: {
@@ -99,6 +103,7 @@ const noChanges = ref(true)
 
 const startingData = []
 const updatedData = new Set([])
+const leave = ref(true)
 
 watch(() => props.modelValue, (data) => {
     grades.value.length = 0
@@ -127,6 +132,7 @@ watch(() => props.modelValue, (data) => {
         
         watch(grades.value[len - 1], (newData) => {
             updatedData.add(newData)
+            leave.value = false
             noChanges.value = false
         })
     }
@@ -146,6 +152,7 @@ async function updateGrades() {
             life: 5000
         })
 
+        leave.value = true
         noChanges.value = true
     } catch (error) {
         toast.add({
@@ -160,16 +167,35 @@ async function updateGrades() {
 function resetData() {
     grades.value = structuredClone(startingData)
     updatedData.clear()
+    leave.value = true
 
     for (const grade of grades.value) {
         watch(grade, (newData) => {
-        updatedData.add(newData)
-        noChanges.value = false
+            updatedData.add(newData)
+            leave.value = false
+            noChanges.value = false
         })
     }
 
     noChanges.value = true
 }
+
+onBeforeRouteLeave((to) => {
+    if (leave.value) {
+        return true
+    }
+
+    confirm.require({
+        message: 'Do you really want to leave? you have unsaved changes!',
+        header: 'Redirect Confirmation',
+        accept: async () => {
+            leave.value = true
+            await router.push(to)
+        }
+    })
+
+    return false
+})
 </script>
 
 <template>
