@@ -136,6 +136,7 @@ watch(() =>  editingRows.value, (data) => {
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        isFetching.value = true
         try {
             await classLearningStrandStore.updateModule(newData.id, {
                 title: newData.title,
@@ -146,6 +147,8 @@ const onRowEditSave = async (event) => {
             classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
                 updateModuleTable(data)
             })
+
+            isFetching.value = false
 
             toast.add({
                 severity: 'success',
