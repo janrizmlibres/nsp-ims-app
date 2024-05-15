@@ -3,7 +3,6 @@
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Dropdown from 'primevue/dropdown';
-import ProgressSpinner from 'primevue/progressspinner';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
@@ -76,16 +75,13 @@ watch(() => learningStrandInput.value, (input) => {
     <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
     <TabView>
         <TabPanel header="Active">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-            <GradesTable v-else :isNotActive="!termStatus" v-model="active" :id="classLearningStrandId" @onUpdate="updateGradesData" />
+            <GradesTable :isNotActive="!termStatus" v-model="active" :id="classLearningStrandId" @onUpdate="updateGradesData" />
         </TabPanel>
         <TabPanel header="Inactive">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-            <GradesTable v-else :isNotActive="true" v-model="inactive" :id="classLearningStrandId" @onUpdate="updateGradesData" />
+            <GradesTable :isNotActive="true" v-model="inactive" :id="classLearningStrandId" @onUpdate="updateGradesData" />
         </TabPanel>
         <TabPanel header="Dropped">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-            <GradesTable v-else :isNotActive="true" v-model="drop" :id="classLearningStrandId" @onUpdate="updateGradesData" />
+            <GradesTable :isNotActive="true" v-model="drop" :id="classLearningStrandId" @onUpdate="updateGradesData" />
         </TabPanel>
     </TabView>
 </template>
