@@ -93,32 +93,7 @@ const items = computed(() => [
     key: '5',
     label: 'Class Management',
     icon: 'fa fa-book-open',
-    items: [
-      {
-        key: '5-1',
-        label: 'Modules',
-        icon: 'fa fa-note-sticky',
-        route: { name: 'modules' }
-      },
-      {
-        key: '5-2',
-        label: 'Grades',
-        icon: 'fa fa-star',
-        route: { name: 'grades' }
-      },
-      {
-        key: '5-3',
-        label: 'Sessions',
-        icon: 'fa fa-calendar-days',
-        route: { name: 'sessions' }
-      },
-      {
-        key: '5-4',
-        label: 'Schedules',
-        icon: 'fa fa-clock',
-        route: { name: 'schedules' }
-      },
-    ]
+    route: { name: 'class-management' }
   },
   {
     key: '6',
