@@ -45,7 +45,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <ProgressSpinner v-if="isLoading" />
+    <ProgressSpinner v-if="isLoading" class="self-center" />
     <ContentPane v-else header="Grades" subheader="Management">
         <TheHeader @chooseLearningStrand="updateLearningStand" @updateState="updateState" :state="state" />
         <GradesTab :id="selectedLearningStrandId" :state="state" :termStatus="termStatus" />
