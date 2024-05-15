@@ -1,6 +1,5 @@
 <script setup>
 // Presets
-import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
@@ -184,11 +183,6 @@ onBeforeRouteLeave((to) => {
 
 <template>
     <div v-if="state" class="bg-white shadow-xl rounded-md p-5">
-        <div class="flex flex-row gap-4 items-center px-4">
-            <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
-            <span class="font-semibold text-3xl u-txt-active">Modules</span>
-        </div>
-        <Divider />
         <DataTable 
             :value="allModules" dataKey="id" 
             :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
