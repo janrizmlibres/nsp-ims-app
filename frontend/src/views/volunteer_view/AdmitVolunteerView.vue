@@ -23,6 +23,7 @@
 
       <div class="flex-none text-right">
         <div class="inline-block">
+          <Toast />
           <Button class="h-10 u-bg-green" @click="handleSubmit">
               <font-awesome-icon
                 icon="fa-solid fa-circle-check"
@@ -54,6 +55,9 @@ import ProgressSpinner from 'primevue/progressspinner'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { ref, watch } from 'vue';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast();
 
 const formData = ref({
     id: '',
@@ -83,13 +87,41 @@ const formData = ref({
     emergencyRelationship: ''
 });
 
+const validateField = (fieldName, regex, errorMessage) => {
+  if (formData.value[fieldName] && !regex.test(formData.value[fieldName])) {
+    toast.add({ severity: 'error', summary: 'Error', detail: errorMessage, life: 3000 });
+    return false;
+  }
+  return true;
+};
+
 const handleDataChange = (newData) => {
     // Merge the new data into the existing formData
     Object.assign(formData.value, newData);
 };
 
 const handleSubmit = () => {
+  const results = [
+    validateField('firstName', /^[a-zA-Z\s]*$/, 'Invalid First Name'),
+    validateField('middleName', /^[a-zA-Z\s]*$/, 'Invalid Middle Name'),
+    validateField('lastName', /^[a-zA-Z\s]*$/, 'Invalid Last Name'),
+    validateField('nickname', /^[a-zA-Z\s]*$/, 'Invalid Nickname'),
+    validateField('suffix', /^[a-zA-Z\s]*$/, 'Invalid Suffix'),
+    validateField('yearLevel', /^[a-zA-Z0-9\s]*$/, 'Invalid Year Level'),
+    validateField('course', /^[a-zA-Z\s]*$/, 'Invalid Course'),
+    validateField('work', /^[a-zA-Z0-9\s]*$/, 'Invalid Work'),
+    validateField('contactNumber', /^\d{1,13}$/, 'Invalid Contact Number'),
+    validateField('emergencyFirstName', /^[a-zA-Z\s]*$/, 'Invalid Emergency Contact First Name'),
+    validateField('emergencyMiddleName', /^[a-zA-Z\s]*$/, 'Invalid Emergency Contact Middle Name'),
+    validateField('emergencyLastName', /^[a-zA-Z\s]*$/, 'Invalid Emergency Contact Last Name'),
+    validateField('emergencySuffix', /^[a-zA-Z\s]*$/, 'Invalid Emergency Contact Suffix'),
+    validateField('emergencyContact', /^\d{1,13}$/, 'Invalid Emergency Contact Number'),
+    validateField('emergencyRelationship', /^[a-zA-Z\s]*$/, 'Invalid input for Relationship with Emergency Contact'),
+  ];
+
+  if (results.every(result => result)) {
     console.log(formData.value);
+  }
 };
 
 watch(formData, handleDataChange);
