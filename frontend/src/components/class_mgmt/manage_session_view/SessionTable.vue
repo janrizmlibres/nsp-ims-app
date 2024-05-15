@@ -267,7 +267,7 @@ onBeforeRouteLeave((to) => {
             </template>
         </Column>
         <Column :rowEditor="true" bodyStyle="text-align:center"></Column>
-        <template #footer v-if="termStatus"> 
+        <template #footer v-if="termStatus && learningStrandInput"> 
             <Button icon="fa fa-plus" label="Add Session" text raised rounded aria-label="Submit" @click="addSession"/>
         </template>
     </DataTable>

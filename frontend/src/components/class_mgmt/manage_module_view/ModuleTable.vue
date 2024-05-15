@@ -236,7 +236,7 @@ onBeforeRouteLeave((to) => {
         </Column>
         <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
         <Column :rowEditor="termStatus" bodyStyle="text-align:center" frozen class="right-0" />
-        <template #footer v-if="termStatus"> 
+        <template #footer v-if="termStatus && learningStrandInput"> 
             <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
             <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
         </template>
