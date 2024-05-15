@@ -8,6 +8,8 @@ import InputText from 'primevue/inputtext';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import { useConfirm } from 'primevue/useconfirm';
 
 // Custom
 
@@ -20,6 +22,8 @@ const classLearningStrandStore = useClassLearningStrandStore()
 
 const props = defineProps(['id', 'state', 'termStatus'])
 const toast = useToast()
+const confirm = useConfirm()
+const router = useRouter()
 
 const cols = ref([
     {field: 'absent', header: 'Absent'},
@@ -105,6 +109,7 @@ const isFetching = ref(false)
 const allSessions = ref([])
 const classLearningStrandId = ref()
 const editingRows = ref([]);
+const leave = ref(true)
 
 function updateSessionTable(sessions) {
     isFetching.value = true
@@ -172,6 +177,11 @@ async function addSession() {
     }
 }
 
+watch(() =>  editingRows.value, (data) => {
+    if (data.length === 0) leave.value = true
+    else leave.value = false
+})
+
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
 
@@ -197,6 +207,23 @@ const onRowEditSave = async (event) => {
         }
     }
 };
+
+onBeforeRouteLeave((to) => {
+    if (leave.value) {
+        return true
+    }
+
+    confirm.require({
+        message: 'Do you really want to leave? you have unsaved changes!',
+        header: 'Redirect Confirmation',
+        accept: async () => {
+            leave.value = true
+            await router.push(to)
+        }
+    })
+
+    return false
+})
 </script>
 
 <template>
@@ -236,7 +263,7 @@ const onRowEditSave = async (event) => {
                     <InputText v-model="data[field]" autofocus />
                 </template>
             </Column>
-            <Column :rowEditor="true" style="max-width: 2rem" bodyStyle="text-align:center"></Column>
+            <Column :rowEditor="true" bodyStyle="text-align:center"></Column>
             <template #footer v-if="termStatus"> 
                 <Button icon="fa fa-plus" label="Add Session" text raised rounded aria-label="Submit" @click="addSession"/>
             </template>
