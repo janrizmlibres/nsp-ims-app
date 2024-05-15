@@ -12,9 +12,10 @@ router.post(
   "/add-student",
   isAuth,
   [
+    // body("identity").customSanitizer((value) => JSON.parse(value)),
     body("identity.firstName").trim().isAscii(),
     body("identity.middleName")
-      .optional({ values: "null" })
+      .optional({ values: "falsy" })
       .trim()
       .isAlpha("en-US"),
     body("identity.lastName").trim().isAscii(),
@@ -27,6 +28,7 @@ router.post(
     body("identity.photoUrl").optional({ values: "null" }).trim().isURL(),
   ],
   [
+    body("personalInfo").customSanitizer((value) => JSON.parse(value)),
     body("personalInfo.birthday").isISO8601(),
     body("personalInfo.bloodType").exists({ values: "null" }),
     body("personalInfo.birthBarangay").trim().isAscii(),
@@ -41,14 +43,16 @@ router.post(
     body("personalInfo.homeProvince").trim().isAscii(),
   ],
   [
+    body("contactInfo").customSanitizer((value) => JSON.parse(value)),
     body("contactInfo.email").trim().isEmail(),
     body("contactInfo.contactNum").trim().isMobilePhone("en-PH"),
     body("contactInfo.facebook").trim().isAscii(),
   ],
   [
+    body("emergencyPerson").customSanitizer((value) => JSON.parse(value)),
     body("emergencyPerson.firstName").trim().isAscii(),
     body("emergencyPerson.middleName")
-      .optional({ values: "null" })
+      .optional({ values: "falsy" })
       .trim()
       .isAscii(),
     body("emergencyPerson.lastName").trim().isAscii(),
@@ -60,9 +64,10 @@ router.post(
     body("emergencyPerson.relationship").trim().isAscii(),
   ],
   [
+    body("parentalInfo").customSanitizer((value) => JSON.parse(value)),
     body("parentalInfo.LastNameF").trim().isAscii(),
     body("parentalInfo.MiddleNameF")
-      .optional({ values: "null" })
+      .optional({ values: "falsy" })
       .trim()
       .isAscii(),
     body("parentalInfo.FirstNameF").trim().isAscii(),
@@ -73,7 +78,7 @@ router.post(
     body("parentalInfo.OccupationF").trim().isAscii(),
     body("parentalInfo.LastNameM").trim().isAscii(),
     body("parentalInfo.MiddleNameM")
-      .optional({ values: "null" })
+      .optional({ values: "falsy" })
       .trim()
       .isAscii(),
     body("parentalInfo.FirstNameM").trim().isAscii(),
@@ -84,6 +89,7 @@ router.post(
     body("parentalInfo.OccupationM").trim().isAscii(),
   ],
   [
+    body("prevSchool").customSanitizer((value) => JSON.parse(value)),
     body("prevSchool.name").trim().isAscii(),
     body("prevSchool.schoolType").exists({ values: "null" }),
     body("prevSchool.schoolAffiliation").exists({ values: "null" }),

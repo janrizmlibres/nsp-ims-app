@@ -27,7 +27,9 @@ export async function getStudents(_req, res, next) {
 
 export async function addStudent(req, res, next) {
   try {
+    console.log(req.body);
     const errors = validationResult(req);
+    // console.log(errors);
 
     if (!errors.isEmpty()) {
       const error = new Error("Validation failed, entered data is incorrect.");
@@ -35,15 +37,15 @@ export async function addStudent(req, res, next) {
       throw error;
     }
 
-    if (!req.file) {
-      const error = new Error("No profile photo provided.");
-      error.statusCode = 422;
-      throw error;
-    }
+    // if (!req.file) {
+    //   const error = new Error("No profile photo provided.");
+    //   error.statusCode = 422;
+    //   throw error;
+    // }
 
     const student = await Student.create({
       ...JSON.parse(req.body.identity),
-      photoUrl: req.file.path,
+      photoUrl: req.body.identity.photoUrl,
     });
 
     await PersonalInfo.create({

@@ -32,10 +32,10 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-app.use(express.json());
 app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 );
+app.use(express.json());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
