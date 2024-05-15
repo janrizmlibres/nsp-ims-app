@@ -78,7 +78,7 @@ export async function addTerm(req, res, next) {
 export async function getTerms(req, res, next) {
   try {
       const terms = await Term.findAll({
-        include: [{model: ClassLevel, include: [ClassLearningStrand]}],
+        include: [{model: ClassLevel, include: [{model: ClassLearningStrand, include: [LearningStrand]}]}],
         order: [['id', 'DESC']]
       });
 
