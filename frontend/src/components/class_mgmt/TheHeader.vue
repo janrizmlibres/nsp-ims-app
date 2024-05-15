@@ -18,7 +18,6 @@ const classes = computed(() => termInput.value.class_levels)
 const termInput = ref(terms.value.find(term => term.status === true))
 const classLevelInput = ref()
 
-const state = computed(() => props.state)
 const enableLearningStrandDropdown = ref(false)
 
 function updateTerm() {
@@ -45,7 +44,7 @@ function updateClassLevel() {
         </div>
     </div>
 
-    <Panel v-if="!state" class="shadow-md mb-8">
+    <Panel v-if="!props.state" class="shadow-md mb-8">
         <template #header>
             <div class="flex items-center gap-2">
                 <i class="fa fa-circle-info fa-xl"></i>
