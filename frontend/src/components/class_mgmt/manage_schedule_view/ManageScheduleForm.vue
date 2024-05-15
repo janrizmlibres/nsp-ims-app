@@ -92,7 +92,7 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-    <div v-if="props.termStatus" class="flex flex-col bg-white rounded-md shadow-xl p-8 mb-8">
+    <div v-if="props.termStatus" class="flex flex-col p-4">
         <div class="text-center text-xl font-semibold u-txt-active mb-8">Add a Schedule</div>
         <div class="grid xl:grid-flow-col lg:grid-flow-row gap-4 u-txt-active">
             <div class="flex flex-col gap-2">
