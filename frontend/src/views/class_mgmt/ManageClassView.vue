@@ -39,16 +39,40 @@ onMounted(async () => {
     <ProgressSpinner v-if="isLoading" class="self-center" />
     <ContentPane v-else header="Class" subheader="Management">
         <TabView class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
-            <TabPanel header="Modules">
+            <TabPanel>
+                <template #header>
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-note-sticky" />
+                        <span class="u-txt-active">Modules</span>
+                    </div>
+                </template>
                 <ManageModuleView />
             </TabPanel>
-            <TabPanel header="Grades">
+            <TabPanel>
+                <template #header>
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-star" />
+                        <span class="u-txt-active">Grades</span>
+                    </div>
+                </template>
                 <ManageGradeView />
             </TabPanel>
-            <TabPanel header="Sessions">
+            <TabPanel>
+                <template #header>
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-calendar-days" />
+                        <span class="u-txt-active">Sessions</span>
+                    </div>
+                </template>
                 <ManageSessionView />
             </TabPanel>
-            <TabPanel header="Schedules">
+            <TabPanel>
+                <template #header>
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-clock" />
+                        <span class="u-txt-active">Schedules</span>
+                    </div>
+                </template>
                 <ManageScheduleView />
             </TabPanel>
         </TabView>
