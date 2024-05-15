@@ -8,6 +8,8 @@ import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import { useConfirm } from 'primevue/useconfirm';
 
 // Custom
 import AddModuleDialog from './AddModuleDialog.vue';
@@ -21,6 +23,8 @@ const classLearningStrandStore = useClassLearningStrandStore()
 
 const props = defineProps(['id', 'state', 'termStatus'])
 const toast = useToast()
+const router = useRouter()
+const confirm = useConfirm()
 
 const cols = ref([
     {field: 'no_submissions', header: 'No Submissions'},
@@ -122,6 +126,12 @@ watch(() => props.id, (id) => {
 
 
 const editingRows = ref([]);
+const leave = ref(true)
+
+watch(() =>  editingRows.value, (data) => {
+    if (data.length === 0) leave.value = true
+    else leave.value = false
+})
 
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
@@ -153,6 +163,23 @@ const onRowEditSave = async (event) => {
         }
     }
 };
+
+onBeforeRouteLeave((to) => {
+    if (leave.value) {
+        return true
+    }
+
+    confirm.require({
+        message: 'Do you really want to leave? you have unsaved changes!',
+        header: 'Redirect Confirmation',
+        accept: async () => {
+            leave.value = true
+            await router.push(to)
+        }
+    })
+
+    return false
+})
 </script>
 
 <template>
