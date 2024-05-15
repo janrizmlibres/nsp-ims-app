@@ -132,116 +132,116 @@ export async function injectStudent() {
     studentId: student2.id,
   });
 
-  const studentData = [
-    {
-      lrn: 1242312145189,
-      lastName: "Dela Cruz",
-      firstName: "Juan",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242312145145,
-      lastName: "Bautista",
-      firstName: "Felix",
-      middleName: "Polso",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Amidrano",
-      firstName: "Nicolette",
-      middleName: "Bucio",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Fernandez",
-      firstName: "Hero",
-      middleName: "Baltazar",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242312145714,
-      lastName: "Santos",
-      firstName: "Dominic",
-      middleName: "Dicolano",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242562145189,
-      lastName: "Fulminar",
-      firstName: "Ashley",
-      middleName: "De Guzman",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Quintos",
-      firstName: "Ariel",
-      middleName: "Furtonado",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Hilot",
-      firstName: "Van",
-      middleName: "Culminares",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1247192145189,
-      lastName: "Alonto",
-      firstName: "Princess Aliah",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Montecillo",
-      firstName: "Dirk",
-      middleName: "Santocildis",
-      category: "Out-of-School Youth",
-    },
-  ];
+  // const studentData = [
+  //   {
+  //     lrn: 1242312145189,
+  //     lastName: "Dela Cruz",
+  //     firstName: "Juan",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lrn: 1242312145145,
+  //     lastName: "Bautista",
+  //     firstName: "Felix",
+  //     middleName: "Polso",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Amidrano",
+  //     firstName: "Nicolette",
+  //     middleName: "Bucio",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Fernandez",
+  //     firstName: "Hero",
+  //     middleName: "Baltazar",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lrn: 1242312145714,
+  //     lastName: "Santos",
+  //     firstName: "Dominic",
+  //     middleName: "Dicolano",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lrn: 1242562145189,
+  //     lastName: "Fulminar",
+  //     firstName: "Ashley",
+  //     middleName: "De Guzman",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Quintos",
+  //     firstName: "Ariel",
+  //     middleName: "Furtonado",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Hilot",
+  //     firstName: "Van",
+  //     middleName: "Culminares",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lrn: 1247192145189,
+  //     lastName: "Alonto",
+  //     firstName: "Princess Aliah",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Montecillo",
+  //     firstName: "Dirk",
+  //     middleName: "Santocildis",
+  //     category: "Out-of-School Youth",
+  //   },
+  // ];
 
-  await Promise.all(
-    studentData.map(async (student) => {
-      await Student.create(student);
-    })
-  );
+  // await Promise.all(
+  //   studentData.map(async (student) => {
+  //     await Student.create(student);
+  //   })
+  // );
 
-  function getRandomStatus() {
-    let status = ["Inactive", "Active", "Drop"];
-    return status[Math.floor(Math.random() * 2)];
-  }
+  // function getRandomStatus() {
+  //   let status = ["Inactive", "Active", "Drop"];
+  //   return status[Math.floor(Math.random() * 2)];
+  // }
 
-  function getRegularity() {
-    let status = ["Regular", "Hybrid"];
-    return status[Math.floor(Math.random() * 2)];
-  }
+  // function getRegularity() {
+  //   let status = ["Regular", "Hybrid"];
+  //   return status[Math.floor(Math.random() * 2)];
+  // }
 
-  const students = await Student.findAll();
+  // const students = await Student.findAll();
 
-  await Promise.all(
-    students.map(async (student) => {
-      const class_levels = await ClassLevel.findAll();
-      await Promise.all(
-        class_levels.map(async (class_level) => {
-          const enrollment = await class_level.addStudent(student, {
-            through: {
-              hasEnrollmentForm: true,
-              status: getRandomStatus(),
-              regularity: getRegularity(),
-            },
-          });
+  // await Promise.all(
+  //   students.map(async (student) => {
+  //     const class_levels = await ClassLevel.findAll();
+  //     await Promise.all(
+  //       class_levels.map(async (class_level) => {
+  //         const enrollment = await class_level.addStudent(student, {
+  //           through: {
+  //             hasEnrollmentForm: true,
+  //             status: getRandomStatus(),
+  //             regularity: getRegularity(),
+  //           },
+  //         });
 
-          const classLearningStrands = await ClassLearningStrand.findAll({
-            where: { classLevelId: class_level.id },
-          });
+  //         const classLearningStrands = await ClassLearningStrand.findAll({
+  //           where: { classLevelId: class_level.id },
+  //         });
 
-          await Promise.all(
-            classLearningStrands.map(async (classLearningStrand) => {
-              classLearningStrand.addEnrollment(enrollment);
-            })
-          );
-        })
-      );
-    })
-  );
+  //         await Promise.all(
+  //           classLearningStrands.map(async (classLearningStrand) => {
+  //             classLearningStrand.addEnrollment(enrollment);
+  //           })
+  //         );
+  //       })
+  //     );
+  //   })
+  // );
 }
 
 export async function injectStaff() {
