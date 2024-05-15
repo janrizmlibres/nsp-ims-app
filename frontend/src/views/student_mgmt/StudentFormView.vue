@@ -2,7 +2,7 @@
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
 
-import { useRouter } from 'vue-router'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import IdentityForm from '@/components/student_mgmt/profile_view/IdentityForm.vue'
@@ -12,8 +12,8 @@ import { useStudentsStore } from '@/stores/students'
 import FormParts from '../../util/student_form_parts'
 
 const router = useRouter()
-const studentsStore = useStudentsStore()
 const toast = useToast()
+const studentsStore = useStudentsStore()
 
 const formData = {
   identity: {
@@ -79,6 +79,8 @@ const formData = {
   }
 }
 
+let okToLeave = true
+
 function updateFormData(part, data) {
   const updateMapping = {
     [FormParts.Identity]: () => (formData.identity = data),
@@ -90,6 +92,7 @@ function updateFormData(part, data) {
   }
 
   updateMapping[part]()
+  okToLeave = false
 }
 
 async function goToStudentView() {
@@ -117,6 +120,21 @@ async function submitForm() {
     })
   }
 }
+
+onBeforeRouteLeave((to) => {
+  if (okToLeave) return true
+
+  confirm.require({
+    message: 'Do you really want to leave? You have unsaved changes!',
+    header: 'Redirect Confirmation',
+    accept: async () => {
+      okToLeave = true
+      await router.push(to)
+    }
+  })
+
+  return false
+})
 </script>
 
 <template>

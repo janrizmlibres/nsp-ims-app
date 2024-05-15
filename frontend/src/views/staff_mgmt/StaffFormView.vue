@@ -92,7 +92,7 @@ onBeforeRouteLeave((to) => {
   }
 
   confirm.require({
-    message: 'Do you really want to leave? you have unsaved changes!',
+    message: 'Do you really want to leave? You have unsaved changes!',
     header: 'Redirect Confirmation',
     accept: async () => {
       okToLeave.value = true
