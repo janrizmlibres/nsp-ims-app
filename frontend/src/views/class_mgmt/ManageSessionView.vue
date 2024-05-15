@@ -3,25 +3,11 @@
 import { ref } from 'vue';
 
 // Custom
-import TheHeader from '@/components/class_mgmt/TheHeader.vue';
 import SessionTable from '@/components/class_mgmt/manage_session_view/SessionTable.vue';
 
-const selectedLearningStrandId = ref()
-const state = ref(false)
-const termStatus = ref()
-
-function updateLearningStand(learningStrandId) {
-    selectedLearningStrandId.value = learningStrandId
-}
-
-function updateState(learningStrandInput, status) {
-    termStatus.value = status
-    if (learningStrandInput) state.value = true
-    else state.value = false
-}
+const props = defineProps(['selectedLearningStrandId', 'state', 'termStatus'])
 </script>
 
 <template>
-    <TheHeader @chooseLearningStrand="updateLearningStand" @updateState="updateState" :state="state" />
-    <SessionTable :id="selectedLearningStrandId" :state="state" :termStatus="termStatus" />
+    <SessionTable :id="props.sselectedLearningStrandId" :state="props.state" :termStatus="props.termStatus" />
 </template>
