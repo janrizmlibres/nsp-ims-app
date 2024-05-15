@@ -14,34 +14,22 @@ const utilitiesStore = useUtilitiesStore()
 
 const terms = computed(() => utilitiesStore.terms)
 const classes = computed(() => termInput.value.class_levels)
-const learningStrands = ref([]);
 
 const termInput = ref(terms.value.find(term => term.status === true))
 const classLevelInput = ref()
-const learningStrandInput = ref()
 
 const state = computed(() => props.state)
 const enableLearningStrandDropdown = ref(false)
 
 function updateTerm() {
-    enableLearningStrandDropdown.value = false; 
-
-    learningStrandInput.value = null
     classLevelInput.value = null
-    emit('updateState', learningStrandInput.value, termInput.value.status)
+    emit('updateState', classLevelInput.value, termInput.value.status)
 }
 
 function updateClassLevel() {
     enableLearningStrandDropdown.value = true; 
     
-    learningStrandInput.value = null
-    learningStrands.value = classLevelInput.value.class_learning_strands
-    emit('updateState', learningStrandInput.value, termInput.value.status)
-}
-
-function updateLearningStand() {
-    emit('updateState', learningStrandInput.value, termInput.value.status)
-    emit('chooseLearningStrand', learningStrandInput.value.id)
+    emit('updateState', classLevelInput.value, termInput.value.status)
 }
 </script>
 
@@ -54,10 +42,6 @@ function updateLearningStand() {
         <div class="flex flex-col gap-1">
             <label>Class Level</label>
             <Dropdown v-model="classLevelInput" :options="classes" optionLabel="school_level" placeholder="Select a Level" class="w-full" @update:modelValue="updateClassLevel" />
-        </div>
-        <div class="flex flex-col gap-1">
-            <label>Learning Strand</label>
-            <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full" @update:modelValue="updateLearningStand" />
         </div>
     </div>
 
