@@ -13,11 +13,11 @@ const props = defineProps(['state'])
 const utilitiesStore = useUtilitiesStore()
 
 const terms = computed(() => utilitiesStore.terms)
-const classes = computed(() => utilitiesStore.terms.class_levels)
+const classes = computed(() => termInput.value.class_levels)
 const learningStrands = ref([]);
 
-const termInput = computed(() => terms.value.find(term => term.status === true))
-const classLevelInput = computed(() => termInput.value.class_levels)
+const termInput = ref(terms.value.find(term => term.status === true))
+const classLevelInput = ref()
 const learningStrandInput = ref()
 
 const state = computed(() => props.state)
@@ -28,8 +28,7 @@ function updateTerm() {
 
     learningStrandInput.value = null
     classLevelInput.value = null
-
-    classes.value = termInput.value.class_levels
+    emit('updateState', learningStrandInput.value, termInput.value.status)
 }
 
 function updateClassLevel() {
@@ -37,6 +36,7 @@ function updateClassLevel() {
     
     learningStrandInput.value = null
     learningStrands.value = classLevelInput.value.class_learning_strands
+    emit('updateState', learningStrandInput.value, termInput.value.status)
 }
 
 function updateLearningStand() {
