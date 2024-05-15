@@ -255,12 +255,12 @@ onBeforeRouteLeave((to) => {
                 </RouterLink>
             </template>
         </Column>
-        <Column field="date" header="Session Date">
+        <Column field="date" header="Session Date" sortable>
             <template #body="slotProps">
                 {{ slotProps.data.date.toDateString() }}
             </template>
         </Column>
-        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
+        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
         <Column field="remarks" header="Remarks" style="max-width: 10rem;">
             <template #editor="{ data, field }">
                 <InputText v-model="data[field]" autofocus />
