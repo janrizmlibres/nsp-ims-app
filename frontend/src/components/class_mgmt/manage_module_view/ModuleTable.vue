@@ -204,11 +204,7 @@ onBeforeRouteLeave((to) => {
         :ptOptions="{mergeProps:true}"
         :pt="customPt"
     >
-        <template #empty> 
-            <div v-if="!learningStrandInput" class="text-center">No selected learning strand.</div> 
-            <ProgressSpinner v-else-if="learningStrandInput && isFetching" class="items-center" />
-            <div v-else class="text-center">No records found.</div> 
-        </template>
+        <template #empty> <div class="text-center">No records found.</div> </template>
         <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
         <Column header="" class="u-txt-active text-center">
