@@ -21,7 +21,7 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 const classesStore = useClassesStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['id', 'termStatus'])
+const props = defineProps(['learningStrands', 'termStatus'])
 const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
@@ -82,6 +82,7 @@ const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allModules = ref([])
 const classLearningStrandId = ref()
+const learningStrandInput = ref()
 
 function updateModuleTable(modules) {
     isFetching.value = true
@@ -105,11 +106,11 @@ function updateModuleTable(modules) {
     isFetching.value = false
 }
 
-watch(() => props.id, (id) => {
+watch(() => learningStrandInput.value, (input) => {
     isFetching.value = true
-    classLearningStrandId.value = id
+    classLearningStrandId.value = input.id
     try {
-        classLearningStrandStore.getAllModules(id).then((data) => {
+        classLearningStrandStore.getAllModules(input.id).then((data) => {
             updateModuleTable(data)
         })
     } catch (error) {
@@ -121,7 +122,7 @@ watch(() => props.id, (id) => {
         })
     }
     isFetching.value = false
-}, {immediate: false})
+})
 
 
 const editingRows = ref([]);
@@ -182,7 +183,7 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-    <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" @update:modelValue="updateLearningStand" />
+    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
     <DataTable 
         :value="allModules" dataKey="id" 
         :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 

@@ -2,9 +2,9 @@
 // Custom
 import SessionTable from '@/components/class_mgmt/manage_session_view/SessionTable.vue';
 
-const props = defineProps(['selectedLearningStrandId', 'state', 'termStatus'])
+const props = defineProps(['learningStrands', 'termStatus'])
 </script>
 
 <template>
-    <SessionTable :id="props.sselectedLearningStrandId" :state="props.state" :termStatus="props.termStatus" />
+    <SessionTable :learningStrands="props.learningStrands" :termStatus="props.termStatus" />
 </template>

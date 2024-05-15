@@ -2,9 +2,9 @@
 // Custom
 import GradesTab from '@/components/class_mgmt/manage_grade_view/GradesTab.vue';
 
-const props = defineProps(['selectedLearningStrandId', 'state', 'termStatus'])
+const props = defineProps(['learningStrands', 'termStatus'])
 </script>
 
 <template>
-    <GradesTab :id="props.selectedLearningStrandId" :state="props.state" :termStatus="props.termStatus" />
+    <GradesTab :learningStrands="props.learningStrands" :termStatus="props.termStatus" />
 </template>

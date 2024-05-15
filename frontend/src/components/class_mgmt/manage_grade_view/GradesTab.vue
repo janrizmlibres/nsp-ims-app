@@ -15,7 +15,7 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['id', 'termStatus'])
+const props = defineProps(['learningStrands', 'termStatus'])
 const toast = useToast()
 
 const termStatus = computed(() => props.termStatus)
@@ -24,6 +24,7 @@ const active = ref([])
 const inactive = ref([])
 const drop = ref([])
 const isFetching = ref(true)
+const learningStrandInput = ref()
 
 function updateGradesData(data) {
     isFetching.value = true
@@ -51,11 +52,11 @@ function updateGradesData(data) {
     isFetching.value = false
 }
 
-watch(() => props.id, (id) => {
+watch(() => learningStrandInput.value, (input) => {
     isFetching.value = true
-    classLearningStrandId.value = id
+    classLearningStrandId.value = input.id
     try {
-        classLearningStrandStore.getAllGrades(id).then((data) => {  
+        classLearningStrandStore.getAllGrades(input.id).then((data) => {  
             updateGradesData(data)
         })
     } catch (error) {
@@ -67,12 +68,12 @@ watch(() => props.id, (id) => {
         })
     }
     isFetching.value = false
-}, {immediate: true})
+})
 
 </script>
 
 <template>
-    <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" @update:modelValue="updateLearningStand" />
+    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
     <TabView>
         <TabPanel header="Active">
             <ProgressSpinner v-if="isFetching" class="flex justify-center" />

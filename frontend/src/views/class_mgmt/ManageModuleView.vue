@@ -2,9 +2,9 @@
 // Custom
 import ModuleTable from '@/components/class_mgmt/manage_module_view/ModuleTable.vue';
 
-const props = defineProps(['selectedLearningStrandId', 'state', 'termStatus'])
+const props = defineProps(['learningStrands', 'termStatus'])
 </script>
 
 <template>
-    <ModuleTable :id="props.selectedLearningStrandId" :state="props.state" :termStatus="props.termStatus" />
+    <ModuleTable :learningStrands="props.learningStrands" :termStatus="props.termStatus" />
 </template>

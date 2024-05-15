@@ -20,7 +20,7 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 const classesStore = useClassesStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['id', 'termStatus'])
+const props = defineProps(['learningStrands', 'termStatus'])
 const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
@@ -109,6 +109,7 @@ const allSessions = ref([])
 const classLearningStrandId = ref()
 const editingRows = ref([]);
 const leave = ref(true)
+const learningStrandInput = ref()
 
 function updateSessionTable(sessions) {
     isFetching.value = true
@@ -131,11 +132,11 @@ function updateSessionTable(sessions) {
     isFetching.value = false
 }
 
-watch(() => props.id, (id) => {
+watch(() => learningStrandInput.value, (input) => {
     isFetching.value = true
-    classLearningStrandId.value = id
+    classLearningStrandId.value = input.id
     try {
-        classLearningStrandStore.getAllSessions(id).then((data) => {
+        classLearningStrandStore.getAllSessions(input.id).then((data) => {
             updateSessionTable(data)
         })
     } catch (error) {
@@ -226,7 +227,7 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-    <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" @update:modelValue="updateLearningStand" />
+    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
     <DataTable 
         :value="allSessions" dataKey="id" 
         :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
