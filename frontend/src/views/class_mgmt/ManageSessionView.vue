@@ -3,7 +3,6 @@
 import { ref } from 'vue';
 
 // Custom
-import ContentPane from '@/components/UI/ContentPane.vue'
 import TheHeader from '@/components/class_mgmt/TheHeader.vue';
 import SessionTable from '@/components/class_mgmt/manage_session_view/SessionTable.vue';
 
@@ -23,8 +22,6 @@ function updateState(learningStrandInput, status) {
 </script>
 
 <template>
-    <ContentPane header="Sessions" subheader="Management">
-        <TheHeader @chooseLearningStrand="updateLearningStand" @updateState="updateState" :state="state" />
-        <SessionTable :id="selectedLearningStrandId" :state="state" :termStatus="termStatus" />
-    </ContentPane>
+    <TheHeader @chooseLearningStrand="updateLearningStand" @updateState="updateState" :state="state" />
+    <SessionTable :id="selectedLearningStrandId" :state="state" :termStatus="termStatus" />
 </template>

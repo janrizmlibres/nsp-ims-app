@@ -5,7 +5,6 @@ import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
 
 // Custom
-import ContentPane from '@/components/UI/ContentPane.vue'
 import ManageScheduleForm from '@/components/class_mgmt/manage_schedule_view/ManageScheduleForm.vue';
 import SchedulesTable from '@/components/class_mgmt/manage_schedule_view/SchedulesTable.vue';
 
@@ -84,8 +83,6 @@ function resetTable(term) {
 </script>
 
 <template>
-    <ContentPane header="Class Schedules" subheader="Management">
-        <ManageScheduleForm @chooseYear="resetTable" @chooseLevel="updateScheduleTable" @submit="addSchedule" :state="state" />
-        <SchedulesTable v-model="tableData" :term="selectedTerm" @updateSchedule="updateScheduleTable" :state="state" />
-    </ContentPane>
+    <ManageScheduleForm @chooseYear="resetTable" @chooseLevel="updateScheduleTable" @submit="addSchedule" :state="state" />
+    <SchedulesTable v-model="tableData" :term="selectedTerm" @updateSchedule="updateScheduleTable" :state="state" />
 </template>
