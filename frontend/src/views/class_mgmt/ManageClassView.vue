@@ -20,12 +20,12 @@ import TheHeader from '@/components/class_mgmt/TheHeader.vue';
 const utilitiesStore = useUtilitiesStore()
 const isLoading = ref(true)
 const toast = useToast()
-const selectedLearningStrandId = ref()
+const learningStrands = ref()
 const state = ref(false)
 const termStatus = ref()
 
-function updateLearningStand(learningStrandId) {
-    selectedLearningStrandId.value = learningStrandId
+function updateLearningStands(learningStrands) {
+    learningStrands.value = learningStrands
 }
 
 function updateState(learningStrandInput, status) {
@@ -52,7 +52,7 @@ onMounted(async () => {
 <template>
     <ProgressSpinner v-if="isLoading" class="self-center" />
     <ContentPane v-else header="Class" subheader="Management">
-        <TheHeader @chooseLearningStrand="updateLearningStand" @updateState="updateState" :state="state" />
+        <TheHeader @chooseLearningStrand="updateLearningStands" @updateState="updateState" :state="state" />
         <TabView v-if="state" class="p-2 bg-white shadow-xl rounded-md">
             <TabPanel>
                 <template #header>
@@ -61,7 +61,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Modules</span>
                     </div>
                 </template>
-                <ManageModuleView :selectedLearningStrandId="selectedLearningStrandId" :state="state" :termStatus="termStatus" />
+                <ManageModuleView :learningStrands="learningStrands" :state="state" :termStatus="termStatus" />
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -70,7 +70,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Grades</span>
                     </div>
                 </template>
-                <ManageGradeView :selectedLearningStrandId="selectedLearningStrandId" :state="state" :termStatus="termStatus" />
+                <ManageGradeView :learningStrands="learningStrands" :state="state" :termStatus="termStatus" />
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -79,7 +79,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Sessions</span>
                     </div>
                 </template>
-                <ManageSessionView :selectedLearningStrandId="selectedLearningStrandId" :state="state" :termStatus="termStatus" />
+                <ManageSessionView :learningStrands="learningStrands" :state="state" :termStatus="termStatus" />
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -88,7 +88,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Schedules</span>
                     </div>
                 </template>
-                <ManageScheduleView />
+                <ManageScheduleView :learningStrands="learningStrands" :state="state" :termStatus="termStatus" />
             </TabPanel>
         </TabView>
     </ContentPane>
