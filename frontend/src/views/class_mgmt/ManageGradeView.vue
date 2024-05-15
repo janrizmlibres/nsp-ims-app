@@ -1,7 +1,4 @@
 <script setup>
-// Presets
-import { ref } from 'vue';
-
 // Custom
 import GradesTab from '@/components/class_mgmt/manage_grade_view/GradesTab.vue';
 

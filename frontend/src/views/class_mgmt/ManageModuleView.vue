@@ -1,7 +1,4 @@
 <script setup>
-// Presets
-import { ref } from 'vue';
-
 // Custom
 import ModuleTable from '@/components/class_mgmt/manage_module_view/ModuleTable.vue';
 

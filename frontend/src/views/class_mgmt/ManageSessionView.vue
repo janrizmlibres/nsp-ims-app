@@ -1,7 +1,4 @@
 <script setup>
-// Presets
-import { ref } from 'vue';
-
 // Custom
 import SessionTable from '@/components/class_mgmt/manage_session_view/SessionTable.vue';
 
