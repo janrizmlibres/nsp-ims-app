@@ -1,6 +1,7 @@
 <script setup>
 // Presets
 import DataTable from 'primevue/datatable';
+import Dropdown from 'primevue/dropdown';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -226,6 +227,9 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
+    <div class="flex flex-col gap-1 mb-2">
+        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full" @update:modelValue="updateLearningStand" />
+    </div>
     <div v-if="state" class="bg-white shadow-xl rounded-md p-5">
         <DataTable 
             :value="allSessions" dataKey="id" 

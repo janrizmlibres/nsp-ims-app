@@ -2,6 +2,7 @@
 // Presets
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import Dropdown from 'primevue/dropdown';
 import ProgressSpinner from 'primevue/progressspinner';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
@@ -72,20 +73,25 @@ watch(() => props.id, (id) => {
 </script>
 
 <template>
-    <TabView v-if="state" class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
-        <TabPanel header="Active">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-            <GradesTable v-else :isNotActive="!termStatus" v-model="active" :id="classLearningStrandId" @onUpdate="updateGradesData" />
-        </TabPanel>
-        <TabPanel header="Inactive">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-            <GradesTable v-else :isNotActive="true" v-model="inactive" :id="classLearningStrandId" @onUpdate="updateGradesData" />
-        </TabPanel>
-        <TabPanel header="Dropped">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-            <GradesTable v-else :isNotActive="true" v-model="drop" :id="classLearningStrandId" @onUpdate="updateGradesData" />
-        </TabPanel>
-    </TabView>
+    <div v-if="state">
+        <div class="flex flex-col gap-1 mb-2">
+            <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full" @update:modelValue="updateLearningStand" />
+        </div>
+        <TabView class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
+            <TabPanel header="Active">
+                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+                <GradesTable v-else :isNotActive="!termStatus" v-model="active" :id="classLearningStrandId" @onUpdate="updateGradesData" />
+            </TabPanel>
+            <TabPanel header="Inactive">
+                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+                <GradesTable v-else :isNotActive="true" v-model="inactive" :id="classLearningStrandId" @onUpdate="updateGradesData" />
+            </TabPanel>
+            <TabPanel header="Dropped">
+                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+                <GradesTable v-else :isNotActive="true" v-model="drop" :id="classLearningStrandId" @onUpdate="updateGradesData" />
+            </TabPanel>
+        </TabView>
+    </div>
 </template>
 
 <style>
