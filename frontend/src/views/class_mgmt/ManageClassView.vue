@@ -24,13 +24,9 @@ const learningStrands = ref()
 const state = ref(false)
 const termStatus = ref()
 
-function updateLearningStands(learningStrands) {
-    learningStrands.value = learningStrands
-}
-
-function updateState(learningStrandInput, status) {
+function updateState(classLevelInput, status) {
     termStatus.value = status
-    if (learningStrandInput) state.value = true
+    if (classLevelInput) state.value = true
     else state.value = false
 }
 
@@ -52,7 +48,7 @@ onMounted(async () => {
 <template>
     <ProgressSpinner v-if="isLoading" class="self-center" />
     <ContentPane v-else header="Class" subheader="Management">
-        <TheHeader @chooseLearningStrand="updateLearningStands" @updateState="updateState" :state="state" />
+        <TheHeader @updateState="updateState" :state="state" />
         <TabView v-if="state" class="p-2 bg-white shadow-xl rounded-md">
             <TabPanel>
                 <template #header>
