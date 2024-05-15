@@ -20,7 +20,7 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 const classesStore = useClassesStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['id', 'state', 'termStatus'])
+const props = defineProps(['id', 'termStatus'])
 const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
@@ -103,7 +103,6 @@ const customPt = {
     }
 }
 
-const state = computed(() => props.state)
 const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allSessions = ref([])
@@ -228,7 +227,7 @@ onBeforeRouteLeave((to) => {
 
 <template>
     <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full mb-4" @update:modelValue="updateLearningStand" />
-    <div v-if="state" class="bg-white shadow-xl rounded-md p-5">
+    <div class="bg-white shadow-xl rounded-md p-5">
         <DataTable 
             :value="allSessions" dataKey="id" 
             :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 

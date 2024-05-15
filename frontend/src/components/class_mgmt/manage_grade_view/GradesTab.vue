@@ -15,10 +15,9 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['id', 'state', 'termStatus'])
+const props = defineProps(['id', 'termStatus'])
 const toast = useToast()
 
-const state = computed(() => props.state)
 const termStatus = computed(() => props.termStatus)
 const classLearningStrandId = ref()
 const active = ref([])
@@ -73,23 +72,21 @@ watch(() => props.id, (id) => {
 </script>
 
 <template>
-    <div v-if="state">
-        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full mb-4" @update:modelValue="updateLearningStand" />
-        <TabView class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
-            <TabPanel header="Active">
-                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <GradesTable v-else :isNotActive="!termStatus" v-model="active" :id="classLearningStrandId" @onUpdate="updateGradesData" />
-            </TabPanel>
-            <TabPanel header="Inactive">
-                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <GradesTable v-else :isNotActive="true" v-model="inactive" :id="classLearningStrandId" @onUpdate="updateGradesData" />
-            </TabPanel>
-            <TabPanel header="Dropped">
-                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <GradesTable v-else :isNotActive="true" v-model="drop" :id="classLearningStrandId" @onUpdate="updateGradesData" />
-            </TabPanel>
-        </TabView>
-    </div>
+    <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full mb-4" @update:modelValue="updateLearningStand" />
+    <TabView class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
+        <TabPanel header="Active">
+            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+            <GradesTable v-else :isNotActive="!termStatus" v-model="active" :id="classLearningStrandId" @onUpdate="updateGradesData" />
+        </TabPanel>
+        <TabPanel header="Inactive">
+            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+            <GradesTable v-else :isNotActive="true" v-model="inactive" :id="classLearningStrandId" @onUpdate="updateGradesData" />
+        </TabPanel>
+        <TabPanel header="Dropped">
+            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+            <GradesTable v-else :isNotActive="true" v-model="drop" :id="classLearningStrandId" @onUpdate="updateGradesData" />
+        </TabPanel>
+    </TabView>
 </template>
 
 <style>

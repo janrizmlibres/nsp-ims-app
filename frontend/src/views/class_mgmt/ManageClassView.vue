@@ -61,7 +61,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Modules</span>
                     </div>
                 </template>
-                <ManageModuleView :learningStrands="learningStrands" :state="state" :termStatus="termStatus" />
+                <ManageModuleView :learningStrands="learningStrands" :termStatus="termStatus" />
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -70,7 +70,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Grades</span>
                     </div>
                 </template>
-                <ManageGradeView :learningStrands="learningStrands" :state="state" :termStatus="termStatus" />
+                <ManageGradeView :learningStrands="learningStrands" :termStatus="termStatus" />
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -79,7 +79,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Sessions</span>
                     </div>
                 </template>
-                <ManageSessionView :learningStrands="learningStrands" :state="state" :termStatus="termStatus" />
+                <ManageSessionView :learningStrands="learningStrands" :termStatus="termStatus" />
             </TabPanel>
             <TabPanel>
                 <template #header>
@@ -88,7 +88,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Schedules</span>
                     </div>
                 </template>
-                <ManageScheduleView :learningStrands="learningStrands" :state="state" :termStatus="termStatus" />
+                <ManageScheduleView :learningStrands="learningStrands" :termStatus="termStatus" />
             </TabPanel>
         </TabView>
     </ContentPane>
