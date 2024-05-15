@@ -182,7 +182,7 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-    <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" :disabled="!enableLearningStrandDropdown" class="w-full mb-4" @update:modelValue="updateLearningStand" />
+    <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" @update:modelValue="updateLearningStand" />
     <DataTable 
         :value="allModules" dataKey="id" 
         :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
