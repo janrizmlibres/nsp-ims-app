@@ -19,14 +19,12 @@ import { useToast } from 'primevue/usetoast';
 const volunteerStore = useVolunteerStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['modelValue', 'term', 'state'])
+const props = defineProps(['modelValue', 'state', 'termStatus'])
 const emit = defineEmits(['updateSchedule'])
 const toast = useToast()
 
 const classData = ref([])
 const volunteers = computed(() => volunteerStore.volunteers)
-const termStatus = ref(true)
-const state = computed(() => props.state)
 
 onMounted(async () => {
     try {
@@ -42,7 +40,6 @@ onMounted(async () => {
 })
 
 watch(() => props.modelValue, (data) => classData.value = data, {immediate: true})
-watch(() => props.term, (data) => termStatus.value = data.status, {immediate: false})
 
 const days = ref(["M", "T", "W", "TH", "F", "S"]);
 
@@ -138,7 +135,7 @@ function to24hr(time12h) {
 </script>
 
 <template>
-    <div v-if="state" class="bg-white rounded-md shadow-xl flex flex-col p-7 pt-4 flex-1">
+    <div class="bg-white rounded-md shadow-xl flex flex-col p-7 pt-4 flex-1">
         <DataTable 
             :value="classData" dataKey="scheduleId"
             v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
@@ -187,7 +184,7 @@ function to24hr(time12h) {
                     <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
                 </template>
             </Column>
-            <Column :rowEditor="termStatus" bodyStyle="text-align:center"></Column>
+            <Column :rowEditor="props.termStatus" bodyStyle="text-align:center"></Column>
         </DataTable>
     </div>
 </template>
