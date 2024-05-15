@@ -58,15 +58,16 @@ watch(() => learningStrandInput.value, (input) => {
         classLearningStrandStore.getAllGrades(input.id).then((data) => {  
             updateGradesData(data)
         })
+        
+        isFetching.value = false
     } catch (error) {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }
-    isFetching.value = false
 })
 
 </script>

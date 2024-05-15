@@ -85,7 +85,6 @@ const classLearningStrandId = ref()
 const learningStrandInput = ref()
 
 function updateModuleTable(modules) {
-    isFetching.value = true
     allModules.value.length = 0
 
     for (const module of modules) {
@@ -103,7 +102,6 @@ function updateModuleTable(modules) {
             total: module.total
         })
     }
-    isFetching.value = false
 }
 
 watch(() => learningStrandInput.value, (input) => {
@@ -113,15 +111,16 @@ watch(() => learningStrandInput.value, (input) => {
         classLearningStrandStore.getAllModules(input.id).then((data) => {
             updateModuleTable(data)
         })
+        
+        isFetching.value = false
     } catch (error) {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }
-    isFetching.value = false
 })
 
 

@@ -139,15 +139,16 @@ watch(() => learningStrandInput.value, (input) => {
         classLearningStrandStore.getAllSessions(input.id).then((data) => {
             updateSessionTable(data)
         })
+
+        isFetching.value = false
     } catch (error) {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }
-    isFetching.value = false
 }, {immediate: false})
 
 async function addSession() {
