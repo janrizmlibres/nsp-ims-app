@@ -2,18 +2,21 @@
   <ContentPane header="Admit Volunteer">
     <div class="flex flex-col gap-3 h-full mr-1">
       <BaseCard>
-        <AdmitVolunteerHeader @update="handleUpdate" />
+        <AdmitVolunteerHeader @dataChanged="handleDataChange" />
       </BaseCard>
       <BaseCard class="grow">
         <TabView>
           <TabPanel header="Personal Infromation">
-            <PersonalInformationForm @update="handleUpdate" />
+            <PersonalInformationForm @dataChanged="handleDataChange" />
           </TabPanel>
           <TabPanel header="Contact Infromation">
-            <ContactInformationForm @update="handleUpdate" />
+            <ContactInformationForm @dataChanged="handleDataChange" />
           </TabPanel>
           <TabPanel header="Preferences">
-            <PreferencesForm @update="handleUpdate" />
+            <PreferencesForm @dataChanged="handleDataChange" />
+          </TabPanel>
+          <TabPanel header="Emergency Contact">
+            <EmergencyContactForm @dataChanged="handleDataChange" />
           </TabPanel>
         </TabView>
       </BaseCard>
@@ -44,6 +47,7 @@ import BaseCard from '@/components/UI/BaseCard.vue'
 import PersonalInformationForm from '@/components/volunteer_view/PersonalInformationForm.vue'
 import ContactInformationForm from '@/components/volunteer_view/ContactInformationForm.vue'
 import PreferencesForm from '@/components/volunteer_view/PreferencesForm.vue'
+import EmergencyContactForm from '@/components/volunteer_view/EmergencyContactForm.vue'
 import AdmitVolunteerHeader from '@/components/volunteer_view/AdmitVolunteerHeader.vue'
 import Button from 'primevue/button'
 import ProgressSpinner from 'primevue/progressspinner'
@@ -58,6 +62,7 @@ export default {
         PersonalInformationForm,
         ContactInformationForm,
         PreferencesForm,
+        EmergencyContactForm,
         BaseCard,
         Button,
         ProgressSpinner,
@@ -66,38 +71,47 @@ export default {
         TabView,
     },
     setup() {
-    const formData = ref({
-      selectedAffiliation: '', 
-      id: '',
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      nickname: '',
-      dateOfBirth: '',
-      suffix: '',
-      course: '',
-      yearLevel: '',
-      work: '',
-      housing: '',
-      city: '',
-      barangay: '',
-      province: '',
-      contactNumber: '',
-      emailAddress: '',
-      facebook: '',
-      availability: '',
-      areaOfSpecialization: ''
-    });
+      const formData = ref({
+            id: '',
+            firstName: '',
+            middleName: '',
+            lastName: '',
+            nickname: '',
+            dateOfBirth: '',
+            suffix: '',
+            course: '',
+            yearLevel: '',
+            work: '',
+            housing: '',
+            city: '',
+            barangay: '',
+            province: '',
+            contactNumber: '',
+            emailAddress: '',
+            facebook: '',
+            availability: '',
+            emergencyLastName: '', 
+            emergencyFirstName: '', 
+            emergencyMiddleName: '', 
+            emergencySuffix: '', 
+            emergencyContact: '', 
+            emergencyRelationship: ''
+        });
 
-    const handleUpdate = (data) => {
-      formData.value = { ...formData.value, ...data };
-    };
+        const handleDataChange = (newData) => {
+            // Merge the new data into the existing formData
+            Object.assign(formData.value, newData);
+        };
 
-    const handleSubmit = () => {
-      console.log(formData.value);
-    };
+        const handleSubmit = () => {
+            console.log(formData.value);
+        };
 
-    return { handleUpdate, handleSubmit };
-  },
+        return {
+            formData,
+            handleDataChange,
+            handleSubmit, // make sure to return this method
+        };
+    },
 };
 </script>

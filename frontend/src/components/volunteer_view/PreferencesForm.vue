@@ -7,11 +7,17 @@ const emit = defineEmits(['dataChanged', 'update'])
 const day = ref([])
 const aos = ref([])
 
+const handleDataChange = (newData) => {
+  emit('dataChanged', newData);
+};
+
 watch([day, aos], () => {
-  emit('update', {
+  const newData = {
     availability: day.value,
     areaOfSpecialization: aos.value
-  })
+  };
+  emit('update', newData);
+  handleDataChange(newData);
 })
 </script>
 

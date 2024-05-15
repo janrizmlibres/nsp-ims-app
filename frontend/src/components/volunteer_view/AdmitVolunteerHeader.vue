@@ -24,34 +24,40 @@
     </div>
   </template>
   
-  <script>
-  import InputText from 'primevue/inputtext'
-  import { ref, watch } from 'vue'
-  import Dropdown from 'primevue/dropdown';
-  
-  export default {
-    components: {
-      InputText,
-      Dropdown
-    },
-    emits: ['update'],
-    setup(_, { emit }) {
-      const selectedAffiliation = ref();
-      const id = ref();
-      const affiliation = ref([
-        { name: 'Student', code: 'Student' },
-        { name: 'Professional', code: 'Professional' }
-      ]);
-  
-      watch([selectedAffiliation, id], () => {
-        emit('update', { selectedAffiliation: selectedAffiliation.value ? selectedAffiliation.value.code : '', id: id.value });
-      });
-  
-      return {
-        selectedAffiliation,
-        id,
-        affiliation
-      }
+<script>
+import InputText from 'primevue/inputtext'
+import { ref, watch } from 'vue'
+import Dropdown from 'primevue/dropdown';
+
+export default {
+  components: {
+    InputText,
+    Dropdown
+  },
+  emits: ['update', 'dataChanged'],
+  setup(_, { emit }) {
+    const selectedAffiliation = ref();
+    const id = ref();
+    const affiliation = ref([
+      { name: 'Student', code: 'Student' },
+      { name: 'Professional', code: 'Professional' }
+    ]);
+
+    const handleDataChange = (newData) => {
+      emit('dataChanged', newData);
+    };
+
+    watch([selectedAffiliation, id], () => {
+      const newData = { selectedAffiliation: selectedAffiliation.value ? selectedAffiliation.value.code : '', id: id.value };
+      emit('update', newData);
+      handleDataChange(newData);
+    });
+
+    return {
+      selectedAffiliation,
+      id,
+      affiliation
     }
   }
-  </script>
+}
+</script>

@@ -8,12 +8,18 @@ const contactNumber = ref(null)
 const emailAddress = ref(null)
 const facebook = ref(null)
 
+const handleDataChange = (newData) => {
+  emit('dataChanged', newData);
+};
+
 watch([contactNumber, emailAddress, facebook], () => {
-  emit('update', {
+  const newData = {
     contactNumber: contactNumber.value,
     emailAddress: emailAddress.value,
     facebook: facebook.value
-  })
+  };
+  emit('update', newData);
+  handleDataChange(newData);
 })
 </script>
 

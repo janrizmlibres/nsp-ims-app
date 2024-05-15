@@ -19,8 +19,12 @@ const city = ref(null)
 const barangay = ref(null)
 const province = ref(null)
 
+const handleDataChange = (newData) => {
+  emit('dataChanged', newData);
+};
+
 watch([firstName, middleName, lastName, nickname, dateOfBirth, suffix, course, yearLevel, work, housing, city, barangay, province], () => {
-  emit('update', {
+  handleDataChange({
     firstName: firstName.value,
     middleName: middleName.value,
     lastName: lastName.value,
