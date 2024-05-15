@@ -105,22 +105,29 @@ function updateModuleTable(modules) {
     }
 }
 
+watch(() => props.learningStrands, () => {
+    learningStrandInput.value = null
+    allModules.value.length = 0
+})
+
 watch(() => learningStrandInput.value, (input) => {
-    isFetching.value = true
-    classLearningStrandId.value = input.id
-    try {
-        classLearningStrandStore.getAllModules(input.id).then((data) => {
-            updateModuleTable(data)
-        })
-        
-        isFetching.value = false
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered. Please refresh this page.',
-            life: 3000
-        })
+    if (input) {
+        isFetching.value = true
+        classLearningStrandId.value = input.id
+        try {
+            classLearningStrandStore.getAllModules(input.id).then((data) => {
+                updateModuleTable(data)
+            })
+            
+            isFetching.value = false
+        } catch (error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Unexpected error encountered. Please refresh this page.',
+                life: 3000
+            })
+        }
     }
 })
 

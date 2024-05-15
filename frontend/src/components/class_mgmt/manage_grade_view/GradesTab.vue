@@ -51,22 +51,31 @@ function updateGradesData(data) {
     isFetching.value = false
 }
 
+watch(() => props.learningStrands, () => {
+    learningStrandInput.value = null
+    active.value = []
+    inactive.value = []
+    drop.value = []
+})
+
 watch(() => learningStrandInput.value, (input) => {
-    isFetching.value = true
-    classLearningStrandId.value = input.id
-    try {
-        classLearningStrandStore.getAllGrades(input.id).then((data) => {  
-            updateGradesData(data)
-        })
-        
-        isFetching.value = false
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered. Please refresh this page.',
-            life: 3000
-        })
+    if (input) {
+        isFetching.value = true
+        classLearningStrandId.value = input.id
+        try {
+            classLearningStrandStore.getAllGrades(input.id).then((data) => {  
+                updateGradesData(data)
+            })
+            
+            isFetching.value = false
+        } catch (error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Unexpected error encountered. Please refresh this page.',
+                life: 3000
+            })
+        }
     }
 })
 

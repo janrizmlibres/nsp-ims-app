@@ -132,22 +132,29 @@ function updateSessionTable(sessions) {
     isFetching.value = false
 }
 
-watch(() => learningStrandInput.value, (input) => {
-    isFetching.value = true
-    classLearningStrandId.value = input.id
-    try {
-        classLearningStrandStore.getAllSessions(input.id).then((data) => {
-            updateSessionTable(data)
-        })
+watch(() => props.learningStrands, () => {
+    learningStrandInput.value = null
+    allSessions.value.length = 0
+})
 
-        isFetching.value = false
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered. Please refresh this page.',
-            life: 3000
-        })
+watch(() => learningStrandInput.value, (input) => {
+    if (input) {
+        isFetching.value = true
+        classLearningStrandId.value = input.id
+        try {
+            classLearningStrandStore.getAllSessions(input.id).then((data) => {
+                updateSessionTable(data)
+            })
+
+            isFetching.value = false
+        } catch (error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Unexpected error encountered. Please refresh this page.',
+                life: 3000
+            })
+        }
     }
 }, {immediate: false})
 
