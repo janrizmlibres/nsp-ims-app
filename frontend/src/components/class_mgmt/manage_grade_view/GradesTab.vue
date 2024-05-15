@@ -67,7 +67,7 @@ watch(() => props.id, (id) => {
         })
     }
     isFetching.value = false
-}, {immediate: false})
+}, {immediate: true})
 
 </script>
 
