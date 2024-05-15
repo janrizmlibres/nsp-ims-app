@@ -2,48 +2,29 @@
 // Presets
 import Dropdown from 'primevue/dropdown';
 import Panel from 'primevue/panel';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 
 // stores
-import { useTermStore } from '@/stores/term';
-import { useToast } from 'primevue/usetoast';
 import { useClassStore } from '@/stores/class';
+import { useUtilitiesStore } from '@/stores/utilities';
 
 const emit = defineEmits(['chooseLearningStrand', 'updateState'])
 const props = defineProps(['state'])
-const toast = useToast()
 
-const termStore = useTermStore()
+const utilitiesStore = useUtilitiesStore()
 const classStore = useClassStore()
 
-const terms = ref([])
-const classes = ref([])
+const terms = computed(() => utilitiesStore.terms)
+const classes = computed(() => utilitiesStore.terms.class_levels)
 const learningStrands = ref([]);
 
-const termInput = ref()
-const classLevelInput = ref()
+const termInput = computed(() => terms.value.find(term => term.status === true))
+const classLevelInput = computed(() => termInput.value.class_levels)
 const learningStrandInput = ref()
 
 const state = computed(() => props.state)
 const enableSchoolLevelDropdown = ref(true)
 const enableLearningStrandDropdown = ref(false)
-
-onMounted(() => {
-    try {
-        termStore.getAllTerms().then((data) => {
-            terms.value = data
-            termInput.value = data.find(term => term.status === true)
-            classes.value = termInput.value.class_levels
-        })
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.response.data.message,
-            life: 3000
-        })
-    }
-})
 
 function updateTerm() {
     enableLearningStrandDropdown.value = false; 
@@ -52,7 +33,7 @@ function updateTerm() {
     learningStrandInput.value = null
     classLevelInput.value = null
 
-    termStore.getTerm(termInput.value.id).then((data) => classes.value = data.class_levels)
+    classes.value = termInput.value.class_levels
     emit('updateState', learningStrandInput.value)
 }
 
