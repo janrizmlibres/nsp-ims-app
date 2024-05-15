@@ -27,9 +27,7 @@ export async function getStudents(_req, res, next) {
 
 export async function addStudent(req, res, next) {
   try {
-    console.log(req.body);
     const errors = validationResult(req);
-    // console.log(errors);
 
     if (!errors.isEmpty()) {
       const error = new Error("Validation failed, entered data is incorrect.");
@@ -44,32 +42,32 @@ export async function addStudent(req, res, next) {
     // }
 
     const student = await Student.create({
-      ...JSON.parse(req.body.identity),
+      ...req.body.identity,
       photoUrl: req.body.identity.photoUrl,
     });
 
     await PersonalInfo.create({
-      ...JSON.parse(req.body.personalInfo),
+      ...req.body.personalInfo,
       studentId: student.id,
     });
 
     await ContactInfo.create({
-      ...JSON.parse(req.body.contactInfo),
+      ...req.body.contactInfo,
       studentId: student.id,
     });
 
     await EmergencyPerson.create({
-      ...JSON.parse(req.body.emergencyPerson),
+      ...req.body.emergencyPerson,
       studentId: student.id,
     });
 
     await ParentalInfo.create({
-      ...JSON.parse(req.body.parentalInfo),
+      ...req.body.parentalInfo,
       studentId: student.id,
     });
 
     await PreviousSchool.create({
-      ...JSON.parse(req.body.prevSchool),
+      ...req.body.prevSchool,
       studentId: student.id,
     });
 
