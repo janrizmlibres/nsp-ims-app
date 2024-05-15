@@ -30,7 +30,16 @@ export const useStudentsStore = defineStore('students', () => {
   async function addStudent(formData) {
     const authStore = useAuthStore()
 
-    const result = await axios.post('http://localhost:8080/profile/add-student', formData, {
+    const form = new FormData()
+    form.append('image', formData.identity.photoUrl)
+
+    delete formData.identity.photoUrl
+
+    for (const key in formData) {
+      form.append(key, JSON.stringify(formData[key]))
+    }
+
+    const result = await axios.post('http://localhost:8080/profile/add-student', form, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
