@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
 // Custom
+import ProgressSpinner from 'primevue/progressspinner';
 import ContentPane from '@/components/UI/ContentPane.vue'
 import TheHeader from '@/components/class_mgmt/TheHeader.vue';
 import GradesTab from '@/components/class_mgmt/manage_grade_view/GradesTab.vue';
