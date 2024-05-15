@@ -38,7 +38,7 @@ onMounted(async () => {
 <template>
     <ProgressSpinner v-if="isLoading" class="self-center" />
     <ContentPane v-else header="Class" subheader="Management">
-        <TabView class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
+        <TabView class="p-2 bg-white shadow-xl rounded-md">
             <TabPanel>
                 <template #header>
                     <div class="flex items-center gap-2">
