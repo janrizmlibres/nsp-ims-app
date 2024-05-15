@@ -24,40 +24,27 @@
     </div>
   </template>
   
-<script>
+<script setup>
 import InputText from 'primevue/inputtext'
-import { ref, watch } from 'vue'
+import { ref, watch, defineEmits } from 'vue'
 import Dropdown from 'primevue/dropdown';
 
-export default {
-  components: {
-    InputText,
-    Dropdown
-  },
-  emits: ['update', 'dataChanged'],
-  setup(_, { emit }) {
-    const selectedAffiliation = ref();
-    const id = ref();
-    const affiliation = ref([
-      { name: 'Student', code: 'Student' },
-      { name: 'Professional', code: 'Professional' }
-    ]);
+const emit = defineEmits(['update', 'dataChanged'])
 
-    const handleDataChange = (newData) => {
-      emit('dataChanged', newData);
-    };
+const selectedAffiliation = ref();
+const id = ref();
+const affiliation = ref([
+  { name: 'Student', code: 'Student' },
+  { name: 'Professional', code: 'Professional' }
+]);
 
-    watch([selectedAffiliation, id], () => {
-      const newData = { selectedAffiliation: selectedAffiliation.value ? selectedAffiliation.value.code : '', id: id.value };
-      emit('update', newData);
-      handleDataChange(newData);
-    });
+const handleDataChange = (newData) => {
+  emit('dataChanged', newData);
+};
 
-    return {
-      selectedAffiliation,
-      id,
-      affiliation
-    }
-  }
-}
+watch([selectedAffiliation, id], () => {
+  const newData = { selectedAffiliation: selectedAffiliation.value ? selectedAffiliation.value.code : '', id: id.value };
+  emit('update', newData);
+  handleDataChange(newData);
+});
 </script>

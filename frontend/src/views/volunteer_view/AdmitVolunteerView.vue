@@ -41,7 +41,7 @@
   </ContentPane>
   </template>
 
-<script>
+<script setup>
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
 import PersonalInformationForm from '@/components/volunteer_view/PersonalInformationForm.vue'
@@ -53,65 +53,45 @@ import Button from 'primevue/button'
 import ProgressSpinner from 'primevue/progressspinner'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-export default {
-    name: "VolunteerRecordsView",
-    components: {
-        ContentPane,
-        PersonalInformationForm,
-        ContactInformationForm,
-        PreferencesForm,
-        EmergencyContactForm,
-        BaseCard,
-        Button,
-        ProgressSpinner,
-        AdmitVolunteerHeader,
-        TabPanel,
-        TabView,
-    },
-    setup() {
-      const formData = ref({
-            id: '',
-            firstName: '',
-            middleName: '',
-            lastName: '',
-            nickname: '',
-            dateOfBirth: '',
-            suffix: '',
-            course: '',
-            yearLevel: '',
-            work: '',
-            housing: '',
-            city: '',
-            barangay: '',
-            province: '',
-            contactNumber: '',
-            emailAddress: '',
-            facebook: '',
-            availability: '',
-            emergencyLastName: '', 
-            emergencyFirstName: '', 
-            emergencyMiddleName: '', 
-            emergencySuffix: '', 
-            emergencyContact: '', 
-            emergencyRelationship: ''
-        });
+const formData = ref({
+    id: '',
+    selectedAffiliation: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
+    nickname: '',
+    dateOfBirth: '',
+    suffix: '',
+    course: '',
+    yearLevel: '',
+    work: '',
+    housing: '',
+    city: '',
+    barangay: '',
+    province: '',
+    contactNumber: '',
+    emailAddress: '',
+    facebook: '',
+    availability: '',
+    emergencyLastName: '', 
+    emergencyFirstName: '', 
+    emergencyMiddleName: '', 
+    emergencySuffix: '', 
+    emergencyContact: '', 
+    emergencyRelationship: ''
+});
 
-        const handleDataChange = (newData) => {
-            // Merge the new data into the existing formData
-            Object.assign(formData.value, newData);
-        };
-
-        const handleSubmit = () => {
-            console.log(formData.value);
-        };
-
-        return {
-            formData,
-            handleDataChange,
-            handleSubmit, // make sure to return this method
-        };
-    },
+const handleDataChange = (newData) => {
+    // Merge the new data into the existing formData
+    Object.assign(formData.value, newData);
 };
+
+const handleSubmit = () => {
+    console.log(formData.value);
+};
+
+watch(formData, handleDataChange);
+
 </script>
