@@ -136,7 +136,7 @@ watch(() => props.modelValue, (data) => {
             noChanges.value = false
         })
     }
-}, {immediate: true})
+})
 
 async function updateGrades() {
     try {
