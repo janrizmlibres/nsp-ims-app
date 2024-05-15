@@ -9,16 +9,19 @@ import Calendar from 'primevue/calendar';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 import { computed, ref, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useToast } from 'primevue/usetoast';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
 const route = useRoute()
 const toast = useToast()
+const confirm = useConfirm()
+const router = useRouter()
 
 const customPt = {
     root: {
@@ -103,6 +106,7 @@ const learners = ref([])
 const noChanges = ref(true)
 const startingData = []
 const updatedData = new Set([])
+const leave = ref(true)
 
 watch(() => props.modelValue, (data) => {
     console.log(typeof route.query.status);
@@ -130,6 +134,7 @@ watch(() => props.modelValue, (data) => {
         
         watch(learners.value[len - 1], (newData) => {
             updatedData.add(newData)
+            leave.value = false
             noChanges.value = false
         })
     }
@@ -173,6 +178,7 @@ async function updateSubmissions() {
             life: 5000
         })
 
+        leave.value = true
         noChanges.value = true
     } catch (error) {
         toast.add({
@@ -187,10 +193,12 @@ async function updateSubmissions() {
 function resetData() {
     learners.value = structuredClone(startingData)
     updatedData.clear()
+    leave.value = true
 
     for (const datum of learners.value) {
         watch(datum, (newData) => {
         updatedData.add(newData)
+        leave.value = false
         noChanges.value = false
         })
     }
@@ -202,6 +210,23 @@ const exportRef = ref()
 function exportCSV() {
     exportRef.value.exportCSV()
 }
+
+onBeforeRouteLeave((to) => {
+    if (leave.value) {
+        return true
+    }
+
+    confirm.require({
+        message: 'Do you really want to leave? you have unsaved changes!',
+        header: 'Redirect Confirmation',
+        accept: async () => {
+            leave.value = true
+            await router.push(to)
+        }
+    })
+
+    return false
+})
 </script>
 
 <template>
