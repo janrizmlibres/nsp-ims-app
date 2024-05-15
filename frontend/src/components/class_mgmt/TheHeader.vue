@@ -32,7 +32,6 @@ function updateTerm() {
     classLevelInput.value = null
 
     classes.value = termInput.value.class_levels
-    emit('updateState', learningStrandInput.value)
 }
 
 function updateClassLevel() {
@@ -41,7 +40,6 @@ function updateClassLevel() {
     learningStrandInput.value = null
 
     classStore.getAllLearningStrands(classLevelInput.value.id).then((data) => learningStrands.value = data)
-    emit('updateState', learningStrandInput.value)
 }
 
 function updateLearningStand() {
