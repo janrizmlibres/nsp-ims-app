@@ -20,6 +20,7 @@ const classStore = useClassStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
 const tableData = ref([])
+const isFetching = ref(true)
 
 async function addSchedule(learningStrand, form) {
     try {
@@ -73,7 +74,18 @@ function updateScheduleTable(classId) {
 }
 
 watch(() => props.classLevel, (data) => {
-    updateScheduleTable(data.id)
+    try {
+        updateScheduleTable(data.id)
+        
+        isFetching.value = false
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please refresh this page.',
+            life: 3000
+        })
+    }
 }, { immediate: true })
 </script>
 
