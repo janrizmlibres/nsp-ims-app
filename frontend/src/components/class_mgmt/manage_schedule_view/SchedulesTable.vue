@@ -135,58 +135,56 @@ function to24hr(time12h) {
 </script>
 
 <template>
-    <div class="bg-white rounded-md shadow-xl flex flex-col p-7 pt-4 flex-1">
-        <DataTable 
-            :value="classData" dataKey="scheduleId"
-            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-            :ptOptions="{mergeProps:true}"
-            :pt="customPt"
-        >
-            <template #empty> <div class="text-center">Nothing added.</div> </template>
+    <DataTable 
+        :value="classData" dataKey="scheduleId"
+        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+        :ptOptions="{mergeProps:true}"
+        :pt="customPt"
+    >
+        <template #empty> <div class="text-center">Nothing added.</div> </template>
 
-            <ColumnGroup type="header">
-                <Row>
-                    <Column header="Learning Strand" :rowspan="2" />
-                    <Column header="Teacher" :rowspan="2" />
-                    <Column header="Schedule" :colspan="4" />
-                </Row>
-                <Row>
-                    <Column header="Days" field="school_days"/>
-                    <Column header="Start Time" field="start_time"/>
-                    <Column header="End Time" field="end_time"/>
-                    <Column header="" />
-                </Row>
-            </ColumnGroup>
-            <Column field="name" />
-            <Column field="volunteer">
-                <template #body="slotProps">
-                    {{ slotProps.data.volunteer.fullname }}
-                </template>
-                <template #editor="{ data, field }">
-                    <Dropdown v-model="data[field]" :options="volunteers" optionLabel="fullname" placeholder="data[field].fullname" class="w-full md:w-[14rem]" />
-                </template>
-            </Column>
-            <Column field="school_days">
-                <template #body="slotProps">
-                    {{ slotProps.data.school_days.toString() }}
-                </template>
-                <template #editor="{ data, field }">
-                    <MultiSelect v-model="data[field]" :options="days" placeholder="Select Days" :maxSelectedLabels="2" class="w-full xl:w-[14rem]" />
-                </template>
-            </Column>
-            <Column field="start_time">
-                <template #editor="{ data, field }">
-                    <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-                </template>
-            </Column>
-            <Column field="end_time">
-                <template #editor="{ data, field }">
-                    <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-                </template>
-            </Column>
-            <Column :rowEditor="props.termStatus" bodyStyle="text-align:center"></Column>
-        </DataTable>
-    </div>
+        <ColumnGroup type="header">
+            <Row>
+                <Column header="Learning Strand" :rowspan="2" />
+                <Column header="Teacher" :rowspan="2" />
+                <Column header="Schedule" :colspan="4" />
+            </Row>
+            <Row>
+                <Column header="Days" field="school_days"/>
+                <Column header="Start Time" field="start_time"/>
+                <Column header="End Time" field="end_time"/>
+                <Column header="" />
+            </Row>
+        </ColumnGroup>
+        <Column field="name" />
+        <Column field="volunteer">
+            <template #body="slotProps">
+                {{ slotProps.data.volunteer.fullname }}
+            </template>
+            <template #editor="{ data, field }">
+                <Dropdown v-model="data[field]" :options="volunteers" optionLabel="fullname" placeholder="data[field].fullname" class="w-full md:w-[14rem]" />
+            </template>
+        </Column>
+        <Column field="school_days">
+            <template #body="slotProps">
+                {{ slotProps.data.school_days.toString() }}
+            </template>
+            <template #editor="{ data, field }">
+                <MultiSelect v-model="data[field]" :options="days" placeholder="Select Days" :maxSelectedLabels="2" class="w-full xl:w-[14rem]" />
+            </template>
+        </Column>
+        <Column field="start_time">
+            <template #editor="{ data, field }">
+                <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+            </template>
+        </Column>
+        <Column field="end_time">
+            <template #editor="{ data, field }">
+                <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+            </template>
+        </Column>
+        <Column :rowEditor="props.termStatus" bodyStyle="text-align:center"></Column>
+    </DataTable>
 </template>
 
 <style>
