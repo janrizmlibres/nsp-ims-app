@@ -71,13 +71,17 @@ async function addModule() {
 }
 
 async function cancel() {
-    if (value.value === null && dates.value === null) {
+    if ((value.value === null || value.value === '') && dates.value === null) {
+        value.value = null
+        dates.value = null
         classLearningStrandStore.showHideAddModuleDialog()
     } else {
         confirm.require({
             message: 'Do you really want to leave? you have unsaved changes!',
             header: 'Redirect Confirmation',
             accept: async () => {
+                value.value = null
+                dates.value = null
                 classLearningStrandStore.showHideAddModuleDialog()
             }
         })
