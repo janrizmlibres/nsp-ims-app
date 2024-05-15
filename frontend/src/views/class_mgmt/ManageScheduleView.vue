@@ -3,6 +3,7 @@
 import { ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
+import Divider from 'primevue/divider';
 
 // Custom
 import ManageScheduleForm from '@/components/class_mgmt/manage_schedule_view/ManageScheduleForm.vue';
@@ -78,5 +79,6 @@ watch(() => props.classLevel, (data) => {
 
 <template>
     <ManageScheduleForm @submit="addSchedule" :classLevel="props.classLevel" :termStatus="props.termStatus" />
+    <Divider />
     <SchedulesTable v-model="tableData" @updateSchedule="updateScheduleTable" :termStatus="props.termStatus" :state="props.state" />
 </template>
