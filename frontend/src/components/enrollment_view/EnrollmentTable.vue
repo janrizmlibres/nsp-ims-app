@@ -129,7 +129,7 @@ function editEnrolled(data) {
              filterDisplay="menu"
              :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']" 
              removableSort> 
-    <column field="lrn" header="LRN" sortable>
+    <column frozen field="lrn" header="LRN" sortable>
       <template #body="{ data }">
         {{ data.lrn }}
       </template>
@@ -137,7 +137,7 @@ function editEnrolled(data) {
         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by name" />
       </template>
     </column>
-    <column field="lastName" header="Last Name" sortable>
+    <column frozen field="lastName" header="Last Name" sortable>
       <template #body="{ data }">
         {{ data.lastName }}
       </template>
@@ -145,7 +145,7 @@ function editEnrolled(data) {
         <InputText v-model="filterModel.value" type="text" class="p-column-filter" placeholder="Search by name" />
       </template>
     </column>
-    <column field="firstName" header="First Name" sortable>
+    <column frozen field="firstName" header="First Name" sortable>
       <template #body="{ data }">
         {{ data.firstName }}
       </template>
