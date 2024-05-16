@@ -97,7 +97,9 @@ export const enrollLearner = async (req, res, next) => {
       throw error;
     }
     
-    const classLevel = await ClassLevel.findByPk(req.body.selectedSchoolLevel);
+    const classLevel = await ClassLevel.findByPk(
+      req.body.selectedSchoolLevelId
+    );
     
     if (!classLevel) {
       const error = new Error("Class level not found.");
