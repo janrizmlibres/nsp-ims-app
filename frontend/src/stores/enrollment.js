@@ -36,16 +36,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     editedTerm.value = term
   }
   
-  async function enrollLearner(
-    lrn, 
-    classLevelID, 
-    hasEnrollmentForm, 
-    digital_literacy, 
-    ftl_pretest, 
-    callable, 
-    bridger, 
-    regularity, 
-    remarks) {
+  async function enrollLearner(data) {
     
     const authStore = useAuthStore()
     
@@ -64,16 +55,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     })
   }
 
-  async function updateLearner(
-    lrn,
-    classLevelID,
-    hasEnrollmentForm,
-    digital_literacy,
-    ftl_pretest,
-    callable,
-    bridger,
-    regularity,
-    remarks) {
+  async function updateLearner(enrollmentId, data) {
 
     const authStore = useAuthStore()
 
