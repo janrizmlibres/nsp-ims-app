@@ -24,7 +24,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     const authStore = useAuthStore()
 
     const result = await axios.get(
-      `http://localhost:8080/enrollment/retrieve-enrolled/${lrn}/${termID}/${classLevel}`, 
+      `http://localhost:8080/enrollment/${studentId}/${enrollmentId}/retrieve`, 
       {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
@@ -49,17 +49,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
 
     const authStore = useAuthStore()
 
-    await axios.post('http://localhost:8080/enrollment/update-learner', {
-      lrn,
-      classLevelID,
-      hasEnrollmentForm,
-      digital_literacy,
-      ftl_pretest,
-      callable,
-      bridger,
-      regularity,
-      remarks
-    }, {
+    await axios.patch(`http://localhost:8080/enrollment/${enrollmentId}/update`, data, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
   }
@@ -67,10 +57,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   async function changeEnrolledStatus(enrollmentId, statusToChange) {
     const authStore = useAuthStore()
 
-    await axios.post('http://localhost:8080/enrollment/change-enrollment-status', {
-      lrn,
-      academicYear,
-      classLevel,
+    await axios.patch(`http://localhost:8080/enrollment/${enrollmentId}/status/update`, {
       statusToChange
     }, {
       headers: { Authorization: 'Bearer ' + authStore.token }
