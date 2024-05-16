@@ -33,7 +33,6 @@ const isValid = computed(() => {
 })
 
 const form = ref({
-  selectedSchoolLevel: null,
   hasEnrollmentForm: null,
   digitalLiteracyScore: null,
   fltPretestScore: null,
