@@ -32,7 +32,7 @@ const form = ref({
 
 async function getStudent()  {
   try {
-    await enrollmentStore.getEnrolled(props.lrn, props.academicYear, props.classLevel)
+    await enrollmentStore.getEnrolled(props.studentId, props.enrollmentId)
     await termStore.getTerms()
 
     const chosenYear = termStore.terms.find(term => term.academic_year === props.academicYear)
@@ -71,15 +71,8 @@ const selectedFullName = ref();
 async function updateEnrolled() {
   try {
     await enrollmentStore.updateLearner(
-      selectedLRN.value,
-      selectedSchoolLevel.value.id,
-      hasEnrollmentForm.value,
-      digitalLiteracyScore.value,
-      fltPretestScore.value,
-      callable.value,
-      bridger.value,
-      selectedRegularity.value.code,
-      selectedRemarks.value
+      props.enrollmentId,
+      form.value
     )
     toast.add({
       severity: 'success',
