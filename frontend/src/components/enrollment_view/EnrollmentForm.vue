@@ -124,6 +124,7 @@ async function submitEvent() {
         <Dropdown
           v-model="form.selectedSchoolLevel"
           :options="schoolLevels"
+          optionValue="id"
           optionLabel="school_level"
           placeholder="Select a Class Level"
           class="w-full md:w-14rem h-11"
@@ -136,6 +137,7 @@ async function submitEvent() {
         <Dropdown
           v-model="form.selectedRegularity"
           :options="regularity"
+          optionValue="code"
           optionLabel="name"
           placeholder="Select a Regularity"
           class="w-full md:w-14rem"
