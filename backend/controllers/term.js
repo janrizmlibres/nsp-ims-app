@@ -26,6 +26,11 @@ export async function getAllTerms(req, res, next) {
         const terms = await Term.findAll(
             {include: [ClassLevel]}
         );
+        
+        //sort terms by start date
+        terms.sort((a, b) => {
+            return new Date(a.start_date) - new Date(b.start_date);
+        });
 
         res.status(200).json({
             message: "Fetched all terms successfully.",
