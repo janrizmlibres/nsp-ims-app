@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAuthStore } from './auth'
+import { ref } from 'vue'
 
 export const useUtilitiesStore = defineStore('utilities', () => {
     const strands = ref([])

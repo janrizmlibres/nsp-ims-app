@@ -1,11 +1,11 @@
 <script setup>
 // Presets
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
+import Divider from 'primevue/divider';
 
 // Custom
-import ContentPane from '@/components/UI/ContentPane.vue'
 import ManageScheduleForm from '@/components/class_mgmt/manage_schedule_view/ManageScheduleForm.vue';
 import SchedulesTable from '@/components/class_mgmt/manage_schedule_view/SchedulesTable.vue';
 
@@ -14,13 +14,13 @@ import { useClassStore } from '@/stores/class';
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
 const toast = useToast()
+const props = defineProps(['classLevel', 'state', 'termStatus'])
 
 const classStore = useClassStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const selectedTerm = ref()
 const tableData = ref([])
-const state = ref(false)
+const isFetching = ref(true)
 
 async function addSchedule(learningStrand, form) {
     try {
@@ -50,9 +50,6 @@ async function addSchedule(learningStrand, form) {
 }
 
 function updateScheduleTable(classId) {
-    if (classId) state.value = true
-    else state.value = false
-
     tableData.value.length = 0
 
     classStore.getAllLearningStrands(classId).then((data) => {
@@ -76,16 +73,24 @@ function updateScheduleTable(classId) {
     })
 }
 
-function resetTable(term) {
-    state.value = false
-    tableData.value.length = 0
-    selectedTerm.value = term
-}
+watch(() => props.classLevel, (data) => {
+    try {
+        updateScheduleTable(data.id)
+        
+        isFetching.value = false
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please refresh this page.',
+            life: 3000
+        })
+    }
+}, { immediate: true })
 </script>
 
 <template>
-    <ContentPane header="Class Schedules" subheader="Management">
-        <ManageScheduleForm @chooseYear="resetTable" @chooseLevel="updateScheduleTable" @submit="addSchedule" :state="state" />
-        <SchedulesTable v-model="tableData" :term="selectedTerm" @updateSchedule="updateScheduleTable" :state="state" />
-    </ContentPane>
+    <ManageScheduleForm @submit="addSchedule" :classLevel="props.classLevel" :termStatus="props.termStatus" />
+    <Divider />
+    <SchedulesTable v-model="tableData" @updateSchedule="updateScheduleTable" :termStatus="props.termStatus" :state="props.state" />
 </template>

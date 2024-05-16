@@ -5,9 +5,9 @@ import LoginView from '../views/login/LoginView.vue'
 import TheRootView from '../views/TheRootView.vue'
 
 // Class Management Views
+import ManageClassView from '@/views/class_mgmt/ManageClassView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
-import ManageScheduleView from '@/views/class_mgmt/ManageScheduleView.vue'
-import ManageModuleView from '@/views/class_mgmt/ManageModuleView.vue'
+import SessionView from '@/views/class_mgmt/SessionView.vue'
 
 // Utilities Views
 import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
@@ -27,10 +27,6 @@ import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vu
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
 
 import { useAuthStore } from '@/stores/auth'
-import ManageGradeView from '@/views/class_mgmt/ManageGradeView.vue'
-import ManageSessionView from '@/views/class_mgmt/ManageSessionView.vue'
-import SessionView from '@/views/class_mgmt/SessionView.vue'
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -77,14 +73,9 @@ const router = createRouter({
           },
           children: [
             {
-              path: '/schedules',
-              name: 'schedules',
-              component: ManageScheduleView
-            },
-            {
-              path: '/modules',
-              name: 'modules',
-              component: ManageModuleView
+              path: '/class',
+              name: 'class-management',
+              component: ManageClassView
             },
             {
               path: '/module',
@@ -94,16 +85,6 @@ const router = createRouter({
               beforeEnter: (to) => {
                 return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
               }
-            },
-            {
-              path: '/grades',
-              name: 'grades',
-              component: ManageGradeView
-            },
-            {
-              path: '/sessions',
-              name: 'sessions',
-              component: ManageSessionView
             },
             {
               path: '/session',

@@ -1,13 +1,15 @@
 <script setup>
 // Presets
-import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
+import Dropdown from 'primevue/dropdown';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import { useConfirm } from 'primevue/useconfirm';
 
 // Custom
 
@@ -18,8 +20,10 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 const classesStore = useClassesStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['id', 'state', 'termStatus'])
+const props = defineProps(['learningStrands', 'termStatus'])
 const toast = useToast()
+const confirm = useConfirm()
+const router = useRouter()
 
 const cols = ref([
     {field: 'absent', header: 'Absent'},
@@ -99,12 +103,13 @@ const customPt = {
     }
 }
 
-const state = computed(() => props.state)
 const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allSessions = ref([])
 const classLearningStrandId = ref()
 const editingRows = ref([]);
+const leave = ref(true)
+const learningStrandInput = ref()
 
 function updateSessionTable(sessions) {
     isFetching.value = true
@@ -127,22 +132,30 @@ function updateSessionTable(sessions) {
     isFetching.value = false
 }
 
-watch(() => props.id, (id) => {
-    isFetching.value = true
-    classLearningStrandId.value = id
-    try {
-        classLearningStrandStore.getAllSessions(id).then((data) => {
-            updateSessionTable(data)
-        })
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered.',
-            life: 3000
-        })
+watch(() => props.learningStrands, () => {
+    learningStrandInput.value = null
+    allSessions.value.length = 0
+})
+
+watch(() => learningStrandInput.value, (input) => {
+    if (input) {
+        isFetching.value = true
+        classLearningStrandId.value = input.id
+        try {
+            classLearningStrandStore.getAllSessions(input.id).then((data) => {
+                updateSessionTable(data)
+            })
+
+            isFetching.value = false
+        } catch (error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Unexpected error encountered. Please refresh this page.',
+                life: 3000
+            })
+        }
     }
-    isFetching.value = false
 }, {immediate: false})
 
 async function addSession() {
@@ -172,6 +185,11 @@ async function addSession() {
     }
 }
 
+watch(() =>  editingRows.value, (data) => {
+    if (data.length === 0) leave.value = true
+    else leave.value = false
+})
+
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
 
@@ -197,51 +215,62 @@ const onRowEditSave = async (event) => {
         }
     }
 };
+
+onBeforeRouteLeave((to) => {
+    if (leave.value) {
+        return true
+    }
+
+    confirm.require({
+        message: 'Do you really want to leave? you have unsaved changes!',
+        header: 'Redirect Confirmation',
+        accept: async () => {
+            leave.value = true
+            await router.push(to)
+        }
+    })
+
+    return false
+})
 </script>
 
 <template>
-    <div v-if="state" class="bg-white shadow-xl rounded-md p-5">
-        <div class="flex flex-row gap-4 items-center px-4">
-            <i class="fa fa-calendar-days fa-2xl u-txt-active"></i>
-            <span class="font-semibold text-3xl u-txt-active">Sessions</span>
-        </div>
-        <Divider />
-        <DataTable 
-            :value="allSessions" dataKey="id" 
-            :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
-            resizableColumns columnResizeMode="fit" showGridlines
-            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-            :paginator="allSessions.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-            :ptOptions="{mergeProps:true}"
-            :pt="customPt"
-        >
-            <template #empty> <div class="text-center">No records found.</div> </template>
-            <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
+    <DataTable 
+        :value="allSessions" dataKey="id" 
+        :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
+        resizableColumns columnResizeMode="fit" showGridlines
+        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+        :paginator="allSessions.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+        :ptOptions="{mergeProps:true}"
+        :pt="customPt"
+    >
+        <template #empty> <div class="text-center">No records found.</div> </template>
+        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
-            <Column header="" class="u-txt-active text-center" style="width: 2rem">
-                <template #body="slotProps">
-                    <RouterLink :to="{ name: 'session-info', query: { id: slotProps.data.id, status: termStatus } }">
-                        <i class="fa fa-eye" />
-                    </RouterLink>
-                </template>
-            </Column>
-            <Column field="date" header="Session Date">
-                <template #body="slotProps">
-                    {{ slotProps.data.date.toDateString() }}
-                </template>
-            </Column>
-            <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
-            <Column field="remarks" header="Remarks" style="max-width: 10rem;">
-                <template #editor="{ data, field }">
-                    <InputText v-model="data[field]" autofocus />
-                </template>
-            </Column>
-            <Column :rowEditor="true" style="max-width: 2rem" bodyStyle="text-align:center"></Column>
-            <template #footer v-if="termStatus"> 
-                <Button icon="fa fa-plus" label="Add Session" text raised rounded aria-label="Submit" @click="addSession"/>
+        <Column header="" class="u-txt-active text-center" style="width: 2rem">
+            <template #body="slotProps">
+                <RouterLink :to="{ name: 'session-info', query: { id: slotProps.data.id, status: termStatus } }">
+                    <i class="fa fa-eye" />
+                </RouterLink>
             </template>
-        </DataTable>
-    </div>
+        </Column>
+        <Column field="date" header="Session Date" sortable>
+            <template #body="slotProps">
+                {{ slotProps.data.date.toDateString() }}
+            </template>
+        </Column>
+        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
+        <Column field="remarks" header="Remarks" style="max-width: 10rem;">
+            <template #editor="{ data, field }">
+                <InputText v-model="data[field]" autofocus />
+            </template>
+        </Column>
+        <Column :rowEditor="true" bodyStyle="text-align:center"></Column>
+        <template #footer v-if="termStatus && learningStrandInput"> 
+            <Button icon="fa fa-plus" label="Add Session" text raised rounded aria-label="Submit" @click="addSession"/>
+        </template>
+    </DataTable>
 </template>
 
 <style>
