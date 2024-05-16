@@ -139,18 +139,6 @@ export const enrollLearner = async (req, res, next) => {
 };
 
 export const updateEnrollment = async (req, res, next) => {
-  const { 
-    lrn, 
-    classLevelID, 
-    hasEnrollmentForm, 
-    digital_literacy, 
-    ftl_pretest, 
-    callable, 
-    bridger,
-    regularity, 
-    remarks 
-  } = req.body;
-  
   try {
     //search for the Student ID from its lrn field
     const student = await Student.findOne(
@@ -256,13 +244,6 @@ export const getEnrolled = async (req, res, next) => {
 }
 
 export const changeEnrollmentStatus = async (req, res, next) => {
-  const {
-    lrn,
-    academicYear,
-    classLevel,
-    statusToChange
-  } = req.body;
-
   try {
     //search for the Student ID from its lrn field
     const student = await Student.findOne(
