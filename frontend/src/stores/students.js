@@ -27,6 +27,16 @@ export const useStudentsStore = defineStore('students', () => {
     students.value = result.data.students
   }
 
+  async function getStudent(studentId) {
+    const authStore = useAuthStore()
+
+    const result = await axios.get(`http://localhost:8080/profile/student/${studentId}`, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    return result
+  }
+
   async function addStudent(formData) {
     const authStore = useAuthStore()
 
@@ -46,5 +56,5 @@ export const useStudentsStore = defineStore('students', () => {
     return result
   }
 
-  return { students, studentsNormalized, getStudents, addStudent }
+  return { students, studentsNormalized, getStudents, getStudent, addStudent }
 })
