@@ -13,9 +13,9 @@ const route = useRoute()
       <div class="flex flex-col w-full">
         <EditEnrolledForm 
           class="h-fit mt-10" 
-          :lrn="route.query.lrn" 
-          :academic-year="route.query.academicYear" 
-          :class-level="route.query.classLevel"
+          :studentId="route.query.studentId"
+          :enrollmentId="route.query.enrollmentId"
+          :academicYear="route.query.academicYear"
         />
       </div>
     </div>
