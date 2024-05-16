@@ -162,31 +162,17 @@ export const enrollLearner = async (req, res, next) => {
 
 export const updateEnrollment = async (req, res, next) => {
   try {
-    const enrollment = await Enrollment.findByPk(req.params.enrollmentId, 
-      {
-        include: [ ClassLevel ]
-      })
+    const enrollment = await Enrollment.findByPk(req.params.enrollmentId)
     
-    
-    const classLevel = await ClassLevel.findByPk(enrollment.classLevelId)
-    
-    await classLevel.update(
-      {
-        school_level: req.body.selectedSchoolLevel.school_level
-      }
-    )
-    
-    await enrollment.update(
-      {
-        hasEnrollmentForm: req.body.hasEnrollmentForm,
-        digital_literacy: req.body.digitalLiteracyScore,
-        ftl_pretest: req.body.fltPretestScore,
-        callable: req.body.callable,
-        bridger: req.body.bridger,
-        regularity: req.body.selectedRegularity.code,
-        remarks: req.body.selectedRemarks,
-      }
-    )
+    await enrollment.update({ 
+      hasEnrollmentForm: req.body.hasEnrollmentForm,
+      digital_literacy: req.body.digitalLiteracyScore,
+      ftl_pretest: req.body.fltPretestScore,
+      callable: req.body.callable,
+      bridger: req.body.bridger,
+      regularity: req.body.selectedRegularity.code,
+      remarks: req.body.selectedRemarks, 
+    })
     
     res.status(201).json({ 
       message: 'Updated learner enrollment successfully!' 
