@@ -38,17 +38,23 @@ async function getStudent()  {
     const chosenYear = termStore.terms.find(term => { return term.academic_year === props.academicYear })
     schoolLevels.value = chosenYear.class_levels
     
-    selectedLRN.value = enrollmentStore.learner[0].lrn
-    console.log("Full Name: ", enrollmentStore.learner[0].fullName)
-    selectedFullName.value = enrollmentStore.learner[0].fullName
-    selectedSchoolLevel.value = chosenYear.class_levels.find(level => level.school_level === props.classLevel)
-    selectedRegularity.value = { regularity: enrollmentStore.learner[0].regularity, code: enrollmentStore.learner[0].regularity }
-    selectedRemarks.value = enrollmentStore.learner[0].remarks
-    digitalLiteracyScore.value = enrollmentStore.learner[0].digitalLiteracy
-    fltPretestScore.value = enrollmentStore.learner[0].ftlPretest
-    hasEnrollmentForm.value = enrollmentStore.learner[0].hasEnrollmentForm
-    callable.value = enrollmentStore.learner[0].callable
-    bridger.value = enrollmentStore.learner[0].bridger
+    selectedLRN.value = enrollmentStore.learner.lrn
+    selectedFullName.value = enrollmentStore.learner.fullName
+
+    form.value.selectedSchoolLevel = schoolLevels.value.find(level => { 
+      return level.school_level === enrollmentStore.learner.schoolLevel.school_level 
+    })
+
+    form.value.selectedRegularity = { 
+      regularity: enrollmentStore.learner.regularity, code: enrollmentStore.learner.regularity 
+    }
+    
+    form.value.selectedRemarks = enrollmentStore.learner.remarks
+    form.value.digitalLiteracyScore = enrollmentStore.learner.digitalLiteracy
+    form.value.fltPretestScore = enrollmentStore.learner.ftlPretest
+    form.value.hasEnrollmentForm = enrollmentStore.learner.hasEnrollmentForm
+    form.value.callable = enrollmentStore.learner.callable
+    form.value.bridger = enrollmentStore.learner.Bridger
     
   } catch (error) {
     toast.add({
@@ -137,7 +143,7 @@ getStudent()
           <span>School Level</span>
         </div>
         <Dropdown
-          v-model="selectedSchoolLevel"
+          v-model="form.selectedSchoolLevel"
           :options="schoolLevels"
           optionLabel="school_level"
           placeholder="Select a School Level"
@@ -149,7 +155,7 @@ getStudent()
           <span>Regularity</span>
         </div>
         <Dropdown
-          v-model="selectedRegularity"
+          v-model="form.selectedRegularity"
           :options="regularity"
           optionLabel="regularity"
           placeholder="Select a Regularity"
@@ -160,7 +166,7 @@ getStudent()
         <div class="basis-32 text-right">
           <span>Remarks</span>
         </div>
-        <InputText v-model="selectedRemarks" class="w-full md:w-14rem"/>
+        <InputText v-model="form.selectedRemarks" class="w-full md:w-14rem"/>
       </div>
     </div>
 
@@ -170,31 +176,31 @@ getStudent()
         <div class="basis-32 text-right">
           <span>Digital Literacy Score</span>
         </div>
-        <InputNumber id="digitalLiteracy" v-model="digitalLiteracyScore" class="grow"/>
+        <InputNumber id="digitalLiteracy" v-model="form.digitalLiteracyScore" class="grow"/>
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-28 text-right ml-4">
           <span>FLT Pre-Test Score</span>
         </div>
-        <InputNumber v-model="fltPretestScore" class="grow"/>
+        <InputNumber v-model="form.fltPretestScore" class="grow"/>
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Has Enrollment Form</span>
         </div>
-        <Checkbox v-model="hasEnrollmentForm" :binary="true" />
+        <Checkbox v-model="form.hasEnrollmentForm" :binary="true" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Callable</span>
         </div>
-        <Checkbox v-model="callable" :binary="true" />
+        <Checkbox v-model="form.callable" :binary="true" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Bridger</span>
         </div>
-        <Checkbox v-model="bridger" :binary="true" />
+        <Checkbox v-model="form.bridger" :binary="true" />
       </div>
       <div class="flex gap-4 mb-2 items-center place-self-end">
         <Button @click="updateEnrolled" label="Update Learner" class="mt-4" :disabled="!isValid"/>
