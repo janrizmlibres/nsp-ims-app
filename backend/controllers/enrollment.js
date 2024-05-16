@@ -181,16 +181,13 @@ export const updateEnrollment = async (req, res, next) => {
 
 export const getEnrolled = async (req, res, next) => {
   try {
-    const chosenTerm = await Term.findOne({
-      where: {academic_year: academicYear}
+    // Find student from student id and then include the enrollment where it is equal to the enrollmentId which also includes the class level
+    const enrolledStudent = await Enrollment.findByPk(
+      req.params.enrollmentId, {
+      include: [ Student, ClassLevel ]
     })
     
-    const classLevels = await ClassLevel.findAll({
-      where: {termId: chosenTerm.id, school_level: classLevel},
-      include: {model: Student, where: {lrn: lrn}, include: {model: Enrollment}},
-    })
-    
-    if (classLevels.length === 0) {
+    if (!enrolledStudent) {
       const error = new Error("No enrolled student found.");
       error.statusCode = 404;
       throw error;
@@ -214,11 +211,6 @@ export const getEnrolled = async (req, res, next) => {
       message: 'Fetched enrolled student successfully!',
       enrolled: student
     });
-    
-    // Flatten the array
-    const flattenedData = [].concat(...parsedData);
-    
-    res.status(200).json({ message: 'Fetched enrolled student successfully!', enrolled: flattenedData });
     
   } catch (error) {
     if (!error.statusCode) {
