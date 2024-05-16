@@ -24,9 +24,7 @@ export async function getActiveTerm(req, res, next) {
 export async function getAllTerms(req, res, next) {
     try {
         const terms = await Term.findAll(
-            {where: {status: false}, 
-            include: [{model: ClassLevel, 
-                include: [Learner]}]}
+            {include: [ClassLevel]}
         );
 
         res.status(200).json({
