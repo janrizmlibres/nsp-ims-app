@@ -1,6 +1,9 @@
 ﻿import Term from "../models/term.js";
 import Enrollment from '../models/enrollment.js'
-import ClassLevel from "../models/class_level.js";
+import ClassLevel from "../models/class/class_level.js";
+import ClassLearningStrand from '../models/class/class_learning_strand.js'
+import Session from '../models/class/session.js'
+import Module from '../models/class/module.js'
 import Student from '../models/student/student.js'
 
 /**
@@ -111,7 +114,7 @@ export const enrollLearner = async (req, res, next) => {
       throw error;
     }
     
-    await classLevel.addStudent(student, {
+    const enrollment = await classLevel.addStudent(student, {
       through: {
         hasEnrollmentForm: req.body.hasEnrollmentForm,
         digital_literacy: req.body.digitalLiteracyScore,
@@ -124,6 +127,23 @@ export const enrollLearner = async (req, res, next) => {
         remarks: req.body.selectedRemarks,
       }
     });
+    
+    const classLearningStrands = await ClassLearningStrand.findAll({
+      where: {classLevelId: req.body.selectedSchoolLevelId},
+      include: [Module, Session]
+    })
+    
+    classLearningStrands.map(classLearningStrand => {
+      classLearningStrand.addEnrollment(enrollment)
+
+      classLearningStrand.modules.map(module => {
+        module.addEnrollment(enrollment)
+      })
+
+      classLearningStrand.sessions.map(session => {
+        session.addEnrollment(enrollment)
+      })
+    })
     
     res.status(201).json({ 
       message: 'Enrolled learner successfully!' 
