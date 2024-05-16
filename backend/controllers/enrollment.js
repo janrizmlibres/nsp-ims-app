@@ -86,9 +86,7 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
 export const enrollLearner = async (req, res, next) => {
   try {
     //search for the Student ID from its lrn field
-    const student = await Student.findOne(
-      {where: {lrn: lrn}}
-    )
+    const student = await Student.findByPk(req.body.selectedStudentId)
     
     if (!student) {
       const error = new Error("Student not found.");
