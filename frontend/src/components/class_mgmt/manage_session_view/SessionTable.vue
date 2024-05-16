@@ -14,10 +14,8 @@ import { useConfirm } from 'primevue/useconfirm';
 // Custom
 
 // stores
-import { useClassesStore } from '@/stores/classes';
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
-const classesStore = useClassesStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
 const props = defineProps(['learningStrands', 'termStatus'])
@@ -177,13 +175,11 @@ onBeforeRouteLeave((to) => {
 <template>
     <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
     <DataTable 
-        :value="allSessions" dataKey="id" 
-        :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
-        resizableColumns columnResizeMode="fit" showGridlines
+        :value="allSessions" dataKey="id" showGridlines
+        sortField="date" :sortOrder="-1" removableSort
         v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
         :paginator="allSessions.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        :ptOptions="{mergeProps:true}"
-        :pt="customPt"
+        :pt="customPt" :ptOptions="{mergeProps:true}"
     >
         <template #empty> <div class="text-center">No records found.</div> </template>
         <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>

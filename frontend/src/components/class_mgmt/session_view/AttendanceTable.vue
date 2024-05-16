@@ -145,11 +145,10 @@ onBeforeRouteLeave((to) => {
 <template>
     <DataTable 
         :value="learners" dataKey="id" 
-        sortField="lastName" :sortOrder="1" removableSort 
-        resizableColumns columnResizeMode="fit" showGridlines ref="exportRef"
+        sortField="lastName" :sortOrder="1" removableSort
+        showGridlines ref="exportRef"
         :paginator="learners.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        :ptOptions="{mergeProps:true}"
-        :pt="customPt"
+        :pt="customPt" :ptOptions="{mergeProps:true}"
     >
         <template #empty> <div class="text-center">No records found.</div> </template>
         <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
