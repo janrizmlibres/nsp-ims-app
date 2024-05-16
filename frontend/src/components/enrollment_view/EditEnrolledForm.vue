@@ -19,8 +19,15 @@ const router = useRouter()
 
 const schoolLevels = ref([])
 
-const isValid = computed(() => {
-  return selectedSchoolLevel.value && selectedRegularity.value.regularity
+const form = ref({
+  selectedSchoolLevel: null,
+  hasEnrollmentForm: null,
+  digitalLiteracyScore: null,
+  fltPretestScore: null,
+  callable: null,
+  bridger: null,
+  selectedRegularity: null,
+  selectedRemarks: null,
 })
 
 async function getStudent()  {
@@ -60,14 +67,6 @@ const regularity = ref([
 
 const selectedLRN = ref();
 const selectedFullName = ref();
-const selectedSchoolLevel = ref();
-const selectedRegularity = ref();
-const selectedRemarks = ref();
-const digitalLiteracyScore = ref();
-const fltPretestScore = ref();
-const hasEnrollmentForm = ref();
-const callable = ref();
-const bridger = ref();
 
 async function updateEnrolled() {
   try {
