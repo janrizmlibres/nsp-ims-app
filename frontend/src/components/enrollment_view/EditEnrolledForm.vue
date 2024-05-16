@@ -144,13 +144,8 @@ getStudent()
         <div class="basis-32 text-right">
           <span>School Level</span>
         </div>
-        <Dropdown
-          v-model="form.selectedSchoolLevel"
-          :options="schoolLevels"
-          optionLabel="school_level"
-          placeholder="Select a School Level"
-          class="w-full md:w-14rem h-11"
-        />
+        <InputText
+          v-model="selectedSchoolLevel" disabled class="w-full md:w-14rem h-11" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="text-right basis-32">
