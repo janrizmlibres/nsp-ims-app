@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.get("/students", isAuth, profileController.getStudents);
 
+router.get("/student/:studentId", isAuth, profileController.getStudent);
+
 router.post(
   "/add-student",
   isAuth,

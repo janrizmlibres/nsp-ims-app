@@ -25,6 +25,35 @@ export async function getStudents(_req, res, next) {
   }
 }
 
+export async function getStudent(req, res, next) {
+  const studentId = req.params.studentId;
+
+  try {
+    const student = Student.findByPk(studentId, {
+      include: [
+        PersonalInfo,
+        ContactInfo,
+        PreviousSchool,
+        ParentalInfo,
+        EmergencyPerson,
+      ],
+    });
+
+    if (!student) {
+      const error = Error("Student cannot be found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({ message: "Student fetched.", student: student });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
 export async function addStudent(req, res, next) {
   try {
     const errors = validationResult(req);
@@ -75,33 +104,6 @@ export async function addStudent(req, res, next) {
       message: "Student record created.",
       student: student,
     });
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-  }
-}
-
-export async function getStudent(req, res, next) {
-  try {
-    const student = Student.findByPk(req.body.id, {
-      include: [
-        PersonalInfo,
-        ContactInfo,
-        PreviousSchool,
-        ParentalInfo,
-        EmergencyPerson,
-      ],
-    });
-
-    if (!student) {
-      const error = Error("Student cannot be found.");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    res.status(200).json({ message: "Student fetched.", student: student });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
