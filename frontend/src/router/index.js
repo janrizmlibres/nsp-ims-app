@@ -74,10 +74,6 @@ const router = createRouter({
         },
         {
           path: 'enrollment',
-          beforeEnter: () => {
-            const authStore = useAuthStore()
-            return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
-          },
           children: [
             {
               path: 'current',
@@ -92,13 +88,21 @@ const router = createRouter({
             {
               path: 'enroll-learners',
               name: 'enroll-learners',
-              component: EnrollLearnersView
+              component: EnrollLearnersView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              },
             },
             {
               path: 'edit-enrolled',
               name: 'edit-enrolled',
-              query: { lrn: Number, academicYear: String, classLevel: String },
-              component: EditEnrolledView
+              query: { studentId: Number, enrollmentId: Number, academicYear: String},
+              component: EditEnrolledView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              },
             }
           ]
         },
