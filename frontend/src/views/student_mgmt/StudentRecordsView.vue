@@ -1,6 +1,7 @@
 <script setup>
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import Button from 'primevue/button'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import StudentHeader from '@/components/student_mgmt/StudentHeader.vue'
@@ -47,6 +48,14 @@ onMounted(async () => {
       scrollable
       removableSort
     >
+      <Column header="">
+        <template #body="slotProps">
+          <RouterLink :to="{ name: 'view-student', params: { studentId: slotProps.data.id } }">
+            <Button class="h-8" label="View" icon="fa-solid fa-eye" outlined />
+          </RouterLink>
+        </template>
+      </Column>
+
       <Column
         v-for="col of columns"
         :key="col.field"

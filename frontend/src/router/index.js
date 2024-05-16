@@ -31,7 +31,6 @@ import ManageGradeView from '@/views/class_mgmt/ManageGradeView.vue'
 import ManageSessionView from '@/views/class_mgmt/ManageSessionView.vue'
 import SessionView from '@/views/class_mgmt/SessionView.vue'
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -66,6 +65,12 @@ const router = createRouter({
               path: 'add',
               name: 'add-student',
               component: StudentFormView
+            },
+            {
+              path: ':studentId',
+              name: 'view-student',
+              component: StudentFormView,
+              props: true
             }
           ]
         },
@@ -113,7 +118,7 @@ const router = createRouter({
               beforeEnter: (to) => {
                 return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
               }
-            },
+            }
           ]
         },
         {

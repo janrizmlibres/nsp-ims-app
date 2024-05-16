@@ -29,7 +29,7 @@ export async function getStudent(req, res, next) {
   const studentId = req.params.studentId;
 
   try {
-    const student = Student.findByPk(studentId, {
+    const student = await Student.findByPk(studentId, {
       include: [
         PersonalInfo,
         ContactInfo,
@@ -72,7 +72,7 @@ export async function addStudent(req, res, next) {
 
     const student = await Student.create({
       ...req.body.identity,
-      photoUrl: req.file.path,
+      photoUrl: req.file.path.replace("\\", "/"),
     });
 
     await PersonalInfo.create({

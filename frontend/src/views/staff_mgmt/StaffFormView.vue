@@ -125,12 +125,6 @@ onMounted(async () => {
 
     updateKey.value += 1
   } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
-    })
     router.back()
   }
 })

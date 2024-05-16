@@ -2,6 +2,7 @@
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
 
+import { onMounted } from 'vue'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
@@ -10,6 +11,13 @@ import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
 import { useStudentsStore } from '@/stores/students'
 
 import FormParts from '../../util/student_form_parts'
+
+const props = defineProps({
+  studentId: {
+    type: String,
+    default: null
+  }
+})
 
 const router = useRouter()
 const toast = useToast()
@@ -134,6 +142,19 @@ onBeforeRouteLeave((to) => {
   })
 
   return false
+})
+
+onMounted(async () => {
+  if (props.studentId === null) return
+
+  try {
+    const result = await studentsStore.getStudent(props.studentId)
+    const student = result.data.student
+
+    console.log(student)
+  } catch (error) {
+    router.back()
+  }
 })
 </script>
 
