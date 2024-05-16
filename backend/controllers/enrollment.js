@@ -223,41 +223,12 @@ export const getEnrolled = async (req, res, next) => {
 
 export const changeEnrollmentStatus = async (req, res, next) => {
   try {
-    //search for the Student ID from its lrn field
-    const student = await Student.findOne(
-      {where: {lrn: lrn}}
-    )
-
-    if (!student) {
-      const error = new Error("Student not found.");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    const chosenTerm = await Term.findOne({
-      where: {academic_year: academicYear}
+    const enrollment = await Enrollment.findByPk(req.params.enrollmentId)
+    
+    await enrollment.update({
+      status: req.body.statusToChange
     })
-
-    const chosenClassLevel = await ClassLevel.findOne({
-      where: {termId: chosenTerm.id, school_level: classLevel},
-      include: {model: Student, where: {lrn: lrn}},
-    })
-
-    // Check if student is already enrolled in the class level
-    const isEnrolled = await chosenClassLevel.hasStudent(student);
-
-    if (!isEnrolled) {
-      const error = new Error("Student is not enrolled in this year class level.");
-      error.statusCode = 400;
-      throw error;
-    }
-
-    await chosenClassLevel.addStudent(student, {
-      through: {
-        status: statusToChange
-      }
-    });
-
+    
     res.status(201).json({
       message: 'Updated learner enrollment successfully!'
     });
