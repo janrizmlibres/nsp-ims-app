@@ -53,7 +53,7 @@ const confirmStatusChange = (data) => {
 
 async function changeStatus(data, statusToChange) {
   try {
-    await enrollmentStore.changeEnrolledStatus(data.lrn, data.term, data.schoolLevel, statusToChange)
+    await enrollmentStore.changeEnrolledStatus(data.enrollmentId, statusToChange)
     await refreshStudentTable()
     toast.add({
       severity: 'success',
