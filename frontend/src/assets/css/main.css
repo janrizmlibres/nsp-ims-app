@@ -167,6 +167,16 @@
   }
 }
 
+td:first-child {
+  margin-left: 2rem;
+  border-radius:0.5rem 0 0 0.5rem;
+}
+
+td:last-child {
+  margin-right: 2rem;
+  border-radius:0 0.5rem 0.5rem 0;
+}
+
 html {
   background-color: #eeeeee;
 }

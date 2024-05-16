@@ -20,6 +20,9 @@ const router = useRouter()
 const confirm = useConfirm()
 
 const customPt = {
+    table: {
+        class: ['px-1 border-spacing-y-4']
+    },
     column: {
         headercell: ({ context, props }) => ({
             class: [
@@ -27,8 +30,14 @@ const customPt = {
                 // Color
                 (props.sortable === '' || props.sortable) && context.sorted ? 'bg-surface-200' : 'bg-surface-200'
             ]
-        })
-    }
+        }),
+        bodycell: {
+            class: ['my-4']
+        }
+    },
+    bodyrow: {
+        class: ['rounded-lg shadow-[0_0_2px_rgb(0,0,0,0.2)]']
+    },
 }
 
 const emit = defineEmits(['onUpdate'])
@@ -137,7 +146,7 @@ onBeforeRouteLeave((to) => {
 
 <template>
     <DataTable 
-        :value="grades" dataKey="id" showGridlines
+        :value="grades" dataKey="id"
         sortField="lastName" :sortOrder="1" removableSort 
         :paginator="grades.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
         :pt="customPt" :ptOptions="{mergeProps:true}"

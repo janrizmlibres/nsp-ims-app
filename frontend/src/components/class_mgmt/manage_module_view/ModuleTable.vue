@@ -32,6 +32,9 @@ const cols = ref([
 ])
 
 const customPt = {
+    table: {
+        class: ['px-1 border-spacing-y-4']
+    },
     column: {
         headercell: ({ context, props }) => ({
             class: [
@@ -39,8 +42,14 @@ const customPt = {
                 // Color
                 (props.sortable === '' || props.sortable) && context.sorted ? 'bg-surface-200' : 'bg-surface-200'
             ]
-        })
-    }
+        }),
+        bodycell: {
+            class: ['my-4']
+        }
+    },
+    bodyrow: {
+        class: ['rounded-lg shadow-[0_0_2px_rgb(0,0,0,0.2)]']
+    },
 }
 
 const termStatus = computed(() => props.termStatus)
@@ -159,7 +168,7 @@ onBeforeRouteLeave((to) => {
 <template>
     <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
     <DataTable 
-        :value="allModules" dataKey="id" showGridlines
+        :value="allModules" dataKey="id"
         sortField="retrieval_date" :sortOrder="-1" removableSort 
         v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
         :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
