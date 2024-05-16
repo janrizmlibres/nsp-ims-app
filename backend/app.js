@@ -9,7 +9,7 @@ import authRoutes from "./routes/auth.js";
 import enrollmentRoutes from "./routes/enrollment.js";
 import termRoutes from "./routes/term.js";
 import classRoutes from "./routes/class.js";
-import strandRoutes from "./routes/strand.js";
+import classLearningStrandRoutes from "./routes/class_learning_strand.js";
 import utilitiesRoutes from "./routes/utilities.js";
 import volunteerRoutes from "./routes/volunteer.js";
 import profileRoutes from "./routes/profile.js";
@@ -44,7 +44,7 @@ app.use("/auth", authRoutes);
 app.use("/enrollment", enrollmentRoutes)
 app.use("/term", termRoutes);
 app.use("/class", classRoutes);
-app.use("/strand", strandRoutes);
+app.use("/classLearningStrand", classLearningStrandRoutes);
 app.use("/utilities", utilitiesRoutes);
 app.use("/volunteer", volunteerRoutes);
 

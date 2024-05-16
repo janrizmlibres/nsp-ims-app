@@ -11,10 +11,9 @@ import EnrollLearnersView from '@/views/enrollment/EnrollLearnersView.vue'
 import EditEnrolledView from '@/views/enrollment/EditEnrolledView.vue'
 
 // Class Management Views
-import ClassesView from '../views/class_mgmt/ClassesView.vue'
-import ClassView from '../views/class_mgmt/ClassView.vue'
-import StrandView from '../views/class_mgmt/StrandView.vue'
+import ManageClassView from '@/views/class_mgmt/ManageClassView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
+import SessionView from '@/views/class_mgmt/SessionView.vue'
 
 // Utilities Views
 import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
@@ -115,33 +114,27 @@ const router = createRouter({
           children: [
             {
               path: '/class',
-              name: 'class',
-              component: ClassView,
-              query: {
-                id: Number,
-                action: String
-              },
-              beforeEnter: (to) => {
-                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
-              }
-            },
-            {
-              path: '/strand',
-              name: 'strand-info',
-              component: StrandView,
-              query: { id: Number }
+              name: 'class-management',
+              component: ManageClassView
             },
             {
               path: '/module',
               name: 'module-info',
               component: ModuleView,
-              query: { id: Number }
+              query: { id: Number, status: Boolean },
+              beforeEnter: (to) => {
+                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
+              }
             },
             {
-              path: 'classes',
-              name: 'class-records',
-              component: ClassesView
-            }
+              path: '/session',
+              name: 'session-info',
+              component: SessionView,
+              query: { id: Number, status: Boolean },
+              beforeEnter: (to) => {
+                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
+              }
+            },
           ]
         },
         {

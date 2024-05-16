@@ -4,8 +4,18 @@ import { useAuthStore } from './auth'
 import { ref } from 'vue'
 
 export const useUtilitiesStore = defineStore('utilities', () => {
-    const learningStrands = ref()
+    const terms = ref([])
 
+    async function getTerms() {
+        const authStore = useAuthStore()
+
+        const result = await axios.get('http://localhost:8080/utilities/terms', {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+        })
+
+        terms.value = result.data.data
+    }
+    
     async function getLearningStrands() {
         const authStore = useAuthStore()
 
@@ -13,16 +23,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         headers: { Authorization: 'Bearer ' + authStore.token }
         })
 
-        learningStrands.value = result.data.data
+        return result.data.data
     }
 
-    async function createTerm(form) {
-        const authStore = useAuthStore()
-
-        await axios.post(`http://localhost:8080/utilities/terms/create`, form, {
-        headers: { Authorization: 'Bearer ' + authStore.token }
-        })
-    }
-
-    return { learningStrands, getLearningStrands, createTerm }
+    return { terms, getLearningStrands, getTerms }
 })

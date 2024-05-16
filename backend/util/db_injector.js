@@ -4,33 +4,135 @@ import Student from "../models/student/student.js";
 import Staff from "../models/staff/staff.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
-import ClassLevel from "../models/class_level.js";
-import Learner from "../models/learner.js";
 import Volunteer from "../models/volunteer/volunteer.js";
+import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
+import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
+import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
+import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
+import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
+import StudentVolunteer from "../models/volunteer/student_volunteer.js";
+import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
+import ClassLevel from "../models/class/class_level.js";
+import ClassLearningStrand from "../models/class/class_learning_strand.js";
 
 export async function injectAll() {
   await injectStaff();
-  await injectStudent();
-  await injectAcademicYear();
   await injectLearningStrand();
-  await injectLearner();
+  await injectAcademicYear();
+  await injectStudent();
   await injectVolunteer();
 }
 
 export async function injectStudent() {
-  await Student.create({
-    lrn: "198765150721",
-    category: "Out-of-School Youth",
-    firstName: "Juan",
-    lastName: "Dela Cruz",
-  });
+  const studentData = [
+    {
+      lrn: 1242312145189,
+      lastName: "Dela Cruz",
+      firstName: "Juan",
+      category: "Out-of-School Youth",
+    },
+    {
+      lrn: 1242312145145,
+      lastName: "Bautista",
+      firstName: "Felix",
+      middleName: "Polso",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Amidrano",
+      firstName: "Nicolette",
+      middleName: "Bucio",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Fernandez",
+      firstName: "Hero",
+      middleName: "Baltazar",
+      category: "Out-of-School Youth",
+    },
+    {
+      lrn: 1242312145714,
+      lastName: "Santos",
+      firstName: "Dominic",
+      middleName: "Dicolano",
+      category: "Out-of-School Youth",
+    },
+    {
+      lrn: 1242562145189,
+      lastName: "Fulminar",
+      firstName: "Ashley",
+      middleName: "De Guzman",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Quintos",
+      firstName: "Ariel",
+      middleName: "Furtonado",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Hilot",
+      firstName: "Van",
+      middleName: "Culminares",
+      category: "Out-of-School Youth",
+    },
+    {
+      lrn: 1247192145189,
+      lastName: "Alonto",
+      firstName: "Princess Aliah",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Montecillo",
+      firstName: "Dirk",
+      middleName: "Santocildis",
+      category: "Out-of-School Youth",
+    },
+  ];
 
-  await Student.create({
-    lrn: "127051567891",
-    category: "Out-of-School Youth",
-    firstName: "Pedro",
-    lastName: "Pascual",
-  });
+  await Promise.all(
+    studentData.map(async (student) => {
+      await Student.create(student);
+    })
+  );
+
+  function getRandomStatus() {
+    let status = ["Inactive", "Active", "Drop"];
+    return status[Math.floor(Math.random() * 2)];
+  }
+  
+  function getRegularity() {
+    let status = ["Regular", "Hybrid"];
+    return status[Math.floor(Math.random() * 2)];
+  }
+
+  const students = await Student.findAll();
+  await Promise.all(    
+    students.map(async (student) => {
+      const class_levels = await ClassLevel.findAll();
+      await Promise.all(
+        class_levels.map(async (class_level) => {
+          const enrollment = await class_level.addStudent(student, {
+            through: {
+              hasEnrollmentForm: true,
+              status: getRandomStatus(),
+              regularity: getRegularity(),
+            },
+          });
+
+          const classLearningStrands = await ClassLearningStrand.findAll({
+            where: {classLevelId: class_level.id}
+          });
+
+          await Promise.all(
+            classLearningStrands.map(async (classLearningStrand) => {
+              classLearningStrand.addEnrollment(enrollment)
+            })
+          )
+        })
+      );
+    })
+  );
 }
 
 export async function injectStaff() {
@@ -251,112 +353,19 @@ export async function injectAcademicYear() {
     })
   );
 
-  const active_year = await Term.findOne({ where: { status: true } });
+  const academic_years = await Term.findAll()
+  const learningStrands = await LearningStrand.findAll()
 
   await Promise.all(
-    classLevelData.map(async (class_level) => {
-      await active_year.createClass_level({
-        school_level: class_level.school_level,
-      });
-    })
-  );
-}
-
-export async function injectLearner() {
-  const learnerData = [
-    {
-      lrn: 1242312145189,
-      lastName: "Dela Cruz",
-      firstName: "Juan",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242312145145,
-      lastName: "Bautista",
-      firstName: "Felix",
-      middleName: "Polso",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Amidrano",
-      firstName: "Nicolette",
-      middleName: "Bucio",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Fernandez",
-      firstName: "Hero",
-      middleName: "Baltazar",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242312145714,
-      lastName: "Santos",
-      firstName: "Dominic",
-      middleName: "Dicolano",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242562145189,
-      lastName: "Fulminar",
-      firstName: "Ashley",
-      middleName: "De Guzman",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Quintos",
-      firstName: "Ariel",
-      middleName: "Furtonado",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Hilot",
-      firstName: "Van",
-      middleName: "Culminares",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1247192145189,
-      lastName: "Alonto",
-      firstName: "Princess Aliah",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Montecillo",
-      firstName: "Dirk",
-      middleName: "Santocildis",
-      category: "Out-of-School Youth",
-    },
-  ];
-
-  await Promise.all(
-    learnerData.map(async (learner) => {
-      await Learner.create(learner);
-    })
-  );
-
-  const class_levels = await ClassLevel.findAll();
-
-  function getRandomStatus() {
-    let status = ["Inactive", "Active", "Drop"];
-    return status[Math.floor(Math.random() * 2)];
-  }
-
-  await Promise.all(
-    class_levels.map(async (class_level) => {
-      const learners = await Learner.findAll();
-
-      await Promise.all(
-        learners.map(async (learner) => {
-          class_level.addLearner(learner, {
-            through: {
-              hasEnrollmentForm: true,
-              status: getRandomStatus(),
-              modularity: "Regular",
-            },
-          });
+    academic_years.map(async (academic_year) => {
+      classLevelData.map(async (class_level) => {
+        const classLevel = await academic_year.createClass_level({
+          school_level: class_level.school_level,
+        });
+        learningStrands.map(async (learningStrand) => {
+          await classLevel.addLearning_strand(learningStrand)
         })
-      );
+      })
     })
   );
 }
@@ -474,9 +483,251 @@ export async function injectVolunteer() {
     },
   ];
 
+  const volunteerPersonalInformationData = [
+    {
+      nickname: "Shelly",
+      sex: "Female",
+      birthday: new Date(1980, 1, 1),
+      housing: "123 Main St",
+      barangay: "Barangay 1",
+      city: "City A",
+      province: "Province A"
+    },
+    {
+      nickname: "Alonzo",
+      sex: "Male",
+      birthday: new Date(1985, 1, 1),
+      housing: "456 Maple Ave",
+      barangay: "Barangay 2",
+      city: "City B",
+      province: "Province B"
+    },
+    {
+      nickname: "Alejandra",
+      sex: "Female",
+      birthday: new Date(1990, 1, 1),
+      housing: "789 Oak St",
+      barangay: "Barangay 3",
+      city: "City C",
+      province: "Province C"
+    },
+    {
+      nickname: "Gabriel",
+      sex: "Male",
+      birthday: new Date(1995, 1, 1),
+      housing: "1011 Pine Ave",
+      barangay: "Barangay 4",
+      city: "City D",
+      province: "Province D"
+    },
+    {
+      nickname: "John",
+      sex: "Male",
+      birthday: new Date(1985, 1, 1),
+      housing: "1213 Birch Blvd",
+      barangay: "Barangay 5",
+      city: "City E",
+      province: "Province E"
+    },
+    {
+      nickname: "Job",
+      sex: "Male",
+      birthday: new Date(1990, 1, 1),
+      housing: "1415 Cedar Ct",
+      barangay: "Barangay 6",
+      city: "City F",
+      province: "Province F"
+    },
+    {
+      nickname: "Wilson",
+      sex: "Male",
+      birthday: new Date(1995, 1, 1),
+      housing: "1617 Dogwood Dr",
+      barangay: "Barangay 7",
+      city: "City G",
+      province: "Province G"
+    },
+    {
+      nickname: "Felixson",
+      sex: "Male",
+      birthday: new Date(2000, 1, 1),
+      housing: "1819 Elm St",
+      barangay: "Barangay 8",
+      city: "City H",
+      province: "Province H"
+    },
+    {
+      nickname: "Fernan",
+      sex: "Female",
+      birthday: new Date(1980, 1, 1),
+      housing: "2021 Fir St",
+      barangay: "Barangay 9",
+      city: "City I",
+      province: "Province I"
+    },
+    {
+      nickname: "Kenneth",
+      sex: "Male",
+      birthday: new Date(1985, 1, 1),
+      housing: "2223 Grove St",
+      barangay: "Barangay 10",
+      city: "City J",
+      province: "Province J"
+    },
+    {
+      nickname: "Daisy",
+      sex: "Female",
+      birthday: new Date(1990, 1, 1),
+      housing: "2425 Hickory St",
+      barangay: "Barangay 11",
+      city: "City K",
+      province: "Province K"
+    },
+    // ... add more entries here ...
+  ];
+
+  const volunteerEmergencyContacts = [
+    { firstName: "John", lastName: "Doe", contactNumber: 1234567890, relationship: "Brother" },
+    { firstName: "Jane", lastName: "Doe", contactNumber: 2345678901, relationship: "Sister" },
+    { firstName: "Jim", lastName: "Doe", contactNumber: 3456789012, relationship: "Brother" },
+    { firstName: "Jill", lastName: "Doe", contactNumber: 4567890123, relationship: "Sister" },
+    { firstName: "Joe", lastName: "Doe", contactNumber: 5678901234, relationship: "Brother" },
+    { firstName: "Jenny", lastName: "Doe", contactNumber: 6789012345, relationship: "Sister" },
+    { firstName: "Jerry", lastName: "Doe", contactNumber: 7890123456, relationship: "Brother" },
+    { firstName: "Jess", lastName: "Doe", contactNumber: 8901234567, relationship: "Sister" },
+    { firstName: "Jack", lastName: "Doe", contactNumber: 9012345678, relationship: "Brother" },
+    { firstName: "Jasmine", lastName: "Doe", contactNumber: 1234567890, relationship: "Sister" },
+    { firstName: "Jacob", lastName: "Doe", contactNumber: 2345678901, relationship: "Brother" }
+  ];
+
+  const StudentVolunteer = [
+    {
+      program: "BS PSY",
+      year: "1st",
+    },
+    {
+      program: "BS CS",
+      year: "2nd",
+    },
+    {
+      program: "BS IT",
+      year: "3rd",
+    },
+    {
+      program: "BS IS",
+      year: "4th",
+    },
+    {
+      program: "BS E",
+      year: "1st",
+    },
+    {
+      program: "BS CE",
+      year: "2nd",
+    },
+    {
+      program: "AB PHILO",
+      year: "3rd",
+    },
+    {
+      program: "BS PSY",
+      year: "4th",
+    },
+    {
+      program: "BS CS",
+      year: "1st",
+    },
+    {
+      program: "BS IT",
+      year: "1st",
+    },
+    {
+      program: "BS E",
+      year: "1st",
+    },
+  ];
+
+
+  const volunteerContactInformationData = [
+    {
+      contactNumber: "09123456789",
+      facebook: "Shelly-Cruz",
+      email: "shelly-cruz@example.com"
+    },
+    {
+      contactNumber: "09123456788",
+      facebook: "Alonzo-Fuentes",
+      email: "alonzo-fuentes@example.com"
+    },
+    {
+      contactNumber: "09123456787",
+      facebook: "Alejandra-Firma",
+      email: "alejandra-firma@example.com"
+    },
+    {
+      contactNumber: "09123456786",
+      facebook: "Gabriel-Horticullado",
+      email: "Gabriel-Horticullado@example.com"
+    },
+    {
+      contactNumber: "09123456785",
+      facebook: "John-Santos",
+      email: "John-Santos@example.com"
+    },
+    {
+      contactNumber: "09123456784",
+      facebook: "Job-Dapin",
+      email: "Job-Dapin@example.com"
+    },
+    {
+      contactNumber: "09123456783",
+      facebook: "Wilson-Roa",
+      email: "Wilson-Roa@example.com"
+    },
+    {
+      contactNumber: "09123456782",
+      facebook: "Felixson-Dimagiba",
+      email: "Felixson-Dimagiba@example.com"
+    },
+    {
+      contactNumber: "09123456781",
+      facebook: "Fernan-Goma",
+      email: "Fernan-Goma@example.com"
+    },
+    {
+      contactNumber: "09123456780",
+      facebook: "Kenneth-Lopez",
+      email: "Kenneth-Lopez@example.com"
+    },
+    {
+      contactNumber: "09123456779",
+      facebook: "Daisy-Sayson",
+      email: "Daisy-Sayson@example.com"
+    },
+    // ... add more entries here ...
+  ];
+
+  function getRandomAvailability() {
+    let availability = ["M", "T", "W", "TH", "F", "S"];
+    return availability[Math.floor(Math.random() * 2)];
+  }
+
+  function getSpecialization() {
+    let area = ["LS1-E", "LS1-F", "LS2-S", "LS3-M", "LS4-CLS", "LS5-UTS", "LS6-DL", "Homeroom", ];
+    return area[Math.floor(Math.random() * 2)];
+  }
+
   await Promise.all(
-    volunteerData.map(async (volunteer) => {
-      await Volunteer.create(volunteer);
+    volunteerData.map(async (data, index) => {
+
+      const volunteer = await Volunteer.create(data);
+
+      volunteer.createStudent_volunteer(StudentVolunteer[index])
+      volunteer.createVolunteer_personal_information(volunteerPersonalInformationData[index])
+      volunteer.createVolunteer_emergency_contact(volunteerEmergencyContacts[index])
+      volunteer.createVolunteer_contact_information(volunteerContactInformationData[index])
+      volunteer.createVolunteer_availability({day: getRandomAvailability()})
+      volunteer.createVolunteer_specialization({area: getSpecialization()})
     })
   );
 }
