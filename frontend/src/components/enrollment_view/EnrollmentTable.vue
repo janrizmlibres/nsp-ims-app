@@ -117,7 +117,7 @@ const statuses = ref(['Active', 'Inactive', 'Drop']);
 const schoolLevels = ref(['Grade School', 'Junior High School'])
 
 function editEnrolled(data) {
-  router.push({ name: 'edit-enrolled', query: { lrn: data.lrn, academicYear: data.term, classLevel: data.schoolLevel } })
+  router.push({ name: 'edit-enrolled', query: { studentId: data.studentId, enrollmentId: data.enrollmentId, academicYear: data.term } })
 }
 
 </script>
