@@ -33,6 +33,7 @@ const isValid = computed(() => {
 })
 
 const form = ref({
+  selectedStudentId: null,
   hasEnrollmentForm: null,
   digitalLiteracyScore: null,
   fltPretestScore: null,
@@ -53,9 +54,7 @@ async function getStudent()  {
     selectedLRN.value = enrollmentStore.learner.lrn
     selectedFullName.value = enrollmentStore.learner.fullName
 
-    form.value.selectedSchoolLevel = schoolLevels.value.find(level => { 
-      return level.school_level === enrollmentStore.learner.schoolLevel.school_level 
-    })
+    selectedSchoolLevel.value = enrollmentStore.learner.schoolLevel.school_level
 
     form.value.selectedRegularity = { 
       regularity: enrollmentStore.learner.regularity, code: enrollmentStore.learner.regularity 
@@ -80,6 +79,8 @@ async function getStudent()  {
 
 async function updateEnrolled() {
   try {
+    form.value.selectedStudentId = props.studentId
+    
     await enrollmentStore.updateLearner(
       props.enrollmentId,
       form.value
