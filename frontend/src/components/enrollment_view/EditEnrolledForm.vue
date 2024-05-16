@@ -33,7 +33,6 @@ const isValid = computed(() => {
 })
 
 const form = ref({
-  selectedStudentId: null,
   hasEnrollmentForm: null,
   digitalLiteracyScore: null,
   fltPretestScore: null,
@@ -79,8 +78,6 @@ async function getStudent()  {
 
 async function updateEnrolled() {
   try {
-    form.value.selectedStudentId = props.studentId
-    
     await enrollmentStore.updateLearner(
       props.enrollmentId,
       form.value
