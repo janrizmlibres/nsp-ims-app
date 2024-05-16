@@ -203,7 +203,7 @@ getStudent()
         <Checkbox v-model="form.bridger" :binary="true" />
       </div>
       <div class="flex gap-4 mb-2 items-center place-self-end">
-        <Button @click="updateEnrolled" label="Update Learner" class="mt-4" :disabled="!isValid"/>
+        <Button @click="updateEnrolled" label="Update Learner" class="mt-4" />
         <Button @click="cancelEdit" label="Cancel" class="mt-4"/>
       </div>
     </div>
