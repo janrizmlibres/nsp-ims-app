@@ -24,10 +24,22 @@ const Grade = sequelize.define("grade", {
       key: "id",
     },
   },
-  first_quarter: BOOLEAN,
-  second_quarter: BOOLEAN,
-  third_quarter: BOOLEAN,
-  fourth_quarter: BOOLEAN,
+  first_quarter: {
+    type: BOOLEAN,
+    defaultValue: false
+  },
+  second_quarter: {
+    type: BOOLEAN,
+    defaultValue: false
+  },
+  third_quarter: {
+    type: BOOLEAN,
+    defaultValue: false
+  },
+  fourth_quarter: {
+    type: BOOLEAN,
+    defaultValue: false
+  },
   remarks: STRING,
 });
 
