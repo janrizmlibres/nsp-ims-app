@@ -20,7 +20,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     learners.value = result.data.learners
   }
   
-  async function getEnrolled(lrn, termID, classLevel) {
+  async function getEnrolled(studentId, enrollmentId) {
     const authStore = useAuthStore()
 
     const result = await axios.get(
@@ -40,17 +40,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     
     const authStore = useAuthStore()
     
-    await axios.post('http://localhost:8080/enrollment/enroll-learner', {
-      lrn,
-      classLevelID,
-      hasEnrollmentForm,
-      digital_literacy,
-      ftl_pretest,
-      callable,
-      bridger,
-      regularity,
-      remarks
-    }, {
+    await axios.post('http://localhost:8080/enrollment/enroll-learner', data, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
   }
@@ -74,7 +64,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     })
   }
   
-  async function changeEnrolledStatus(lrn, academicYear, classLevel, statusToChange) {
+  async function changeEnrolledStatus(enrollmentId, statusToChange) {
     const authStore = useAuthStore()
 
     await axios.post('http://localhost:8080/enrollment/change-enrollment-status', {
