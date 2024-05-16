@@ -26,7 +26,7 @@ const selectedFullName = ref()
 schoolLevels.value = termStore.activeTerm.class_levels
 
 const isValid = computed(() => {
-  return form.value.selectedStudentId && form.value.selectedSchoolLevel
+  return form.value.selectedStudentId && form.value.selectedSchoolLevelId
 })
 
 const regularity = ref([
@@ -38,7 +38,7 @@ const form = ref()
 
 form.value = {
   selectedStudentId: null,
-  selectedSchoolLevel: null,
+  selectedSchoolLevelId: null,
   hasEnrollmentForm: null,
   digitalLiteracyScore: null,
   fltPretestScore: null,
@@ -122,7 +122,7 @@ async function submitEvent() {
           <span>Class Level<span class="text-red-500">*</span></span>
         </div>
         <Dropdown
-          v-model="form.selectedSchoolLevel"
+          v-model="form.selectedSchoolLevelId"
           :options="schoolLevels"
           optionValue="id"
           optionLabel="school_level"
