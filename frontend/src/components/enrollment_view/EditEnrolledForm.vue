@@ -35,7 +35,7 @@ async function getStudent()  {
     await enrollmentStore.getEnrolled(props.studentId, props.enrollmentId)
     await termStore.getTerms()
 
-    const chosenYear = termStore.terms.find(term => term.academic_year === props.academicYear)
+    const chosenYear = termStore.terms.find(term => { return term.academic_year === props.academicYear })
     schoolLevels.value = chosenYear.class_levels
     
     selectedLRN.value = enrollmentStore.learner[0].lrn
