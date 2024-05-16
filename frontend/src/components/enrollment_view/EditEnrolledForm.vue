@@ -105,15 +105,15 @@ function cancelEdit() {
 }
 
 const props = defineProps({
-  lrn: {
+  studentId: {
+    type: String,
+    required: true
+  },
+  enrollmentId: {
     type: String,
     required: true
   },
   academicYear: {
-    type: String,
-    required: true
-  },
-  classLevel: {
     type: String,
     required: true
   }
