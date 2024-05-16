@@ -35,6 +35,7 @@ export async function injectStudent() {
     category: "Out-of-School Youth",
     firstName: "Juan",
     lastName: "Dela Cruz",
+    photoUrl: "/images/gordon.jpg",
   });
 
   await PersonalInfo.create({
@@ -86,6 +87,7 @@ export async function injectStudent() {
     category: "In-School Youth",
     firstName: "Maria",
     lastName: "Santos",
+    photoUrl: "/images/kim.jpg",
   });
 
   await PersonalInfo.create({

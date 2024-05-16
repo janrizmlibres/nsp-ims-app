@@ -12,7 +12,7 @@ router.post(
   "/add-student",
   isAuth,
   [
-    // body("identity").customSanitizer((value) => JSON.parse(value)),
+    body("identity").customSanitizer((value) => JSON.parse(value)),
     body("identity.firstName").trim().isAscii(),
     body("identity.middleName")
       .optional({ values: "falsy" })
@@ -25,7 +25,6 @@ router.post(
       .matches("^[A-Za-z]+.$"),
     body("identity.lrn").isNumeric({ locale: "en-US" }),
     body("identity.category").exists({ values: "null" }),
-    body("identity.photoUrl").optional({ values: "null" }).trim().isURL(),
   ],
   [
     body("personalInfo").customSanitizer((value) => JSON.parse(value)),
@@ -34,7 +33,7 @@ router.post(
     body("personalInfo.birthBarangay").trim().isAscii(),
     body("personalInfo.birthCity").trim().isAscii(),
     body("personalInfo.birthProvince").trim().isAscii(),
-    body("personalInfo.religion").trim().isAlpha("en-US"),
+    body("personalInfo.religion").trim().isAscii(),
     body("personalInfo.sex").exists({ values: "null" }),
     body("personalInfo.civilStatus").exists({ values: "null" }),
     body("personalInfo.homeBlkLtSt").trim().isAscii(),
@@ -65,28 +64,28 @@ router.post(
   ],
   [
     body("parentalInfo").customSanitizer((value) => JSON.parse(value)),
-    body("parentalInfo.LastNameF").trim().isAscii(),
-    body("parentalInfo.MiddleNameF")
+    body("parentalInfo.lastNameF").trim().isAscii(),
+    body("parentalInfo.middleNameF")
       .optional({ values: "falsy" })
       .trim()
       .isAscii(),
-    body("parentalInfo.FirstNameF").trim().isAscii(),
-    body("parentalInfo.SuffixNameF")
+    body("parentalInfo.firstNameF").trim().isAscii(),
+    body("parentalInfo.suffixNameF")
       .optional({ values: "null" })
       .trim()
       .matches("^[A-Za-z]+.$"),
-    body("parentalInfo.OccupationF").trim().isAscii(),
-    body("parentalInfo.LastNameM").trim().isAscii(),
-    body("parentalInfo.MiddleNameM")
+    body("parentalInfo.occupationF").trim().isAscii(),
+    body("parentalInfo.lastNameM").trim().isAscii(),
+    body("parentalInfo.middleNameM")
       .optional({ values: "falsy" })
       .trim()
       .isAscii(),
-    body("parentalInfo.FirstNameM").trim().isAscii(),
-    body("parentalInfo.SuffixNameM")
+    body("parentalInfo.firstNameM").trim().isAscii(),
+    body("parentalInfo.suffixNameM")
       .optional({ values: "null" })
       .trim()
       .matches("^[A-Za-z]+.$"),
-    body("parentalInfo.OccupationM").trim().isAscii(),
+    body("parentalInfo.occupationM").trim().isAscii(),
   ],
   [
     body("prevSchool").customSanitizer((value) => JSON.parse(value)),

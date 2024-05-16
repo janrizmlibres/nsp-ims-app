@@ -6,7 +6,7 @@ import BaseCard from '@/components/UI/BaseCard.vue'
 import OverlayPanel from 'primevue/overlaypanel'
 import Button from 'primevue/button'
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import FormParts from '@/util/student_form_parts'
 
 const emit = defineEmits(['dataChanged'])
@@ -37,6 +37,8 @@ const categories = ref([
   'Disabled'
 ])
 
+watch(photoUrl, () => handleUpdate())
+
 function setAvatarHover(value) {
   isAvatarHovered.value = value
 }
@@ -55,7 +57,7 @@ function handleUpdate() {
     lrn: lrn.value,
     suffixName: selectedSuffix.value,
     category: selectedCat.value,
-    photoUrl: null
+    photoUrl: photoUrl.value && uploader.value.files[0]
   }
 
   emit('dataChanged', FormParts.Identity, data)
@@ -82,7 +84,7 @@ function setImageModal(value) {
 <template>
   <!-- Profile Photo Modal -->
   <div
-    class="fixed z-50 top-0 left-0 w-full h-full overflow-auto bg-black/90"
+    class="fixed flex items-center z-50 top-0 left-0 w-full h-full overflow-auto bg-black/90"
     :class="isImgModalVisible ? 'block' : 'hidden'"
   >
     <span

@@ -35,15 +35,15 @@ export async function addStudent(req, res, next) {
       throw error;
     }
 
-    // if (!req.file) {
-    //   const error = new Error("No profile photo provided.");
-    //   error.statusCode = 422;
-    //   throw error;
-    // }
+    if (!req.file) {
+      const error = new Error("No profile photo provided.");
+      error.statusCode = 422;
+      throw error;
+    }
 
     const student = await Student.create({
       ...req.body.identity,
-      photoUrl: req.body.identity.photoUrl,
+      photoUrl: req.file.path,
     });
 
     await PersonalInfo.create({
