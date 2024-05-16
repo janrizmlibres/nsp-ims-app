@@ -21,11 +21,12 @@ const toast = useToast()
 const filteredLearners = ref([])
 
 const schoolLevels = ref([])
+const selectedFullName = ref()
 
 schoolLevels.value = termStore.activeTerm.class_levels
 
 const isValid = computed(() => {
-  return selectedLRN.value && selectedFullName.value && selectedSchoolLevel.value && selectedRegularity.value
+  return form.value.selectedStudentId && form.value.selectedSchoolLevel
 })
 
 const regularity = ref([
@@ -33,16 +34,19 @@ const regularity = ref([
   { name: 'Hybrid', code: 'Hybrid' },
 ])
 
-const selectedLRN = ref();
-const selectedFullName = ref();
-const selectedSchoolLevel = ref();
-const selectedRegularity = ref();
-const selectedRemarks = ref();
-const digitalLiteracyScore = ref();
-const fltPretestScore = ref();
-const hasEnrollmentForm = ref();
-const callable = ref();
-const bridger = ref();
+const form = ref()
+
+form.value = {
+  selectedStudentId: null,
+  selectedSchoolLevel: null,
+  hasEnrollmentForm: null,
+  digitalLiteracyScore: null,
+  fltPretestScore: null,
+  callable: null,
+  bridger: null,
+  selectedRegularity: null,
+  selectedRemarks: null,
+}
 
 const selectedLRN = ref()
 
@@ -57,8 +61,9 @@ const search = debounce((event) => {
 }, 300) // 300ms delay
 
 function onSelectedLearner() {
-  const selectedLearner = studentsStore.students.find(student => student.fullname === selectedFullName.value.fullname)
-  selectedLRN.value = selectedLearner.lrn
+  const selectedStudent = studentsStore.students.find(student => student.fullname === selectedFullName.value.fullname)
+  selectedLRN.value = selectedStudent.lrn
+  form.value.selectedStudentId = selectedStudent.id
 }
 
 function clearSelectedFullName() {
@@ -67,17 +72,7 @@ function clearSelectedFullName() {
 
 async function submitEvent() {
   try {
-    await enrollmentStore.enrollLearner(
-      selectedLRN.value,
-      selectedSchoolLevel.value.id,
-      hasEnrollmentForm.value,
-      digitalLiteracyScore.value,
-      fltPretestScore.value,
-      callable.value,
-      bridger.value,
-      selectedRegularity.value.code,
-      selectedRemarks.value
-    )
+    await enrollmentStore.enrollLearner(form.value)
     toast.add({
       severity: 'success',
       summary: 'Success',
@@ -127,7 +122,7 @@ async function submitEvent() {
           <span>Class Level<span class="text-red-500">*</span></span>
         </div>
         <Dropdown
-          v-model="selectedSchoolLevel"
+          v-model="form.selectedSchoolLevel"
           :options="schoolLevels"
           optionLabel="school_level"
           placeholder="Select a Class Level"
@@ -139,7 +134,7 @@ async function submitEvent() {
           <span>Regularity</span>
         </div>
         <Dropdown
-          v-model="selectedRegularity"
+          v-model="form.selectedRegularity"
           :options="regularity"
           optionLabel="name"
           placeholder="Select a Regularity"
@@ -150,7 +145,7 @@ async function submitEvent() {
         <div class="basis-32 text-right">
           <span>Remarks</span>
         </div>
-        <InputText v-model="selectedRemarks" class="w-full md:w-14rem"/>
+        <InputText v-model="form.selectedRemarks" class="w-full md:w-14rem"/>
       </div>
     </div>
 
@@ -160,31 +155,31 @@ async function submitEvent() {
         <div class="basis-32 text-right">
           <span>Digital Literacy Score</span>
         </div>
-        <InputNumber id="digitalLiteracy" v-model="digitalLiteracyScore" class="grow"/>
+        <InputNumber id="digitalLiteracy" v-model="form.digitalLiteracyScore" class="grow"/>
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-28 text-right ml-4">
           <span>FLT Pre-Test Score</span>
         </div>
-        <InputNumber v-model="fltPretestScore" class="grow"/>
+        <InputNumber v-model="form.fltPretestScore" class="grow"/>
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Has Enrollment Form</span>
         </div>
-        <Checkbox v-model="hasEnrollmentForm" :binary="true" />
+        <Checkbox v-model="form.hasEnrollmentForm" :binary="true" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Callable</span>
         </div>
-        <Checkbox v-model="callable" :binary="true" />
+        <Checkbox v-model="form.callable" :binary="true" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Bridger</span>
         </div>
-        <Checkbox v-model="bridger" :binary="true" />
+        <Checkbox v-model="form.bridger" :binary="true" />
       </div>
       <Button @click="submitEvent" label="Enroll Learner" class="mt-4 place-self-end" :disabled="!isValid"/>
     </div>
