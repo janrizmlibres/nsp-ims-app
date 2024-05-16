@@ -23,11 +23,9 @@ import Student from '../models/student/student.js'
  * @returns {Promise<*>}
  */
 export const getAllEnrolledOnTerm = async (req, res, next) => {
-  const termID = req.params.termID
-  
   try {
     const currentTerm = await Term.findByPk(
-      termID
+      req.params.termID
     )
 
     const classLevels = await ClassLevel.findAll({
@@ -84,18 +82,6 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
  * @returns {Promise<*>}
  */
 export const enrollLearner = async (req, res, next) => {
-  const { 
-    lrn, 
-    classLevelID, 
-    hasEnrollmentForm, 
-    digital_literacy, 
-    ftl_pretest, 
-    callable, 
-    bridger,
-    regularity, 
-    remarks 
-  } = req.body;
-  
   try {
     //search for the Student ID from its lrn field
     const student = await Student.findOne(
@@ -127,15 +113,15 @@ export const enrollLearner = async (req, res, next) => {
     
     await classLevel.addStudent(student, {
       through: {
-        hasEnrollmentForm: hasEnrollmentForm,
-        digital_literacy: digital_literacy,
-        ftl_pretest: ftl_pretest,
-        callable: callable,
-        bridger: bridger,
+        hasEnrollmentForm: req.body.hasEnrollmentForm,
+        digital_literacy: req.body.digitalLiteracyScore,
+        ftl_pretest: req.body.fltPretestScore,
+        callable: req.body.callable,
+        bridger: req.body.bridger,
         dateEnrolled: new Date(),
         status: "Active",
-        regularity: regularity,
-        remarks: remarks,
+        regularity: req.body.selectedRegularity,
+        remarks: req.body.selectedRemarks,
       }
     });
     
@@ -194,17 +180,17 @@ export const updateEnrollment = async (req, res, next) => {
       throw error;
     }
     
-    await classLevel.addStudent(student, {
-      through: {
-        hasEnrollmentForm: hasEnrollmentForm,
-        digital_literacy: digital_literacy,
-        ftl_pretest: ftl_pretest,
-        callable: callable,
-        bridger: bridger,
-        regularity: regularity,
-        remarks: remarks,
+    await enrollment.update(
+      {
+        hasEnrollmentForm: req.body.hasEnrollmentForm,
+        digital_literacy: req.body.digitalLiteracyScore,
+        ftl_pretest: req.body.fltPretestScore,
+        callable: req.body.callable,
+        bridger: req.body.bridger,
+        regularity: req.body.selectedRegularity.code,
+        remarks: req.body.selectedRemarks,
       }
-    });
+    )
     
     res.status(201).json({ 
       message: 'Updated learner enrollment successfully!' 
@@ -220,10 +206,6 @@ export const updateEnrollment = async (req, res, next) => {
 }
 
 export const getEnrolled = async (req, res, next) => {
-  const lrn = req.params.lrn;
-  const academicYear = req.params.academicYear;
-  const classLevel = req.params.classLevel;
-  
   try {
     const chosenTerm = await Term.findOne({
       where: {academic_year: academicYear}
@@ -240,21 +222,23 @@ export const getEnrolled = async (req, res, next) => {
       throw error;
     }
     
-    const parsedData = classLevels.map(classLevel => {
-      return classLevel.students.map(student => {
-        return {
-          lrn: student.lrn,
-          fullName: student.fullname,
-          schoolLevel: classLevel.school_level,
-          regularity: student.enrollment.regularity,
-          remarks: student.enrollment.remarks,
-          digitalLiteracy: student.enrollment.digital_literacy,
-          ftlPretest: student.enrollment.ftl_pretest,
-          hasEnrollmentForm: student.enrollment.hasEnrollmentForm,
-          callable: student.enrollment.callable,
-          Bridger: student.enrollment.bridger,
-        };
-      });
+    // Parse the data to be returned in an array
+    const student = {
+      lrn: enrolledStudent.student.lrn,
+      fullName: enrolledStudent.student.fullname,
+      schoolLevel: enrolledStudent.class_level,
+      regularity: enrolledStudent.regularity,
+      remarks: enrolledStudent.remarks,
+      digitalLiteracy: enrolledStudent.digital_literacy,
+      ftlPretest: enrolledStudent.ftl_pretest,
+      hasEnrollmentForm: enrolledStudent.hasEnrollmentForm,
+      callable: enrolledStudent.callable,
+      Bridger: enrolledStudent.bridger,
+    };
+    
+    res.status(200).json({
+      message: 'Fetched enrolled student successfully!',
+      enrolled: student
     });
     
     // Flatten the array
