@@ -10,6 +10,7 @@ import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useStudentsStore } from '@/stores/students.js'
 import { useTermStore } from '@/stores/term.js'
 import { useToast } from 'primevue/usetoast'
+import { debounce } from 'lodash'
 
 const enrollmentStore = useEnrollmentStore()
 const studentsStore = useStudentsStore()
@@ -43,17 +44,17 @@ const hasEnrollmentForm = ref();
 const callable = ref();
 const bridger = ref();
 
-const search = (event) => {
-  setTimeout(() => {
-    if (!event.query.trim().length && event.query === "Type a Learner") {
-      filteredLearners.value = studentsStore.students.filter(student => student.lrn !== null)
-    } else {
-      filteredLearners.value = studentsStore.students.filter((student) => {
-        return student.lrn !== null && student.fullname.toLowerCase().startsWith(event.query.toLowerCase());
-      });
-    }
-  }, 250);
-}
+const selectedLRN = ref()
+
+const search = debounce((event) => {
+  if (!event.query.trim().length && event.query === "Type a Learner") {
+    filteredLearners.value = studentsStore.students
+  } else {
+    filteredLearners.value = studentsStore.students.filter((student) => {
+      return student.fullname.toLowerCase().startsWith(event.query.toLowerCase());
+    });
+  }
+}, 300) // 300ms delay
 
 function onSelectedLearner() {
   const selectedLearner = studentsStore.students.find(student => student.fullname === selectedFullName.value.fullname)
