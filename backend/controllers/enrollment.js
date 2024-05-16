@@ -140,33 +140,19 @@ export const enrollLearner = async (req, res, next) => {
 
 export const updateEnrollment = async (req, res, next) => {
   try {
-    //search for the Student ID from its lrn field
-    const student = await Student.findOne(
-      {where: {lrn: lrn}}
+    const enrollment = await Enrollment.findByPk(req.params.enrollmentId, 
+      {
+        include: [ ClassLevel ]
+      })
+    
+    
+    const classLevel = await ClassLevel.findByPk(enrollment.classLevelId)
+    
+    await classLevel.update(
+      {
+        school_level: req.body.selectedSchoolLevel.school_level
+      }
     )
-    
-    if (!student) {
-      const error = new Error("Student not found.");
-      error.statusCode = 404;
-      throw error;
-    }
-    
-    const classLevel = await ClassLevel.findByPk(classLevelID);
-    
-    if (!classLevel) {
-      const error = new Error("Class level not found.");
-      error.statusCode = 404;
-      throw error;
-    }
-    
-    // Check if student is already enrolled in the class level
-    const isEnrolled = await classLevel.hasStudent(student);
-    
-    if (!isEnrolled) {
-      const error = new Error("Student is not enrolled in this year class level.");
-      error.statusCode = 400;
-      throw error;
-    }
     
     await enrollment.update(
       {
