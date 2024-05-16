@@ -6,9 +6,19 @@ import isAuth from "../middleware/is_auth.js";
 const router = express.Router();
 
 router.get("/retrieve-from-term/:termID", isAuth, enrollmentController.getAllEnrolledOnTerm);
-router.get("/retrieve-enrolled/:lrn/:academicYear/:classLevel", isAuth, enrollmentController.getEnrolled);
-router.post("/update-learner", isAuth, enrollmentController.updateEnrollment);
-router.post("/change-enrollment-status", isAuth, enrollmentController.changeEnrollmentStatus);
+router.get("/:studentId/:enrollmentId/retrieve", isAuth, enrollmentController.getEnrolled);
+router.patch("/:enrollmentId/update", isAuth,
+  [
+    body("hasEnrollmentForm").isBoolean(),
+    body("digitalLiteracyScore").isInt(),
+    body("fltPretestScore").isInt(),
+    body("callable").isBoolean(),
+    body("bridger").isBoolean(),
+    body("selectedRegularity").isString(),
+    body("selectedRemarks").isString(),
+  ],
+  enrollmentController.updateEnrollment);
+router.patch("/:enrollmentId/status/update", isAuth, enrollmentController.changeEnrollmentStatus);
 router.post(
   "/enroll-learner", 
   isAuth, 
