@@ -34,47 +34,14 @@ const cols = ref([
 ])
 
 const customPt = {
-    root: {
-        class: ['flex flex-col pt-2 justify-between']
-    },
     column: {
         headercell: ({ context, props }) => ({
             class: [
-                'font-medium',
+                'u-txt-active',
                 // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active'
+                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-surface-200' : 'bg-surface-200'
             ]
-        }),
-            sorticon: ({ context }) => ({
-                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-        }),
-    },
-    paginator: {
-        root: {
-            class: ['flex items-center justify-center flex-wrap object-bottom', 'px-4 pt-4 pb-2', 'border-0 rounded-bl-xl rounded-br-xl', 'bg-transparent dark:bg-surface-800', 'text-surface-500 dark:text-white/60']
-        },
-        pagebutton: ({ context }) => ({
-            class: [
-            'relative',
-            // Flex & Alignment
-            'inline-flex items-center justify-center',
-            // Shape
-            'border-0 rounded-full dark:rounded-md',
-            // Size
-            'min-w-[3rem] h-12 m-[0.143rem]',
-            'leading-none',
-            // Color
-            'text-surface-500 dark:text-white/80',
-            {
-                'u-bg-scolor-2 border-primary-50 text-white font-semibold': context.active
-            },
-            // State
-            {
-                'hover:bg-surface-50': !context.disabled && !context.active,
-                'focus:u-ring-scolor': !context.disabled
-            },
-            ]
-        }),
+        })
     }
 }
 

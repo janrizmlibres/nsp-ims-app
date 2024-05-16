@@ -137,7 +137,7 @@ function to24hr(time12h) {
 <template>
     <DataTable 
         :value="classData" dataKey="scheduleId"
-        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave" 
         :ptOptions="{mergeProps:true}"
         :pt="customPt"
     >
