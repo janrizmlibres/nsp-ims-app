@@ -60,26 +60,6 @@ import { useVolunteerStore } from '@/stores/volunteer';
 
 const volunteerStore = useVolunteerStore();
 
-async function submitForm() {
-  try {
-    const result = await volunteerStore.addVolunteer(formData.value)
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: result.data.message,
-      life: 5000
-    })
-    await router.replace({ name: 'volunteer-records' })
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
-    })
-  }
-}
-
 const toast = useToast();
 
 const formData = ref({
@@ -145,7 +125,6 @@ const handleSubmit = () => {
 
   if (results.every(result => result)) {
     console.log(formData.value);
-    submitForm();
   }
 };
 
