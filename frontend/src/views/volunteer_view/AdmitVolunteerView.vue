@@ -63,33 +63,77 @@ const volunteerStore = useVolunteerStore();
 const toast = useToast();
 
 const formData = ref({
-    volunteerId: '',
-    affiliation: '',
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    nickname: '',
-    birthday: '',
-    suffix: '',
-    program: '',
-    year: '',
-    work: '',
-    housing: '',
-    city: '',
-    barangay: '',
-    province: '',
-    contactNumber: '',
-    email: '',
-    facebook: '',
-    day: '',
-    area: '',
-    emergencyLastName: '', 
-    emergencyFirstName: '', 
-    emergencyMiddleName: '', 
-    emergencySuffix: '', 
-    emergencyContact: '', 
-    emergencyRelationship: ''
+  Volunteer: {
+    volunteerId: null,
+    affiliation: null,
+    firstName: null,
+    middleName: null,
+    lastName: null,
+    suffix: null,
+  },
+
+  StudentVolunteer: {
+    program: null,
+    year: null,
+  },
+
+  VolunteerAvailability: {
+    day: null,
+  },
+
+  VolunteerContactInformation: {
+    contactNumber: null,
+    email: null,
+    facebook: null,
+  },
+
+  VolunteerEmergency: {
+    emergencyLastName: null,
+    emergencyFirstName: null,
+    emergencyMiddleName: null,
+    emergencySuffix: null,
+    emergencyContact: null,
+    emergencyRelationship: null,
+  },
+
+  VolunteerPersonalInformation: {
+    nickname: null,
+    birthday: null,
+    housing: null,
+    city: null,
+    barangay: null,
+    province: null,
+    sex: null,
+  },
+
+  VolunteerSpecialization: {
+    area: null,
+  }
+
+  //add work
 });
+
+async function submitForm() {
+  try {
+    // Replace `yourStore` and `addYourData` with the actual store and function names
+    const result = await volunteerStore.addVolunteer(formData.value)
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: result.data.message,
+      life: 5000
+    })
+    // Replace `yourView` with the actual route name to navigate after successful submission
+    await router.replace({ name: 'VolunteerRecordsView' })
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
 
 const validateField = (fieldName, regex, errorMessage) => {
   if (formData.value[fieldName] && !regex.test(formData.value[fieldName])) {
@@ -125,6 +169,7 @@ const handleSubmit = () => {
 
   if (results.every(result => result)) {
     console.log(formData.value);
+    submitForm();
   }
 };
 
