@@ -1,4 +1,4 @@
-﻿<script>
+﻿<script setup>
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dropdown from 'primevue/dropdown'
@@ -58,14 +58,11 @@ const props = defineProps({
   },
 })
 
-
-
 onMounted(() => {
   getLearningStrands()
 
   enrollmentStore.setGrades([])
 })
-
 </script>
 <template>
   <Dropdown
