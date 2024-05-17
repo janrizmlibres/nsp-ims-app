@@ -2,9 +2,12 @@
 import Enrollment from '../models/enrollment.js'
 import ClassLevel from "../models/class/class_level.js";
 import ClassLearningStrand from '../models/class/class_learning_strand.js'
+import ModuleSubmission from '../models/class/module_submission.js'
 import Session from '../models/class/session.js'
 import Module from '../models/class/module.js'
 import Student from '../models/student/student.js'
+import Grade from '../models/class/grade.js'
+import Attendance from '../models/class/attendance.js'
 
 /**
  * Retrieves all learners enrolled in a term.
