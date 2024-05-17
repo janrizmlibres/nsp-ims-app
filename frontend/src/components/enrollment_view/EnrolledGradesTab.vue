@@ -46,4 +46,24 @@ async function getEnrolledGrades() {
     })
   }
 }
+
+const props = defineProps({
+  schoolLevelId: {
+    type: String,
+    required: true
+  },
+  enrollmentId: {
+    type: String,
+    required: true
+  },
+})
+
+
+
+onMounted(() => {
+  getLearningStrands()
+
+  enrollmentStore.setGrades([])
+})
+
 </script>
