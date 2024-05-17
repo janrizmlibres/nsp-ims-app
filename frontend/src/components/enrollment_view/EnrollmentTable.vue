@@ -120,6 +120,10 @@ function editEnrolled(data) {
   router.push({ name: 'edit-enrolled', query: { studentId: data.studentId, enrollmentId: data.enrollmentId, academicYear: data.term } })
 }
 
+function viewEnrolled(data) {
+  router.push({ name: 'view-enrolled', query: { studentId: data.studentId, enrollmentId: data.enrollmentId, schoolLevelId: data.classLevelId, studentFullName: data.fullName } })
+}
+
 </script>
 
 <template>
@@ -128,8 +132,13 @@ function editEnrolled(data) {
              :rows="10" dataKey="id" 
              filterDisplay="menu"
              :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']" 
-             removableSort> 
-    <column frozen field="lrn" header="LRN" sortable>
+             removableSort>
+    <Column headerStyle="width: 5rem; text-align: center" bodyStyle="text-align: center; overflow: visible">
+      <template #body="{ data }">
+        <Button icon="pi pi-eye" label="View" @click="viewEnrolled(data)"/>
+      </template>
+    </Column>
+    <column field="lrn" header="LRN" sortable>
       <template #body="{ data }">
         {{ data.lrn }}
       </template>
