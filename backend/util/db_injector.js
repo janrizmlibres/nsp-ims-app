@@ -33,8 +33,8 @@ export async function injectStudent() {
   const student1 = await Student.create({
     lrn: "198765150721",
     category: "Out-of-School Youth",
-    firstName: "Juan",
-    lastName: "Dela Cruz",
+    firstName: "Gordon",
+    lastName: "Ramsay",
     photoUrl: "/images/gordon.jpg",
   });
 
@@ -71,8 +71,8 @@ export async function injectStudent() {
     name: "St. Larlar Musician School",
     schoolType: "Private",
     schoolAffiliation: "Non-Sectarian",
-    lastSyAttended: "1901 - 1902",
-    highestEducation: "Secondary Education",
+    lastSyAttended: "1920-1921",
+    highestEducation: "Secondary education",
     gradeStopped: "Grade 10",
     reason: "Sleeps anywhere",
     street: "Marigold St.",
@@ -84,9 +84,9 @@ export async function injectStudent() {
 
   const student2 = await Student.create({
     lrn: "123456789012345",
-    category: "In-School Youth",
-    firstName: "Maria",
-    lastName: "Santos",
+    category: "Teenage Pregnancy",
+    firstName: "Kim",
+    lastName: "Chiu",
     photoUrl: "/images/kim.jpg",
   });
 
@@ -124,8 +124,8 @@ export async function injectStudent() {
     schoolType: "Private",
     schoolAffiliation: "Sectarian",
     lastSyAttended: "2022-2023",
-    highestEducation: "Senior High School",
-    gradeStopped: "Grade 12",
+    highestEducation: "No formal education",
+    gradeStopped: "Kindergarten",
     reason: "Graduated",
     street: "Mabini Street",
     barangay: "Macabalan",

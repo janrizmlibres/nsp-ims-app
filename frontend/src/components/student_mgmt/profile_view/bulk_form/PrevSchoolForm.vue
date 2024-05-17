@@ -3,7 +3,7 @@ import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, inject } from 'vue'
 import { getYear } from 'date-fns'
 
 import { objectMap } from '@/util/helpers'
@@ -11,25 +11,28 @@ import FormParts from '@/util/student_form_parts'
 
 const emit = defineEmits(['dataChanged'])
 
-const schoolName = ref(null)
-const discontinuationReason = ref(null)
+const prevSchoolData = inject('prevSchoolData')
+const isViewMode = inject('isViewMode')
+
+const schoolName = ref(prevSchoolData.value.name)
+const discontinuationReason = ref(prevSchoolData.value.reason)
 
 const address = ref({
-  street: { label: 'Blk/Lt/St', data: null },
-  barangay: { label: 'Barangay', data: null },
-  city: { label: 'City', data: null },
-  province: { label: 'Province', data: null }
+  street: { label: 'Blk/Lt/St', data: prevSchoolData.value.street },
+  barangay: { label: 'Barangay', data: prevSchoolData.value.barangay },
+  city: { label: 'City', data: prevSchoolData.value.city },
+  province: { label: 'Province', data: prevSchoolData.value.province }
 })
 
-const selectedType = ref(null)
-const selectedAffiliation = ref(null)
+const selectedType = ref(prevSchoolData.value.schoolType)
+const selectedAffiliation = ref(prevSchoolData.value.schoolAffiliation)
 
-const selectedEduc = ref(null)
+const selectedEduc = ref(prevSchoolData.value.highestEducation)
 const selectedLevel = ref(null)
 
 const selectedYearL = ref(null)
 const selectedYearR = ref(null)
-const lastYrAttended = ref(null)
+const lastYrAttended = ref(prevSchoolData.value.lastSyAttended)
 
 const yearsR = ref([])
 const yearsL = computed(() => {
@@ -86,6 +89,8 @@ function handleUpdate() {
 }
 
 onMounted(() => {
+  console.log(prevSchoolData.value)
+
   const currentYear = getYear(new Date())
 
   for (let i = currentYear - 120; i <= currentYear + 1; i++) {
@@ -95,6 +100,16 @@ onMounted(() => {
   for (let i = 1; i <= 10; i++) {
     levels.value.push(`Grade ${i}`)
   }
+
+  const lastSyAttended = prevSchoolData.value.lastSyAttended
+
+  if (lastSyAttended) {
+    const [splitYrL, splitYrR] = lastSyAttended.split('-')
+    selectedYearL.value = splitYrL.trim()
+    selectedYearR.value = splitYrR.trim()
+  }
+
+  selectedLevel.value = prevSchoolData.value.gradeStopped
 })
 </script>
 
@@ -110,6 +125,13 @@ onMounted(() => {
           type="text"
           v-model="schoolName"
           @update:model-value="handleUpdate"
+          :pt="{
+            root: ({ context }) => {
+              return { class: [{ '!opacity-100': context.disabled }] }
+            }
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6 col-span-2">
@@ -120,6 +142,9 @@ onMounted(() => {
           v-model="selectedType"
           :options="types"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6 col-span-2">
@@ -130,6 +155,9 @@ onMounted(() => {
           v-model="selectedAffiliation"
           :options="affiliations"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
 
         <div class="flex items-center justify-end text-right pr-6 col-span-2">
@@ -137,9 +165,25 @@ onMounted(() => {
         </div>
 
         <div class="grid grid-cols-5 gap-3 col-span-3">
-          <Dropdown class="h-10 col-span-2" v-model="selectedYearL" :options="yearsL" filter />
+          <Dropdown
+            class="h-10 col-span-2"
+            v-model="selectedYearL"
+            :options="yearsL"
+            filter
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
+          />
           <span class="flex items-center justify-center">-</span>
-          <Dropdown class="h-10 col-span-2" v-model="selectedYearR" :options="yearsR" filter />
+          <Dropdown
+            class="h-10 col-span-2"
+            v-model="selectedYearR"
+            :options="yearsR"
+            filter
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
+          />
         </div>
 
         <div class="flex items-center justify-end text-right pr-6 col-span-2">
@@ -150,6 +194,9 @@ onMounted(() => {
           v-model="selectedEduc"
           :options="educAttainment"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
 
         <div class="flex items-center justify-end text-right pr-6 col-span-2">
@@ -160,6 +207,9 @@ onMounted(() => {
           v-model="selectedLevel"
           :options="levels"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
       </div>
     </div>
@@ -175,6 +225,13 @@ onMounted(() => {
           rows="5"
           cols="30"
           @update:model-value="handleUpdate"
+          :pt="{
+            root: ({ context }) => {
+              return { class: [{ '!opacity-100': context.disabled }] }
+            }
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6">
@@ -189,6 +246,13 @@ onMounted(() => {
           v-model="value.data"
           :placeholder="value.label"
           @update:model-value="handleUpdate"
+          :pt="{
+            root: ({ context }) => {
+              return { class: [{ '!opacity-100': context.disabled }] }
+            }
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
       </div>
     </div>

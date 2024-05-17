@@ -10,20 +10,21 @@ import { ref, watch } from 'vue'
 import FormParts from '@/util/student_form_parts'
 
 const emit = defineEmits(['dataChanged'])
+const props = defineProps({ identity: Object, isViewMode: Boolean })
 
 const op = ref()
 const uploader = ref(null)
 
 const name = ref({
-  lastName: null,
-  firstName: null,
-  middleName: null
+  lastName: props.identity.lastName,
+  firstName: props.identity.firstName,
+  middleName: props.identity.middleName
 })
 
-const lrn = ref(null)
-const selectedSuffix = ref(null)
-const selectedCat = ref(null)
-const photoUrl = ref(null)
+const lrn = ref(props.identity.lrn)
+const selectedSuffix = ref(props.identity.suffixName)
+const selectedCat = ref(props.identity.category)
+const photoUrl = ref(props.identity.photoUrl && `http://localhost:8080${props.identity.photoUrl}`)
 
 const isAvatarHovered = ref(false)
 const isImgModalVisible = ref(false)
@@ -153,45 +154,93 @@ function setImageModal(value) {
           class="h-10 col-span-2"
           type="text"
           v-model="name.lastName"
+          v-tooltip.top="name.lastName ? 'Last Name' : ''"
           placeholder="Last Name"
           @update:modelValue="handleUpdate"
+          :pt="{
+            root: ({ context }) => {
+              return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+            }
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
         <InputText
           class="h-10 col-span-2"
           type="text"
           v-model="name.firstName"
+          v-tooltip.top="name.firstName ? 'First Name' : ''"
           placeholder="First Name"
           @update:modelValue="handleUpdate"
+          :pt="{
+            root: ({ context }) => {
+              return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+            }
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
         <InputText
           class="h-10 col-span-2"
           type="text"
           v-model="name.middleName"
+          v-tooltip.top="name.middleName ? 'Middle Name' : ''"
           placeholder="Middle Name"
           @update:modelValue="handleUpdate"
+          :pt="{
+            root: ({ context }) => ({
+              class: [{ '!opacity-100 !pointer-events-auto': context.disabled }]
+            })
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
         <Dropdown
           class="h-10"
           v-model="selectedSuffix"
+          v-tooltip.top="selectedSuffix ? 'Suffix' : ''"
           showClear
           :options="suffixes"
           placeholder="Suffix"
-          @update:modelValue="handleUpdate"
+          @change="handleUpdate"
+          :pt="{
+            root: ({ props }) => ({
+              class: { '!opacity-100 !pointer-events-auto': props.disabled }
+            })
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
 
         <InputText
           class="h-10 col-span-2"
           type="text"
           v-model="lrn"
+          v-tooltip.bottom="lrn ? 'LRN' : ''"
           placeholder="LRN"
           @update:modelValue="handleUpdate"
+          :pt="{
+            root: ({ context }) => {
+              return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+            }
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
         <Dropdown
-          class="h-10 col-span-2 content-center"
+          class="h-10 col-span-2"
           v-model="selectedCat"
+          v-tooltip.bottom="selectedCat ? 'Category' : ''"
           :options="categories"
           placeholder="Category"
           @change="handleUpdate"
+          :pt="{
+            root: ({ props }) => ({
+              class: { '!opacity-100 !pointer-events-auto': props.disabled }
+            })
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
       </div>
     </div>

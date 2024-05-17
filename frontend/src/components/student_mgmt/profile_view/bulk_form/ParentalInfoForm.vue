@@ -1,26 +1,29 @@
 <script setup>
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
-import { ref } from 'vue'
+import { inject, ref } from 'vue'
 
 import FormParts from '@/util/student_form_parts'
 
 const emit = defineEmits(['dataChanged'])
 
+const parentalData = inject('parentalData')
+const isViewMode = inject('isViewMode')
+
 const formData = ref({
   fatherData: {
-    lastNameF: null,
-    firstNameF: null,
-    middleNameF: null,
-    suffixNameF: null,
-    occupationF: null
+    lastNameF: parentalData.value && parentalData.value.lastNameF,
+    firstNameF: parentalData.value && parentalData.value.firstNameF,
+    middleNameF: parentalData.value && parentalData.value.middleNameF,
+    suffixNameF: parentalData.value && parentalData.value.suffixNameF,
+    occupationF: parentalData.value && parentalData.value.occupationF
   },
   motherData: {
-    lastNameM: null,
-    firstNameM: null,
-    middleNameM: null,
-    suffixNameM: null,
-    occupationM: null
+    lastNameM: parentalData.value && parentalData.value.lastNameM,
+    firstNameM: parentalData.value && parentalData.value.lastNameM,
+    middleNameM: parentalData.value && parentalData.value.middleNameM,
+    suffixNameM: parentalData.value && parentalData.value.suffixNameM,
+    occupationM: parentalData.value && parentalData.value.occupationM
   }
 })
 
@@ -54,6 +57,13 @@ function handleUpdate() {
               type="text"
               v-model="formData[parentKeys[idx]][dataKeys[idx][n]]"
               @update:model-value="handleUpdate"
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="isViewMode"
             />
             <Dropdown
               v-else
@@ -62,6 +72,9 @@ function handleUpdate() {
               showClear
               :options="suffixes"
               @update:modelValue="handleUpdate"
+              :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="isViewMode"
             />
           </template>
         </div>

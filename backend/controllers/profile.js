@@ -33,9 +33,9 @@ export async function getStudent(req, res, next) {
       include: [
         PersonalInfo,
         ContactInfo,
-        PreviousSchool,
-        ParentalInfo,
         EmergencyPerson,
+        ParentalInfo,
+        PreviousSchool,
       ],
     });
 

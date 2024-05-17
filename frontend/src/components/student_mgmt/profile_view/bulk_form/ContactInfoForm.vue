@@ -1,28 +1,32 @@
 <script setup>
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
-import { ref } from 'vue'
+import { inject, onMounted, ref } from 'vue'
 
 import FormParts from '@/util/student_form_parts'
 import { objectMap } from '@/util/helpers'
 
 const emit = defineEmits(['dataChanged'])
 
+const contactData = inject('contactData')
+const emergencyData = inject('emergencyData')
+const isViewMode = inject('isViewMode')
+
 const leftFields = ref({
-  contactNum: { label: 'Contact Number', data: null },
-  email: { label: 'Email Address', data: null },
-  facebook: { label: 'Facebook', data: null }
+  email: { label: 'Email Address', data: contactData.value.email },
+  contactNum: { label: 'Contact Number', data: contactData.value.contactNum },
+  facebook: { label: 'Facebook', data: contactData.value.facebook }
 })
 
 const rightFields = ref({
-  lastName: { label: 'Last Name', data: null },
-  firstName: { label: 'First Name', data: null },
-  middleName: { label: 'Middle Name', data: null },
-  suffixName: { label: 'Suffix', data: null },
-  contactNum: { label: 'Contact Number', data: null }
+  lastName: { label: 'Last Name', data: emergencyData.value.lastName },
+  firstName: { label: 'First Name', data: emergencyData.value.firstName },
+  middleName: { label: 'Middle Name', data: emergencyData.value.middleName },
+  suffixName: { label: 'Suffix', data: emergencyData.value.suffixName },
+  contactNum: { label: 'Contact Number', data: emergencyData.value.contactNum }
 })
 
-const selectedRelationship = ref(null)
+const selectedRelationship = ref(emergencyData.value.relationship)
 
 const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 
@@ -36,6 +40,8 @@ function updateEmergencyContact() {
   data.relationship = selectedRelationship.value
   emit('dataChanged', FormParts.Emergency, data)
 }
+
+onMounted(() => console.log(emergencyData.value))
 </script>
 
 <template>
@@ -54,6 +60,13 @@ function updateEmergencyContact() {
               type="text"
               v-model="field.data"
               @update:modelValue="updateContactInfo"
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="isViewMode"
             />
           </template>
         </div>
@@ -75,6 +88,13 @@ function updateEmergencyContact() {
               type="text"
               v-model="field.data"
               @update:modelValue="updateEmergencyContact"
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="isViewMode"
             />
             <Dropdown
               v-else
@@ -83,6 +103,9 @@ function updateEmergencyContact() {
               showClear
               :options="suffixes"
               @update:modelValue="updateEmergencyContact"
+              :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="isViewMode"
             />
           </template>
 
@@ -94,6 +117,13 @@ function updateEmergencyContact() {
             type="text"
             v-model="selectedRelationship"
             @update:modelValue="updateEmergencyContact"
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
           />
         </div>
       </div>

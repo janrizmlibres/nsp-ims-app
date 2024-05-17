@@ -64,12 +64,14 @@ const router = createRouter({
             {
               path: 'add',
               name: 'add-student',
-              component: StudentFormView
+              component: StudentFormView,
+              meta: { reuse: true }
             },
             {
               path: ':studentId',
               name: 'view-student',
               component: StudentFormView,
+              meta: { reuse: true },
               props: true
             }
           ]

@@ -33,7 +33,6 @@ export const useStudentsStore = defineStore('students', () => {
     const result = await axios.get(`http://localhost:8080/profile/student/${studentId}`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
-    console.log(result)
 
     return result
   }

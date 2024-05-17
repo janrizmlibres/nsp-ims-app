@@ -1,8 +1,9 @@
 <script setup>
 import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
 
-import { onMounted } from 'vue'
+import { onMounted, ref, computed, provide, watch } from 'vue'
 import { useRouter, onBeforeRouteLeave } from 'vue-router'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
@@ -10,7 +11,7 @@ import IdentityForm from '@/components/student_mgmt/profile_view/IdentityForm.vu
 import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
 import { useStudentsStore } from '@/stores/students'
 
-import FormParts from '../../util/student_form_parts'
+import FormParts from '@/util/student_form_parts'
 
 const props = defineProps({
   studentId: {
@@ -19,12 +20,15 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['routeChange'])
+
 const router = useRouter()
 const toast = useToast()
+const confirm = useConfirm()
 const studentsStore = useStudentsStore()
 
 const formData = {
-  identity: {
+  identity: ref({
     firstName: null,
     middleName: null,
     lastName: null,
@@ -32,8 +36,8 @@ const formData = {
     lrn: null,
     category: null,
     photoUrl: null
-  },
-  personalInfo: {
+  }),
+  personalInfo: ref({
     birthday: null,
     bloodType: null,
     birthBarangay: null,
@@ -46,21 +50,21 @@ const formData = {
     homeBarangay: null,
     homeCity: null,
     homeProvince: null
-  },
-  contactInfo: {
+  }),
+  contactInfo: ref({
     email: null,
     contactNum: null,
     facebook: null
-  },
-  emergencyPerson: {
+  }),
+  emergencyPerson: ref({
     firstName: null,
     middleName: null,
     lastName: null,
     suffixName: null,
     contactNum: null,
     relationship: null
-  },
-  parentalInfo: {
+  }),
+  parentalInfo: ref({
     lastNameF: null,
     middleNameF: null,
     firstNameF: null,
@@ -71,8 +75,8 @@ const formData = {
     firstNameM: null,
     suffixNameM: null,
     occupationM: null
-  },
-  prevSchool: {
+  }),
+  prevSchool: ref({
     name: null,
     schoolType: null,
     schoolAffiliation: null,
@@ -84,19 +88,37 @@ const formData = {
     barangay: null,
     city: null,
     province: null
-  }
+  })
 }
 
 let okToLeave = true
+const updateKey = ref(0)
+const isViewMode = ref(Boolean(props.studentId))
+const headerText = computed(() => {
+  if (props.studentId === null) return 'Add Record'
+  return isViewMode.value ? 'View Record' : 'Edit Record'
+})
+
+watch(
+  () => props.studentId,
+  () => emit('routeChange')
+)
+
+provide('personalData', formData.personalInfo)
+provide('contactData', formData.contactInfo)
+provide('emergencyData', formData.emergencyPerson)
+provide('parentalData', formData.parentalInfo)
+provide('prevSchoolData', formData.prevSchool)
+provide('isViewMode', isViewMode)
 
 function updateFormData(part, data) {
   const updateMapping = {
-    [FormParts.Identity]: () => (formData.identity = data),
-    [FormParts.Personal]: () => (formData.personalInfo = data),
-    [FormParts.Contact]: () => (formData.contactInfo = data),
-    [FormParts.Emergency]: () => (formData.emergencyPerson = data),
-    [FormParts.Parental]: () => (formData.parentalInfo = data),
-    [FormParts.PrevSchool]: () => (formData.prevSchool = data)
+    [FormParts.Identity]: () => (formData.identity.value = data),
+    [FormParts.Personal]: () => (formData.personalInfo.value = data),
+    [FormParts.Contact]: () => (formData.contactInfo.value = data),
+    [FormParts.Emergency]: () => (formData.emergencyPerson.value = data),
+    [FormParts.Parental]: () => (formData.parentalInfo.value = data),
+    [FormParts.PrevSchool]: () => (formData.prevSchool.value = data)
   }
 
   updateMapping[part]()
@@ -151,7 +173,24 @@ onMounted(async () => {
     const result = await studentsStore.getStudent(props.studentId)
     const student = result.data.student
 
-    console.log(student)
+    const {
+      personal_info,
+      contact_info,
+      emergency_person,
+      parental_info,
+      previous_school,
+      ...identity
+    } = student
+
+    formData.identity.value = identity
+    formData.personalInfo.value = personal_info
+    formData.contactInfo.value = contact_info
+    formData.emergencyPerson.value = emergency_person
+    formData.parentalInfo.value = parental_info
+    formData.prevSchool.value = previous_school
+
+    okToLeave = true
+    updateKey.value += 1
   } catch (error) {
     router.back()
   }
@@ -159,10 +198,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane :header="`Students / Add Record`" subheader="Academic Year 2022 - 2023">
+  <ContentPane :header="`Students / ${headerText}`" subheader="Academic Year 2022 - 2023">
     <div class="flex flex-col gap-3 h-full mr-1">
-      <IdentityForm @dataChanged="updateFormData" />
-      <BulkForm @dataChanged="updateFormData" />
+      <IdentityForm
+        @dataChanged="updateFormData"
+        :identity="formData.identity.value"
+        :isViewMode="isViewMode"
+        :key="updateKey"
+      />
+      <BulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
 
       <div class="flex-none text-right">
         <div class="inline-block">
