@@ -1,6 +1,6 @@
 <script setup>
 // Custom
-import EnrolledSessionTable from '@/components/enrollment_view/EnrolledSessionTable.vue'
+import EnrolledAttendanceTable from '@/components/enrollment_view/EnrolledSessionTable.vue'
 import { defineProps } from 'vue'
 
 const props = defineProps({
@@ -16,5 +16,5 @@ const props = defineProps({
 </script>
 
 <template>
-    
+  <EnrolledAttendanceTable :schoolLevelId="props.schoolLevelId" :enrollmentId="props.enrollmentId" />
 </template>
