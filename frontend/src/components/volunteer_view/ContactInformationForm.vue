@@ -5,17 +5,17 @@ import { ref, watch } from 'vue'
 const emit = defineEmits(['dataChanged', 'update'])
 
 const contactNumber = ref(null)
-const emailAddress = ref(null)
+const email = ref(null)
 const facebook = ref(null)
 
 const handleDataChange = (newData) => {
   emit('dataChanged', newData);
 };
 
-watch([contactNumber, emailAddress, facebook], () => {
+watch([contactNumber, email, facebook], () => {
   const newData = {
     contactNumber: contactNumber.value,
-    emailAddress: emailAddress.value,
+    email: email.value,
     facebook: facebook.value
   };
   emit('update', newData);
@@ -46,7 +46,7 @@ watch([contactNumber, emailAddress, facebook], () => {
           <InputText
             class="grow h-10"
             type="text"
-            v-model="emailAddress"
+            v-model="email"
           />
         </div>
 

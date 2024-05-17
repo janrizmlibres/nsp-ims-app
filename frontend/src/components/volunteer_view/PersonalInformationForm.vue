@@ -9,10 +9,10 @@ const firstName = ref(null)
 const middleName = ref(null)
 const lastName = ref(null)
 const nickname = ref(null)
-const dateOfBirth = ref(null)
+const birthday = ref(null)
 const suffix = ref(null)
-const course = ref(null)
-const yearLevel = ref(null)
+const program = ref(null)
+const year = ref(null)
 const work = ref(null)
 const housing = ref(null)
 const city = ref(null)
@@ -23,16 +23,16 @@ const handleDataChange = (newData) => {
   emit('dataChanged', newData);
 };
 
-watch([firstName, middleName, lastName, nickname, dateOfBirth, suffix, course, yearLevel, work, housing, city, barangay, province], () => {
+watch([firstName, middleName, lastName, nickname, birthday, suffix, program, year, work, housing, city, barangay, province], () => {
   handleDataChange({
     firstName: firstName.value,
     middleName: middleName.value,
     lastName: lastName.value,
     nickname: nickname.value,
-    dateOfBirth: dateOfBirth.value,
+    birthday: birthday.value,
     suffix: suffix.value,
-    course: course.value,
-    yearLevel: yearLevel.value,
+    program: program.value,
+    year: year.value,
     work: work.value,
     housing: housing.value,
     city: city.value,
@@ -97,7 +97,7 @@ watch([firstName, middleName, lastName, nickname, dateOfBirth, suffix, course, y
           </div>
           <Calendar
             class="grow h-10"
-            v-model="dateOfBirth"
+            v-model="birthday"
           />
         </div>
 
@@ -116,12 +116,12 @@ watch([firstName, middleName, lastName, nickname, dateOfBirth, suffix, course, y
       <div class="basis-1/2 pr-16 pl-2">
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Course</span>
+            <span>Program</span>
           </div>
           <InputText
             class="grow h-10"
             type="text"
-            v-model="course"
+            v-model="program"
           />
         </div>
 
@@ -132,7 +132,7 @@ watch([firstName, middleName, lastName, nickname, dateOfBirth, suffix, course, y
           <InputText
             class="grow h-10"
             type="text"
-            v-model="yearLevel"
+            v-model="year"
           />
         </div>
 

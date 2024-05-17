@@ -7,7 +7,7 @@
         <InputText
           class="grow h-10 flex-grow"
           type="text"
-          v-model="id"
+          v-model="volunteerId"
         />
       </div>
   
@@ -16,8 +16,8 @@
           <span>Affiliation</span>
         </div>
         <Dropdown 
-        v-model="selectedAffiliation" 
-        :options="affiliation" 
+        v-model="affiliation" 
+        :options="affiliationSelect" 
         optionLabel="name" 
         class="grow h-10 flex-grow" />
       </div>
@@ -31,9 +31,9 @@ import Dropdown from 'primevue/dropdown';
 
 const emit = defineEmits(['update', 'dataChanged'])
 
-const selectedAffiliation = ref();
-const id = ref();
-const affiliation = ref([
+const affiliation = ref();
+const volunteerId = ref();
+const affiliationSelect = ref([
   { name: 'Student', code: 'Student' },
   { name: 'Professional', code: 'Professional' }
 ]);
@@ -42,8 +42,8 @@ const handleDataChange = (newData) => {
   emit('dataChanged', newData);
 };
 
-watch([selectedAffiliation, id], () => {
-  const newData = { selectedAffiliation: selectedAffiliation.value ? selectedAffiliation.value.code : '', id: id.value };
+watch([affiliation, volunteerId], () => {
+  const newData = { affiliation: affiliation.value ? affiliation.value.code : '', volunteerId: volunteerId.value };
   emit('update', newData);
   handleDataChange(newData);
 });

@@ -5,16 +5,16 @@ import Checkbox from 'primevue/checkbox'
 const emit = defineEmits(['dataChanged', 'update'])
 
 const day = ref([])
-const aos = ref([])
+const area = ref([])
 
 const handleDataChange = (newData) => {
   emit('dataChanged', newData);
 };
 
-watch([day, aos], () => {
+watch([day, area], () => {
   const newData = {
-    availability: day.value,
-    areaOfSpecialization: aos.value
+    day: day.value,
+    area: area.value
   };
   emit('update', newData);
   handleDataChange(newData);
@@ -61,35 +61,35 @@ watch([day, aos], () => {
             <span>Area of Specialization</span>
           </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="aos" inputId="ls1-e" name="ls1-e" value="LS1-E" />
+                <Checkbox v-model="area" inputId="ls1-e" name="ls1-e" value="LS1-E" />
                 <label for="ls1-e" class="ml-2 whitespace-nowrap"> LS1-E </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="aos" inputId="ls1-f" name="ls1-f" value="LS1-F" />
+                <Checkbox v-model="area" inputId="ls1-f" name="ls1-f" value="LS1-F" />
                 <label for="ls1-f" class="ml-2 whitespace-nowrap"> LS1-F </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="aos" inputId="ls2-S" name="ls2-s" value="LS2-S" />
+                <Checkbox v-model="area" inputId="ls2-S" name="ls2-s" value="LS2-S" />
                 <label for="ls2-s" class="ml-2 whitespace-nowrap"> LS2-S </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="aos" inputId="ls3-m" name="ls3-m" value="LS3-M" />
+                <Checkbox v-model="area" inputId="ls3-m" name="ls3-m" value="LS3-M" />
                 <label for="ls3-m" class="ml-2 whitespace-nowrap"> LS3-M </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="aos" inputId="ls4-cls" name="ls4-cls" value="LS4-CLS" />
+                <Checkbox v-model="area" inputId="ls4-cls" name="ls4-cls" value="LS4-CLS" />
                 <label for="ls4-cls" class="ml-2 whitespace-nowrap"> LS4-CLS</label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="aos" inputId="ls5-uts" name="ls5-uts" value="LS5-UTS" />
+                <Checkbox v-model="area" inputId="ls5-uts" name="ls5-uts" value="LS5-UTS" />
                 <label for="ls5-uts" class="ml-2 whitespace-nowrap"> LS5-UTS</label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="aos" inputId="ls6-dl" name="ls6-dl" value="LS6-DL" />
+                <Checkbox v-model="area" inputId="ls6-dl" name="ls6-dl" value="LS6-DL" />
                 <label for="ls6-dl" class="ml-2 whitespace-nowrap"> LS6-DL</label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="aos" inputId="hr" name="homeroom" value="Homeroom" />
+                <Checkbox v-model="area" inputId="hr" name="homeroom" value="Homeroom" />
                 <label for="homeroom" class="ml-2"> Homeroom</label>
             </div>
         </div>

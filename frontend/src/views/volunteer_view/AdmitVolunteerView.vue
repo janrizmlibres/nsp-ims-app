@@ -56,29 +56,53 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import { ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { useVolunteerStore } from '@/stores/volunteer';
+
+const volunteerStore = useVolunteerStore();
+
+async function submitForm() {
+  try {
+    const result = await volunteerStore.addVolunteer(formData.value)
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: result.data.message,
+      life: 5000
+    })
+    await router.replace({ name: 'volunteer-records' })
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
 
 const toast = useToast();
 
 const formData = ref({
-    id: '',
-    selectedAffiliation: '',
+    volunteerId: '',
+    affiliation: '',
     firstName: '',
     middleName: '',
     lastName: '',
     nickname: '',
-    dateOfBirth: '',
+    birthday: '',
     suffix: '',
-    course: '',
-    yearLevel: '',
+    program: '',
+    year: '',
     work: '',
     housing: '',
     city: '',
     barangay: '',
     province: '',
     contactNumber: '',
-    emailAddress: '',
+    email: '',
     facebook: '',
-    availability: '',
+    day: '',
+    area: '',
     emergencyLastName: '', 
     emergencyFirstName: '', 
     emergencyMiddleName: '', 
@@ -121,6 +145,7 @@ const handleSubmit = () => {
 
   if (results.every(result => result)) {
     console.log(formData.value);
+    submitForm();
   }
 };
 
