@@ -67,3 +67,41 @@ onMounted(() => {
 })
 
 </script>
+<template>
+  <Dropdown
+    v-model="learningStrandInput"
+    :options="learningStrands"
+    optionLabel="learning_strand.name"
+    @change="getEnrolledGrades"
+    placeholder="Select a Strand"
+    class="w-full mb-4" />
+  <DataTable
+    :value="grades"
+    :rows="10" dataKey="id" >
+    <column field="firstQuarter" header="Q1">
+      <template #body="{ data }">
+        <div v-if="data.firstQuarter"><span class="text-lime-600 font-bold">&#10003;</span></div> <!-- This is a check mark -->
+        <div v-else>X</div>
+      </template>
+    </column>
+    <column field="secondQuarter" header="Q2">
+      <template #body="{ data }">
+        <div v-if="data.secondQuarter"><span class="text-lime-600 font-bold">&#10003;</span></div> <!-- This is a check mark -->
+        <div v-else>X</div>
+      </template>
+    </column>
+    <column field="thirdQuarter" header="Q3">
+      <template #body="{ data }">
+        <div v-if="data.thirdQuarter"><span class="text-lime-600 font-bold">&#10003;</span></div><!-- This is a check mark -->
+        <div v-else>X</div>
+      </template>
+    </column>
+    <column field="fourthQuarter" header="Q4">
+      <template #body="{ data }">
+        <div v-if="data.fourthQuarter"><span class="text-lime-600 font-bold">&#10003;</span></div> <!-- This is a check mark -->
+        <div v-else>X</div>
+      </template>
+    </column>
+    <column field="remarks" header="Remarks" />
+  </DataTable>
+</template>
