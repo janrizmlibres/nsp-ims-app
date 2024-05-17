@@ -26,6 +26,16 @@ export const useTermStore = defineStore('term', () => {
     })
   }
 
+  async function getTerm(termId) {
+    const authStore = useAuthStore()
+
+    const result = await axios.get(`http://localhost:8080/term/${termId}`, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+    
+    return result.data.data
+  }
+
   async function getActiveTerm() {
     const authStore = useAuthStore()
 
@@ -35,10 +45,20 @@ export const useTermStore = defineStore('term', () => {
     
     activeTerm.value = result.data.data
   }
+  
+  async function getAllTerms() {
+    const authStore = useAuthStore()
+
+    const result = await axios.get(`http://localhost:8080/term/terms`, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+    
+    return result.data.data
+  }
 
   function showHideAddTermDialog() {
     visibleAddTermDialog.value = !visibleAddTermDialog.value
   }
 
-  return { terms, visibleAddTermDialog, activeTerm, getTerms, addTerm, getActiveTerm, showHideAddTermDialog }
+  return { terms, visibleAddTermDialog, activeTerm, getTerms, addTerm, getActiveTerm, getTerm, getAllTerms, showHideAddTermDialog }
 })

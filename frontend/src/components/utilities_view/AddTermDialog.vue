@@ -32,7 +32,6 @@ async function addTerm() {
             range.value.push(date)
         }
         
-        console.log(range.value[0].getFullYear());
         await termStore.addTerm({
             academic_year: range.value[0].getFullYear() + '-' + range.value[1].getFullYear(),
             start_date: range.value[0],
@@ -55,6 +54,7 @@ async function addTerm() {
     }
 
     await termStore.getTerms()
+    await termStore.getActiveTerm()
     dates.value = null;
     termStore.showHideAddTermDialog()
 }

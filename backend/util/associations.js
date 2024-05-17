@@ -5,17 +5,19 @@ import EmergencyPerson from "../models/student/emergency_person.js";
 import ParentalInfo from "../models/student/parental_info.js";
 import PreviousSchool from "../models/student/previous_school.js";
 
+import ClassLearningStrand from "../models/class/class_learning_strand.js";
+import ClassSchedule from "../models/class/class_schedule.js";
+import Module from "../models/class/module.js";
+import ModuleSubmission from "../models/class/module_submission.js";
+import Grade from "../models/class/grade.js";
+import Session from "../models/class/session.js";
+import Attendance from "../models/class/attendance.js";
+
 import Term from "../models/term.js";
-import ClassLevel from "../models/class_level.js";
+import ClassLevel from "../models/class/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
-import Module from "../models/module.js";
-import Learner from "../models/learner.js";
+
 import Enrollment from "../models/enrollment.js";
-import Attendance from "../models/attendance.js";
-import ModuleSubmission from "../models/module_submission.js";
-import ClassLearningStrand from "../models/class_learning_strand.js";
-import ClassSchedule from "../models/class_schedule.js";
-import Session from "../models/session.js";
 
 import Staff from "../models/staff/staff.js";
 import Permission from "../models/staff/permission.js";
@@ -63,7 +65,7 @@ function setAssociations() {
   Term.hasMany(ClassLevel);
   ClassLevel.belongsTo(Term);
 
-  // Class-LearningStrand Relationship
+  // Class Learning Strand Relationship
   ClassLevel.belongsToMany(LearningStrand, { through: ClassLearningStrand });
   LearningStrand.belongsToMany(ClassLevel, { through: ClassLearningStrand });
   LearningStrand.hasMany(ClassLearningStrand);
@@ -71,63 +73,79 @@ function setAssociations() {
   ClassLevel.hasMany(ClassLearningStrand);
   ClassLearningStrand.belongsTo(ClassLevel);
 
-  // ClassLearningStrand-Schedule Relationship
-  ClassLearningStrand.hasMany(ClassSchedule);
-  ClassSchedule.belongsTo(ClassLearningStrand);
+  // Class Learning Strand-Schedule Relationship
+  ClassLearningStrand.belongsToMany(Volunteer, { through: ClassSchedule});
+  Volunteer.belongsToMany(ClassLearningStrand, { through: ClassSchedule });
+  Volunteer.hasMany(ClassSchedule)
+  ClassSchedule.belongsTo(Volunteer)
+  ClassLearningStrand.hasMany(ClassSchedule)
+  ClassSchedule.belongsTo(ClassLearningStrand)
 
-  // ClassLearningStrand-Module Relationship
-  ClassLearningStrand.hasMany(Module);
-  Module.belongsTo(ClassLearningStrand);
+  // Class Learning Strand-Module Relationship
+  ClassLearningStrand.hasMany(Module)
+  Module.belongsTo(ClassLearningStrand)
 
   // Student-ClassLevel Relationship
-  Learner.belongsToMany(ClassLevel, { through: Enrollment });
-  ClassLevel.belongsToMany(Learner, { through: Enrollment });
-  ClassLevel.hasMany(Enrollment);
-  Enrollment.belongsTo(ClassLevel);
-  Learner.hasMany(Enrollment);
-  Enrollment.belongsTo(Learner);
+  Student.belongsToMany(ClassLevel, { through: Enrollment });
+  ClassLevel.belongsToMany(Student, { through: Enrollment });
+  ClassLevel.hasMany(Enrollment)
+  Enrollment.belongsTo(ClassLevel)
+  Student.hasMany(Enrollment)
+  Enrollment.belongsTo(Student)
+
+  // Class Learning Strand-Session Relationship
+  ClassLearningStrand.hasMany(Session)
+  Session.belongsTo(ClassLearningStrand)
+
+  // Student-Session Relationship
+  Enrollment.belongsToMany(Session, { through: Attendance });
+  Session.belongsToMany(Enrollment, { through: Attendance });
+  Session.hasMany(Attendance)
+  Attendance.belongsTo(Session)
+  Enrollment.hasMany(Attendance)
+  Attendance.belongsTo(Enrollment)
 
   // Student-Class Learning Strand Relationship
-  Learner.belongsToMany(Session, { through: Attendance });
-  Session.belongsToMany(Learner, { through: Attendance });
-  Session.hasMany(Attendance);
-  Attendance.belongsTo(Session);
-  Learner.hasMany(Attendance);
-  Attendance.belongsTo(Learner);
+  Enrollment.belongsToMany(ClassLearningStrand, { through: Grade });
+  ClassLearningStrand.belongsToMany(Enrollment, { through: Grade });
+  ClassLearningStrand.hasMany(Grade)
+  Grade.belongsTo(ClassLearningStrand)
+  Enrollment.hasMany(Grade)
+  Grade.belongsTo(Enrollment)
 
   // Student-Module Relationship
-  Learner.belongsToMany(Module, { through: ModuleSubmission });
-  Module.belongsToMany(Learner, { through: ModuleSubmission });
-  Module.hasMany(ModuleSubmission);
-  ModuleSubmission.belongsTo(Module);
-  Learner.hasMany(ModuleSubmission);
-  ModuleSubmission.belongsTo(Learner);
+  Enrollment.belongsToMany(Module, { through: ModuleSubmission });
+  Module.belongsToMany(Enrollment, { through: ModuleSubmission });
+  Module.hasMany(ModuleSubmission)
+  ModuleSubmission.belongsTo(Module)
+  Enrollment.hasMany(ModuleSubmission)
+  ModuleSubmission.belongsTo(Enrollment)
 
   // Volunteer-Affiliation Relationship
-  Volunteer.hasOne(StudentVolunteer);
-  StudentVolunteer.belongsTo(Volunteer);
-  Volunteer.hasOne(ProfessionalVolunteer);
-  ProfessionalVolunteer.belongsTo(Volunteer);
+  Volunteer.hasOne(StudentVolunteer)
+  StudentVolunteer.belongsTo(Volunteer)
+  Volunteer.hasOne(ProfessionalVolunteer)
+  ProfessionalVolunteer.belongsTo(Volunteer)
 
   // Volunteer-Personal Information Relationship
-  Volunteer.hasOne(VolunteerPersonalInformation);
-  VolunteerPersonalInformation.belongsTo(Volunteer);
+  Volunteer.hasOne(VolunteerPersonalInformation)
+  VolunteerPersonalInformation.belongsTo(Volunteer)
 
   // Volunteer-Contact Information Relationship
-  Volunteer.hasOne(VolunteerContactInformation);
-  VolunteerContactInformation.belongsTo(Volunteer);
+  Volunteer.hasOne(VolunteerContactInformation)
+  VolunteerContactInformation.belongsTo(Volunteer)
 
   // Volunteer-Emergency Contact Relationship
-  Volunteer.hasOne(VolunteerEmergency);
-  VolunteerEmergency.belongsTo(Volunteer);
+  Volunteer.hasOne(VolunteerEmergency)
+  VolunteerEmergency.belongsTo(Volunteer)
 
   // Volunteer-Availability Relationship
-  Volunteer.hasOne(VolunteerAvailability);
-  VolunteerAvailability.belongsTo(Volunteer);
+  Volunteer.hasOne(VolunteerAvailability)
+  VolunteerAvailability.belongsTo(Volunteer)
 
   // Volunteer-Specialization Relationship
-  Volunteer.hasOne(VolunteerSpecialization);
-  VolunteerSpecialization.belongsTo(Volunteer);
+  Volunteer.hasOne(VolunteerSpecialization)
+  VolunteerSpecialization.belongsTo(Volunteer)
 }
 
 export default setAssociations;

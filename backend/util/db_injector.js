@@ -4,33 +4,135 @@ import Student from "../models/student/student.js";
 import Staff from "../models/staff/staff.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
-import ClassLevel from "../models/class_level.js";
-import Learner from "../models/learner.js";
 import Volunteer from "../models/volunteer/volunteer.js";
+import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
+import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
+import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
+import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
+import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
+import StudentVolunteer from "../models/volunteer/student_volunteer.js";
+import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
+import ClassLevel from "../models/class/class_level.js";
+import ClassLearningStrand from "../models/class/class_learning_strand.js";
 
 export async function injectAll() {
   await injectStaff();
-  await injectStudent();
-  await injectAcademicYear();
   await injectLearningStrand();
-  await injectLearner();
+  await injectAcademicYear();
+  await injectStudent();
   await injectVolunteer();
 }
 
 export async function injectStudent() {
-  await Student.create({
-    lrn: "198765150721",
-    category: "Out-of-School Youth",
-    firstName: "Juan",
-    lastName: "Dela Cruz",
-  });
+  const studentData = [
+    {
+      lrn: 1242312145189,
+      lastName: "Dela Cruz",
+      firstName: "Juan",
+      category: "Out-of-School Youth",
+    },
+    {
+      lrn: 1242312145145,
+      lastName: "Bautista",
+      firstName: "Felix",
+      middleName: "Polso",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Amidrano",
+      firstName: "Nicolette",
+      middleName: "Bucio",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Fernandez",
+      firstName: "Hero",
+      middleName: "Baltazar",
+      category: "Out-of-School Youth",
+    },
+    {
+      lrn: 1242312145714,
+      lastName: "Santos",
+      firstName: "Dominic",
+      middleName: "Dicolano",
+      category: "Out-of-School Youth",
+    },
+    {
+      lrn: 1242562145189,
+      lastName: "Fulminar",
+      firstName: "Ashley",
+      middleName: "De Guzman",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Quintos",
+      firstName: "Ariel",
+      middleName: "Furtonado",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Hilot",
+      firstName: "Van",
+      middleName: "Culminares",
+      category: "Out-of-School Youth",
+    },
+    {
+      lrn: 1247192145189,
+      lastName: "Alonto",
+      firstName: "Princess Aliah",
+      category: "Out-of-School Youth",
+    },
+    {
+      lastName: "Montecillo",
+      firstName: "Dirk",
+      middleName: "Santocildis",
+      category: "Out-of-School Youth",
+    },
+  ];
 
-  await Student.create({
-    lrn: "127051567891",
-    category: "Out-of-School Youth",
-    firstName: "Pedro",
-    lastName: "Pascual",
-  });
+  await Promise.all(
+    studentData.map(async (student) => {
+      await Student.create(student);
+    })
+  );
+
+  function getRandomStatus() {
+    let status = ["Inactive", "Active", "Drop"];
+    return status[Math.floor(Math.random() * 2)];
+  }
+  
+  function getRegularity() {
+    let status = ["Regular", "Hybrid"];
+    return status[Math.floor(Math.random() * 2)];
+  }
+
+  const students = await Student.findAll();
+  await Promise.all(    
+    students.map(async (student) => {
+      const class_levels = await ClassLevel.findAll();
+      await Promise.all(
+        class_levels.map(async (class_level) => {
+          const enrollment = await class_level.addStudent(student, {
+            through: {
+              hasEnrollmentForm: true,
+              status: getRandomStatus(),
+              regularity: getRegularity(),
+            },
+          });
+
+          const classLearningStrands = await ClassLearningStrand.findAll({
+            where: {classLevelId: class_level.id}
+          });
+
+          await Promise.all(
+            classLearningStrands.map(async (classLearningStrand) => {
+              classLearningStrand.addEnrollment(enrollment)
+            })
+          )
+        })
+      );
+    })
+  );
 }
 
 export async function injectStaff() {
@@ -251,112 +353,19 @@ export async function injectAcademicYear() {
     })
   );
 
-  const active_year = await Term.findOne({ where: { status: true } });
+  const academic_years = await Term.findAll()
+  const learningStrands = await LearningStrand.findAll()
 
   await Promise.all(
-    classLevelData.map(async (class_level) => {
-      await active_year.createClass_level({
-        school_level: class_level.school_level,
-      });
-    })
-  );
-}
-
-export async function injectLearner() {
-  const learnerData = [
-    {
-      lrn: 1242312145189,
-      lastName: "Dela Cruz",
-      firstName: "Juan",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242312145145,
-      lastName: "Bautista",
-      firstName: "Felix",
-      middleName: "Polso",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Amidrano",
-      firstName: "Nicolette",
-      middleName: "Bucio",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Fernandez",
-      firstName: "Hero",
-      middleName: "Baltazar",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242312145714,
-      lastName: "Santos",
-      firstName: "Dominic",
-      middleName: "Dicolano",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242562145189,
-      lastName: "Fulminar",
-      firstName: "Ashley",
-      middleName: "De Guzman",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Quintos",
-      firstName: "Ariel",
-      middleName: "Furtonado",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Hilot",
-      firstName: "Van",
-      middleName: "Culminares",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1247192145189,
-      lastName: "Alonto",
-      firstName: "Princess Aliah",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Montecillo",
-      firstName: "Dirk",
-      middleName: "Santocildis",
-      category: "Out-of-School Youth",
-    },
-  ];
-
-  await Promise.all(
-    learnerData.map(async (learner) => {
-      await Learner.create(learner);
-    })
-  );
-
-  const class_levels = await ClassLevel.findAll();
-
-  function getRandomStatus() {
-    let status = ["Inactive", "Active", "Drop"];
-    return status[Math.floor(Math.random() * 2)];
-  }
-
-  await Promise.all(
-    class_levels.map(async (class_level) => {
-      const learners = await Learner.findAll();
-
-      await Promise.all(
-        learners.map(async (learner) => {
-          class_level.addLearner(learner, {
-            through: {
-              hasEnrollmentForm: true,
-              status: getRandomStatus(),
-              modularity: "Regular",
-            },
-          });
+    academic_years.map(async (academic_year) => {
+      classLevelData.map(async (class_level) => {
+        const classLevel = await academic_year.createClass_level({
+          school_level: class_level.school_level,
+        });
+        learningStrands.map(async (learningStrand) => {
+          await classLevel.addLearning_strand(learningStrand)
         })
-      );
+      })
     })
   );
 }

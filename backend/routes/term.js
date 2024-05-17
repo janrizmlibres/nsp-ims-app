@@ -6,5 +6,7 @@ const router = express.Router();
 
 router.get("/active", isAuth, termController.getActiveTerm);
 router.get("/terms", isAuth, termController.getAllTerms);
+router.get("/:termId", isAuth, termController.getTerm);
+
 
 export default router;
