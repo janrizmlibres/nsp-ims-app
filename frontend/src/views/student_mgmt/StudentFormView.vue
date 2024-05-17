@@ -4,7 +4,7 @@ import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 
 import { onMounted, ref, computed, provide, watch } from 'vue'
-import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import IdentityForm from '@/components/student_mgmt/profile_view/IdentityForm.vue'
@@ -12,23 +12,19 @@ import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
 import { useStudentsStore } from '@/stores/students'
 
 import FormParts from '@/util/student_form_parts'
-
-const props = defineProps({
-  studentId: {
-    type: String,
-    default: null
-  }
-})
+import { isEqual } from 'lodash'
 
 const emit = defineEmits(['routeChange'])
 
+const route = useRoute()
 const router = useRouter()
 const toast = useToast()
 const confirm = useConfirm()
+
 const studentsStore = useStudentsStore()
 
-const formData = {
-  identity: ref({
+const initialData = {
+  identity: {
     firstName: null,
     middleName: null,
     lastName: null,
@@ -36,8 +32,8 @@ const formData = {
     lrn: null,
     category: null,
     photoUrl: null
-  }),
-  personalInfo: ref({
+  },
+  personalInfo: {
     birthday: null,
     bloodType: null,
     birthBarangay: null,
@@ -50,21 +46,21 @@ const formData = {
     homeBarangay: null,
     homeCity: null,
     homeProvince: null
-  }),
-  contactInfo: ref({
+  },
+  contactInfo: {
     email: null,
     contactNum: null,
     facebook: null
-  }),
-  emergencyPerson: ref({
+  },
+  emergencyPerson: {
     firstName: null,
     middleName: null,
     lastName: null,
     suffixName: null,
     contactNum: null,
     relationship: null
-  }),
-  parentalInfo: ref({
+  },
+  parentalInfo: {
     lastNameF: null,
     middleNameF: null,
     firstNameF: null,
@@ -75,8 +71,8 @@ const formData = {
     firstNameM: null,
     suffixNameM: null,
     occupationM: null
-  }),
-  prevSchool: ref({
+  },
+  prevSchool: {
     name: null,
     schoolType: null,
     schoolAffiliation: null,
@@ -88,19 +84,36 @@ const formData = {
     barangay: null,
     city: null,
     province: null
-  })
+  }
 }
 
-let okToLeave = true
+const formData = {
+  identity: ref(structuredClone(initialData.identity)),
+  personalInfo: ref(structuredClone(initialData.personalInfo)),
+  contactInfo: ref(structuredClone(initialData.contactInfo)),
+  emergencyPerson: ref(structuredClone(initialData.emergencyPerson)),
+  parentalInfo: ref(structuredClone(initialData.parentalInfo)),
+  prevSchool: ref(structuredClone(initialData.prevSchool))
+}
+
+let isOkToLeave = false
 const updateKey = ref(0)
-const isViewMode = ref(Boolean(props.studentId))
+
 const headerText = computed(() => {
-  if (props.studentId === null) return 'Add Record'
-  return isViewMode.value ? 'View Record' : 'Edit Record'
+  if (!route.params.studentId) return 'Add Record'
+  return route.meta.isViewMode ? 'View Record' : 'Edit Record'
+})
+const confirmBtnText = computed(() => (route.meta.isViewMode ? 'Edit' : 'Submit'))
+const cancelBtnText = computed(() => (route.meta.isViewMode ? 'Back' : 'Cancel'))
+const isFormDirty = computed(() => {
+  for (const key in initialData) {
+    if (!isEqual(initialData[key], formData[key].value)) return true
+  }
+  return false
 })
 
 watch(
-  () => props.studentId,
+  () => route.name,
   () => emit('routeChange')
 )
 
@@ -109,7 +122,6 @@ provide('contactData', formData.contactInfo)
 provide('emergencyData', formData.emergencyPerson)
 provide('parentalData', formData.parentalInfo)
 provide('prevSchoolData', formData.prevSchool)
-provide('isViewMode', isViewMode)
 
 function updateFormData(part, data) {
   const updateMapping = {
@@ -122,11 +134,21 @@ function updateFormData(part, data) {
   }
 
   updateMapping[part]()
-  okToLeave = false
+}
+
+function handleConfirm() {
+  if (route.meta.isViewMode)
+    router.push({ name: 'edit-student', params: { studentId: route.params.studentId } })
+  else submitForm()
+}
+
+function handleCancel() {
+  if (route.name === 'add-student' || route.meta.isViewMode) goToStudentView()
+  else router.push({ name: 'view-student', params: { studentId: route.params.studentId } })
 }
 
 async function goToStudentView() {
-  await router.replace({ name: 'student-records' })
+  await router.push({ name: 'student-records' })
 }
 
 async function submitForm() {
@@ -152,13 +174,13 @@ async function submitForm() {
 }
 
 onBeforeRouteLeave((to) => {
-  if (okToLeave) return true
+  if (!isFormDirty.value || isOkToLeave) return true
 
   confirm.require({
     message: 'Do you really want to leave? You have unsaved changes!',
     header: 'Redirect Confirmation',
     accept: async () => {
-      okToLeave = true
+      isOkToLeave = true
       await router.push(to)
     }
   })
@@ -167,10 +189,10 @@ onBeforeRouteLeave((to) => {
 })
 
 onMounted(async () => {
-  if (props.studentId === null) return
+  if (!route.params.studentId) return
 
   try {
-    const result = await studentsStore.getStudent(props.studentId)
+    const result = await studentsStore.getStudent(route.params.studentId)
     const student = result.data.student
 
     const {
@@ -182,14 +204,26 @@ onMounted(async () => {
       ...identity
     } = student
 
-    formData.identity.value = identity
-    formData.personalInfo.value = personal_info
-    formData.contactInfo.value = contact_info
-    formData.emergencyPerson.value = emergency_person
-    formData.parentalInfo.value = parental_info
-    formData.prevSchool.value = previous_school
+    const filterObject = (obj) => {
+      // eslint-disable-next-line no-unused-vars
+      const { id, createdAt, updatedAt, studentId, ...filteredObj } = obj
+      return filteredObj
+    }
 
-    okToLeave = true
+    initialData.identity = filterObject(identity)
+    initialData.personalInfo = filterObject(personal_info)
+    initialData.contactInfo = filterObject(contact_info)
+    initialData.emergencyPerson = filterObject(emergency_person)
+    initialData.parentalInfo = parental_info && filterObject(parental_info)
+    initialData.prevSchool = filterObject(previous_school)
+
+    formData.identity.value = initialData.identity
+    formData.personalInfo.value = initialData.personalInfo
+    formData.contactInfo.value = initialData.contactInfo
+    formData.emergencyPerson.value = initialData.emergencyPerson
+    formData.parentalInfo.value = initialData.parentalInfo
+    formData.prevSchool.value = initialData.prevSchool
+
     updateKey.value += 1
   } catch (error) {
     router.back()
@@ -203,27 +237,27 @@ onMounted(async () => {
       <IdentityForm
         @dataChanged="updateFormData"
         :identity="formData.identity.value"
-        :isViewMode="isViewMode"
+        :isViewMode="$route.meta.isViewMode"
         :key="updateKey"
       />
       <BulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
 
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Button class="h-10 u-bg-green" @click="submitForm">
+          <Button class="h-10 u-bg-green" @click="handleConfirm">
             <div>
               <font-awesome-icon
                 icon="fa-solid fa-circle-check"
                 class="absolute top-2/4 -mt-2 left-3"
               />
-              <h2 class="pl-5 font-bold">Submit</h2>
+              <h2 class="pl-5 font-bold">{{ confirmBtnText }}</h2>
             </div>
           </Button>
           <Button
             class="h-10 ml-2 u-bg-red"
-            label="Cancel"
+            :label="cancelBtnText"
             icon="fa-solid fa-circle-xmark"
-            @click="goToStudentView"
+            @click="handleCancel"
           />
         </div>
       </div>

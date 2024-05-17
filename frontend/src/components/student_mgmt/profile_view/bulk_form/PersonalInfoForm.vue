@@ -11,7 +11,6 @@ import FormParts from '@/util/student_form_parts'
 const emit = defineEmits(['dataChanged'])
 
 const personalData = inject('personalData')
-const isViewMode = inject('isViewMode')
 
 const selectedSex = ref(personalData.value.sex)
 const selectedBloodType = ref(personalData.value.bloodType)
@@ -126,7 +125,7 @@ onMounted(() => {
             @change="handleUpdate"
             :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
+            :disabled="$route.meta.isViewMode"
           />
 
           <div class="flex items-center justify-end">
@@ -139,7 +138,7 @@ onMounted(() => {
             @change="handleUpdate"
             :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
+            :disabled="$route.meta.isViewMode"
           />
         </div>
 
@@ -153,7 +152,7 @@ onMounted(() => {
           @change="handleUpdate"
           :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6">
@@ -170,7 +169,7 @@ onMounted(() => {
             @change="handleUpdate"
             :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
+            :disabled="$route.meta.isViewMode"
           />
           <Dropdown
             class="h-10 col-span-3"
@@ -180,7 +179,7 @@ onMounted(() => {
             @change="handleUpdate"
             :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
+            :disabled="$route.meta.isViewMode"
           />
           <Dropdown
             class="h-10 col-span-4"
@@ -191,7 +190,7 @@ onMounted(() => {
             @change="handleUpdate"
             :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
+            :disabled="$route.meta.isViewMode"
           />
         </div>
 
@@ -206,7 +205,7 @@ onMounted(() => {
           @update:modelValue="handleUpdate"
           :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
@@ -216,7 +215,7 @@ onMounted(() => {
           @update:modelValue="handleUpdate"
           :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
@@ -226,7 +225,7 @@ onMounted(() => {
           @update:modelValue="handleUpdate"
           :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
       </div>
     </div>
@@ -244,7 +243,7 @@ onMounted(() => {
           @change="handleUpdate"
           :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6">
@@ -261,7 +260,7 @@ onMounted(() => {
           @update:modelValue="handleUpdate"
           :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
       </div>
     </div>

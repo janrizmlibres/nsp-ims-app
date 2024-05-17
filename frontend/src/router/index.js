@@ -65,14 +65,19 @@ const router = createRouter({
               path: 'add',
               name: 'add-student',
               component: StudentFormView,
-              meta: { reuse: true }
+              meta: { isViewMode: false }
             },
             {
               path: ':studentId',
               name: 'view-student',
               component: StudentFormView,
-              meta: { reuse: true },
-              props: true
+              meta: { isViewMode: true }
+            },
+            {
+              path: 'edit/:studentId',
+              name: 'edit-student',
+              component: StudentFormView,
+              meta: { isViewMode: false }
             }
           ]
         },

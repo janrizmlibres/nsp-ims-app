@@ -1,7 +1,7 @@
 <script setup>
 import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
-import { inject, onMounted, ref } from 'vue'
+import { inject, ref } from 'vue'
 
 import FormParts from '@/util/student_form_parts'
 import { objectMap } from '@/util/helpers'
@@ -10,7 +10,6 @@ const emit = defineEmits(['dataChanged'])
 
 const contactData = inject('contactData')
 const emergencyData = inject('emergencyData')
-const isViewMode = inject('isViewMode')
 
 const leftFields = ref({
   email: { label: 'Email Address', data: contactData.value.email },
@@ -40,8 +39,6 @@ function updateEmergencyContact() {
   data.relationship = selectedRelationship.value
   emit('dataChanged', FormParts.Emergency, data)
 }
-
-onMounted(() => console.log(emergencyData.value))
 </script>
 
 <template>
@@ -66,7 +63,7 @@ onMounted(() => console.log(emergencyData.value))
                 }
               }"
               :ptOptions="{ mergeProps: true }"
-              :disabled="isViewMode"
+              :disabled="$route.meta.isViewMode"
             />
           </template>
         </div>
@@ -94,7 +91,7 @@ onMounted(() => console.log(emergencyData.value))
                 }
               }"
               :ptOptions="{ mergeProps: true }"
-              :disabled="isViewMode"
+              :disabled="$route.meta.isViewMode"
             />
             <Dropdown
               v-else
@@ -105,7 +102,7 @@ onMounted(() => console.log(emergencyData.value))
               @update:modelValue="updateEmergencyContact"
               :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
               :ptOptions="{ mergeProps: true }"
-              :disabled="isViewMode"
+              :disabled="$route.meta.isViewMode"
             />
           </template>
 
@@ -123,7 +120,7 @@ onMounted(() => console.log(emergencyData.value))
               }
             }"
             :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
+            :disabled="$route.meta.isViewMode"
           />
         </div>
       </div>

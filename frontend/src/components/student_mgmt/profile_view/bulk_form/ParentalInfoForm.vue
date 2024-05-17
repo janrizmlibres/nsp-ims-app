@@ -8,7 +8,6 @@ import FormParts from '@/util/student_form_parts'
 const emit = defineEmits(['dataChanged'])
 
 const parentalData = inject('parentalData')
-const isViewMode = inject('isViewMode')
 
 const formData = ref({
   fatherData: {
@@ -63,7 +62,7 @@ function handleUpdate() {
                 }
               }"
               :ptOptions="{ mergeProps: true }"
-              :disabled="isViewMode"
+              :disabled="$route.meta.isViewMode"
             />
             <Dropdown
               v-else
@@ -74,7 +73,7 @@ function handleUpdate() {
               @update:modelValue="handleUpdate"
               :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
               :ptOptions="{ mergeProps: true }"
-              :disabled="isViewMode"
+              :disabled="$route.meta.isViewMode"
             />
           </template>
         </div>

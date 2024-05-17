@@ -12,7 +12,6 @@ import FormParts from '@/util/student_form_parts'
 const emit = defineEmits(['dataChanged'])
 
 const prevSchoolData = inject('prevSchoolData')
-const isViewMode = inject('isViewMode')
 
 const schoolName = ref(prevSchoolData.value.name)
 const discontinuationReason = ref(prevSchoolData.value.reason)
@@ -68,7 +67,7 @@ watch([selectedYearL, selectedYearR], ([newYearL, newYearR], [oldYearL, oldYearR
     selectedYearL.value = (Number(newYearR) - 1).toString()
   }
 
-  lastYrAttended.value = `${selectedYearL.value} - ${selectedYearR.value}`
+  lastYrAttended.value = `${selectedYearL.value}-${selectedYearR.value}`
   isYearSet = true
   handleUpdate()
 })
@@ -89,8 +88,6 @@ function handleUpdate() {
 }
 
 onMounted(() => {
-  console.log(prevSchoolData.value)
-
   const currentYear = getYear(new Date())
 
   for (let i = currentYear - 120; i <= currentYear + 1; i++) {
@@ -131,7 +128,7 @@ onMounted(() => {
             }
           }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6 col-span-2">
@@ -144,7 +141,7 @@ onMounted(() => {
           @change="handleUpdate"
           :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6 col-span-2">
@@ -157,7 +154,7 @@ onMounted(() => {
           @change="handleUpdate"
           :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
 
         <div class="flex items-center justify-end text-right pr-6 col-span-2">
@@ -172,7 +169,7 @@ onMounted(() => {
             filter
             :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
+            :disabled="$route.meta.isViewMode"
           />
           <span class="flex items-center justify-center">-</span>
           <Dropdown
@@ -182,7 +179,7 @@ onMounted(() => {
             filter
             :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
+            :disabled="$route.meta.isViewMode"
           />
         </div>
 
@@ -196,7 +193,7 @@ onMounted(() => {
           @change="handleUpdate"
           :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
 
         <div class="flex items-center justify-end text-right pr-6 col-span-2">
@@ -209,7 +206,7 @@ onMounted(() => {
           @change="handleUpdate"
           :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
       </div>
     </div>
@@ -231,7 +228,7 @@ onMounted(() => {
             }
           }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6">
@@ -252,7 +249,7 @@ onMounted(() => {
             }
           }"
           :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
+          :disabled="$route.meta.isViewMode"
         />
       </div>
     </div>

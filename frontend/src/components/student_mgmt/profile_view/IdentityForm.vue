@@ -7,10 +7,14 @@ import OverlayPanel from 'primevue/overlaypanel'
 import Button from 'primevue/button'
 
 import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
 import FormParts from '@/util/student_form_parts'
 
 const emit = defineEmits(['dataChanged'])
 const props = defineProps({ identity: Object, isViewMode: Boolean })
+
+const route = useRoute()
 
 const op = ref()
 const uploader = ref(null)
@@ -45,8 +49,10 @@ function setAvatarHover(value) {
 }
 
 function handleAvatar(event) {
-  if (photoUrl.value) {
+  if (photoUrl.value && !route.meta.isViewMode) {
     op.value.toggle(event)
+  } else if (photoUrl.value && route.meta.isViewMode) {
+    setImageModal(true)
   } else {
     uploader.value.click()
   }
