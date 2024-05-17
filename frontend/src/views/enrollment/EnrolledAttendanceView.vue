@@ -1,6 +1,6 @@
 <script setup>
 // Custom
-import EnrolledAttendanceTable from '@/components/enrollment_view/EnrolledSessionTable.vue'
+import EnrolledAttendanceTable from '@/components/enrollment_view/EnrolledAttendanceTable.vue'
 import { defineProps } from 'vue'
 
 const props = defineProps({
