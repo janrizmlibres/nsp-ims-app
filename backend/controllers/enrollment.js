@@ -48,6 +48,7 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
           dateEnrolled: student.enrollment.dateEnrolled,
           status: student.enrollment.status,
           term: currentTerm.academic_year,
+          classLevelId: classLevel.id,
           enrollmentId: student.enrollment.id,
           studentId: student.id
         };
