@@ -54,19 +54,19 @@ const items = computed(() => [
         key: '3-1',
         label: 'Academic Year',
         icon: 'fa fa-calendar-week',
-        route: { name: 'dashboard' }
+        route: { name: 'current-enrollment' }
       },
       {
         key: '3-2',
         label: 'Enrollment Records',
         icon: 'fa fa-scroll',
-        route: { name: 'dashboard' }
+        route: { name: 'enrollment-history' }
       },
       {
         key: '3-3',
         label: 'Enroll Students',
         icon: 'fa fa-school-flag',
-        route: { name: 'dashboard' }
+        route: { name: 'enroll-learners' }
       }
     ]
   },

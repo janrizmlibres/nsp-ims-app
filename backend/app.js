@@ -6,6 +6,7 @@ import setAssociations from "./util/associations.js";
 
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
+import enrollmentRoutes from "./routes/enrollment.js";
 import termRoutes from "./routes/term.js";
 import classRoutes from "./routes/class.js";
 import classLearningStrandRoutes from "./routes/class_learning_strand.js";
@@ -40,6 +41,7 @@ app.get("/", (_, res) => {
 app.use("/profile", profileRoutes);
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
+app.use("/enrollment", enrollmentRoutes)
 app.use("/term", termRoutes);
 app.use("/class", classRoutes);
 app.use("/classLearningStrand", classLearningStrandRoutes);
