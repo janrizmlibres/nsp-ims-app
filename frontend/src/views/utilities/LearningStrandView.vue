@@ -7,21 +7,62 @@ import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column'
 import { useToast } from 'primevue/usetoast';
-import { ref, watch, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
 const strandStore = useUtilitiesStore()
 const toast = useToast()
 
-const strands = ref([])
+const strands = computed(() => strandStore.strands)
+
+onMounted(async () => {
+    try {
+        await strandStore.getLearningStrands()
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    } 
+})
+
+async function deleteLearningStrand(id) {
+    try {
+        await strandStore.deleteLearningStrand(id)
+        await strandStore.getLearningStrands()
+
+        toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Learning Strand deleted successfully!',
+                life: 3000
+        })
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    }
+}
+
 const editingRows = ref([])
 
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
-    console.log(newData);
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
         try {
+            await strandStore.updateLearningStrand(newData.id, {
+                code: newData.code,
+                name: newData.name
+            })
+
+            await strandStore.getLearningStrands()
+
             toast.add({
                 severity: 'success',
                 summary: 'Success',
@@ -37,27 +78,7 @@ const onRowEditSave = async (event) => {
             })
         }
     }
-};
-
-onMounted(async () => {
-    try {
-        await strandStore.getLearningStrands()
-        strands.value = strandStore.strands
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered.',
-            life: 3000
-        })
-    } 
-})
-
-async function fetchLearningStrands(data) {
-    strands.value = data
 }
-
-watch(() => strandStore.strands, fetchLearningStrands, { immediate: false})
 </script>
 
 <template>
@@ -121,20 +142,20 @@ watch(() => strandStore.strands, fetchLearningStrands, { immediate: false})
         <template #empty> <div class="text-center">No learning strand records found.</div> </template>
         <template #loading> <div class="text-center">Loading learning strand records. Please wait.</div> </template>
 
-        <Column field="code" header="Learning Strand Code">
+        <Column field="code" header="Learning Strand Code" sortable>
             <template #editor="{ data, field }">
                 <InputText v-model="data[field]" autofocus />
             </template>
         </Column>
-        <Column field="name" header="Learning Strand Name">
+        <Column field="name" header="Learning Strand Name" sortable>
             <template #editor="{ data, field }">
                 <InputText v-model="data[field]" autofocus />
             </template>
         </Column>
         <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
         <Column style="width: 2rem;">
-            <template #body>
-                <Button icon="fa fa-trash" text rounded severity="danger" />
+            <template #body="slotProps">
+                <Button icon="fa fa-trash" text rounded severity="danger" @click="deleteLearningStrand(slotProps.data.id)" />
             </template>
         </Column>
         <template #footer> 
@@ -143,5 +164,5 @@ watch(() => strandStore.strands, fetchLearningStrands, { immediate: false})
         </template>
         </DataTable>
     </div>
-  </ContentPane>
+    </ContentPane>
 </template>
