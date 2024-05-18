@@ -54,7 +54,7 @@ onMounted(async () => {
     <ProgressSpinner v-if="isLoading" class="self-center" />
     <ContentPane v-else header="Class" subheader="Management">
         <TheHeader @updateState="updateState" :state="state" />
-        <TabView v-if="state" class="p-2 bg-white shadow-xl rounded-md">
+        <TabView v-if="state" class="bg-white shadow-xl rounded-md">
             <TabPanel>
                 <template #header>
                     <div class="flex items-center gap-2">
