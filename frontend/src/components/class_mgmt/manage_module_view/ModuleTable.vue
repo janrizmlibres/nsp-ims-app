@@ -65,8 +65,8 @@ const addModuleDialog = ref(false)
 
 const meterProgress = ref((data) => {
     return [{
-        label: `() of ${data.length} completed`, 
-        value: data.length
+        label: `${data.filter((datum) => datum.status === true).length} of ${data.length} completed`, 
+        value: data.filter(datum => datum.status === true).length
     }]
 })
 
@@ -183,15 +183,15 @@ function showAddModuleDialog() {
 
 <template>
     <div class="flex flex-row grow">
-        <div class="flex flex-col w-[15%] rounded-md mr-6 p-2 gap-4" >
-            <Button icon="fa fa-plus" label="Add Module" aria-label="Add Module" iconClass="['mr-4']" text rounded raised :disabled="!(termStatus && learningStrandInput)" @click="showAddModuleDialog"/>
+        <div class="flex flex-col w-[17%] rounded-md mr-10 p-2 gap-4" >
+            <Button icon="fa fa-plus" label="Add Module" aria-label="Add Module" iconClass="['mr-4']" rounded outlined :disabled="!(termStatus && learningStrandInput)" @click="showAddModuleDialog"/>
             
-            <div v-if="termStatus && learningStrandInput" class="mt-2">
+            <div v-if="termStatus && learningStrandInput" class="mt-2 p-4">
                 <label>Module Progress</label>
-                <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" />
+                <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" class="font-semibold" />
             </div>
         </div>
-        <div class="w-[85%] shadow-xl">
+        <div class="w-[83%] shadow-xl">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">
@@ -208,7 +208,10 @@ function showAddModuleDialog() {
                     </span>
                 </template>
                 <template #end>
-                    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="deselect" />    
+                    <div class="flex flex-row gap-4 items-center">
+                        <label class="font-semibold">Learning Strand:</label>
+                        <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="deselect" /> 
+                    </div>
                 </template>
             </Toolbar>
             <DataTable 
