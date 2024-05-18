@@ -186,7 +186,7 @@ function showAddModuleDialog() {
         <div class="flex flex-col w-[17%] rounded-md mr-10 p-2 gap-4" >
             <Button icon="fa fa-plus" label="Add Module" aria-label="Add Module" iconClass="['mr-4']" rounded outlined :disabled="!(termStatus && learningStrandInput)" @click="showAddModuleDialog"/>
             
-            <div v-if="termStatus && learningStrandInput" class="mt-2 p-4">
+            <div class="mt-2 p-4">
                 <label>Module Progress</label>
                 <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" class="font-semibold" />
             </div>
