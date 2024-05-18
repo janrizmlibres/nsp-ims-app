@@ -137,9 +137,11 @@ function updateFormData(part, data) {
 }
 
 function handleConfirm() {
-  if (route.meta.isViewMode)
+  if (route.meta.isViewMode) {
     router.push({ name: 'edit-student', params: { studentId: route.params.studentId } })
-  else submitForm()
+  } else {
+    submitForm()
+  }
 }
 
 function handleCancel() {
@@ -153,7 +155,10 @@ async function goToStudentView() {
 
 async function submitForm() {
   try {
-    const result = await studentsStore.addStudent(formData)
+    const result =
+      route.name === 'add-student'
+        ? await studentsStore.addStudent(formData)
+        : await studentsStore.addStudent(formData)
 
     toast.add({
       severity: 'success',

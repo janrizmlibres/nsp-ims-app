@@ -56,5 +56,22 @@ export const useStudentsStore = defineStore('students', () => {
     return result
   }
 
-  return { students, studentsNormalized, getStudents, getStudent, addStudent }
+  async function updateStudent(studentId, formData) {
+    const authStore = useAuthStore()
+
+    const form = new FormData()
+    form.append('image', formData.identity.photoUrl)
+
+    for (const key in formData) {
+      form.append(key, JSON.stringify(formData[key]))
+    }
+
+    const result = await axios.put(`http://localhost:8080/profile/student/${studentId}`, form, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    return result
+  }
+
+  return { students, studentsNormalized, getStudents, getStudent, addStudent, updateStudent }
 })

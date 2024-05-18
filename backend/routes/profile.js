@@ -118,7 +118,7 @@ router.post(
   profileController.addStudent
 );
 
-router.get("/student/:id", isAuth, profileController.getStudent);
+router.get("/student/:studentId", isAuth, profileController.getStudent);
 
 router.put(
   "/student/:studentId",
