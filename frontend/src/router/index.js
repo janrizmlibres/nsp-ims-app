@@ -34,9 +34,8 @@ import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vu
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
 
 import { useAuthStore } from '@/stores/auth'
-import ManageGradeView from '@/views/class_mgmt/ManageGradeView.vue'
-import ManageSessionView from '@/views/class_mgmt/ManageSessionView.vue'
-import SessionView from '@/views/class_mgmt/SessionView.vue'
+// import ManageGradeView from '@/views/class_mgmt/ManageGradeView.vue'
+// import ManageSessionView from '@/views/class_mgmt/ManageSessionView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

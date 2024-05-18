@@ -1,3 +1,6 @@
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
 import { validationResult } from "express-validator";
 
 import Student from "../models/student/student.js";
@@ -40,7 +43,7 @@ export async function getStudent(req, res, next) {
     });
 
     if (!student) {
-      const error = Error("Student cannot be found.");
+      const error = Error("Student not found.");
       error.statusCode = 404;
       throw error;
     }
@@ -111,3 +114,60 @@ export async function addStudent(req, res, next) {
     next(error);
   }
 }
+
+export async function updateStudent(req, res, next) {
+  try {
+    if (!req.file) {
+      const error = new Error("No profile photo provided.");
+      error.statusCode = 422;
+      throw error;
+    }
+
+    const studentId = req.params.studentId;
+    const student = await Student.findByPk(studentId);
+
+    if (!student) {
+      const error = Error("Student not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const {
+      identity,
+      personalInfo,
+      contactInfo,
+      emergencyPerson,
+      parentalInfo,
+      prevSchool,
+    } = req.body;
+
+    const imageUrl = req.file.path.replace("\\", "/");
+
+    if (imageUrl !== student.photoUrl) {
+      clearImage(student.photoUrl);
+      identity.photoUrl = imageUrl;
+    }
+
+    student.set(identity);
+    await student.save();
+
+    await student.setPersonalInfo(personalInfo);
+    await student.setContactInfo(contactInfo);
+    await student.setEmergencyPerson(emergencyPerson);
+    await student.setParentalInfo(parentalInfo);
+    await student.setPreviousSchool(prevSchool);
+
+    res.json(200).json({ message: "Student information updated!" });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
+const clearImage = (filePath) => {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  filePath = path.join(__dirname, "..", filePath);
+  fs.unlink(filePath, (err) => console.log(err));
+};
