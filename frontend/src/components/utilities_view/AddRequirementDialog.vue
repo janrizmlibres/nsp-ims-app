@@ -29,6 +29,8 @@ async function addRequirement() {
             requirement_name: name.value
         })
 
+        await requirementStore.getRequirements()
+
         toast.add({
             severity: 'success',
             summary: 'Success',
@@ -44,7 +46,6 @@ async function addRequirement() {
         })
     }
 
-    await requirementStore.getRequirements()
     name.value = null;
     requirementStore.showHideAddRequirementDialog()
 }
