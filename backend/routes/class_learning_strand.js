@@ -19,7 +19,7 @@ router.patch("/session/:sessionId/update", isAuth, classLearningStrandController
 router.put("/module/moduleSubmissions/update", isAuth, classLearningStrandController.updateModuleSubmissions);
 router.put("/session/attendances/update", isAuth, classLearningStrandController.updateAttendances);
 router.put("/grades/update", isAuth, classLearningStrandController.updateGrades);
-
+router.delete("/modules/delete", isAuth, classLearningStrandController.deleteModules);
 
 export default router;
 

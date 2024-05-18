@@ -141,6 +141,24 @@ export async function updateModule(req, res, next) {
     } 
 }
 
+export async function deleteModules(req, res, next) {
+    const { moduleIds } = req.body
+
+    try {
+        await Module.destroy({
+            where: { id: moduleIds }
+        })
+
+        res.status(200).json({ message: "Deleted Modules Successfully!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    } 
+}
+
 export async function updateModuleSubmissions(req, res, next) {
     try {
         for (const moduleSubmission of req.body.updatedData) {
