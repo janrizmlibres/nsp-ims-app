@@ -100,7 +100,7 @@ async function cancel() {
                 <small>Optional</small>
             </div>
         </div>
-        <div class="flex flex-col mb-4">
+        <div class="flex flex-col mb-10">
             <label>Status</label>
             <Dropdown v-model="module.status" :options="statuses" optionLabel="label" optionValue="value" autofocus >
                 <template #value="slotProps">
@@ -112,7 +112,7 @@ async function cancel() {
             </Dropdown>
         </div>
         <div class="flex justify-end gap-2">
-            <Button type="button" label="Add" @click="updateModule"></Button>
+            <Button type="button" label="Update" @click="updateModule"></Button>
             <Button type="button" label="Cancel" severity="danger" @click="cancel"></Button>
         </div>
     </Dialog>

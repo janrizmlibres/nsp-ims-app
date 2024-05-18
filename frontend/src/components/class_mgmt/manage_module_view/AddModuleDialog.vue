@@ -96,7 +96,7 @@ function cancel() {
             <label>Title</label>
             <InputText id="username" v-model="value" aria-describedby="username-help" />
         </div>
-        <div class="flex flex-col gap-4 mb-4">
+        <div class="flex flex-col gap-4 mb-10">
             <div class="flex flex-col">
                 <label>Distribution Date - Retrieval Date</label>
                 <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
