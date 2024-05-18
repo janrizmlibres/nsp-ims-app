@@ -6,6 +6,8 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
+import Toolbar from 'primevue/toolbar';
+import MeterGroup from 'primevue/metergroup';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
@@ -33,7 +35,7 @@ const cols = ref([
 
 const customPt = {
     table: {
-        class: ['px-1 border-spacing-y-4']
+        class: ['px-4 border-spacing-y-4']
     },
     column: {
         headercell: ({ context, props }) => ({
@@ -57,6 +59,15 @@ const isFetching = ref(false)
 const allModules = ref([])
 const classLearningStrandId = ref()
 const learningStrandInput = ref()
+const selectedModules = ref([])
+const metaKey = ref(true)
+
+const meterProgress = ref((data) => {
+    return [{
+        label: `() of ${data.length} completed`, 
+        value: data.length
+    }]
+})
 
 function updateModuleTable(modules) {
     allModules.value.length = 0
@@ -76,6 +87,38 @@ function updateModuleTable(modules) {
             total: module.total
         })
     }
+}
+
+async function deleteModules() {
+    try {
+        const moduleIds = selectedModules.value.map(module => module.id)
+        await classLearningStrandStore.deleteModules({moduleIds: moduleIds})
+
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: 'Module(s) deleted successfully!',
+            life: 3000
+        })
+    } catch(error) {
+        console.log(error);
+    }
+
+    try {
+        classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
+            updateModuleTable(data)
+        })
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+function deselect() {
+    selectedModules.value = []
+}
+
+function viewModule() {
+    router.push({ name: 'module-info', query: {id: selectedModules.value[selectedModules.value.length-1].id, status: termStatus.value} })
 }
 
 watch(() => props.learningStrands, () => {
@@ -166,52 +209,82 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
-    <DataTable 
-        :value="allModules" dataKey="id"
-        sortField="retrieval_date" :sortOrder="-1" removableSort 
-        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-        :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        :pt="customPt" :ptOptions="{mergeProps:true}"
-    >
-        <template #empty> <div class="text-center">No records found.</div> </template>
-
-        <Column header="" class="u-txt-active text-center">
-            <template #body="slotProps">
-                <RouterLink :to="{ name: 'module-info', query: {id: slotProps.data.id, status: termStatus} }">
-                    <i class="fa fa-eye" />
-                </RouterLink>
-            </template>
-        </Column>
-        <Column field="title" header="Title" sortable>
-            <template #editor="{ data, field }">
-                <InputText v-model="data[field]" autofocus />
-            </template>
-        </Column>
-        <Column field="distribution_date" header="Distribution Date" sortable>
-            <template #body="slotProps">
-                {{ slotProps.data.distribution_date.toDateString() }}
-            </template>
-            <template #editor="{ data, field }">
-                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-            </template>
-        </Column>
-        <Column field="retrieval_date" header="Retrieval Date" sortable>
-            <template #body="slotProps">
-                {{ slotProps.data.retrieval_date.toDateString() }}
-            </template>
-            <template #editor="{ data, field }">
-                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-            </template>
-        </Column>
-        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
-        <Column :rowEditor="termStatus" bodyStyle="text-align:center" frozen class="right-0" />
-        <template #footer v-if="termStatus && learningStrandInput"> 
-            <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
+    <div class="flex flex-row grow">
+        <div v-if="termStatus && learningStrandInput" class="flex flex-col rounded-md mr-6 p-2 gap-4" >
+            <Button  icon="fa fa-plus" label="Add Module" aria-label="Add Module" iconClass="['mr-4']" text rounded raised @click="classLearningStrandStore.showHideAddModuleDialog"/>
             <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
-        </template>
-    </DataTable>
+
+            <Button icon="fa fa-pencil" label="Edit Mode" aria-label="Edit Mode" text rounded raised @click="{}"/>
+            <div class="mt-2">
+                <label>Module Progress</label>
+                <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" />
+            </div>
+        </div>
+        <div class="flex-1 shadow-xl">
+            <Toolbar class="!p-2">
+                <template #start>
+                    <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">
+                        <span class="flex items-center gap-2">
+                            <Button icon="fa fa-circle-xmark fa-lg" text aria-label="Edit Mode" style="height: 2rem; width: 2rem;" @click="deselect"/>
+                            <p>
+                                {{ selectedModules.length + ' selected' }}
+                            </p>
+                        </span>
+                        <span class="flex gap-1">
+                            <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                            <Button icon="fa fa-trash" text aria-label="Delete Selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
+                        </span>
+                    </span>
+                </template>
+                <template #end>
+                    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="deselect" />    
+                </template>
+            </Toolbar>
+            <DataTable 
+                :value="allModules" dataKey="id" 
+                v-model:selection="selectedModules"
+                selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewModule"
+                sortField="retrieval_date" :sortOrder="-1" removableSort
+                :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+                :pt="customPt" :ptOptions="{mergeProps:true}" class="unselectable"
+            >
+                <template #empty> <div class="text-center">No records found.</div> </template>
+
+                <Column field="title" header="Title" sortable>
+                    <template #editor="{ data, field }">
+                        <InputText v-model="data[field]" autofocus />
+                    </template>
+                </Column>
+                <Column field="distribution_date" header="Distribution Date" sortable>
+                    <template #body="slotProps">
+                        {{ slotProps.data.distribution_date.toDateString() }}
+                    </template>
+                    <template #editor="{ data, field }">
+                        <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
+                    </template>
+                </Column>
+                <Column field="retrieval_date" header="Retrieval Date" sortable>
+                    <template #body="slotProps">
+                        {{ slotProps.data.retrieval_date.toDateString() }}
+                    </template>
+                    <template #editor="{ data, field }">
+                        <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
+                    </template>
+                </Column>
+                <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
+            </DataTable>
+        </div>
+    </div>
 </template>
 
 <style>
+.unselectable {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
 </style>
