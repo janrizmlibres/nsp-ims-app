@@ -1,13 +1,15 @@
 <script setup>
 // Presets
-import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
+import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import { useConfirm } from 'primevue/useconfirm';
 
 // Custom
 import AddModuleDialog from './AddModuleDialog.vue';
@@ -19,8 +21,10 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 const classesStore = useClassesStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['id', 'state', 'termStatus'])
+const props = defineProps(['learningStrands', 'termStatus'])
 const toast = useToast()
+const router = useRouter()
+const confirm = useConfirm()
 
 const cols = ref([
     {field: 'no_submissions', header: 'No Submissions'},
@@ -74,14 +78,13 @@ const customPt = {
     }
 }
 
-const state = computed(() => props.state)
 const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allModules = ref([])
 const classLearningStrandId = ref()
+const learningStrandInput = ref()
 
 function updateModuleTable(modules) {
-    isFetching.value = true
     allModules.value.length = 0
 
     for (const module of modules) {
@@ -99,33 +102,47 @@ function updateModuleTable(modules) {
             total: module.total
         })
     }
-    isFetching.value = false
 }
 
-watch(() => props.id, (id) => {
-    isFetching.value = true
-    classLearningStrandId.value = id
-    try {
-        classLearningStrandStore.getAllModules(id).then((data) => {
-            updateModuleTable(data)
-        })
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered.',
-            life: 3000
-        })
+watch(() => props.learningStrands, () => {
+    learningStrandInput.value = null
+    allModules.value.length = 0
+})
+
+watch(() => learningStrandInput.value, (input) => {
+    if (input) {
+        isFetching.value = true
+        classLearningStrandId.value = input.id
+        try {
+            classLearningStrandStore.getAllModules(input.id).then((data) => {
+                updateModuleTable(data)
+            })
+            
+            isFetching.value = false
+        } catch (error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Unexpected error encountered. Please refresh this page.',
+                life: 3000
+            })
+        }
     }
-    isFetching.value = false
-}, {immediate: false})
+})
 
 
 const editingRows = ref([]);
+const leave = ref(true)
+
+watch(() =>  editingRows.value, (data) => {
+    if (data.length === 0) leave.value = true
+    else leave.value = false
+})
 
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        isFetching.value = true
         try {
             await classLearningStrandStore.updateModule(newData.id, {
                 title: newData.title,
@@ -136,6 +153,8 @@ const onRowEditSave = async (event) => {
             classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
                 updateModuleTable(data)
             })
+
+            isFetching.value = false
 
             toast.add({
                 severity: 'success',
@@ -153,64 +172,75 @@ const onRowEditSave = async (event) => {
         }
     }
 };
+
+onBeforeRouteLeave((to) => {
+    if (leave.value) {
+        return true
+    }
+
+    confirm.require({
+        message: 'Do you really want to leave? you have unsaved changes!',
+        header: 'Redirect Confirmation',
+        accept: async () => {
+            leave.value = true
+            await router.push(to)
+        }
+    })
+
+    return false
+})
 </script>
 
 <template>
-    <div v-if="state" class="bg-white shadow-xl rounded-md p-5">
-        <div class="flex flex-row gap-4 items-center px-4">
-            <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
-            <span class="font-semibold text-3xl u-txt-active">Modules</span>
-        </div>
-        <Divider />
-        <DataTable 
-            :value="allModules" dataKey="id" 
-            :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
-            resizableColumns columnResizeMode="fit" showGridlines
-            v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
-            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-            :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-            :ptOptions="{mergeProps:true}"
-            :pt="customPt"
-        >
-            <template #empty> <div class="text-center">No records found.</div> </template>
-            <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
+    <DataTable 
+        :value="allModules" dataKey="id" 
+        :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
+        resizableColumns columnResizeMode="fit" showGridlines
+        v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
+        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+        :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
+        :ptOptions="{mergeProps:true}"
+        :pt="customPt"
+    >
+        <template #empty> <div class="text-center">No records found.</div> </template>
+        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
-            <Column header="" class="u-txt-active text-center">
-                <template #body="slotProps">
-                    <RouterLink :to="{ name: 'module-info', query: {id: slotProps.data.id, status: termStatus} }">
-                        <i class="fa fa-eye" />
-                    </RouterLink>
-                </template>
-            </Column>
-            <Column field="title" header="Title" sortable>
-                <template #editor="{ data, field }">
-                    <InputText v-model="data[field]" autofocus />
-                </template>
-            </Column>
-            <Column field="distribution_date" header="Distribution Date" sortable>
-                <template #body="slotProps">
-                    {{ slotProps.data.distribution_date.toDateString() }}
-                </template>
-                <template #editor="{ data, field }">
-                    <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-                </template>
-            </Column>
-            <Column field="retrieval_date" header="Retrieval Date" sortable>
-                <template #body="slotProps">
-                    {{ slotProps.data.retrieval_date.toDateString() }}
-                </template>
-                <template #editor="{ data, field }">
-                    <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-                </template>
-            </Column>
-            <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" sortable />
-            <Column :rowEditor="termStatus" bodyStyle="text-align:center" frozen class="sticky right-0" />
-            <template #footer v-if="termStatus"> 
-                <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
-                <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
+        <Column header="" class="u-txt-active text-center">
+            <template #body="slotProps">
+                <RouterLink :to="{ name: 'module-info', query: {id: slotProps.data.id, status: termStatus} }">
+                    <i class="fa fa-eye" />
+                </RouterLink>
             </template>
-        </DataTable>
-    </div>
+        </Column>
+        <Column field="title" header="Title" sortable>
+            <template #editor="{ data, field }">
+                <InputText v-model="data[field]" autofocus />
+            </template>
+        </Column>
+        <Column field="distribution_date" header="Distribution Date" sortable>
+            <template #body="slotProps">
+                {{ slotProps.data.distribution_date.toDateString() }}
+            </template>
+            <template #editor="{ data, field }">
+                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
+            </template>
+        </Column>
+        <Column field="retrieval_date" header="Retrieval Date" sortable>
+            <template #body="slotProps">
+                {{ slotProps.data.retrieval_date.toDateString() }}
+            </template>
+            <template #editor="{ data, field }">
+                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
+            </template>
+        </Column>
+        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
+        <Column :rowEditor="termStatus" bodyStyle="text-align:center" frozen class="right-0" />
+        <template #footer v-if="termStatus && learningStrandInput"> 
+            <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
+            <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
+        </template>
+    </DataTable>
 </template>
 
 <style>
