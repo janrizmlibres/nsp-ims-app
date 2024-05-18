@@ -7,22 +7,60 @@ import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { useToast } from 'primevue/usetoast';
-import { ref, watch, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
 const requirementStore = useUtilitiesStore()
 const toast = useToast()
 
-const requirements = ref([])
+const requirements = computed(() => requirementStore.requirements)
+
+onMounted(async () => {
+    try {
+        await requirementStore.getRequirements()
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    } 
+})
+
+async function deleteRequirement(id) {
+    try {
+        await requirementStore.deleteRequirement(id)
+        await requirementStore.getRequirements()
+
+        toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Student Requirement deleted successfully!',
+                life: 3000
+        })
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    }
+}
+
 const editingRows = ref([])
 
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
-    console.log(newData);
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
         try {
-            
+            await requirementStore.updateRequirement(newData.id, {
+                requirement_name: newData.requirement_name
+            })
+
+            await requirementStore.getRequirements()
 
             toast.add({
                 severity: 'success',
@@ -40,26 +78,6 @@ const onRowEditSave = async (event) => {
         }
     }
 };
-
-onMounted(async () => {
-    try {
-        await requirementStore.getRequirements()
-        requirements.value = requirementStore.requirements
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered.',
-            life: 3000
-        })
-    } 
-})
-
-async function fetchRequirements(data) {
-    requirements.value = data
-}
-
-watch(() => requirementStore.requirements, fetchRequirements, { immediate: false})
 </script>
 
 <template>
@@ -130,12 +148,12 @@ watch(() => requirementStore.requirements, fetchRequirements, { immediate: false
         </Column>
         <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
         <Column style="width: 2rem;">
-            <template #body>
-                <Button icon="fa fa-trash" text rounded severity="danger" />
+            <template #body="slotProps">
+                <Button icon="fa fa-trash" text rounded severity="danger" @click="deleteRequirement(slotProps.data.id)" />
             </template>
         </Column>
         <template #footer> 
-            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Student Requirement" text raised rounded @click="requirementStore.showHideAddRequirementDialog"/>
+            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Student Requirement" text raised rounded @click="requirementStore.showHideAddRequirementDialog" />
             <AddRequirementDialog />
         </template>
         </DataTable>
