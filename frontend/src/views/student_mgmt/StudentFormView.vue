@@ -88,12 +88,12 @@ const initialData = {
 }
 
 const formData = {
-  identity: ref(structuredClone(initialData.identity)),
-  personalInfo: ref(structuredClone(initialData.personalInfo)),
-  contactInfo: ref(structuredClone(initialData.contactInfo)),
-  emergencyPerson: ref(structuredClone(initialData.emergencyPerson)),
-  parentalInfo: ref(structuredClone(initialData.parentalInfo)),
-  prevSchool: ref(structuredClone(initialData.prevSchool))
+  identity: ref(initialData.identity),
+  personalInfo: ref(initialData.personalInfo),
+  contactInfo: ref(initialData.contactInfo),
+  emergencyPerson: ref(initialData.emergencyPerson),
+  parentalInfo: ref(initialData.parentalInfo),
+  prevSchool: ref(initialData.prevSchool)
 }
 
 let isOkToLeave = false
