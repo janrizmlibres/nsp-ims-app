@@ -1,12 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { ref } from 'vue'
 import { useAuthStore } from './auth'
 
 export const useClassLearningStrandStore = defineStore('classLearningStrand', () => {
-    const visibleAddModuleDialog = ref(false)
-    const visibleAddSessionDialog = ref(false)
-
     async function getStrand(classLearningStrandId) {
         const authStore = useAuthStore()
 
@@ -173,22 +169,12 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
         })
     }
 
-    function showHideAddModuleDialog() {
-        this.visibleAddModuleDialog = !this.visibleAddModuleDialog
-    }
-
-    function showHideAddSessionDialog() {
-        this.visibleAddSessionDialog = !this.visibleAddSessionDialog
-    }
-
-    return { 
-        visibleAddModuleDialog, visibleAddSessionDialog, 
+    return {
         getStrand, 
         addModule, getAllModules, getModule, updateModule, deleteModules, updateModuleSubmissions, 
         addSession, getAllSessions, getSession, updateSession, updateAttendances,
         addSchedule, updateSchedule, 
-        getAllGrades, updateGrades, 
-        showHideAddModuleDialog, showHideAddSessionDialog
+        getAllGrades, updateGrades
     }
 })
 
