@@ -3,18 +3,17 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
-import Calendar from 'primevue/calendar';
 import Toolbar from 'primevue/toolbar';
 import MeterGroup from 'primevue/metergroup';
+import Tag from 'primevue/tag';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
-import { useConfirm } from 'primevue/useconfirm';
+import { useRouter } from 'vue-router';
 
 // Custom
 import AddModuleDialog from './AddModuleDialog.vue';
+import EditModuleDialog from './EditModuleDialog.vue';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
@@ -24,7 +23,6 @@ const classLearningStrandStore = useClassLearningStrandStore()
 const props = defineProps(['learningStrands', 'termStatus'])
 const toast = useToast()
 const router = useRouter()
-const confirm = useConfirm()
 
 const cols = ref([
     {field: 'no_submissions', header: 'No Submissions'},
@@ -57,10 +55,13 @@ const customPt = {
 const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allModules = ref([])
+const module = ref()
 const classLearningStrandId = ref()
 const learningStrandInput = ref()
 const selectedModules = ref([])
 const metaKey = ref(true)
+const editModuleDialog = ref(false)
+const addModuleDialog = ref(false)
 
 const meterProgress = ref((data) => {
     return [{
@@ -84,7 +85,8 @@ function updateModuleTable(modules) {
             no_submissions: module.noSubmissions,
             lacking: module.lacking,
             complete: module.complete,
-            total: module.total
+            total: module.total,
+            status: module.status
         })
     }
 }
@@ -93,7 +95,7 @@ async function deleteModules() {
     try {
         const moduleIds = selectedModules.value.map(module => module.id)
         await classLearningStrandStore.deleteModules({moduleIds: moduleIds})
-
+        deselect()
         toast.add({
             severity: 'success',
             summary: 'Success',
@@ -113,12 +115,17 @@ async function deleteModules() {
     }
 }
 
-function deselect() {
-    selectedModules.value = []
-}
-
 function viewModule() {
     router.push({ name: 'module-info', query: {id: selectedModules.value[selectedModules.value.length-1].id, status: termStatus.value} })
+}
+
+function updateModule(data) {
+    updateModuleTable(data)
+    showEditModuleDialog()
+}
+
+function deselect() {
+    selectedModules.value = []
 }
 
 watch(() => props.learningStrands, () => {
@@ -147,80 +154,44 @@ watch(() => learningStrandInput.value, (input) => {
     }
 })
 
+const getStatusLabel = (status) => {
+    switch (status) {
+        case true:
+            return 'success';
 
-const editingRows = ref([]);
-const leave = ref(true)
+        case false:
+            return 'warning';
 
-watch(() =>  editingRows.value, (data) => {
-    if (data.length === 0) leave.value = true
-    else leave.value = false
-})
-
-const onRowEditSave = async (event) => {
-    let { data, newData } = event;
-    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
-        isFetching.value = true
-        try {
-            await classLearningStrandStore.updateModule(newData.id, {
-                title: newData.title,
-                distribution_date: newData.distribution_date,
-                retrieval_date: newData.retrieval_date
-            })
-
-            classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
-                updateModuleTable(data)
-            })
-
-            isFetching.value = false
-
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Module updated successfully!',
-                life: 3000
-            })
-        } catch(error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Unexpected error encountered.',
-                life: 3000
-            })
-        }
+        default:
+            return null;
     }
 };
 
-onBeforeRouteLeave((to) => {
-    if (leave.value) {
-        return true
-    }
+function editModule(data) {
+    module.value = {... data}
+    showEditModuleDialog()
+}
 
-    confirm.require({
-        message: 'Do you really want to leave? you have unsaved changes!',
-        header: 'Redirect Confirmation',
-        accept: async () => {
-            leave.value = true
-            await router.push(to)
-        }
-    })
+function showEditModuleDialog() {
+    editModuleDialog.value = !editModuleDialog.value
+}
 
-    return false
-})
+function showAddModuleDialog() {
+    addModuleDialog.value = !addModuleDialog.value
+}
 </script>
 
 <template>
     <div class="flex flex-row grow">
-        <div v-if="termStatus && learningStrandInput" class="flex flex-col rounded-md mr-6 p-2 gap-4" >
-            <Button  icon="fa fa-plus" label="Add Module" aria-label="Add Module" iconClass="['mr-4']" text rounded raised @click="classLearningStrandStore.showHideAddModuleDialog"/>
-            <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
-
-            <Button icon="fa fa-pencil" label="Edit Mode" aria-label="Edit Mode" text rounded raised @click="{}"/>
-            <div class="mt-2">
+        <div class="flex flex-col w-[15%] rounded-md mr-6 p-2 gap-4" >
+            <Button icon="fa fa-plus" label="Add Module" aria-label="Add Module" iconClass="['mr-4']" text rounded raised :disabled="!(termStatus && learningStrandInput)" @click="showAddModuleDialog"/>
+            
+            <div v-if="termStatus && learningStrandInput" class="mt-2">
                 <label>Module Progress</label>
                 <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" />
             </div>
         </div>
-        <div class="flex-1 shadow-xl">
+        <div class="w-[85%] shadow-xl">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">
@@ -245,36 +216,37 @@ onBeforeRouteLeave((to) => {
                 v-model:selection="selectedModules"
                 selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewModule"
                 sortField="retrieval_date" :sortOrder="-1" removableSort
-                :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
                 :pt="customPt" :ptOptions="{mergeProps:true}" class="unselectable"
             >
                 <template #empty> <div class="text-center">No records found.</div> </template>
 
-                <Column field="title" header="Title" sortable>
-                    <template #editor="{ data, field }">
-                        <InputText v-model="data[field]" autofocus />
+                <Column :exportable="false" style="width:2rem">
+                    <template #body="slotProps">
+                        <Button icon="fa fa-pencil" text @click="editModule(slotProps.data)" />
                     </template>
                 </Column>
+                <Column field="title" header="Title" sortable />
                 <Column field="distribution_date" header="Distribution Date" sortable>
                     <template #body="slotProps">
                         {{ slotProps.data.distribution_date.toDateString() }}
-                    </template>
-                    <template #editor="{ data, field }">
-                        <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
                     </template>
                 </Column>
                 <Column field="retrieval_date" header="Retrieval Date" sortable>
                     <template #body="slotProps">
                         {{ slotProps.data.retrieval_date.toDateString() }}
                     </template>
-                    <template #editor="{ data, field }">
-                        <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-                    </template>
                 </Column>
                 <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
+                <Column field="status" header="Status">
+                    <template #body="slotProps">
+                        <Tag :value="slotProps.data.status ? 'Finished' : 'Unfinished'" :severity="getStatusLabel(slotProps.data.status)" />
+                    </template>
+                </Column>
             </DataTable>
         </div>
     </div>
+    <AddModuleDialog :id="classLearningStrandId" :state="addModuleDialog" @onUpdate="updateModuleTable" @onUpdateDisplay="showAddModuleDialog" /> 
+    <EditModuleDialog :id="classLearningStrandId" :data="module" :state="editModuleDialog" @onUpdate="updateModule" @onUpdateDisplay="showEditModuleDialog" />
 </template>
 
 <style>
