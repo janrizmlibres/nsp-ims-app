@@ -11,12 +11,12 @@ import { useConfirm } from 'primevue/useconfirm';
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
-const emit = defineEmits(['onUpdate'])
-const props = defineProps(['id'])
+const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
+const props = defineProps(['id', 'state'])
 const toast = useToast()
 const classLearningStrandStore = useClassLearningStrandStore()
 const confirm = useConfirm()
-
+const state = computed(() => props.state)
 const value = ref(null);
 const dates = ref(null);
 const classLearningStrandId = computed(() => props.id)
@@ -67,22 +67,22 @@ async function addModule() {
     
     value.value = null;
     dates.value = null;
-    classLearningStrandStore.showHideAddModuleDialog()
+    emit('onUpdateDisplay')
 }
 
-async function cancel() {
+function cancel() {
     if ((value.value === null || value.value === '') && dates.value === null) {
         value.value = null
         dates.value = null
-        classLearningStrandStore.showHideAddModuleDialog()
+        emit('onUpdateDisplay')
     } else {
         confirm.require({
             message: 'Do you really want to leave? you have unsaved changes!',
             header: 'Redirect Confirmation',
-            accept: async () => {
+            accept: () => {
                 value.value = null
                 dates.value = null
-                classLearningStrandStore.showHideAddModuleDialog()
+                emit('onUpdateDisplay')
             }
         })
     }
@@ -90,7 +90,7 @@ async function cancel() {
 </script>
 
 <template>
-    <Dialog v-model:visible="classLearningStrandStore.visibleAddModuleDialog" modal header="Add Module" :style="{ width: '20rem' }">
+    <Dialog v-model:visible="state" modal header="Add Module" :style="{ width: '20rem' }" :closable="false">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
             <label>Title</label>
