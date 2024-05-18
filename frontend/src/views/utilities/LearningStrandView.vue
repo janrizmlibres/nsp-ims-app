@@ -1,233 +1,168 @@
 <script setup>
-import ContentPane from '@/components/UI/ContentPane.vue'
-import LearningStrandTableHeader from '@/components/utilities/strand_view/LearningStrandTableHeader.vue'
+import ContentPane from '@/components/UI/ContentPane.vue';
+import AddStrandDialog from '@/components/utilities_view/AddStrandDialog.vue';
 
-import Button from 'primevue/button'
-import InputText from 'primevue/inputtext'
-import Divider from 'primevue/divider'
-import DataTable from 'primevue/datatable'
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import DataTable from 'primevue/datatable';
 import Column from 'primevue/column'
+import { useToast } from 'primevue/usetoast';
+import { ref, onMounted, computed } from 'vue';
 
-// import { ref } from 'vue'
-// import { useRouter } from 'vue-router'
+import { useUtilitiesStore } from '@/stores/utilities';
 
-import { useStrandStore } from '@/stores/strand.js'
+const strandStore = useUtilitiesStore()
+const toast = useToast()
 
-const strandStore = useStrandStore()
-// const router = useRouter()
+const strands = computed(() => strandStore.strands)
 
-// const primarySelection = ref({})
+onMounted(async () => {
+    try {
+        await strandStore.getLearningStrands()
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    } 
+})
 
-// function showStrand() {
-//   primarySelection.value = {}
-//   router.push('/learning-strand-management')
-// }
+async function deleteLearningStrand(id) {
+    try {
+        await strandStore.deleteLearningStrand(id)
+        await strandStore.getLearningStrands()
+
+        toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Learning Strand deleted successfully!',
+                life: 3000
+        })
+    } catch(error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    }
+}
+
+const editingRows = ref([])
+
+const onRowEditSave = async (event) => {
+    let { data, newData } = event;
+    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        try {
+            await strandStore.updateLearningStrand(newData.id, {
+                code: newData.code,
+                name: newData.name
+            })
+
+            await strandStore.getLearningStrands()
+
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Learning Strand updated successfully!',
+                life: 3000
+            })
+        } catch(error) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Unexpected error encountered.',
+                life: 3000
+            })
+        }
+    }
+}
 </script>
 
 <template>
-  <ContentPane header="Learning Strand Management">
-    <LearningStrandTableHeader />
-
+    <ContentPane header="Learning Strand" subheader="Configuration">
     <div class="bg-white shadow-xl rounded-md p-5">
-      <div class="flex grow items-center gap-4 p-5">
-        <div class="flex items-center">
-          <label for="learningStrandCodeInput" class="mr-4 u-txt-active"
-            >Learning Strand Code</label
-          >
-          <InputText
-            class="grow h-11.5 flex items-center"
-            type="text"
-            v-model="learningStrandCodeInput"
-          />
-        </div>
-
-        <div class="flex items-center">
-          <label for="learningStrandNameInput" class="mr-4 u-txt-active"
-            >Learning Strand Name</label
-          >
-          <InputText
-            class="grow h-11.5 flex items-center"
-            type="text"
-            v-model="learningStrandNameInput"
-          />
-        </div>
-
-        <div class="flex items-center flex-column gap-2">
-          <Button
-            label="Create"
-            icon="fa-solid fa-plus"
-            @click="submitEvent"
+        <DataTable  
+            v-model:value="strands" dataKey="id" 
+            sortField="id" :sortOrder="1" removableSort 
+            resizableColumns columnResizeMode="fit" showGridlines scrollable 
+            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+            :ptOptions="{mergeProps:true}"
             :pt="{
-              root: ({ props, context, parent }) => ({
-                class: [
-                  {
-                    'u-bg-pcolor-darker':
-                      !props.link &&
-                      props.severity === null &&
-                      !props.text &&
-                      !props.outlined &&
-                      !props.plain,
-                    'border u-bc-button':
-                      !props.link &&
-                      props.severity === null &&
-                      !props.text &&
-                      !props.outlined &&
-                      !props.plain
-                  },
-                  {
-                    'border u-bc-button hover:u-bc-button':
-                      props.outlined && props.severity === null && !props.plain
-                  },
-                  {
-                    'hover:u-bg-button-hover hover:u-bg-border-button-hover':
-                      !props.link &&
-                      props.severity === null &&
-                      !props.text &&
-                      !props.outlined &&
-                      !props.plain
-                  },
-                  {
-                    'focus:u-bg-border-button-focus': props.severity === null
-                  }
-                ]
-              })
-            }"
-            :pt-options="{ mergeProps: true }"
-          />
-        </div>
-      </div>
-    </div>
-
-    <Divider class="before:border-t before:border-surface-400" />
-
-    <div class="bg-white shadow-xl rounded-md p-5">
-      <DataTable
-        v-model:value="strandStore.data"
-        dataKey="id"
-        :sortField="Object.keys(strandStore.data[0])[0]"
-        :sortOrder="-1"
-        removableSort
-        resizableColumns
-        columnResizeMode="fit"
-        v-model:filters="strandStore.filters"
-        :globalFilterFields="strandStore.globalFilters"
-        paginator
-        :rows="10"
-        :rowsPerPageOptions="[5, 10, 15, 20]"
-        v-model:selection="strandStore.primarySelection"
-        selectionMode="single"
-        :ptOptions="{ mergeProps: true }"
-        :pt="{
-          root: {
-            class: ['flex flex-col h-full pt-2 justify-between overflow-auto']
-          },
-          table: {
-            class: 'bg-white border-spacing-0 border-separate'
-          },
-          thead: {
-            class: 'bg-surface-0 top-0 z-40 sticky'
-          },
-          tbody: {
-            class: 'sticky z-20'
-          },
-          column: {
-            headercell: ({ context, props }) => ({
-              class: [
-                'font-medium',
-                {
-                  'space-nowrap border-y bg-clip-padding': context.resizable
+                root: {
+                    class: ['flex flex-col justify-between overflow-auto']
                 },
-                (props.sortable === '' || props.sortable) && context.sorted
-                  ? 'bg-white u-txt-active'
-                  : 'bg-white u-txt-active',
-                {
-                  'hover:bg-surface-50': context.sorted
-                }
-              ]
-            }),
-            sorticon: ({ context }) => ({
-              class: [
-                'ml-2',
-                context.sorted
-                  ? 'u-legend-txt-color dark:text-white/80'
-                  : 'u-txt-active dark:text-white/70'
-              ]
-            }),
-            bodycell: { class: 'py-4 ' }
-          },
-          bodyrow: ({ context, props }) => ({
-            class: [
-              { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
-              { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
-              { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
-              // State
-              {
-                'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent':
-                  context.selectable
-              },
-              {
-                'hover:bg-surface-100 hover:u-txt-active': props.selectionMode && !context.selected
-              },
-              // Misc
-              { 'cursor-pointer': props.selectionMode }
-            ]
-          }),
-          paginator: {
-            root: {
-              class: [
-                'flex items-center justify-center flex-wrap object-bottom',
-                'px-4 pt-4 pb-2',
-                'border-0 rounded-bl-xl rounded-br-xl',
-                'bg-transparent dark:bg-surface-800',
-                'text-surface-500 dark:text-white/60'
-              ]
-            },
-            pagebutton: ({ context }) => ({
-              class: [
-                'relative',
-                // Flex & Alignment
-                'inline-flex items-center justify-center',
-                // Shape
-                'border-0 rounded-full dark:rounded-md',
-                // Size
-                'min-w-[3rem] h-12 m-[0.143rem]',
-                'leading-none',
-                // Color
-                'text-surface-500 dark:text-white/80',
-                { 'u-bg-scolor-2 border-primary-50 text-white font-semibold': context.active },
-                // State
-                {
-                  'hover:bg-surface-50': !context.disabled && !context.active,
-                  'focus:u-ring-scolor': !context.disabled
-                }
-              ]
-            })
-          }
+                table: {
+                    class: 'bg-white border-spacing-0 border-separate',
+                },
+                thead: {
+                    class: 'bg-surface-0 top-0 z-40 sticky'
+                },
+                tbody: {
+                    class: 'sticky z-20'
+                },
+                column: {
+                    headercell: ({ context, props }) => ({
+                        class: [
+                            'font-medium',
+                            {
+                                'space-nowrap border-y bg-clip-padding': context.resizable
+                            },
+                            (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
+                            {
+                                'hover:bg-surface-50': context.sorted
+                            }
+                        ]
+                    }),
+                    sorticon: ({ context }) => ({
+                        class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
+                    }),
+                    bodycell: {class: 'py-4 '},
+                    roweditorinitbutton: {
+                        class: ['relative', 'inline-flex items-center justify-center', 'text-left', 'w-8 h-8', 'border-0 rounded-full', 'u-txt-link', 'border-transparent', 
+                        'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-400/50', 'hover:text-surface-700 hover:bg-surface-300/20', 'transition duration-200', 
+                        'overflow-hidden', 'cursor-pointer select-none']
+                    },
+                },
+                bodyrow: ({ context, props }) => ({
+                    class: [
+                        { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
+                        { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
+                        { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
+                        { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
+                        { 'hover:bg-surface-100 hover:u-txt-active': props.selectionMode && !context.selected },
+                        { 'cursor-pointer': props.selectionMode }
+                    ]
+                })
         }"
-      >
-        <template #empty>
-          <div class="text-center">No learning strand records found.</div>
-        </template>
-        <template #loading>
-          <div class="text-center">Loading learning strand records. Please wait.</div>
-        </template>
+        >
 
-        <Column style="width: 2rem" />
-        <Column
-          v-for="col of strandStore.dataColumns"
-          :key="col.field"
-          :field="col.field"
-          :header="col.header"
-          sortable
-        ></Column>
-        <Column header="" style="width: 1rem; padding-right: 2.5rem">
-          <template #body>
-            <a href="#">
-              <h1>View</h1>
-            </a>
-          </template>
+        <template #empty> <div class="text-center">No learning strand records found.</div> </template>
+        <template #loading> <div class="text-center">Loading learning strand records. Please wait.</div> </template>
+
+        <Column field="code" header="Learning Strand Code" sortable>
+            <template #editor="{ data, field }">
+                <InputText v-model="data[field]" autofocus />
+            </template>
         </Column>
-      </DataTable>
+        <Column field="name" header="Learning Strand Name" sortable>
+            <template #editor="{ data, field }">
+                <InputText v-model="data[field]" autofocus />
+            </template>
+        </Column>
+        <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
+        <Column style="width: 2rem;">
+            <template #body="slotProps">
+                <Button icon="fa fa-trash" text rounded severity="danger" @click="deleteLearningStrand(slotProps.data.id)" />
+            </template>
+        </Column>
+        <template #footer> 
+            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Learning Strand" text raised rounded @click="strandStore.showHideAddStrandDialog"/>
+            <AddStrandDialog/>
+        </template>
+        </DataTable>
     </div>
-  </ContentPane>
+    </ContentPane>
 </template>
