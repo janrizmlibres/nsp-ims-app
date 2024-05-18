@@ -8,9 +8,10 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useToast } from 'primevue/usetoast'
 import { ref, watch, onMounted } from 'vue'
-import { useTermStore } from '@/stores/term'
 
-const termStore = useTermStore()
+import { useUtilitiesStore } from '@/stores/utilities';
+
+const termStore = useUtilitiesStore()
 const toast = useToast()
 
 const terms = ref([])
@@ -22,6 +23,13 @@ const onRowEditSave = async (event) => {
 
   if (JSON.stringify(data) !== JSON.stringify(newData)) {
     try {
+      await termStore.updateTerm(newData.id, {
+        start_date: newData.start_date,
+        end_date: newData.end_date
+      })
+      
+      await termStore.getTerms()
+
       toast.add({
         severity: 'success',
         summary: 'Success',
