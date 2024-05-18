@@ -31,12 +31,15 @@ async function addLearningStrand() {
             name: name.value
         })
 
+        await strandStore.getLearningStrands()
+
         toast.add({
             severity: 'success',
             summary: 'Success',
             detail: 'Learning Strand added successfully!',
             life: 3000
         })
+                
     } catch(error) {
         toast.add({
             severity: 'error',
@@ -46,7 +49,6 @@ async function addLearningStrand() {
         })
     }
 
-    await strandStore.getLearningStrands()
     code.value = null;
     name.value = null;
     strandStore.showHideAddStrandDialog()
