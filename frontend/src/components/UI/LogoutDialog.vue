@@ -11,7 +11,7 @@ import Button from 'primevue/button';
           <i class="pi pi-exclamation-triangle text-5xl"></i>
         </div>
         <span class="font-bold text-2xl block mb-2 mt-4">{{ message.header }}</span>
-        <p class="mb-0">{{ message.message }}</p>
+        <p class="mb-0 text-center">{{ message.message }}</p>
         <div class="flex items-center gap-2 mt-4">
           <Button @click="acceptCallback" class="w-[8rem]"
                   :pt="{

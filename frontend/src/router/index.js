@@ -4,6 +4,13 @@ import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/login/LoginView.vue'
 import TheRootView from '../views/TheRootView.vue'
 
+// Enrollment Views
+import CurrentEnrollmentView from '@/views/enrollment/CurrentEnrollmentView.vue'
+import EnrollmentHistoryView from '@/views/enrollment/EnrollmentHistoryView.vue'
+import EnrollLearnersView from '@/views/enrollment/EnrollLearnersView.vue'
+import EditEnrolledView from '@/views/enrollment/EditEnrolledView.vue'
+import EnrolledView from '@/views/enrollment/EnrolledView.vue'
+
 // Class Management Views
 import ManageClassView from '@/views/class_mgmt/ManageClassView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
@@ -62,6 +69,51 @@ const router = createRouter({
               path: 'add',
               name: 'add-student',
               component: StudentFormView
+            }
+          ]
+        },
+        {
+          path: 'enrollment',
+          children: [
+            {
+              path: 'current',
+              name: 'current-enrollment',
+              component: CurrentEnrollmentView
+            },
+            {
+              path: 'history',
+              name: 'enrollment-history',
+              component: EnrollmentHistoryView
+            },
+            {
+              path: 'enrolled/view',
+              name: 'view-enrolled',
+              query: { 
+                studentId: Number, 
+                enrollmentId: Number, 
+                schoolLevelId: Number, 
+                studentFullName: String
+              },
+              component: EnrolledView
+            },
+            {
+              path: 'enroll-learners',
+              name: 'enroll-learners',
+              component: EnrollLearnersView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              },
+            },
+            {
+              path: 'edit-enrolled',
+              name: 'edit-enrolled',
+              query: { studentId: Number, enrollmentId: Number, academicYear: String},
+              component: EditEnrolledView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              },
             }
           ]
         },
