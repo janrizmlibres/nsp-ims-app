@@ -33,7 +33,8 @@ const Volunteer = sequelize.define("volunteer", {
       return (
         this.firstName +
         (this.middleName === null ? " " : ` ${this.middleName} `) +
-        this.lastName
+        this.lastName +
+        (this.suffix === null ? "" : `, ${this.suffix} `)
       );
     },
     set(_value) {

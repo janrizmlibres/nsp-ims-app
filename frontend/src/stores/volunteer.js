@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
-import { useAuthStore } from './auth'
 import { ref } from 'vue'
+import { useAuthStore } from './auth'
+import axios from 'axios'
 
 export const useVolunteerStore = defineStore('volunteer', () => {
   const volunteers = ref()
@@ -11,7 +11,7 @@ export const useVolunteerStore = defineStore('volunteer', () => {
     
     const response = await axios.get('http://localhost:8080/volunteer/volunteers', {
       headers: {
-        'Authorization': `Bearer ${authStore.token}` // replace 'authStore.token' with your actual token path
+        'Authorization': `Bearer ${authStore.token}`
       }
     });
 

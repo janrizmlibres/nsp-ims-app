@@ -1,66 +1,88 @@
 <script setup>
 import InputText from 'primevue/inputtext'
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
+import FormParts from '@/util/volunteer_form_parts'
+import { objectMap } from '@/util/helpers'
 
-const emit = defineEmits(['dataChanged', 'update'])
+const emit = defineEmits(['dataChanged'])
 
-const contactNumber = ref(null)
-const email = ref(null)
-const facebook = ref(null)
-
-const handleDataChange = (newData) => {
-  emit('dataChanged', newData);
-};
-
-watch([contactNumber, email, facebook], () => {
-  const newData = {
-    contactNumber: contactNumber.value,
-    email: email.value,
-    facebook: facebook.value
-  };
-  emit('update', newData);
-  handleDataChange(newData);
+const leftFields = ref({
+  contactNumber: { label: 'Contact Number', data: null },
+  email: { label: 'Email Address', data: null },
+  facebook: { label: 'Facebook', data: null }
 })
+
+const rightFields = ref({
+  lastName: { label: 'Last Name', data: null },
+  firstName: { label: 'First Name', data: null },
+  middleName: { label: 'Middle Name', data: null },
+  suffixName: { label: 'Suffix', data: null },
+  contactNumber: { label: 'Contact Number', data: null }
+})
+
+const relationship = ref(null)
+
+function updateContactInfo() {
+  const data = objectMap(leftFields.value, (field) => field.data)
+  emit('dataChanged', FormParts.VolunteerContactInformation, data)
+}
+
+function updateEmergencyContact() {
+  const data = objectMap(rightFields.value, (field) => field.data)
+  data.relationship = relationship.value
+  emit('dataChanged', FormParts.VolunteerEmergency, data)
+}
 </script>
 
 <template>
-  <div class="flex flex-col h-full">
+  <div class="grid grid-cols-2">
+    <div class="px-8">
+      <div>
+        <h2 class="font-bold text-center">Personal Contact Information</h2>
 
-    <div class="flex grow font-medium pt-10">
-      <div class="basis-1/2 pr-16 pl-2">
-        <div class="flex gap-10 mb-2 items-center">
-          <div class="basis-32 text-right">
-            <span>Contact Number</span>
+        <div class="grid grid-cols-5 gap-3 mt-4">
+          <template v-for="field of Object.values(leftFields)" :key="field.label">
+            <div class="flex items-center justify-end pr-6 col-span-2">
+              <span>{{ field.label }}</span>
+            </div>
+            <InputText
+              class="h-10 col-span-3"
+              type="text"
+              v-model="field.data"
+              @update:modelValue="updateContactInfo"
+            />
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-8">
+      <div>
+        <h2 class="font-bold text-center">Emergency Contact Person</h2>
+
+        <div class="grid grid-cols-5 gap-3 mt-4">
+          <template v-for="field of Object.values(rightFields)" :key="field.label">
+            <div class="flex items-center justify-end pr-6 col-span-2">
+              <span>{{ field.label }}</span>
+            </div>
+            <InputText
+              class="h-10 col-span-3"
+              type="text"
+              v-model="field.data"
+              @update:modelValue="updateEmergencyContact"
+            />
+          </template>
+
+          <div class="flex items-center justify-end pr-6 col-span-2">
+            <span>Relationship</span>
           </div>
           <InputText
-            class="grow h-10"
+            class="h-10 col-span-3"
             type="text"
-            v-model="contactNumber"
+            v-model="relationship"
+            @update:modelValue="updateEmergencyContact"
           />
         </div>
-
-        <div class="flex gap-10 mb-2 items-center">
-          <div class="basis-32 text-right">
-            <span>Email Address</span>
-          </div>
-          <InputText
-            class="grow h-10"
-            type="text"
-            v-model="email"
-          />
-        </div>
-
-        <div class="flex gap-10 mb-2 items-center">
-          <div class="basis-32 text-right">
-            <span>Facebook</span>
-          </div>
-          <InputText
-            class="grow h-10"
-            type="text"
-            v-model="facebook"
-          />
-        </div>
-
       </div>
     </div>
   </div>

@@ -54,6 +54,7 @@ export default {
       { field: 'affiliation', header: 'Affiliation' },
       { field: 'student.program', header: 'Program' },
       { field: 'student.year', header: 'Year' },
+      { field: 'professional.work', header: 'Work' },
       { field: 'personalInformation.nickname', header: 'Nickname' },
       { field: 'personalInformation.sex', header: 'Sex' },
       { field: 'personalInformation.address', header: 'Address' },
@@ -81,6 +82,7 @@ export default {
         availability: volunteer.volunteer_availability,
         emergencyContact: volunteer.volunteer_emergency_contact,
         student: volunteer.student_volunteer,
+        professional: volunteer.professional_volunteer,
       }));
     });
 

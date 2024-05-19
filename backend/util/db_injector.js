@@ -718,16 +718,15 @@ export async function injectVolunteer() {
   }
 
   await Promise.all(
-    volunteerData.map(async (data, index) => {
+  volunteerData.map(async (data, index) => {
+    const volunteer = await Volunteer.create(data);
 
-      const volunteer = await Volunteer.create(data);
-
-      volunteer.createStudent_volunteer(StudentVolunteer[index])
-      volunteer.createVolunteer_personal_information(volunteerPersonalInformationData[index])
-      volunteer.createVolunteer_emergency_contact(volunteerEmergencyContacts[index])
-      volunteer.createVolunteer_contact_information(volunteerContactInformationData[index])
-      volunteer.createVolunteer_availability({day: getRandomAvailability()})
-      volunteer.createVolunteer_specialization({area: getSpecialization()})
-    })
-  );
+    await volunteer.createStudent_volunteer(StudentVolunteer[index]);
+    await volunteer.createVolunteer_personal_information(volunteerPersonalInformationData[index]);
+    await volunteer.createVolunteer_emergency_contact(volunteerEmergencyContacts[index]);
+    await volunteer.createVolunteer_contact_information(volunteerContactInformationData[index]);
+    await volunteer.createVolunteer_availability({day: getRandomAvailability()});
+    await volunteer.createVolunteer_specialization({area: getSpecialization()});
+  })
+);
 }

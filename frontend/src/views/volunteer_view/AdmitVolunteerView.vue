@@ -1,22 +1,132 @@
+<script setup>
+import ContentPane from '@/components/UI/ContentPane.vue'
+import BaseCard from '@/components/UI/BaseCard.vue'
+import PersonalInformationForm from '@/components/volunteer_view/PersonalInformationForm.vue'
+import ContactInformationForm from '@/components/volunteer_view/ContactInformationForm.vue'
+import PreferencesForm from '@/components/volunteer_view/PreferencesForm.vue'
+import AdmitVolunteerHeader from '@/components/volunteer_view/AdmitVolunteerHeader.vue'
+import Button from 'primevue/button'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import { useToast } from 'primevue/usetoast';
+import { useVolunteerStore } from '@/stores/volunteer';
+import FormParts from '../../util/volunteer_form_parts'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const volunteerStore = useVolunteerStore();
+const toast = useToast();
+
+const formData = {
+  Volunteer: {
+    volunteerId: null,
+    affiliation: null,
+    firstName: null,
+    middleName: null,
+    lastName: null,
+    suffix: null,
+  },
+
+  VolunteerPersonalInformation: {
+    nickname: null,
+    birthday: null,
+    sex: null,
+    housing: null,
+    barangay: null,
+    city: null,
+    province: null
+  },
+
+  VolunteerContactInformation: {
+    contactNumber: null,
+    email: null,
+    facebook: null,
+  },
+
+  VolunteerEmergency: {
+    lastName: null,
+    firstName: null,
+    middleName: null,
+    suffix: null,
+    contactNumber: null,
+    relationship: null,
+  },
+
+  VolunteerAvailability: {
+    day: null,
+  },
+
+  VolunteerSpecialization: {
+    area: null,
+  },
+
+  StudentVolunteer: {
+    program: null,
+    year: null,
+  },
+
+  ProfessionalVolunteer: {
+    work: null,
+  },
+
+  //add work
+}
+
+function updateFormData(part, data) {
+  const updateMapping = {
+    [FormParts.Volunteer]: () => (formData.Volunteer = data),
+    [FormParts.VolunteerPersonalInformation]: () => (formData.VolunteerPersonalInformation = data),
+    [FormParts.VolunteerContactInformation]: () => (formData.VolunteerContactInformation = data),
+    [FormParts.VolunteerEmergency]: () => (formData.VolunteerEmergency = data),
+    [FormParts.VolunteerAvailability]: () => (formData.VolunteerAvailability = data),
+    [FormParts.VolunteerSpecialization]: () => (formData.VolunteerSpecialization = data),
+    [FormParts.StudentVolunteer]: () => (formData.StudentVolunteer = data),
+    [FormParts.ProfessionalVolunteer]: () => (formData.ProfessionalVolunteer = data)
+  }
+    updateMapping[part]()
+}
+
+async function goToVolunteerRecords() {
+  await router.replace({ name: 'volunteer-records' })
+}
+
+async function submitForm() {
+  try {
+    const result = await volunteerStore.addVolunteer(formData)
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: result.data.message,
+      life: 5000
+    })
+    await goToVolunteerRecords()
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
+</script>
+
 <template>
   <ContentPane header="Admit Volunteer">
     <div class="flex flex-col gap-3 h-full mr-1">
       <BaseCard>
-        <AdmitVolunteerHeader @dataChanged="handleDataChange" />
+        <AdmitVolunteerHeader @dataChanged="updateFormData" />
       </BaseCard>
       <BaseCard class="grow">
         <TabView>
           <TabPanel header="Personal Infromation">
-            <PersonalInformationForm @dataChanged="handleDataChange" />
+            <PersonalInformationForm @dataChanged="updateFormData" />
           </TabPanel>
           <TabPanel header="Contact Infromation">
-            <ContactInformationForm @dataChanged="handleDataChange" />
+            <ContactInformationForm @dataChanged="updateFormData" />
           </TabPanel>
           <TabPanel header="Preferences">
-            <PreferencesForm @dataChanged="handleDataChange" />
-          </TabPanel>
-          <TabPanel header="Emergency Contact">
-            <EmergencyContactForm @dataChanged="handleDataChange" />
+            <PreferencesForm @dataChanged="updateFormData" />
           </TabPanel>
         </TabView>
       </BaseCard>
@@ -24,7 +134,7 @@
       <div class="flex-none text-right">
         <div class="inline-block">
           <Toast />
-          <Button class="h-10 u-bg-green" @click="handleSubmit">
+          <Button class="h-10 u-bg-green" @click="submitForm">
               <font-awesome-icon
                 icon="fa-solid fa-circle-check"
                 class="absolute top-2/4 -mt-2 left-3"
@@ -35,6 +145,7 @@
             class="h-10 ml-2 u-bg-red"
             label="Cancel"
             icon="fa-solid fa-circle-xmark"
+            @click="goToVolunteerRecords"
           />
         </div>
       </div>
@@ -42,137 +153,3 @@
   </ContentPane>
   </template>
 
-<script setup>
-import ContentPane from '@/components/UI/ContentPane.vue'
-import BaseCard from '@/components/UI/BaseCard.vue'
-import PersonalInformationForm from '@/components/volunteer_view/PersonalInformationForm.vue'
-import ContactInformationForm from '@/components/volunteer_view/ContactInformationForm.vue'
-import PreferencesForm from '@/components/volunteer_view/PreferencesForm.vue'
-import EmergencyContactForm from '@/components/volunteer_view/EmergencyContactForm.vue'
-import AdmitVolunteerHeader from '@/components/volunteer_view/AdmitVolunteerHeader.vue'
-import Button from 'primevue/button'
-import ProgressSpinner from 'primevue/progressspinner'
-import TabView from 'primevue/tabview'
-import TabPanel from 'primevue/tabpanel'
-import { ref, watch } from 'vue';
-import { useToast } from 'primevue/usetoast';
-import { useVolunteerStore } from '@/stores/volunteer';
-
-const volunteerStore = useVolunteerStore();
-
-const toast = useToast();
-
-const formData = ref({
-  Volunteer: {
-    volunteerId: null,
-    affiliation: null,
-    firstName: null,
-    middleName: null,
-    lastName: null,
-    suffix: null,
-  },
-
-  StudentVolunteer: {
-    program: null,
-    year: null,
-  },
-
-  VolunteerAvailability: {
-    day: null,
-  },
-
-  VolunteerContactInformation: {
-    contactNumber: null,
-    email: null,
-    facebook: null,
-  },
-
-  VolunteerEmergency: {
-    emergencyLastName: null,
-    emergencyFirstName: null,
-    emergencyMiddleName: null,
-    emergencySuffix: null,
-    emergencyContact: null,
-    emergencyRelationship: null,
-  },
-
-  VolunteerPersonalInformation: {
-    nickname: null,
-    birthday: null,
-    housing: null,
-    city: null,
-    barangay: null,
-    province: null,
-    sex: null,
-  },
-
-  VolunteerSpecialization: {
-    area: null,
-  }
-
-  //add work
-});
-
-async function submitForm() {
-  try {
-    // Replace `yourStore` and `addYourData` with the actual store and function names
-    const result = await volunteerStore.addVolunteer(formData.value)
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: result.data.message,
-      life: 5000
-    })
-    // Replace `yourView` with the actual route name to navigate after successful submission
-    await router.replace({ name: 'VolunteerRecordsView' })
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
-    })
-  }
-}
-
-const validateField = (fieldName, regex, errorMessage) => {
-  if (formData.value[fieldName] && !regex.test(formData.value[fieldName])) {
-    toast.add({ severity: 'error', summary: 'Error', detail: errorMessage, life: 3000 });
-    return false;
-  }
-  return true;
-};
-
-const handleDataChange = (newData) => {
-    // Merge the new data into the existing formData
-    Object.assign(formData.value, newData);
-};
-
-const handleSubmit = () => {
-  const results = [
-    validateField('firstName', /^[a-zA-Z\s]*$/, 'Invalid First Name'),
-    validateField('middleName', /^[a-zA-Z\s]*$/, 'Invalid Middle Name'),
-    validateField('lastName', /^[a-zA-Z\s]*$/, 'Invalid Last Name'),
-    validateField('nickname', /^[a-zA-Z\s]*$/, 'Invalid Nickname'),
-    validateField('suffix', /^[a-zA-Z\s]*$/, 'Invalid Suffix'),
-    validateField('yearLevel', /^[a-zA-Z0-9\s]*$/, 'Invalid Year Level'),
-    validateField('course', /^[a-zA-Z\s]*$/, 'Invalid Course'),
-    validateField('work', /^[a-zA-Z0-9\s]*$/, 'Invalid Work'),
-    validateField('contactNumber', /^\d{1,13}$/, 'Invalid Contact Number'),
-    validateField('emergencyFirstName', /^[a-zA-Z\s]*$/, 'Invalid Emergency Contact First Name'),
-    validateField('emergencyMiddleName', /^[a-zA-Z\s]*$/, 'Invalid Emergency Contact Middle Name'),
-    validateField('emergencyLastName', /^[a-zA-Z\s]*$/, 'Invalid Emergency Contact Last Name'),
-    validateField('emergencySuffix', /^[a-zA-Z\s]*$/, 'Invalid Emergency Contact Suffix'),
-    validateField('emergencyContact', /^\d{1,13}$/, 'Invalid Emergency Contact Number'),
-    validateField('emergencyRelationship', /^[a-zA-Z\s]*$/, 'Invalid input for Relationship with Emergency Contact'),
-  ];
-
-  if (results.every(result => result)) {
-    console.log(formData.value);
-    submitForm();
-  }
-};
-
-watch(formData, handleDataChange);
-
-</script>

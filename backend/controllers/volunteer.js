@@ -7,6 +7,7 @@ import VolunteerSpecialization from "../models/volunteer/volunteer_specializatio
 import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
 import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
 import StudentVolunteer from "../models/volunteer/student_volunteer.js";
+import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
 
 export async function getAllVolunteers(req, res, next) {
   try {
@@ -16,7 +17,8 @@ export async function getAllVolunteers(req, res, next) {
                 VolunteerSpecialization,
                 VolunteerAvailability,
                 VolunteerEmergency,
-                StudentVolunteer]
+                StudentVolunteer,
+                ProfessionalVolunteer]
     });
 
     res.status(201).json({ 
@@ -73,11 +75,17 @@ export async function addVolunteer(req, res, next) {
       volunteerId: volunteer.id,
     });
 
+    await ProfessionalVolunteer.create({
+      ...req.body.ProfessionalVolunteer,
+      volunteerId: volunteer.id,
+    });
+
     res.status(200).json({
       message: "Volunteer record created.",
       volunteer: volunteer,
     });
   } catch (error) {
+    console.error('Error details:', error);
     if (!error.statusCode) {
       error.statusCode = 500;
     }
