@@ -117,8 +117,11 @@ export async function addStudent(req, res, next) {
 
 export async function updateStudent(req, res, next) {
   try {
-    if (!req.file) {
-      const error = new Error("No profile photo provided.");
+    const errors = validationResult(req);
+    console.log(errors);
+
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
       error.statusCode = 422;
       throw error;
     }

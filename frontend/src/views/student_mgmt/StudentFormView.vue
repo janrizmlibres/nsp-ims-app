@@ -3,7 +3,7 @@ import Button from 'primevue/button'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 
-import { onMounted, ref, computed, provide, watch } from 'vue'
+import { onMounted, ref, computed, provide, watch, readonly } from 'vue'
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
@@ -87,14 +87,7 @@ const initialData = {
   }
 }
 
-const formData = {
-  identity: ref(initialData.identity),
-  personalInfo: ref(initialData.personalInfo),
-  contactInfo: ref(initialData.contactInfo),
-  emergencyPerson: ref(initialData.emergencyPerson),
-  parentalInfo: ref(initialData.parentalInfo),
-  prevSchool: ref(initialData.prevSchool)
-}
+const formData = ref(structuredClone(initialData))
 
 let isOkToLeave = false
 const updateKey = ref(0)
@@ -117,20 +110,16 @@ watch(
   () => emit('routeChange')
 )
 
-provide('personalData', formData.personalInfo)
-provide('contactData', formData.contactInfo)
-provide('emergencyData', formData.emergencyPerson)
-provide('parentalData', formData.parentalInfo)
-provide('prevSchoolData', formData.prevSchool)
+provide('formData', readonly({ formData, updateFormData }))
 
 function updateFormData(part, data) {
   const updateMapping = {
-    [FormParts.Identity]: () => (formData.identity.value = data),
-    [FormParts.Personal]: () => (formData.personalInfo.value = data),
-    [FormParts.Contact]: () => (formData.contactInfo.value = data),
-    [FormParts.Emergency]: () => (formData.emergencyPerson.value = data),
-    [FormParts.Parental]: () => (formData.parentalInfo.value = data),
-    [FormParts.PrevSchool]: () => (formData.prevSchool.value = data)
+    [FormParts.Identity]: () => (formData.value.identity = data),
+    [FormParts.Personal]: () => (formData.value.personalInfo = data),
+    [FormParts.Contact]: () => (formData.value.contactInfo = data),
+    [FormParts.Emergency]: () => (formData.value.emergencyPerson = data),
+    [FormParts.Parental]: () => (formData.value.parentalInfo = data),
+    [FormParts.PrevSchool]: () => (formData.value.prevSchool = data)
   }
 
   updateMapping[part]()
@@ -158,7 +147,7 @@ async function submitForm() {
     const result =
       route.name === 'add-student'
         ? await studentsStore.addStudent(formData)
-        : await studentsStore.addStudent(formData)
+        : await studentsStore.updateStudent(route.params.studentId, formData)
 
     toast.add({
       severity: 'success',
@@ -200,34 +189,19 @@ onMounted(async () => {
     const result = await studentsStore.getStudent(route.params.studentId)
     const student = result.data.student
 
-    const {
-      personal_info,
-      contact_info,
-      emergency_person,
-      parental_info,
-      previous_school,
-      ...identity
-    } = student
-
     const filterObject = (obj) => {
       // eslint-disable-next-line no-unused-vars
       const { id, createdAt, updatedAt, studentId, ...filteredObj } = obj
       return filteredObj
     }
 
-    initialData.identity = filterObject(identity)
-    initialData.personalInfo = filterObject(personal_info)
-    initialData.contactInfo = filterObject(contact_info)
-    initialData.emergencyPerson = filterObject(emergency_person)
-    initialData.parentalInfo = parental_info && filterObject(parental_info)
-    initialData.prevSchool = filterObject(previous_school)
+    for (const key in initialData) {
+      initialData[key] = filterObject(student[key])
+    }
 
-    formData.identity.value = initialData.identity
-    formData.personalInfo.value = initialData.personalInfo
-    formData.contactInfo.value = initialData.contactInfo
-    formData.emergencyPerson.value = initialData.emergencyPerson
-    formData.parentalInfo.value = initialData.parentalInfo
-    formData.prevSchool.value = initialData.prevSchool
+    for (const key in initialData) {
+      formData.value[key] = initialData[key]
+    }
 
     updateKey.value += 1
   } catch (error) {
