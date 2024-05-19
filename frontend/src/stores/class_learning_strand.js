@@ -53,6 +53,18 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
         )
     }
 
+    async function updateModuleStatus(form) {
+        const authStore = useAuthStore()
+    
+        await axios.patch(
+            `http://localhost:8080/classLearningStrand/modules/update`,
+            form,
+            {
+                headers: { Authorization: 'Bearer ' + authStore.token }
+            }
+        )
+    }
+
     async function deleteModules(form) {
         const authStore = useAuthStore()
     
@@ -183,7 +195,7 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
 
     return {
         getStrand, 
-        addModule, getAllModules, getModule, updateModule, deleteModules, updateModuleSubmissions, 
+        addModule, getAllModules, getModule, updateModule, updateModuleStatus, deleteModules, updateModuleSubmissions, 
         addSession, getAllSessions, getSession, updateSession, deleteSessions, updateAttendances,
         addSchedule, updateSchedule, 
         getAllGrades, updateGrades
