@@ -31,27 +31,6 @@ const cols = ref([
     {field: 'total', header: 'Total'},
 ])
 
-const customPt = {
-    table: {
-        class: ['px-4 border-spacing-y-4']
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'u-txt-active',
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-surface-200' : 'bg-surface-200'
-            ]
-        }),
-        bodycell: {
-            class: ['my-4']
-        }
-    },
-    bodyrow: {
-        class: ['rounded-lg shadow-[0_0_2px_rgb(0,0,0,0.2)]']
-    },
-}
-
 const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allModules = ref([])
@@ -182,7 +161,7 @@ function showAddModuleDialog() {
 </script>
 
 <template>
-    <div class="flex flex-row grow">
+    <div class="flex h-full w-full">
         <div class="flex flex-col w-[17%] rounded-md mr-10 p-2 gap-4" >
             <Button icon="fa fa-plus" label="Add Module" aria-label="Add Module" iconClass="['mr-4']" rounded outlined :disabled="!(termStatus && learningStrandInput)" @click="showAddModuleDialog"/>
             
@@ -191,7 +170,7 @@ function showAddModuleDialog() {
                 <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" class="font-semibold" />
             </div>
         </div>
-        <div class="w-[83%] shadow-xl">
+        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">
@@ -216,10 +195,9 @@ function showAddModuleDialog() {
             </Toolbar>
             <DataTable 
                 :value="allModules" dataKey="id" 
-                v-model:selection="selectedModules"
+                v-model:selection="selectedModules" scrollable style=" overflow: auto;"
                 selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewModule"
-                sortField="retrieval_date" :sortOrder="-1" removableSort
-                :pt="customPt" :ptOptions="{mergeProps:true}" class="unselectable"
+                sortField="retrieval_date" :sortOrder="-1" removableSort class="unselectable"
             >
                 <template #empty> <div class="text-center">No records found.</div> </template>
 
