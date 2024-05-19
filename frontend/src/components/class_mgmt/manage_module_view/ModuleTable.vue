@@ -13,7 +13,7 @@ import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 
 // Custom
-import AddModuleDialog from './AddModuleDialog.vue';
+import AddModuleSection from './AddModuleSection.vue';
 import EditModuleDialog from './EditModuleDialog.vue';
 
 // stores
@@ -43,7 +43,6 @@ const learningStrandInput = ref()
 const selectedModules = ref([])
 const metaKey = ref(true)
 const editModuleDialog = ref(false)
-const addModuleDialog = ref(false)
 
 const meterProgress = ref((data) => {
     return [{
@@ -182,16 +181,12 @@ function editModule(data) {
 function showEditModuleDialog() {
     editModuleDialog.value = !editModuleDialog.value
 }
-
-function showAddModuleDialog() {
-    addModuleDialog.value = !addModuleDialog.value
-}
 </script>
 
 <template>
     <div class="flex h-full w-full">
         <div class="flex flex-col w-[17%] rounded-md mr-10 p-2 gap-4" >
-            <Button icon="fa fa-plus" label="Add Module" aria-label="Add Module" iconClass="['mr-4']" rounded outlined :disabled="!(termStatus && learningStrandInput)" @click="showAddModuleDialog"/>
+            <AddModuleSection :id="classLearningStrandId"  @onUpdate="updateModuleTable" /> 
             
             <div class="mt-2 p-4">
                 <label>Module Progress</label>
@@ -258,7 +253,6 @@ function showAddModuleDialog() {
             </DataTable>
         </div>
     </div>
-    <AddModuleDialog :id="classLearningStrandId" :state="addModuleDialog" @onUpdate="updateModuleTable" @onUpdateDisplay="showAddModuleDialog" /> 
     <EditModuleDialog :id="classLearningStrandId" :data="module" :state="editModuleDialog" @onUpdate="updateModule" @onUpdateDisplay="showEditModuleDialog" />
 </template>
 
