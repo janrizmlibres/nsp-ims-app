@@ -54,20 +54,7 @@ onMounted(async () => {
     <ProgressSpinner v-if="isLoading" class="self-center" />
     <ContentPane v-else header="Class" subheader="Management">
         <TheHeader @updateState="updateState" :state="state" />
-        <TabView v-if="state" class="bg-white shadow-xl rounded-md"
-        :pt="{
-            root: {
-                class: ['relative flex flex-col h-full overflow-hidden']
-            },
-            panelContainer: {
-                class: ['relative h-full overflow-hidden']
-            },
-            tabpanel: {
-                content: {
-                    class: ['h-full']
-                }
-            }
-        }" :ptOptions="{mergeProps:true}">
+        <TabView v-if="state" class="bg-white shadow-xl rounded-md">
             <TabPanel>
                 <template #header>
                     <div class="flex items-center gap-2">
