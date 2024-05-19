@@ -2,7 +2,7 @@
 // Presets
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import InputText from 'primevue/inputtext';
+import Textarea from 'primevue/textarea';
 import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
 import { computed, ref, watch } from 'vue';
@@ -19,31 +19,11 @@ const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
 
-const customPt = {
-    table: {
-        class: ['px-1 border-spacing-y-4']
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'u-txt-active',
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-surface-200' : 'bg-surface-200'
-            ]
-        }),
-        bodycell: {
-            class: ['my-4']
-        }
-    },
-    bodyrow: {
-        class: ['rounded-lg shadow-[0_0_2px_rgb(0,0,0,0.2)]']
-    },
-}
-
 const emit = defineEmits(['onUpdate'])
-const props = defineProps(['modelValue', 'isNotActive', 'id'])
+const props = defineProps(['modelValue', 'isNotActive', 'id', 'mode'])
 const isNotActive = computed(() => props.isNotActive)
 const classLearningStrandId = computed(() => props.id)
+const edit = ref(false)
 const grades = ref([])
 const noChanges = ref(true)
 
@@ -98,8 +78,8 @@ async function updateGrades() {
             life: 5000
         })
 
-        leave.value = true
         noChanges.value = true
+        changeMode()
     } catch (error) {
         toast.add({
             severity: 'error',
@@ -111,19 +91,29 @@ async function updateGrades() {
 }
 
 function resetData() {
-    grades.value = structuredClone(startingData)
-    updatedData.clear()
-    leave.value = true
+    confirm.require({
+        message: 'Do you really want to leave? you have unsaved changes!',
+        header: 'Redirect Confirmation',
+        accept: async () => {
+            grades.value = structuredClone(startingData)
+            updatedData.clear()
 
-    for (const grade of grades.value) {
-        watch(grade, (newData) => {
-            updatedData.add(newData)
-            leave.value = false
-            noChanges.value = false
-        })
-    }
+            for (const grade of grades.value) {
+                watch(grade, (newData) => {
+                    updatedData.add(newData)
+                    noChanges.value = false
+                })
+            }
 
-    noChanges.value = true
+            noChanges.value = true
+            changeMode()
+        }
+    })
+}
+
+function changeMode() {
+    edit.value = !edit.value
+    leave.value = !leave.value
 }
 
 onBeforeRouteLeave((to) => {
@@ -135,7 +125,7 @@ onBeforeRouteLeave((to) => {
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
         accept: async () => {
-            leave.value = true
+            changeMode()
             await router.push(to)
         }
     })
@@ -146,10 +136,8 @@ onBeforeRouteLeave((to) => {
 
 <template>
     <DataTable 
-        :value="grades" dataKey="id"
-        sortField="lastName" :sortOrder="1" removableSort 
-        :paginator="grades.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        :pt="customPt" :ptOptions="{mergeProps:true}"
+        :value="grades" dataKey="id" scrollable style=" overflow: auto;"
+        sortField="lastName" :sortOrder="1" removableSort
     >
         <template #empty> <div class="text-center">No records found.</div> </template>
 
@@ -159,44 +147,50 @@ onBeforeRouteLeave((to) => {
 
         <Column field="first_quarter" header="Q1">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.first_quarter" :disabled="isNotActive" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.first_quarter" :disabled="isNotActive || !edit" :binary="true" />
             </template>
         </Column>
         <Column field="second_quarter" header="Q2">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.second_quarter" :disabled="isNotActive" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.second_quarter" :disabled="isNotActive || !edit" :binary="true" />
             </template>
         </Column>
         <Column field="third_quarter" header="Q3">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.third_quarter" :disabled="isNotActive" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.third_quarter" :disabled="isNotActive || !edit" :binary="true" />
             </template>
         </Column>
         <Column field="fourth_quarter" header="Q4">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.fourth_quarter" :disabled="isNotActive" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.fourth_quarter" :disabled="isNotActive || !edit" :binary="true" />
             </template>
         </Column>
-        <Column field="remarks" header="Remarks">
-            <template #body="slotProps">
-                <InputText v-model="slotProps.data.grades.remarks" :disabled="isNotActive" autofocus />
+        <Column field="remarks" header="Remarks" style="width: 19rem;">
+            <template #body="slotProps" v-if="!edit">
+                {{ slotProps.data.grades.remarks }}
+            </template>
+            <template #body="slotProps" v-else>
+                <Textarea v-model="slotProps.data.grades.remarks" rows="5" cols="30" />
             </template>
         </Column>
-        <Column field="grades.updatedAt" header="Updated At" sortable>
+        <Column field="grades.updatedAt" header="Updated At" style="width: 10rem;" sortable>
             <template #body="slotProps">
                 {{ new Date(slotProps.data.grades.updatedAt).toLocaleString() }}
             </template>
         </Column>
         <template #footer>
-            <p>
-                Record(s) count: <span class="u-txt-red"> {{ grades.length }} </span>
-            </p>
+            <div class="flex flex-row justify-between items-center">
+                <p>
+                    Record(s) count: <span class="u-txt-red"> {{ grades.length }} </span>
+                </p>
+                <div v-if="edit" class="flex flex-row gap-4">
+                    <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined @click="updateGrades"/>
+                    <Button icon="fa fa-xmark" label="Discard" aria-label="Discard Changes" iconClass="['mr-4']" size="small" rounded outlined @click="resetData"/>
+                </div>
+                <Button v-else-if="!isNotActive" icon="fa fa-plus" label="Edit Grades" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="!classLearningStrandId" @click="changeMode"/>
+            </div>
         </template>
     </DataTable>
-    <div v-if="!isNotActive" class="flex justify-end gap-2 mt-4">
-        <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateGrades"></Button>
-        <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
-    </div>
 </template>
 
 <style>
