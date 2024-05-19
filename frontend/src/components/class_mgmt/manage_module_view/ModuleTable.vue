@@ -7,6 +7,7 @@ import Dropdown from 'primevue/dropdown';
 import Toolbar from 'primevue/toolbar';
 import MeterGroup from 'primevue/metergroup';
 import Tag from 'primevue/tag';
+import Badge from 'primevue/badge';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
@@ -146,6 +147,25 @@ const getStatusLabel = (status) => {
     }
 };
 
+const getNumericLabel = (field) => {
+    switch (field) {
+        case 'no_submissions':
+            return 'danger';
+
+        case 'lacking':
+            return 'warning';
+
+        case 'complete':
+            return 'success';
+
+        case 'total':
+            return 'info';
+
+        default:
+            return null;
+    }
+}
+
 function editModule(data) {
     module.value = {... data}
     showEditModuleDialog()
@@ -217,7 +237,11 @@ function showAddModuleDialog() {
                         {{ slotProps.data.retrieval_date.toDateString() }}
                     </template>
                 </Column>
-                <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
+                <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header">
+                    <template #body="{ data, field }">
+                        <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
+                    </template>
+                </Column>
                 <Column field="status" header="Status">
                     <template #body="slotProps">
                         <Tag :value="slotProps.data.status ? 'Finished' : 'Unfinished'" :severity="getStatusLabel(slotProps.data.status)" />
