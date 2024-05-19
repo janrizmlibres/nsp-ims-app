@@ -52,10 +52,10 @@ async function updateModule() {
         }
 
         await classLearningStrandStore.updateModule(props.data.id, {
-            title: props.data.title,
+            title: module.value.title,
             distribution_date: range.value[0],
             retrieval_date: range.value[1],
-            status: props.data.status
+            status: module.value.status
         })
 
         classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
