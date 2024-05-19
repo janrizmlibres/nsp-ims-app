@@ -20,6 +20,7 @@ router.put("/module/moduleSubmissions/update", isAuth, classLearningStrandContro
 router.put("/session/attendances/update", isAuth, classLearningStrandController.updateAttendances);
 router.put("/grades/update", isAuth, classLearningStrandController.updateGrades);
 router.delete("/modules/delete", isAuth, classLearningStrandController.deleteModules);
+router.delete("/sessions/delete", isAuth, classLearningStrandController.deleteSessions);
 
 export default router;
 
