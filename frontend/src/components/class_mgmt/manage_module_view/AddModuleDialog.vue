@@ -93,12 +93,12 @@ function cancel() {
     <Dialog v-model:visible="state" modal header="Add Module" :style="{ width: '20rem' }" :closable="false">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
-            <label>Title</label>
-            <InputText id="username" v-model="value" aria-describedby="username-help" />
+            <label for="title">Title</label>
+            <InputText id="title" v-model="value" aria-describedby="title-help" />
         </div>
         <div class="flex flex-col gap-4 mb-10">
             <div class="flex flex-col">
-                <label>Distribution Date - Retrieval Date</label>
+                <label for="calendar">Distribution Date - Retrieval Date</label>
                 <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
             </div>
         </div>
