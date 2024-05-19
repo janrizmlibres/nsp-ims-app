@@ -3,6 +3,7 @@
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Dropdown from 'primevue/dropdown';
+import Toolbar from 'primevue/toolbar';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
@@ -78,22 +79,30 @@ watch(() => learningStrandInput.value, (input) => {
         }
     }
 })
-
 </script>
 
 <template>
-    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
-    <TabView>
-        <TabPanel header="Active">
-            <GradesTable :isNotActive="!termStatus" v-model="active" :id="classLearningStrandId" @onUpdate="updateGradesData" />
-        </TabPanel>
-        <TabPanel header="Inactive">
-            <GradesTable :isNotActive="true" v-model="inactive" :id="classLearningStrandId" @onUpdate="updateGradesData" />
-        </TabPanel>
-        <TabPanel header="Dropped">
-            <GradesTable :isNotActive="true" v-model="drop" :id="classLearningStrandId" @onUpdate="updateGradesData" />
-        </TabPanel>
-    </TabView>
+    <div class="relative flex flex-col h-full">
+        <Toolbar class="!p-2">
+            <template #end>
+                <div class="flex flex-row gap-4 items-center">
+                    <label class="font-semibold">Learning Strand:</label>
+                    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;"/> 
+                </div>
+            </template>
+        </Toolbar>
+        <TabView>
+            <TabPanel header="Active">
+                <GradesTable v-model="active" :id="classLearningStrandId" :isNotActive="!termStatus" @onUpdate="updateGradesData" />
+            </TabPanel>
+            <TabPanel header="Inactive">
+                <GradesTable v-model="inactive" :id="classLearningStrandId" :isNotActive="!termStatus" @onUpdate="updateGradesData" />
+            </TabPanel>
+            <TabPanel header="Dropped">
+                <GradesTable v-model="drop" :id="classLearningStrandId" :isNotActive="true" @onUpdate="updateGradesData" />
+            </TabPanel>
+        </TabView>
+    </div>
 </template>
 
 <style>
