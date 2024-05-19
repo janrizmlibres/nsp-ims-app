@@ -65,7 +65,7 @@ app.get("/", (_, res) => {
 app.use("/profile", profileRoutes);
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
-app.use("/enrollment", enrollmentRoutes)
+app.use("/enrollment", enrollmentRoutes);
 app.use("/term", termRoutes);
 app.use("/class", classRoutes);
 app.use("/classLearningStrand", classLearningStrandRoutes);

@@ -67,15 +67,9 @@ export async function addStudent(req, res, next) {
       throw error;
     }
 
-    if (!req.file) {
-      const error = new Error("No profile photo provided.");
-      error.statusCode = 422;
-      throw error;
-    }
-
     const student = await Student.create({
       ...req.body.identity,
-      photoUrl: req.file.path.replace("\\", "/"),
+      photoUrl: req.file && req.file.path.replace("\\", "/"),
     });
 
     await PersonalInfo.create({
@@ -118,7 +112,6 @@ export async function addStudent(req, res, next) {
 export async function updateStudent(req, res, next) {
   try {
     const errors = validationResult(req);
-    console.log(errors);
 
     if (!errors.isEmpty()) {
       const error = new Error("Validation failed, entered data is incorrect.");
@@ -144,23 +137,48 @@ export async function updateStudent(req, res, next) {
       prevSchool,
     } = req.body;
 
-    const imageUrl = req.file.path.replace("\\", "/");
+    const imageUrl = req.file
+      ? req.file.path.replace("\\", "/")
+      : identity.photoUrl;
 
     if (imageUrl !== student.photoUrl) {
       clearImage(student.photoUrl);
       identity.photoUrl = imageUrl;
     }
 
-    student.set(identity);
-    await student.save();
+    const personalInfoInstance = await PersonalInfo.findOne({
+      where: { studentId: student.id },
+    });
 
-    await student.setPersonalInfo(personalInfo);
-    await student.setContactInfo(contactInfo);
-    await student.setEmergencyPerson(emergencyPerson);
-    await student.setParentalInfo(parentalInfo);
-    await student.setPreviousSchool(prevSchool);
+    const contactInfoInstance = await ContactInfo.findOne({
+      where: { studentId: student.id },
+    });
 
-    res.json(200).json({ message: "Student information updated!" });
+    const emergencyPersonInstance = await EmergencyPerson.findOne({
+      where: { studentId: student.id },
+    });
+
+    const parentalInfoInstance = await ParentalInfo.findOne({
+      where: { studentId: student.id },
+    });
+
+    const prevSchoolInstance = await PreviousSchool.findOne({
+      where: { studentId: student.id },
+    });
+
+    await student.update(identity);
+    await personalInfoInstance.update(personalInfo);
+    await contactInfoInstance.update(contactInfo);
+    await emergencyPersonInstance.update(emergencyPerson);
+    await prevSchoolInstance.update(prevSchool);
+
+    if (!parentalInfoInstance) {
+      await ParentalInfo.create({ ...parentalInfo, studentId: student.id });
+    } else {
+      await parentalInfoInstance.update(parentalInfo);
+    }
+
+    res.status(200).json({ message: "Student information updated!" });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -170,6 +188,8 @@ export async function updateStudent(req, res, next) {
 }
 
 const clearImage = (filePath) => {
+  if (!filePath) return;
+
   const __dirname = dirname(fileURLToPath(import.meta.url));
   filePath = path.join(__dirname, "..", filePath);
   fs.unlink(filePath, (err) => console.log(err));

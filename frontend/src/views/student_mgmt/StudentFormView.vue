@@ -100,7 +100,7 @@ const confirmBtnText = computed(() => (route.meta.isViewMode ? 'Edit' : 'Submit'
 const cancelBtnText = computed(() => (route.meta.isViewMode ? 'Back' : 'Cancel'))
 const isFormDirty = computed(() => {
   for (const key in initialData) {
-    if (!isEqual(initialData[key], formData[key].value)) return true
+    if (!isEqual(initialData[key], formData.value[key])) return true
   }
   return false
 })
@@ -146,8 +146,8 @@ async function submitForm() {
   try {
     const result =
       route.name === 'add-student'
-        ? await studentsStore.addStudent(formData)
-        : await studentsStore.updateStudent(route.params.studentId, formData)
+        ? await studentsStore.addStudent(formData.value)
+        : await studentsStore.updateStudent(route.params.studentId, formData.value)
 
     toast.add({
       severity: 'success',
@@ -195,9 +195,21 @@ onMounted(async () => {
       return filteredObj
     }
 
-    for (const key in initialData) {
-      initialData[key] = filterObject(student[key])
-    }
+    const {
+      personal_info,
+      contact_info,
+      emergency_person,
+      parental_info,
+      previous_school,
+      ...identity
+    } = student
+
+    initialData.identity = filterObject(identity)
+    initialData.personalInfo = filterObject(personal_info)
+    initialData.contactInfo = filterObject(contact_info)
+    initialData.emergencyPerson = filterObject(emergency_person)
+    initialData.parentalInfo = parental_info && filterObject(parental_info)
+    initialData.prevSchool = filterObject(previous_school)
 
     for (const key in initialData) {
       formData.value[key] = initialData[key]
@@ -215,7 +227,7 @@ onMounted(async () => {
     <div class="flex flex-col gap-3 h-full mr-1">
       <IdentityForm
         @dataChanged="updateFormData"
-        :identity="formData.identity.value"
+        :identity="formData.identity"
         :isViewMode="$route.meta.isViewMode"
         :key="updateKey"
       />

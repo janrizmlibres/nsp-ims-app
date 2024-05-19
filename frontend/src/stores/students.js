@@ -59,6 +59,8 @@ export const useStudentsStore = defineStore('students', () => {
   async function updateStudent(studentId, formData) {
     const authStore = useAuthStore()
 
+    console.log(formData.identity)
+
     const form = new FormData()
     form.append('image', formData.identity.photoUrl)
 

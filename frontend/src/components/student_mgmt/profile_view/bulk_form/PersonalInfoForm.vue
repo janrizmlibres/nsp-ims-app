@@ -8,14 +8,14 @@ import { getDaysInMonth, format, getYear, getDay, getMonth } from 'date-fns'
 import { objectMap } from '@/util/helpers'
 import FormParts from '@/util/student_form_parts'
 
-const emit = defineEmits(['dataChanged'])
+const { formData, updateFormData } = inject('formData')
 
-const personalData = inject('personalData')
+const personalInfo = formData.personalInfo
 
-const selectedSex = ref(personalData.value.sex)
-const selectedBloodType = ref(personalData.value.bloodType)
-const selectedCivilStat = ref(personalData.value.civilStatus)
-const selectedReligion = ref(personalData.value.religion)
+const selectedSex = ref(personalInfo.sex)
+const selectedBloodType = ref(personalInfo.bloodType)
+const selectedCivilStat = ref(personalInfo.civilStatus)
+const selectedReligion = ref(personalInfo.religion)
 
 const birthday = ref({ month: null, day: null, year: null })
 const computedBirthday = computed(() => {
@@ -28,15 +28,15 @@ const computedBirthday = computed(() => {
 })
 
 const birthPlace = ref({
-  birthBarangay: personalData.value.birthBarangay,
-  birthCity: personalData.value.birthCity,
-  birthProvince: personalData.value.birthProvince
+  birthBarangay: personalInfo.birthBarangay,
+  birthCity: personalInfo.birthCity,
+  birthProvince: personalInfo.birthProvince
 })
 const address = ref({
-  homeBlkLtSt: { label: 'Blk/Lt/St', data: personalData.value.homeBlkLtSt },
-  homeBarangay: { label: 'Barangay', data: personalData.value.homeBarangay },
-  homeCity: { label: 'City', data: personalData.value.homeCity },
-  homeProvince: { label: 'Province', data: personalData.value.homeProvince }
+  homeBlkLtSt: { label: 'Blk/Lt/St', data: personalInfo.homeBlkLtSt },
+  homeBarangay: { label: 'Barangay', data: personalInfo.homeBarangay },
+  homeCity: { label: 'City', data: personalInfo.homeCity },
+  homeProvince: { label: 'Province', data: personalInfo.homeProvince }
 })
 
 const sex = ['M', 'F']
@@ -87,7 +87,7 @@ function handleUpdate() {
     ...objectMap(address.value, (field) => field.data)
   }
 
-  emit('dataChanged', FormParts.Personal, data)
+  updateFormData(FormParts.Personal, data)
 }
 
 onMounted(() => {
@@ -101,10 +101,10 @@ onMounted(() => {
     years.value.push(i.toString())
   }
 
-  if (personalData.value.birthday) {
-    birthday.value.month = getMonth(personalData.value.birthday)
-    birthday.value.day = getDay(personalData.value.birthday).toString()
-    birthday.value.year = getYear(personalData.value.birthday).toString()
+  if (personalInfo.birthday) {
+    birthday.value.month = getMonth(personalInfo.birthday)
+    birthday.value.day = getDay(personalInfo.birthday).toString()
+    birthday.value.year = getYear(personalInfo.birthday).toString()
   }
 })
 </script>

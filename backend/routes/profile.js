@@ -15,7 +15,7 @@ const identityValidator = [
   body("identity.suffixName")
     .optional({ values: "null" })
     .trim()
-    .matches("^[A-Za-z]+.$"),
+    .matches("^[A-Za-z]+.?$"),
   body("identity.lrn").isNumeric({ locale: "en-US" }),
   body("identity.category").exists({ values: "null" }),
 ];
@@ -38,9 +38,9 @@ const personalValidator = [
 
 const contactValidator = [
   body("contactInfo").customSanitizer((value) => JSON.parse(value)),
-  body("contactInfo.email").trim().isEmail(),
+  body("contactInfo.email").optional({ values: "falsy" }).trim().isEmail(),
   body("contactInfo.contactNum").trim().isMobilePhone("en-PH"),
-  body("contactInfo.facebook").trim().isAscii(),
+  body("contactInfo.facebook").optional({ values: "falsy" }).trim().isAscii(),
 ];
 
 const emergencyValidator = [
@@ -54,35 +54,47 @@ const emergencyValidator = [
   body("emergencyPerson.suffixName")
     .optional({ values: "null" })
     .trim()
-    .matches("^[A-Za-z]+.$"),
+    .matches("^[A-Za-z]+.?$"),
   body("emergencyPerson.contactNum").trim().isMobilePhone("en-PH"),
   body("emergencyPerson.relationship").trim().isAscii(),
 ];
 
 const parentalValidator = [
   body("parentalInfo").customSanitizer((value) => JSON.parse(value)),
-  body("parentalInfo.lastNameF").trim().isAscii(),
+  body("parentalInfo.lastNameF").optional({ values: "falsy" }).trim().isAscii(),
   body("parentalInfo.middleNameF")
     .optional({ values: "falsy" })
     .trim()
     .isAscii(),
-  body("parentalInfo.firstNameF").trim().isAscii(),
+  body("parentalInfo.firstNameF")
+    .optional({ values: "falsy" })
+    .trim()
+    .isAscii(),
   body("parentalInfo.suffixNameF")
     .optional({ values: "null" })
     .trim()
-    .matches("^[A-Za-z]+.$"),
-  body("parentalInfo.occupationF").trim().isAscii(),
-  body("parentalInfo.lastNameM").trim().isAscii(),
+    .matches("^[A-Za-z]+.?$"),
+  body("parentalInfo.occupationF")
+    .optional({ values: "falsy" })
+    .trim()
+    .isAscii(),
+  body("parentalInfo.lastNameM").optional({ values: "falsy" }).trim().isAscii(),
   body("parentalInfo.middleNameM")
     .optional({ values: "falsy" })
     .trim()
     .isAscii(),
-  body("parentalInfo.firstNameM").trim().isAscii(),
+  body("parentalInfo.firstNameM")
+    .optional({ values: "falsy" })
+    .trim()
+    .isAscii(),
   body("parentalInfo.suffixNameM")
     .optional({ values: "null" })
     .trim()
-    .matches("^[A-Za-z]+.$"),
-  body("parentalInfo.occupationM").trim().isAscii(),
+    .matches("^[A-Za-z]+.?$"),
+  body("parentalInfo.occupationM")
+    .optional({ values: "falsy" })
+    .trim()
+    .isAscii(),
 ];
 
 const prevSchoolValidator = [

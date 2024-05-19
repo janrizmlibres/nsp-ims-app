@@ -9,29 +9,29 @@ import { getYear } from 'date-fns'
 import { objectMap } from '@/util/helpers'
 import FormParts from '@/util/student_form_parts'
 
-const emit = defineEmits(['dataChanged'])
+const { formData, updateFormData } = inject('formData')
 
-const prevSchoolData = inject('prevSchoolData')
+const prevSchoolInfo = formData.prevSchool
 
-const schoolName = ref(prevSchoolData.value.name)
-const discontinuationReason = ref(prevSchoolData.value.reason)
+const schoolName = ref(prevSchoolInfo.name)
+const discontinuationReason = ref(prevSchoolInfo.reason)
 
 const address = ref({
-  street: { label: 'Blk/Lt/St', data: prevSchoolData.value.street },
-  barangay: { label: 'Barangay', data: prevSchoolData.value.barangay },
-  city: { label: 'City', data: prevSchoolData.value.city },
-  province: { label: 'Province', data: prevSchoolData.value.province }
+  street: { label: 'Blk/Lt/St', data: prevSchoolInfo.street },
+  barangay: { label: 'Barangay', data: prevSchoolInfo.barangay },
+  city: { label: 'City', data: prevSchoolInfo.city },
+  province: { label: 'Province', data: prevSchoolInfo.province }
 })
 
-const selectedType = ref(prevSchoolData.value.schoolType)
-const selectedAffiliation = ref(prevSchoolData.value.schoolAffiliation)
+const selectedType = ref(prevSchoolInfo.schoolType)
+const selectedAffiliation = ref(prevSchoolInfo.schoolAffiliation)
 
-const selectedEduc = ref(prevSchoolData.value.highestEducation)
+const selectedEduc = ref(prevSchoolInfo.highestEducation)
 const selectedLevel = ref(null)
 
 const selectedYearL = ref(null)
 const selectedYearR = ref(null)
-const lastYrAttended = ref(prevSchoolData.value.lastSyAttended)
+const lastYrAttended = ref(prevSchoolInfo.lastSyAttended)
 
 const yearsR = ref([])
 const yearsL = computed(() => {
@@ -84,7 +84,7 @@ function handleUpdate() {
     ...objectMap(address.value, (field) => field.data)
   }
 
-  emit('dataChanged', FormParts.PrevSchool, data)
+  updateFormData(FormParts.PrevSchool, data)
 }
 
 onMounted(() => {
@@ -98,7 +98,7 @@ onMounted(() => {
     levels.value.push(`Grade ${i}`)
   }
 
-  const lastSyAttended = prevSchoolData.value.lastSyAttended
+  const lastSyAttended = prevSchoolInfo.lastSyAttended
 
   if (lastSyAttended) {
     const [splitYrL, splitYrR] = lastSyAttended.split('-')
@@ -106,7 +106,7 @@ onMounted(() => {
     selectedYearR.value = splitYrR.trim()
   }
 
-  selectedLevel.value = prevSchoolData.value.gradeStopped
+  selectedLevel.value = prevSchoolInfo.gradeStopped
 })
 </script>
 

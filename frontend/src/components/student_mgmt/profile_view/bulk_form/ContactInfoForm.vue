@@ -6,38 +6,38 @@ import { inject, ref } from 'vue'
 import FormParts from '@/util/student_form_parts'
 import { objectMap } from '@/util/helpers'
 
-const emit = defineEmits(['dataChanged'])
+const { formData, updateFormData } = inject('formData')
 
-const contactData = inject('contactData')
-const emergencyData = inject('emergencyData')
+const contactInfo = formData.contactInfo
+const emergencyInfo = formData.emergencyPerson
 
 const leftFields = ref({
-  email: { label: 'Email Address', data: contactData.value.email },
-  contactNum: { label: 'Contact Number', data: contactData.value.contactNum },
-  facebook: { label: 'Facebook', data: contactData.value.facebook }
+  email: { label: 'Email Address', data: contactInfo.email },
+  contactNum: { label: 'Contact Number', data: contactInfo.contactNum },
+  facebook: { label: 'Facebook', data: contactInfo.facebook }
 })
 
 const rightFields = ref({
-  lastName: { label: 'Last Name', data: emergencyData.value.lastName },
-  firstName: { label: 'First Name', data: emergencyData.value.firstName },
-  middleName: { label: 'Middle Name', data: emergencyData.value.middleName },
-  suffixName: { label: 'Suffix', data: emergencyData.value.suffixName },
-  contactNum: { label: 'Contact Number', data: emergencyData.value.contactNum }
+  lastName: { label: 'Last Name', data: emergencyInfo.lastName },
+  firstName: { label: 'First Name', data: emergencyInfo.firstName },
+  middleName: { label: 'Middle Name', data: emergencyInfo.middleName },
+  suffixName: { label: 'Suffix', data: emergencyInfo.suffixName },
+  contactNum: { label: 'Contact Number', data: emergencyInfo.contactNum }
 })
 
-const selectedRelationship = ref(emergencyData.value.relationship)
+const selectedRelationship = ref(emergencyInfo.relationship)
 
 const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 
 function updateContactInfo() {
   const data = objectMap(leftFields.value, (field) => field.data)
-  emit('dataChanged', FormParts.Contact, data)
+  updateFormData(FormParts.Contact, data)
 }
 
 function updateEmergencyContact() {
   const data = objectMap(rightFields.value, (field) => field.data)
   data.relationship = selectedRelationship.value
-  emit('dataChanged', FormParts.Emergency, data)
+  updateFormData(FormParts.Emergency, data)
 }
 </script>
 

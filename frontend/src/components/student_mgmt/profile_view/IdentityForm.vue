@@ -28,7 +28,7 @@ const name = ref({
 const lrn = ref(props.identity.lrn)
 const selectedSuffix = ref(props.identity.suffixName)
 const selectedCat = ref(props.identity.category)
-const photoUrl = ref(props.identity.photoUrl && `http://localhost:8080${props.identity.photoUrl}`)
+const photoUrl = ref(props.identity.photoUrl && `http://localhost:8080/${props.identity.photoUrl}`)
 
 const isAvatarHovered = ref(false)
 const isImgModalVisible = ref(false)
@@ -45,10 +45,13 @@ const categories = ref([
 watch(photoUrl, () => handleUpdate())
 
 function setAvatarHover(value) {
+  if (route.meta.isViewMode && !photoUrl.value) return
   isAvatarHovered.value = value
 }
 
 function handleAvatar(event) {
+  if (route.meta.isViewMode && !photoUrl.value) return
+
   if (photoUrl.value && !route.meta.isViewMode) {
     op.value.toggle(event)
   } else if (photoUrl.value && route.meta.isViewMode) {

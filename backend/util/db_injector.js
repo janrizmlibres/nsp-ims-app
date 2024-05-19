@@ -35,7 +35,7 @@ export async function injectStudent() {
     category: "Out-of-School Youth",
     firstName: "Gordon",
     lastName: "Ramsay",
-    photoUrl: "/images/gordon.jpg",
+    photoUrl: "images/gordon.jpg",
   });
 
   await PersonalInfo.create({
@@ -87,7 +87,7 @@ export async function injectStudent() {
     category: "Teenage Pregnancy",
     firstName: "Kim",
     lastName: "Chiu",
-    photoUrl: "/images/kim.jpg",
+    photoUrl: "images/kim.jpg",
   });
 
   await PersonalInfo.create({
