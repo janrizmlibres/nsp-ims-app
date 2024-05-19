@@ -117,6 +117,18 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
         )
     }
 
+    async function deleteSessions(form) {
+        const authStore = useAuthStore()
+    
+        await axios.delete(
+            `http://localhost:8080/classLearningStrand/sessions/delete`,
+            {
+                data: form,
+                headers: { Authorization: 'Bearer ' + authStore.token }
+            }
+        )
+    }
+
     async function updateAttendances(updatedData) {
         const authStore = useAuthStore()
     
@@ -172,7 +184,7 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
     return {
         getStrand, 
         addModule, getAllModules, getModule, updateModule, deleteModules, updateModuleSubmissions, 
-        addSession, getAllSessions, getSession, updateSession, updateAttendances,
+        addSession, getAllSessions, getSession, updateSession, deleteSessions, updateAttendances,
         addSchedule, updateSchedule, 
         getAllGrades, updateGrades
     }
