@@ -3,17 +3,16 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
 
-const props = defineProps(['classLearningStrandId'])
+const props = defineProps(['id'])
 const toast = useToast()
 
 const emit = defineEmits(['onUpdate'])
 const classLearningStrandStore = useClassLearningStrandStore()
-const op = ref()
-classLearningStrandStore.addSessionPanel = op
+const classLearningStrandId = computed(() => props.id)
 
 const sessions = ref([])
 const date = ref()
@@ -54,8 +53,8 @@ async function addSession() {
     }
 
     try {
-        await classLearningStrandStore.addSession(props.classLearningStrandId, {dates:newDates})
-        classLearningStrandStore.getAllSessions(props.classLearningStrandId).then((data) => {
+        await classLearningStrandStore.addSession(classLearningStrandId.value, {dates:newDates})
+        classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
             emit('onUpdate', data)
         })
         
@@ -83,12 +82,12 @@ async function addSession() {
         <span class="font-semibold text-lg u-txt-active mb-4">Add Session</span>
         <div class="flex flex-col mb-4">
             <label>Selection Type</label>
-            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!props.classLearningStrandId" @update:modelValue="resetValues" />
+            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!classLearningStrandId" @update:modelValue="resetValues" />
         </div>
         <div v-if="selectionType === 1" class="flex flex-col gap-4 mb-4">
             <div class="flex flex-col">
                 <label>Session Date</label>
-                <Calendar v-model="date" id="calendar" showIcon showButtonBar iconDisplay="input" :disabled="!props.classLearningStrandId" @update:modelValue="addSelectedDate" />
+                <Calendar v-model="date" id="calendar" showIcon showButtonBar iconDisplay="input" :disabled="!classLearningStrandId" @update:modelValue="addSelectedDate" />
             </div>
         </div>
         <div v-if="selectionType === 2" class="flex flex-col gap-4 mb-4">
@@ -97,6 +96,6 @@ async function addSession() {
                 <Calendar v-model="date" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
             </div>
         </div>
-        <Button v-if="selectionType" type="button" outlined rounded label="Add" :disabled="!date" @click="addSession" />
+        <Button type="button" outlined rounded label="Add" :disabled="!date" @click="addSession" />
     </div>
 </template>
