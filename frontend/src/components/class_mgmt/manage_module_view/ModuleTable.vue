@@ -18,12 +18,14 @@ import EditModuleDialog from './EditModuleDialog.vue';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useConfirm } from 'primevue/useconfirm';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
 const props = defineProps(['learningStrands', 'termStatus'])
 const toast = useToast()
 const router = useRouter()
+const confirm = useConfirm()
 
 const cols = ref([
     {field: 'no_submissions', header: 'No Submissions'},
@@ -72,27 +74,33 @@ function updateModuleTable(modules) {
 }
 
 async function deleteModules() {
-    try {
-        const moduleIds = selectedModules.value.map(module => module.id)
-        await classLearningStrandStore.deleteModules({moduleIds: moduleIds})
-        deselect()
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Module(s) deleted successfully!',
-            life: 3000
-        })
-    } catch(error) {
-        console.log(error);
-    }
+    confirm.require({
+        message: 'Do you really want to delete?',
+        header: 'Delete Confirmation',
+        accept: async () => {
+            try {
+                const moduleIds = selectedModules.value.map(module => module.id)
+                await classLearningStrandStore.deleteModules({moduleIds: moduleIds})
+                deselect()
+                toast.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Module(s) deleted successfully!',
+                    life: 3000
+                })
+            } catch(error) {
+                console.log(error);
+            }
 
-    try {
-        classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
-            updateModuleTable(data)
-        })
-    } catch(error) {
-        console.log(error);
-    }
+            try {
+                classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
+                    updateModuleTable(data)
+                })
+            } catch(error) {
+                console.log(error);
+            }
+        }
+    })
 }
 
 function viewModule() {
