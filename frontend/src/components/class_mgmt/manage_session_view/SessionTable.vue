@@ -4,24 +4,26 @@ import DataTable from 'primevue/datatable';
 import Dropdown from 'primevue/dropdown';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
+import Toolbar from 'primevue/toolbar';
+import Badge from 'primevue/badge';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { format } from 'date-fns';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
-import { useConfirm } from 'primevue/useconfirm';
+import { useRouter } from 'vue-router';
 
 // Custom
+import AddSessionSection from './AddSessionSection.vue';
+import EditSessionDialog from './EditSessionDialog.vue';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useConfirm } from 'primevue/useconfirm';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
 const props = defineProps(['learningStrands', 'termStatus'])
 const toast = useToast()
-const confirm = useConfirm()
 const router = useRouter()
+const confirm = useConfirm()
 
 const cols = ref([
     {field: 'absent', header: 'Absent'},
@@ -33,9 +35,11 @@ const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allSessions = ref([])
 const classLearningStrandId = ref()
-const editingRows = ref([]);
-const leave = ref(true)
+const metaKey = ref(true)
 const learningStrandInput = ref()
+const selectedSessions = ref([])
+const session = ref()
+const editSessionDialog = ref(false)
 
 function updateSessionTable(sessions) {
     isFetching.value = true
@@ -50,12 +54,27 @@ function updateSessionTable(sessions) {
             absent: session.absent,
             present: session.present,
             total: session.total,
-            remarks: session.remarks
+            remarks: session.remarks,
+            updatedAt: session.updatedAt
         })
         allSessions.value.push(temp.value)
     }
     
     isFetching.value = false
+}
+
+function editSession(data) {
+    session.value = {... data}
+    showEditSessionDialog()
+}
+
+function showEditSessionDialog() {
+    editSessionDialog.value = !editSessionDialog.value
+}
+
+function updateSession(data) {
+    updateSessionTable(data)
+    showEditSessionDialog()
 }
 
 watch(() => props.learningStrands, () => {
@@ -84,114 +103,129 @@ watch(() => learningStrandInput.value, (input) => {
     }
 }, {immediate: false})
 
-async function addSession() {
-    const date = new Date()
-    const offset = date.getTimezoneOffset()
-    let newDate = format(new Date(date.getTime() - (offset*60*1000)), "yyyy-MM-dd");
-
-    try {
-        await classLearningStrandStore.addSession(classLearningStrandId.value, {date:newDate})
-        classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
-            updateSessionTable(data)
-        })
-        
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Session created successfully',
-            life: 3000
-        })
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail:"Session exists already!",
-            life: 3000
-        })
-    }
+function deselect() {
+    selectedSessions.value = []
 }
 
-watch(() =>  editingRows.value, (data) => {
-    if (data.length === 0) leave.value = true
-    else leave.value = false
-})
-
-const onRowEditSave = async (event) => {
-    let { data, newData } = event;
-
-    if (Object.values(data) != Object.values(newData)) {
-        try {
-            await classLearningStrandStore.updateSession(newData.id, {remarks: newData.remarks})
-            classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
-                updateSessionTable(data)
-            })
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Session updated successfully',
-                life: 3000
-            })
-        } catch(error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail:"Unexpected error encountered.",
-                life: 3000
-            })
-        }
-    }
-};
-
-onBeforeRouteLeave((to) => {
-    if (leave.value) {
-        return true
-    }
-
+async function deleteModules() {
     confirm.require({
-        message: 'Do you really want to leave? you have unsaved changes!',
-        header: 'Redirect Confirmation',
+        message: 'Do you really want to delete?',
+        header: 'Delete Confirmation',
         accept: async () => {
-            leave.value = true
-            await router.push(to)
+            try {
+                const sessionIds = selectedSessions.value.map(session => session.id)
+                await classLearningStrandStore.deleteSessions({sessionIds: sessionIds})
+                deselect()
+                toast.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Session(s) deleted successfully!',
+                    life: 3000
+                })
+            } catch(error) {
+                console.log(error);
+            }
+
+            try {
+                classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((data) => {
+                    updateSessionTable(data)
+                })
+            } catch(error) {
+                console.log(error);
+            }
         }
     })
+}
 
-    return false
-})
+function viewSession() {
+    router.push({ name: 'session-info', query: { id: selectedSessions.value[selectedSessions.value.length-1].id, status: termStatus } })
+}
+
+const getNumericLabel = (field) => {
+    switch (field) {
+        case 'absent':
+            return 'danger';
+
+        case 'present':
+            return 'success';
+
+        case 'total':
+            return 'info';
+
+        default:
+            return null;
+    }
+}
 </script>
 
 <template>
-    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
-    <DataTable 
-        :value="allSessions" dataKey="id"
-        sortField="date" :sortOrder="-1" removable-sort=""
-    >
-        <template #empty> <div class="text-center">No records found.</div> </template>
-        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+    <div class="flex h-full w-full">
+        <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
+            <AddSessionSection :classLearningStrandId="classLearningStrandId" @onUpdate="updateSessionTable" />
+        </div>
+        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl">
+            <Toolbar class="!p-2">
+                <template #start>
+                    <span v-if="selectedSessions.length" class="flex flex-row gap-8 items-center mx-2">
+                        <span class="flex items-center gap-2">
+                            <Button icon="fa fa-circle-xmark fa-lg" text aria-label="Edit Mode" style="height: 2rem; width: 2rem;" @click="deselect"/>
+                            <p>
+                                {{ selectedSessions.length + ' selected' }}
+                            </p>
+                        </span>
+                        <span class="flex gap-1">
+                            <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                            <Button icon="fa fa-trash" text aria-label="Delete Selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
+                        </span>
+                    </span>
+                </template>
+                <template #end>
+                    <div class="flex flex-row gap-4 items-center">
+                        <label class="font-semibold">Learning Strand:</label>
+                        <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="deselect" /> 
+                    </div>
+                </template>
+            </Toolbar>
+            <DataTable 
+                :value="allSessions" dataKey="id"
+                v-model:selection="selectedSessions" scrollable style=" overflow: auto;"
+                selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewSession"
+                sortField="date" :sortOrder="1" removableSort class="unselectable"
+            >
+                <template #empty> <div class="text-center">No records found.</div> </template>
 
-        <Column header="" class="u-txt-active text-center" style="width: 2rem">
-            <template #body="slotProps">
-                <RouterLink :to="{ name: 'session-info', query: { id: slotProps.data.id, status: termStatus } }">
-                    <i class="fa fa-eye" />
-                </RouterLink>
-            </template>
-        </Column>
-        <Column field="date" header="Session Date" sortable>
-            <template #body="slotProps">
-                {{ slotProps.data.date.toDateString() }}
-            </template>
-        </Column>
-        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
-        <Column field="remarks" header="Remarks" style="max-width: 10rem;">
-            <template #editor="{ data, field }">
-                <InputText v-model="data[field]" autofocus />
-            </template>
-        </Column>
-        <Column :rowEditor="true" bodyStyle="text-align:center"></Column>
-        <template #footer v-if="termStatus && learningStrandInput"> 
-            <Button icon="fa fa-plus" label="Add Session" text raised rounded aria-label="Submit" @click="addSession"/>
-        </template>
-    </DataTable>
+                <Column :exportable="false" style="width:2rem">
+                    <template #body="slotProps">
+                        <Button icon="fa fa-pencil" text @click="editSession(slotProps.data)" />
+                    </template>
+                </Column>
+                <Column field="date" header="Session Date" sortable>
+                    <template #body="slotProps">
+                        {{ slotProps.data.date.toDateString() }}
+                    </template>
+                </Column>
+                <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header">
+                    <template #body="{ data, field }">
+                        <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
+                    </template>
+                </Column>
+                <Column field="remarks" header="Remarks" style="width: 16rem;">
+                    <template #body="slotProps">
+                        {{ slotProps.data.remarks }}
+                    </template>
+                </Column>
+                <Column field="updatedAt" header="Updated At" style="width: 10rem;" sortable>
+                    <template #body="slotProps">
+                        {{ new Date(slotProps.data.updatedAt).toLocaleString() }}
+                    </template>
+                </Column>
+                <template #footer>
+                    
+                </template>
+            </DataTable>
+        </div>
+    </div>
+    <EditSessionDialog :id="classLearningStrandId" :data="session" :state="editSessionDialog" @onUpdate="updateSession" @onUpdateDisplay="showEditSessionDialog" />
 </template>
 
 <style>
