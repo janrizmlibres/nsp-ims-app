@@ -43,6 +43,11 @@ const learningStrandInput = ref()
 const selectedModules = ref([])
 const metaKey = ref(true)
 const editModuleDialog = ref(false)
+const status = computed(() => {
+    let data = [... new Set(selectedModules.value.map(module => module.status))]
+    if (data.length === 1) return data[0] ? true : false
+    else return null
+})
 
 const meterProgress = ref((data) => {
     return [{
@@ -100,6 +105,22 @@ async function deleteModules() {
             }
         }
     })
+}
+
+async function markAs() {
+    try {
+        const moduleIds = selectedModules.value.map(module => module.id)
+        await classLearningStrandStore.updateModuleStatus({
+            status: status.value,
+            moduleIds: moduleIds
+        })
+
+        classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
+            updateModuleTable(data)
+        })
+    } catch(error) {
+        console.log(error);
+    }
 }
 
 function viewModule() {
@@ -203,9 +224,11 @@ function showEditModuleDialog() {
                                 {{ selectedModules.length + ' selected' }}
                             </p>
                         </span>
-                        <span class="flex gap-1">
+                        <span class="flex gap-1 items-center">
                             <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
-                            <Button icon="fa fa-trash" text aria-label="Delete Selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
+                            <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
+                            <Button v-if="status === false" label="mark as done" text aria-label="mark-as-done" size="small" @click="markAs"/>
+                            <Button v-if="status === true" label="mark as undone" text aria-label="mark-as-undone" size="small" @click="markAs"/>
                         </span>
                     </span>
                 </template>
@@ -220,7 +243,7 @@ function showEditModuleDialog() {
                 :value="allModules" dataKey="id" 
                 v-model:selection="selectedModules" scrollable style=" overflow: auto;"
                 selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewModule"
-                sortField="retrieval_date" :sortOrder="-1" removableSort class="unselectable"
+                sortField="title" :sortOrder="1" removableSort class="unselectable"
             >
                 <template #empty> <div class="text-center">No records found.</div> </template>
 
@@ -247,7 +270,7 @@ function showEditModuleDialog() {
                 </Column>
                 <Column field="status" header="Status">
                     <template #body="slotProps">
-                        <Tag :value="slotProps.data.status ? 'Finished' : 'Unfinished'" :severity="getStatusLabel(slotProps.data.status)" />
+                        <Tag :value="slotProps.data.status ? 'Done' : 'Not Done'" :severity="getStatusLabel(slotProps.data.status)" />
                     </template>
                 </Column>
             </DataTable>
