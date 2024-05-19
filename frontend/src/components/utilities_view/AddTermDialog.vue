@@ -5,10 +5,10 @@ import Calendar from 'primevue/calendar';
 import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
 
-import { useTermStore } from '@/stores/term';
+import { useUtilitiesStore } from '@/stores/utilities';
 
 const toast = useToast()
-const termStore = useTermStore()
+const termStore = useUtilitiesStore()
 
 const dates = ref(null);
 
