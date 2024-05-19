@@ -29,27 +29,6 @@ const cols = ref([
     {field: 'total', header: 'Total'},
 ])
 
-const customPt = {
-    table: {
-        class: ['px-1 border-spacing-y-4']
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'u-txt-active',
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-surface-200' : 'bg-surface-200'
-            ]
-        }),
-        bodycell: {
-            class: ['my-4']
-        }
-    },
-    bodyrow: {
-        class: ['rounded-lg shadow-[0_0_2px_rgb(0,0,0,0.2)]']
-    },
-}
-
 const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allSessions = ref([])
@@ -184,11 +163,8 @@ onBeforeRouteLeave((to) => {
 <template>
     <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
     <DataTable 
-        :value="allSessions" dataKey="id" showGridlines
-        sortField="date" :sortOrder="-1" removableSort
-        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-        :paginator="allSessions.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        :pt="customPt" :ptOptions="{mergeProps:true}"
+        :value="allSessions" dataKey="id"
+        sortField="date" :sortOrder="-1" removable-sort=""
     >
         <template #empty> <div class="text-center">No records found.</div> </template>
         <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
