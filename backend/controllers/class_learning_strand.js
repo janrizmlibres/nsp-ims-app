@@ -15,7 +15,8 @@ export async function addModule(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
 
     const {
-        title,
+        min,
+        max,
         distriDate,
         retriDate
     } = req.body
@@ -23,32 +24,41 @@ export async function addModule(req, res, next) {
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
 
-        const mod = await Module.findOne({
-            where: {title: title, classLearningStrandId: classLearningStrandId}
+        const titles = []
+
+        for(let i = min; i < max+1; i++) {
+            titles.push("LAS " + i)
+        }
+
+        const modules = await Module.findAll({
+            where: {title: {[Op.in]: titles}, classLearningStrandId: classLearningStrandId}
         })
 
-        if (mod) {
-            const error = new Error("Module exists already!");
+        if (modules.length) {
+            const error = new Error("Module(s) exist(s) already!");
             error.statusCode = 404;
             throw error;
         }
-
-        const module = await classLearningStrand.createModule({
-            title: title,
-            distribution_date: distriDate,
-            retrieval_date: retriDate
-        })
 
         const enrollments = await Enrollment.findAll({
             where: {classLevelId: classLearningStrand.classLevelId}
         })
 
-        for (const enrollment of enrollments) {
-            await module.addEnrollment(enrollment)
-        }
+        titles.map(async title => {
+            const module = await classLearningStrand.createModule({
+                title: title,
+                distribution_date: distriDate,
+                retrieval_date: retriDate
+            })
+
+            for (const enrollment of enrollments) {
+                const module_submission = await module.addEnrollment(enrollment)
+                console.log(module_submission);
+            }
+        })
 
         res.status(201).json({ 
-            message: "Module added!"
+            message: "Learning activity sheets added!"
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -130,6 +140,25 @@ export async function updateModule(req, res, next) {
         await Module.update(
             req.body,
             { where: { id: moduleId }
+        });
+
+        res.status(200).json({ message: "Module updated!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    } 
+}
+
+export async function updateModuleStatus(req, res, next) {
+    const { status, moduleIds } = req.body
+
+    try {
+        await Module.update(
+            { status: !status },
+            { where: { id: moduleIds }
         });
 
         res.status(200).json({ message: "Module updated!" });
