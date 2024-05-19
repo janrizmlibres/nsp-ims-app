@@ -9,6 +9,7 @@ import Session from "../models/class/session.js";
 import Student from "../models/student/student.js";
 import Volunteer from "../models/volunteer/volunteer.js";
 import ModuleSubmission from "../models/class/module_submission.js";
+import { Op } from "sequelize";
 
 export async function addModule(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
@@ -234,37 +235,39 @@ export async function addSession(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
 
     const {
-        date,
+        dates,
     } = req.body
 
     try {
-        const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
-
-        const sesh = await Session.findOne({
-            where: {date: date, classLearningStrandId: classLearningStrandId}
+        const sesh = await Session.findAll({
+            where: {date: {[Op.in]: dates}, classLearningStrandId: classLearningStrandId}
         })
-
-        if (sesh) {
-            const error = new Error("Session exists already!");
+    
+        if (sesh.length) {
+            const error = new Error("Session(s) exist(s) already!");
             error.statusCode = 404;
             throw error;
         }
 
-        const session = await classLearningStrand.createSession({
-            date: date,
-        })
+        const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
 
         const enrollments = await Enrollment.findAll({
             where: {classLevelId: classLearningStrand.classLevelId}, 
             include: [Student]
         })
 
-        for (const enrollment of enrollments) {
-            await session.addEnrollment(enrollment)
+        for (const date of dates) {
+            const session = await classLearningStrand.createSession({
+                date: date,
+            })
+
+            for (const enrollment of enrollments) {
+                await session.addEnrollment(enrollment)
+            }
         }
 
         res.status(201).json({ 
-            message: "Session added!"
+            message: "Session(s) added!"
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -371,6 +374,24 @@ export async function updateSession(req, res, next) {
         next(error);
         return error;
     }
+}
+
+export async function deleteSessions(req, res, next) {
+    const { sessionIds } = req.body
+
+    try {
+        await Session.destroy({
+            where: { id: sessionIds }
+        })
+
+        res.status(200).json({ message: "Deleted Sessions Successfully!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    } 
 }
 
 export async function updateAttendances(req, res, next) {
