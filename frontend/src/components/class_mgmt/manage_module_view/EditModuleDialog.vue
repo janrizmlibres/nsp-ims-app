@@ -2,10 +2,7 @@
 // Presets
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
 import Calendar from 'primevue/calendar';
-import Dropdown from 'primevue/dropdown';
-import Tag from 'primevue/tag';
 import { useToast } from 'primevue/usetoast';
 import { computed, ref, watch } from 'vue';
 import { useConfirm } from 'primevue/useconfirm';
@@ -24,23 +21,6 @@ const classLearningStrandId = computed(() => props.id)
 const dates = ref([])
 
 watch(() => props.data, (data) => module.value = data)
-const statuses = ref([
-    { label: 'Finished', value: true },
-    { label: 'Unfinished', value: false }
-]);
-
-const getStatusLabel = (status) => {
-    switch (status) {
-        case true:
-            return 'success';
-
-        case false:
-            return 'warning';
-
-        default:
-            return null;
-    }
-};
 
 async function updateModule() {
     try {
@@ -52,14 +32,12 @@ async function updateModule() {
         }
 
         await classLearningStrandStore.updateModule(props.data.id, {
-            title: module.value.title,
             distribution_date: range.value[0],
             retrieval_date: range.value[1],
-            status: module.value.status
-        })
-
-        classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
-            emit('onUpdate', data)
+        }).then(() => {
+            classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
+                emit('onUpdate', data)
+            })
         })
 
         toast.add({
@@ -89,27 +67,11 @@ async function cancel() {
 
 <template>
     <Dialog v-model:visible="state" modal header="Edit Module" :style="{ width: '20rem' }" :closable="false">
-        <div class="flex flex-col mb-4">
-            <label>Title</label>
-            <InputText id="module-title" v-model="module.title" aria-describedby="module-title-help" />
-        </div>
         <div class="flex flex-col gap-4 mb-4">
             <div class="flex flex-col">
                 <label>Distribution Date - Retrieval Date</label>
                 <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
-                <small>Optional</small>
             </div>
-        </div>
-        <div class="flex flex-col mb-10">
-            <label>Status</label>
-            <Dropdown v-model="module.status" :options="statuses" optionLabel="label" optionValue="value" autofocus >
-                <template #value="slotProps">
-                    <Tag :value="slotProps.value ? 'Finished' : 'Unfinished'" :severity="getStatusLabel(slotProps.value)" />
-                </template>
-                <template #option="slotProps">
-                    <Tag :value="slotProps.option.value ? 'Finished' : 'Unfinished'" :severity="getStatusLabel(slotProps.option.value)" />
-                </template>
-            </Dropdown>
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Update" @click="updateModule"></Button>
