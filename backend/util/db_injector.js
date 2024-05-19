@@ -4,6 +4,7 @@ import Student from "../models/student/student.js";
 import Staff from "../models/staff/staff.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
+import StudentRequirement from "../models/student_requirement.js";
 import Volunteer from "../models/volunteer/volunteer.js";
 import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
 import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
@@ -21,6 +22,7 @@ export async function injectAll() {
   await injectAcademicYear();
   await injectStudent();
   await injectVolunteer();
+  await injectStudentRequirement();
 }
 
 export async function injectStudent() {
@@ -409,6 +411,41 @@ export async function injectLearningStrand() {
   await Promise.all(
     learningStrandData.map(async (learning_strand) => {
       await LearningStrand.create(learning_strand);
+    })
+  );
+}
+
+export async function injectStudentRequirement() {
+  const studentRequirementData = [
+    {
+      requirement_name: "Enrollment Form",
+    },
+    {
+      requirement_name: "CSWD Endorsement Letter",
+    },
+    {
+      requirement_name: "Birth Certificate",
+    },
+    {
+      requirement_name: "Barangay Clearance",
+    },
+    {
+      requirement_name: "Certificate of Residency",
+    },
+    {
+      requirement_name: "Health Records",
+    },
+    {
+      requirement_name: "Waiver for Photos",
+    },
+    {
+      requirement_name: "Vaccination Card",
+    },
+  ];
+
+  await Promise.all(
+    studentRequirementData.map(async (student_requirement) => {
+      await StudentRequirement.create(student_requirement);
     })
   );
 }
