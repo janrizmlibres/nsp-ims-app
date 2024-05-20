@@ -57,11 +57,15 @@ watch(() => props.modelValue, (data) => {
         <TabView>
             <TabPanel header="Regular">
                 <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <AttendanceTable v-else v-model="regular" :filters="filters" @onUpdate="updateAttendanceData" />
+                <AttendanceTable v-else v-model="regular" :isNotActive="!termStatus" :filters="filters" @onUpdate="updateAttendanceData" />
             </TabPanel>
             <TabPanel header="Hybrid">
                 <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <AttendanceTable v-else v-model="hybrid" :filters="filters" @onUpdate="updateAttendanceData" />
+                <AttendanceTable v-else v-model="hybrid" :isNotActive="!termStatus" :filters="filters" @onUpdate="updateAttendanceData" />
+            </TabPanel>
+            <TabPanel header="Drop">
+                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+                <AttendanceTable v-else v-model="drop" :isNotActive="true" :filters="filters" @onUpdate="updateAttendanceData" />
             </TabPanel>
         </TabView>
     </div>
