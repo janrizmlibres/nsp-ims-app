@@ -358,12 +358,20 @@ export async function getSession(req, res, next) {
         const regularAttendances = await Attendance.findAll({
             where: {
                 '$enrollment.regularity$': 'Regular',
+                '$enrollment.status$': {[Op.not]: 'Drop'}
             }, include: [{model: Enrollment, include: [Student]}]
         })
 
         const hybridAttendances = await Attendance.findAll({
             where: {
                 '$enrollment.regularity$': 'Hybrid',
+                '$enrollment.status$': {[Op.not]: 'Drop'}
+            }, include: [{model: Enrollment, include: [Student]}]
+        })
+
+        const dropAttendances = await Attendance.findAll({
+            where: {
+                '$enrollment.status$': 'Drop'
             }, include: [{model: Enrollment, include: [Student]}]
         })
         
@@ -374,7 +382,8 @@ export async function getSession(req, res, next) {
             session: classLearningStrand.sessions[0],
             attendances: {
                 regular: regularAttendances,
-                hybrid: hybridAttendances
+                hybrid: hybridAttendances,
+                drop: dropAttendances
             }
         },
         });
