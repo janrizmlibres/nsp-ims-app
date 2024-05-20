@@ -97,15 +97,15 @@ watch(() => props.data, (data) => {
         <span class="font-semibold text-lg u-txt-active mb-4">Add Session</span>
         <div class="flex flex-col mb-4">
             <label>Selection Type</label>
-            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!data" @update:modelValue="resetForm" />
+            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!data || !termStatus" @update:modelValue="resetForm" />
         </div>
         <div v-if="selectionType === 1" class="flex flex-col gap-4 mb-4">
             <label>Session Date</label>
-            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data" @update:modelValue="addSelectedDate" />
+            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data || !termStatus" @update:modelValue="addSelectedDate" />
         </div>
         <div v-if="selectionType === 2" class="flex flex-col gap-4 mb-4">
             <label>Session Dates</label>
-            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
+            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data || !termStatus" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
         </div>
         <div class="flex flex-row gap-2">
             <Button type="button" outlined rounded label="Add" :disabled="!date" @click="addSession" class="w-full" />
