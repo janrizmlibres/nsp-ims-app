@@ -76,6 +76,7 @@ watch(() => props.modelValue, (data) => {
             middleName: moduleSubmission.enrollment.student.middleName,
             status: moduleSubmission.status,
             date_submitted: moduleSubmission.date_submitted,
+            score: moduleSubmission.score,
             remarks: moduleSubmission.remarks,
             updatedAt: new Date(moduleSubmission.updatedAt)
         }
