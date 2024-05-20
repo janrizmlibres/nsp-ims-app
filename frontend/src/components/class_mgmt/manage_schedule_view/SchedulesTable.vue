@@ -26,6 +26,7 @@ const props = defineProps(['classLevel', 'termStatus'])
 const toast = useToast()
 const confirm = useConfirm()
 
+const termStatus = computed(() => props.termStatus)
 const learningStrands = computed(() => props.classLevel.class_learning_strands)
 const classLevelId = computed(() => props.classLevel.id)
 const classData = ref([])
@@ -165,7 +166,7 @@ onBeforeUnmount(() => {
 <template>
     <div class="flex h-full w-full">
         <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
-            <AddScheduleSection :id="classLevelId" :learningStrands="learningStrands" @onUpdate="addSchedule" />
+            <AddScheduleSection :id="classLevelId" :learningStrands="learningStrands" :termStatus="termStatus" @onUpdate="addSchedule" />
         </div>
         <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl">
             <Toolbar class="!p-2 h-16">
