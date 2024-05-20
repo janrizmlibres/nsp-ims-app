@@ -46,6 +46,9 @@ async function updateSchedule() {
             detail: 'Module updated successfully!',
             life: 3000
         })
+
+        startTime.value = null
+        endTime.value = null
     } catch(error) {
         console.log(error);
         toast.add({
@@ -61,7 +64,11 @@ async function cancel() {
     confirm.require({
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
-        accept: () => {emit('onUpdateDisplay')}
+        accept: () => {
+            startTime.value = null
+            endTime.value = null
+            emit('onUpdateDisplay')
+        }
     })
 }
 </script>
