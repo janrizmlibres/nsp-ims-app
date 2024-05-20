@@ -10,9 +10,11 @@ import { computed, ref } from 'vue';
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
 const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
-const props = defineProps(['id', 'state'])
+const props = defineProps(['id', 'state', 'termStatus'])
 const toast = useToast()
 const classLearningStrandStore = useClassLearningStrandStore()
+
+const termStatus = computed(() => props.termStatus)
 const min = ref()
 const max = ref()
 const dates = ref(null);
