@@ -147,6 +147,7 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
+    <div class="flex flex-col h-full w-full">
     <DataTable 
             :value="learners" dataKey="id" scrollable style=" overflow: auto;"
         sortField="lastName" :sortOrder="1" removableSort
@@ -159,36 +160,37 @@ onBeforeRouteLeave((to) => {
         <Column field="lastName" header="Last Name" frozen sortable />
         <Column field="firstName" header="First Name" frozen sortable />
         <Column field="middleName" header="Middle Name" />
-        <Column field="status" header="Status" style="max-width: 10rem;" sortable>
-            <template #body="slotProps">
-                <div class="flex gap-4">
-                    <div v-for="status in statuses" :key="status.value" class="flex align-items-center">
-                        <RadioButton v-model="slotProps.data.status" :inputId="status.value" name="dynamic" :value="status.value" :disabled="termStatus === 'false'" />
-                        <label :for="status.label" class="ml-2">{{ status.label }}</label>
-                    </div>
-                </div>
+            <Column field="status" header="Status" sortable>
+                <template #body="slotProps" v-if="!edit">
+                    <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
+                </template>
+                <template #body="slotProps" v-else>
+                    <InputSwitch v-model="slotProps.data.status" trueValue="Present" falseValue="Absent" />
             </template>
         </Column>
-        <Column field="remarks" header="Remarks" style="max-width: 10rem;">
-            <template #body="slotProps">
-                <InputText v-model="slotProps.data.remarks" autofocus :disabled="termStatus === 'false'" />
+            <Column field="remarks" header="Remarks" style="width: 20rem;">
+                <template #body="slotProps" v-if="!edit">
+                    {{ slotProps.data.remarks }}
+                </template>
+                <template #body="slotProps" v-else>
+                    <Textarea v-model="slotProps.data.remarks" rows="5" cols="30" />
             </template>
         </Column>
-        <Column field="updatedAt" header="Updated At" sortable>
+            <Column field="updatedAt" header="Updated At" style="width: 10rem;" sortable>
             <template #body="slotProps">
                 {{ slotProps.data.updatedAt.toLocaleString() }}
             </template>
         </Column>
-        <template #paginatorstart>
-        
-        </template>
-        <template #paginatorend>
-            <Button type="button" icon="pi pi-download" @click="exportCSV" text />
+            <template #footer>
+                <div class="flex flex-row justify-end items-center">
+                    <div v-if="edit" class="flex flex-row gap-4">
+                        <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined @click="updateAttendances"/>
+                        <Button icon="fa fa-xmark" label="Discard" aria-label="Discard Changes" iconClass="['mr-4']" size="small" rounded outlined @click="resetData"/>
+                    </div>
+                    <Button v-else-if="termStatus === 'true'" icon="fa fa-pencil" label="Edit Attendances" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined @click="changeMode"/>
+                </div>
         </template>
     </DataTable>
-    <div v-if="termStatus === 'true'" class="flex justify-end gap-2 mt-4">
-        <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateAttendances"></Button>
-        <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
     </div>
 </template>
 
