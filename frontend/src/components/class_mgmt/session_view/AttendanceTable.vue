@@ -148,11 +148,10 @@ onBeforeRouteLeave((to) => {
 
 <template>
     <DataTable 
-        :value="learners" dataKey="id" 
+            :value="learners" dataKey="id" scrollable style=" overflow: auto;"
         sortField="lastName" :sortOrder="1" removableSort
-        ref="exportRef"
-        :paginator="learners.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        :pt="customPt" :ptOptions="{mergeProps:true}"
+            v-model:filters="filters" filterDisplay="menu"
+            :globalFilterFields="['lastName', 'firstName', 'status', 'remarks']"
     >
         <template #empty> <div class="text-center">No records found.</div> </template>
         <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
