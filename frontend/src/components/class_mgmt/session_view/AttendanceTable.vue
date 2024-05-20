@@ -102,9 +102,12 @@ async function updateAttendances() {
 }
 
 function resetData() {
+    confirm.require({
+        message: 'Do you really want to discard the unsaved changes?',
+        header: 'Redirect Confirmation',
+        accept: async () => {
     learners.value = structuredClone(startingData)
     updatedData.clear()
-    leave.value = true
 
     for (const datum of learners.value) {
         watch(datum, (newData) => {
@@ -115,11 +118,10 @@ function resetData() {
     }
 
     noChanges.value = true
+            changeMode()
+        }
+    })
 }
-
-const exportRef = ref()
-function exportCSV() {
-    exportRef.value.exportCSV()
 }
 
 onBeforeRouteLeave((to) => {
