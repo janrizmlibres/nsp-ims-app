@@ -5,6 +5,8 @@ import { useToast } from 'primevue/usetoast';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import ProgressSpinner from 'primevue/progressspinner';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
+import { useConfirm } from 'primevue/useconfirm';
 
 // Custom
 import ContentPane from '@/components/UI/ContentPane.vue'
@@ -12,14 +14,20 @@ import ManageModuleView from './ManageModuleView.vue';
 import ManageGradeView from './ManageGradeView.vue';
 import ManageSessionView from './ManageSessionView.vue';
 import ManageScheduleView from './ManageScheduleView.vue';
+import TheHeader from '@/components/class_mgmt/TheHeader.vue';
 
 // stores
 import { useUtilitiesStore } from '@/stores/utilities';
-import TheHeader from '@/components/class_mgmt/TheHeader.vue';
+import { useClassStore } from '@/stores/class';
 
 const utilitiesStore = useUtilitiesStore()
-const isLoading = ref(true)
+const classStore = useClassStore()
+
 const toast = useToast()
+const router = useRouter()
+const confirm = useConfirm()
+
+const isLoading = ref(true)
 const learningStrands = ref()
 const term = ref()
 const classLevel = ref()
