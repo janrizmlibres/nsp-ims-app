@@ -1,4 +1,8 @@
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 import express from "express";
+import multer from "multer";
+import { v4 as uuidv4 } from "uuid";
 
 import sequelize from "./util/database.js";
 import { injectAll } from "./util/db_injector.js";
@@ -18,7 +22,27 @@ const app = express();
 const port = process.env.PORT || 3000;
 setAssociations();
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "images"),
+  filename: (req, file, cb) => cb(null, uuidv4() + "-" + file.originalname),
+});
+
+const fileFilter = (req, file, cb) => {
+  if (["image/png", "image/jpg", "image/jpeg"].includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
 app.use(express.json());
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -41,7 +65,7 @@ app.get("/", (_, res) => {
 app.use("/profile", profileRoutes);
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
-app.use("/enrollment", enrollmentRoutes)
+app.use("/enrollment", enrollmentRoutes);
 app.use("/term", termRoutes);
 app.use("/class", classRoutes);
 app.use("/classLearningStrand", classLearningStrandRoutes);
