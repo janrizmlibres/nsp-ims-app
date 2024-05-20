@@ -86,7 +86,7 @@ export default {
     };
 
     function editVolunteer(id) {
-      router.push(`/update-volunteer/${id}`);
+      router.push(`/edit-volunteer/${id}`);
     }
 
     onMounted(async () => {

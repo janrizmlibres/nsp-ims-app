@@ -248,8 +248,8 @@ const router = createRouter({
           component: AdmitVolunteerView
         },
         {
-          path: '/update-volunteer/:id',
-          name: 'EditVolunteer',
+          path: '/edit-volunteer/:id',
+          name: 'edit-volunteer',
           component: EditVolunteerView,
           props: true,
         },
