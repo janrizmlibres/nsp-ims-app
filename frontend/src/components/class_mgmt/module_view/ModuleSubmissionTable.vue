@@ -4,7 +4,9 @@ import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dropdown from 'primevue/dropdown';
+import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
+import InputNumber from 'primevue/inputnumber';
 import Calendar from 'primevue/calendar';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
@@ -15,6 +17,7 @@ import { useConfirm } from 'primevue/useconfirm';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
@@ -22,27 +25,6 @@ const route = useRoute()
 const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
-
-const customPt = {
-    table: {
-        class: ['px-1 border-spacing-y-4']
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'u-txt-active',
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-surface-200' : 'bg-surface-200'
-            ]
-        }),
-        bodycell: {
-            class: ['my-4']
-        }
-    },
-    bodyrow: {
-        class: ['rounded-lg shadow-[0_0_2px_rgb(0,0,0,0.2)]']
-    },
-}
 
 const props = defineProps(['modelValue'])
 const emit = defineEmits(['onUpdate'])
@@ -60,7 +42,6 @@ const filters = ref({
 });
 
 watch(() => props.modelValue, (data) => {
-    console.log(typeof route.query.status);
     isFetching.value = true
     learners.value.length = 0
 
@@ -130,7 +111,6 @@ async function updateSubmissions() {
             life: 5000
         })
 
-        leave.value = true
         noChanges.value = true
         changeMode()
     } catch (error) {
@@ -148,18 +128,18 @@ function resetData() {
         message: 'Do you really want to discard the unsaved changes?',
         header: 'Redirect Confirmation',
         accept: async () => {
-    learners.value = structuredClone(startingData)
-    updatedData.clear()
+            learners.value = structuredClone(startingData)
+            updatedData.clear()
 
-    for (const datum of learners.value) {
-        watch(datum, (newData) => {
-        updatedData.add(newData)
-        leave.value = false
-        noChanges.value = false
-        })
-    }
+            for (const datum of learners.value) {
+                watch(datum, (newData) => {
+                updatedData.add(newData)
+                leave.value = false
+                noChanges.value = false
+                })
+            }
 
-    noChanges.value = true
+            noChanges.value = true
             changeMode()
         }
     })
@@ -191,9 +171,9 @@ onBeforeRouteLeave((to) => {
 <template>
     <div class="flex flex-col h-full overflow-hidden bg-white shadow-xl rounded-md p-5">
         <div class="flex flex-row justify-between">
-        <div class="flex flex-row gap-4 items-center px-4">
-            <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
-            <span class="font-semibold text-3xl u-txt-active">Submissions</span>
+            <div class="flex flex-row gap-4 items-center px-4">
+                <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
+                <span class="font-semibold text-3xl u-txt-active">Submissions</span>
             </div>
             <span class="relative">
                 <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
