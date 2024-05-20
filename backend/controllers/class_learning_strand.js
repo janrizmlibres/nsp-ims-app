@@ -317,11 +317,13 @@ export async function getAllSessions(req, res, next) {
 
         for (const session of sessions) {
             const absent = await session.countAttendances({
-                where: {status: 'Absent'}
+                where: {status: 'Absent'},
+                include: {model: Enrollment, where:{status: {[Op.not]: 'Drop'}}}
             })
 
             const present = await session.countAttendances({
-                where: {status: 'Present'}
+                where: {status: 'Present'},
+                include: {model: Enrollment, where:{status: {[Op.not]: 'Drop'}}}
             })
     
             const total = absent + present
