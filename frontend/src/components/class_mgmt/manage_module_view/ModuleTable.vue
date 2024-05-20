@@ -9,7 +9,7 @@ import MeterGroup from 'primevue/metergroup';
 import Tag from 'primevue/tag';
 import Badge from 'primevue/badge';
 import InputText from 'primevue/inputtext';
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 
@@ -65,6 +65,8 @@ const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
 });
+
+const dt = ref()
 
 function updateModuleTable(modules) {
     allModules.value.length = 0
@@ -213,6 +215,18 @@ function editModule(data) {
 function showEditModuleDialog() {
     editModuleDialog.value = !editModuleDialog.value
 }
+
+function onClickOutside(event) {
+    if (dt.value && !dt.value.$el.contains(event.target)) deselect()
+}
+
+onMounted(() => {
+    document.addEventListener('click', onClickOutside);
+})
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', onClickOutside);
+})
 </script>
 
 <template>
@@ -259,7 +273,7 @@ function showEditModuleDialog() {
                 v-model:selection="selectedModules" scrollable style=" overflow: auto;"
                 selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewModule"
                 sortField="title" :sortOrder="1" removableSort class="unselectable" filterDisplay="menu"
-                :globalFilterFields="['title', 'distribution_date', 'retrieval_date', 'status']"
+                :globalFilterFields="['title', 'distribution_date', 'retrieval_date', 'status']" ref="dt"
             >
                 <template #empty> <div class="text-center">No records found.</div> </template>
 

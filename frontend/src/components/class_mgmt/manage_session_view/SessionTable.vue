@@ -6,7 +6,7 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Toolbar from 'primevue/toolbar';
 import Badge from 'primevue/badge';
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import { format } from 'date-fns';
@@ -43,6 +43,7 @@ const editSessionDialog = ref(false)
 const sessionByMonths = ref()
 const selectedRow = ref({}) 
 const selectedMonth = ref()
+const dt = ref()
 
 function updateSessionTable(sessions) {
     isFetching.value = true
@@ -187,11 +188,17 @@ function onCollapseRow() {
     selectedRow.value = {}
 }
 
-// onMounted(() => {
-//     document.addEventListener
-//     document.addEventListener('click', this.onClickOutside);
-// })
+function onClickOutside(event) {
+    if (dt.value && !dt.value.$el.contains(event.target)) deselect()
+}
 
+onMounted(() => {
+    document.addEventListener('click', onClickOutside);
+})
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', onClickOutside);
+})
 </script>
 
 <template>
@@ -248,7 +255,7 @@ function onCollapseRow() {
                         :value="slotProps.data.sessions" dataKey="id"
                         v-model:selection="selectedSessions"
                         selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewSession" @blur="deselect()"
-                        sortField="date" :sortOrder="1" removableSort class="unselectable"
+                        sortField="date" :sortOrder="1" removableSort class="unselectable" ref="dt"
                     >
                         <template #empty> <div class="text-center">No records found.</div> </template>
 

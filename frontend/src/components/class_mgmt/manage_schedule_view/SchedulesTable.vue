@@ -6,7 +6,7 @@ import Column from 'primevue/column';
 import Row from 'primevue/row';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { format } from 'date-fns';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -34,6 +34,7 @@ const selectedSchedules = ref([])
 const metaKey = ref(true)
 const editScheduleDialog = ref(false)
 const schedule = ref()
+const dt = ref()
 
 function updateScheduleTable(classId) {
     classData.value.length = 0
@@ -147,6 +148,18 @@ function showEditScheduleDialog() {
 function deselect() {
     selectedSchedules.value = []
 }
+
+function onClickOutside(event) {
+    if (dt.value && !dt.value.$el.contains(event.target)) deselect()
+}
+
+onMounted(() => {
+    document.addEventListener('click', onClickOutside);
+})
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', onClickOutside);
+})
 </script>
 
 <template>
@@ -174,7 +187,7 @@ function deselect() {
             <DataTable :value="classData" dataKey="scheduleId"
                 v-model:selection="selectedSchedules" scrollable style=" overflow: auto;"
                 selectionMode="multiple" :metaKeySelection="metaKey"
-                class="unselectable"
+                class="unselectable" ref="dt"
             >
                 <template #empty> <div class="text-center">Nothing added.</div> </template>
 
