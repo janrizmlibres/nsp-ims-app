@@ -12,8 +12,9 @@ import { useVolunteerStore } from '@/stores/volunteer';
 
 const toast = useToast()
 const emit = defineEmits(['onUpdate'])
-const props = defineProps(['id', 'learningStrands'])
+const props = defineProps(['id', 'learningStrands', 'termStatus'])
 
+const termStatus = computed(() => props.termStatus)
 const volunteerStore = useVolunteerStore()
 const volunteers = computed(() => volunteerStore.volunteers)
 const learningStrands = computed(() => props.learningStrands)
