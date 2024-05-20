@@ -24,65 +24,45 @@ const emit = defineEmits(['updateSchedule'])
 const toast = useToast()
 
 const classData = ref([])
-const volunteers = computed(() => volunteerStore.volunteers)
+function updateScheduleTable(classId) {
+    classData.value.length = 0
 
-onMounted(async () => {
-    try {
-        volunteerStore.getAllVolunteers()
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered.',
-            life: 3000
-        })
-    }
-})
+    classStore.getAllLearningStrands(classId).then((data) => {
+        for (const learningStrand of data) {
+            for (const schedule of learningStrand.class_schedules) {
+                const start_time = format(new Date("01/01/0001 " + schedule.start_time), "hh:mm aaa")
+                const end_time = format(new Date("01/01/0001 " + schedule.end_time), "hh:mm aaa")
 
-watch(() => props.modelValue, (data) => classData.value = data, {immediate: true})
-
-const days = ref(["M", "T", "W", "TH", "F", "S"]);
-
-const customPt = {
-    root: {
-        class: ['flex flex-col h-full pt-2 justify-between overflow-auto mb-8']
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'font-medium',
-                {
-                'space-nowrap border-y bg-clip-padding': context.resizable
-                // Resizable
-                },
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
-                {'hover:bg-surface-50': context.sorted}
-            ]
-        }),
-            sorticon: ({ context }) => ({
-                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-        }),
-            bodycell: {class: 'py-3 '}
-    },
-    bodyrow: ({ context, props }) => ({
-        class: [
-            { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
-            { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
-            { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
-            // State
-            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
-            { 'hover:u-bg-pcolor hover:text-white': props.selectionMode && !context.selected },
-            // Misc
-            { 'cursor-pointer': props.selectionMode }
-        ]
+                classData.value.push({
+                    id: learningStrand.id,
+                    classLevelId: learningStrand.classLevelId,
+                    scheduleId: schedule.id,
+                    name: learningStrand.learning_strand.name,
+                    volunteer: schedule.volunteer,
+                    school_days: schedule.days.split(','),
+                    start_time: start_time,
+                    end_time: end_time,
+                    updatedAt: schedule.updatedAt
+                })
+            }
+        }
     })
 }
 
-const editingRows = ref([]);
-
-const onRowEditSave = async (event) => {
-    let { data, newData } = event;
+watch(() => props.classLevel, (data) => {
+    try {
+        updateScheduleTable(data.id)
+        
+        isFetching.value = false
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please refresh this page.',
+            life: 3000
+        })
+    }
+}, { immediate: true })
 
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
         if (newData.start_time instanceof Date) newData.start_time = format(newData.start_time, "HH:mm")
