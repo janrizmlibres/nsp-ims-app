@@ -22,6 +22,7 @@ router.put("/session/attendances/update", isAuth, classLearningStrandController.
 router.put("/grades/update", isAuth, classLearningStrandController.updateGrades);
 router.delete("/modules/delete", isAuth, classLearningStrandController.deleteModules);
 router.delete("/sessions/delete", isAuth, classLearningStrandController.deleteSessions);
+router.delete("/schedules/delete", isAuth, classLearningStrandController.deleteSchedules);
 
 export default router;
 
