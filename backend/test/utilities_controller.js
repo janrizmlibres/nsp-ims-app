@@ -142,4 +142,53 @@ describe("Utilities Controller", () => {
         expect(res.statusCode).to.equal(200);
         expect(res.body.message).to.equal("Student Requirement deleted successfully!");
     });
+
+    it("should add a student category.", async () => {
+        const req = {
+            body: {
+                category_name: "This is a category"
+            },
+        };
+        
+        await utilitiesController.addCategory(req, res, () => {}); 
+        expect(res.statusCode).to.equal(201);
+        expect(res.body.message).to.equal("New Student Category Created!");
+    });
+
+    it("should get all student categories.", async () => {
+        const req = {
+            body: {},
+        };
+        
+        await utilitiesController.getCategories(req, res, () => {}); 
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.message).to.equal("Student Categories fetched successfully!");
+    });
+
+    it("should update a student category.", async () => {
+        const req = {
+            body: {
+                category_name: "Out of School Individuals"
+            },
+            params: {
+                categoryId: 1
+            }
+        };
+        
+        await utilitiesController.updateCategory(req, res, () => {}); 
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.message).to.equal("Student Category updated successfully!");
+    });
+
+    it("should delete a student category.", async () => {
+        const req = {
+            params: {
+                categoryId: 1
+            }
+        };
+        
+        await utilitiesController.deleteCategory(req, res, () => {}); 
+        expect(res.statusCode).to.equal(200);
+        expect(res.body.message).to.equal("Student Category deleted successfully!");
+    });
 });
