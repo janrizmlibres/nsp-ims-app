@@ -22,13 +22,13 @@ const enableLearningStrandDropdown = ref(false)
 
 function updateTerm() {
     classLevelInput.value = null
-    emit('updateState', classLevelInput.value, termInput.value.status)
+    emit('updateState', termInput.value, classLevelInput.value)
 }
 
 function updateClassLevel() {
     enableLearningStrandDropdown.value = true; 
     
-    emit('updateState', classLevelInput.value, termInput.value.status)
+    emit('updateState', termInput.value, classLevelInput.value)
 }
 </script>
 
