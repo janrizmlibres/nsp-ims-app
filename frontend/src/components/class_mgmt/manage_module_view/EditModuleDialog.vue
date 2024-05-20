@@ -9,12 +9,14 @@ import { useConfirm } from 'primevue/useconfirm';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useClassStore } from '@/stores/class';
 
 const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
 const props = defineProps(['id', 'data', 'state'])
 const toast = useToast()
 const confirm = useConfirm()
 const classLearningStrandStore = useClassLearningStrandStore()
+const classStore = useClassStore()
 
 const state = computed(() => props.state)
 const module = ref()
@@ -74,6 +76,11 @@ async function cancel() {
         emit('onUpdateDisplay')
     }
 }
+
+watch(() => dates.value, (data) => {
+    if (data ? data.length : data) classStore.leave = false
+    else classStore.leave = true
+})
 </script>
 
 <template>
