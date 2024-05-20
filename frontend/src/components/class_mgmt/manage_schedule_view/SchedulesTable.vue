@@ -4,25 +4,36 @@ import DataTable from 'primevue/datatable';
 import ColumnGroup from 'primevue/columngroup';
 import Column from 'primevue/column';
 import Row from 'primevue/row';
-import Calendar from 'primevue/calendar';
-import Dropdown from 'primevue/dropdown';
-import MultiSelect from 'primevue/multiselect';
-import { computed, onMounted, ref, watch } from 'vue';
+import Toolbar from 'primevue/toolbar';
+import Button from 'primevue/button';
+import { computed, ref, watch } from 'vue';
 import { format } from 'date-fns';
+import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 
 // Custom
-import { useVolunteerStore } from '@/stores/volunteer';
-import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useToast } from 'primevue/usetoast';
+import AddScheduleSection from './AddScheduleSection.vue';
+import EditScheduleDialog from './EditScheduleDialog.vue';
 
 // stores
-const volunteerStore = useVolunteerStore()
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useClassStore } from '@/stores/class';
+
 const classLearningStrandStore = useClassLearningStrandStore()
+const classStore = useClassStore()
 
 const props = defineProps(['classLevel', 'termStatus'])
 const toast = useToast()
+const confirm = useConfirm()
 
+const learningStrands = computed(() => props.classLevel.class_learning_strands)
+const classLevelId = computed(() => props.classLevel.id)
 const classData = ref([])
+const isFetching = ref(true)
+const selectedSchedules = ref([])
+const metaKey = ref(true)
+const editScheduleDialog = ref(false)
+const schedule = ref()
 function updateScheduleTable(classId) {
     classData.value.length = 0
 
