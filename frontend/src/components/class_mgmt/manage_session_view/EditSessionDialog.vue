@@ -9,17 +9,22 @@ import { useConfirm } from 'primevue/useconfirm';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useClassStore } from '@/stores/class';
 
 const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
 const props = defineProps(['id', 'data', 'state'])
 const toast = useToast()
 const classLearningStrandStore = useClassLearningStrandStore()
+const classStore = useClassStore()
 const confirm = useConfirm()
 const state = computed(() => props.state)
 const session = ref()
 const classLearningStrandId = computed(() => props.id)
 
-watch(() => props.data, (data) => session.value = data)
+watch(() => props.data, (data) => {
+    session.value = data
+    classStore.leave = false
+})
 
 async function updateSession() {
     try {
@@ -34,6 +39,8 @@ async function updateSession() {
             detail: 'Session updated successfully',
             life: 3000
         })
+
+        classStore.leave = true
     } catch(error) {
         toast.add({
             severity: 'error',
@@ -48,7 +55,10 @@ async function cancel() {
     confirm.require({
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
-        accept: () => {emit('onUpdateDisplay')}
+        accept: () => {
+            classStore.leave = true
+            emit('onUpdateDisplay')
+        }
     })
 }
 </script>
