@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useAuthStore } from './auth'
+import { ref } from 'vue'
 
 export const useClassStore = defineStore('class', () => {
+    const leave = ref(true)
+
     async function getClass(classId) {
         const authStore = useAuthStore()
 
@@ -61,7 +64,7 @@ export const useClassStore = defineStore('class', () => {
         return result.data.data
     }
 
-    return { getClass, addSchedule, getAllLearningStrands, getAllModules, getAllStudents, getAllGrades }
+    return { leave, getClass, addSchedule, getAllLearningStrands, getAllModules, getAllStudents, getAllGrades }
 })
 
 
