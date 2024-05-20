@@ -7,7 +7,6 @@ import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { useConfirm } from 'primevue/useconfirm';
 
 // stores
@@ -16,7 +15,6 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 const classLearningStrandStore = useClassLearningStrandStore()
 
 const toast = useToast()
-const router = useRouter()
 const confirm = useConfirm()
 
 const emit = defineEmits(['onUpdate'])
@@ -115,23 +113,6 @@ function changeMode() {
     edit.value = !edit.value
     leave.value = !leave.value
 }
-
-onBeforeRouteLeave((to) => {
-    if (leave.value) {
-        return true
-    }
-
-    confirm.require({
-        message: 'Do you really want to leave? you have unsaved changes!',
-        header: 'Redirect Confirmation',
-        accept: async () => {
-            changeMode()
-            await router.push(to)
-        }
-    })
-
-    return false
-})
 </script>
 
 <template>
