@@ -22,6 +22,7 @@ const router = useRouter()
 
 const props = defineProps(['modelValue', 'filters'])
 const emit = defineEmits(['onUpdate'])
+const filters = computed(() => props.filters)
 const isFetching = ref(false)
 const learners = ref([])
 const noChanges = ref(true)
@@ -29,6 +30,7 @@ const startingData = []
 const updatedData = new Set([])
 const termStatus = computed(() => route.query.status)
 const leave = ref(true)
+const edit = ref(false)
 
 watch(() => props.modelValue, (data) => {
     isFetching.value = true
