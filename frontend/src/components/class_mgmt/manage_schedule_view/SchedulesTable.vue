@@ -94,22 +94,33 @@ watch(() => props.classLevel, (data) => {
             })
         }
     }
-};
+async function deleteSchedules() {
+    confirm.require({
+        message: 'Do you really want to delete?',
+        header: 'Delete Confirmation',
+        accept: async () => {
+            try {
+                const scheduleIds = selectedSchedules.value.map(schedule => schedule.scheduleId)
+                await classLearningStrandStore.deleteSchedules({scheduleIds: scheduleIds})
+                deselect()
+                toast.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Schedule(s) deleted successfully!',
+                    life: 3000
+                })
+            } catch(error) {
+                console.log(error);
+            }
 
-function to24hr(time12h) {
-    const [time, modifier] = time12h.split(' ');
-
-    let [hours, minutes] = time.split(':');
-
-    if (hours === '12') {
-        hours = '00';
-    }
-
-    if (modifier === 'PM') {
-        hours = parseInt(hours, 10) + 12;
-    }
-
-    return `${hours}:${minutes}`;
+            try {
+                updateScheduleTable(props.classLevel.id)
+            } catch(error) {
+                console.log(error);
+            }
+        }
+    })
+}
 }
 </script>
 
