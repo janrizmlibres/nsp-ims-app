@@ -62,10 +62,18 @@ watch(() => props.modelValue, (data) => {
     isFetching.value = false
 }, {immediate: true})
 
-const statuses = ref([
-    { label: 'Absent', value: 'Absent' },
-    { label: 'Present', value: 'Present' }
-]);
+const getStatusLabel = (status) => {
+    switch (status) {
+        case 'Present':
+            return 'success';
+
+        case 'Absent':
+            return 'danger';
+
+        default:
+            return null;
+    }
+};
 
 async function updateAttendances() {
     try {
