@@ -111,8 +111,8 @@ const getStatusLabel = (status) => {
 };
 
 const statuses = ref([
-    { label: 'Complete', value: 'Complete' },
-    { label: 'Lacking', value: 'Lacking' },
+    { label: 'Graded', value: 'Graded' },
+    { label: 'Submitted', value: 'Submitted' },
     { label: 'No Submission', value: 'No Submission' }
 ]);
 
