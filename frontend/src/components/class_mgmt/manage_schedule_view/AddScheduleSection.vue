@@ -73,23 +73,23 @@ function resetForm() {
         <span class="font-semibold text-lg u-txt-active mb-4">Add Schedule</span>
         <div class="flex flex-col mb-4">
             <label>Learning Strand</label>
-            <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" />
+            <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" :disabled="!termStatus" placeholder="Select a Strand" />
         </div>
         <div class="flex flex-col mb-4">
             <label>Teacher</label>
-            <Dropdown v-model="formData.volunteer" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" showClear />
+            <Dropdown v-model="formData.volunteer" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" showClear :disabled="!termStatus" />
         </div>
         <div class="flex flex-col mb-4">
             <label>Days</label>
-            <MultiSelect v-model="formData.school_days" :options="days" placeholder="Select Days" :maxSelectedLabels="3" />
+            <MultiSelect v-model="formData.school_days" :options="days" placeholder="Select Days" :maxSelectedLabels="3" :disabled="!termStatus" />
         </div>
         <div class="flex flex-col mb-4">
             <label>Start Time</label>
-            <Calendar id="calendar-timeonly" v-model="formData.start_time" timeOnly hourFormat="12" />
+            <Calendar id="calendar-timeonly" v-model="formData.start_time" timeOnly hourFormat="12" :disabled="!termStatus" />
         </div>
         <div class="flex flex-col mb-4">
             <label>End Time</label>
-            <Calendar id="calendar-timeonly" v-model="formData.end_time" timeOnly hourFormat="12" />
+            <Calendar id="calendar-timeonly" v-model="formData.end_time" timeOnly hourFormat="12" :disabled="!termStatus" />
         </div>
         <div class="flex flex-row gap-2">
             <Button type="button" outlined rounded label="Add" :disabled="disableSubmitButton" @click="addSchedule" class="w-full" />
