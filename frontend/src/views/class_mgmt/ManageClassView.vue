@@ -21,12 +21,17 @@ const utilitiesStore = useUtilitiesStore()
 const isLoading = ref(true)
 const toast = useToast()
 const learningStrands = ref()
+const term = ref()
 const classLevel = ref()
 const state = ref(false)
 const termStatus = ref()
 
-function updateState(classLevelInput, status) {
-    termStatus.value = status
+function updateState(termInput, classLevelInput) {
+    if (termInput) {
+        term.value = termInput
+        termStatus.value = termInput.status
+    }
+
     if (classLevelInput) { 
         classLevel.value = classLevelInput
         learningStrands.value = classLevelInput.class_learning_strands
@@ -80,7 +85,7 @@ onMounted(async () => {
                         <span class="u-txt-active">Sessions</span>
                     </div>
                 </template>
-                <ManageSessionView :learningStrands="learningStrands" :termStatus="termStatus" />
+                <ManageSessionView :term="term" :learningStrands="learningStrands" :termStatus="termStatus" />
             </TabPanel>
             <TabPanel>
                 <template #header>
