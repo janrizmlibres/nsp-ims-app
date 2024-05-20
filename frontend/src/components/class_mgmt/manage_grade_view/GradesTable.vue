@@ -11,8 +11,10 @@ import { useConfirm } from 'primevue/useconfirm';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useClassStore } from '@/stores/class';
 
 const classLearningStrandStore = useClassLearningStrandStore()
+const classStore = useClassStore()
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -110,6 +112,7 @@ function resetData() {
 }
 
 function changeMode() {
+    classStore.leave = !classStore.leave
     edit.value = !edit.value
     leave.value = !leave.value
 }
