@@ -18,12 +18,14 @@ const toast = useToast()
 
 const classLearningStrandStore = useClassLearningStrandStore()
 const session = ref()
+const date = ref()
 const attendances = ref()
 const strand = ref()
 
 function updateAttendanceTable(data) {
     session.value = data.session
     attendances.value = data.attendances
+    date.value = new Date(session.value.date).toDateString()
 }
 
 watch(() => route.query, (query) => {
@@ -44,9 +46,7 @@ watch(() => route.query, (query) => {
 </script>
 
 <template>
-    <ContentPane header="Attendance" :subheader="strand">
-        <SessionInfoSection v-model="session" />
-        <Divider class="before:border-t before:border-surface-400 my-10"/>
+    <ContentPane :header="date" :subheader="strand">
         <AttendanceTab v-model="attendances" @onUpdate="updateAttendanceTable" />
     </ContentPane>
 </template>
