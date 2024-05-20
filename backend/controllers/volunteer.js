@@ -95,8 +95,8 @@ export async function addVolunteer(req, res, next) {
 
 export async function getVolunteer(req, res, next) {
   try {
-    const id = req.params.id;
-    const volunteer = await Volunteer.findByPk(id, {
+    const volunteerId = req.params.volunteerId;
+    const volunteer = await Volunteer.findByPk(volunteerId, {
       include: [VolunteerPersonalInformation, 
                 VolunteerContactInformation, 
                 VolunteerSpecialization,
@@ -123,8 +123,6 @@ export async function getVolunteer(req, res, next) {
 }
 
 export async function updateVolunteer(req, res, next) {
-  const volunteerId = req.params.volunteerId;
-
   try {
     const errors = validationResult(req);
 
@@ -134,6 +132,7 @@ export async function updateVolunteer(req, res, next) {
       throw error;
     }
 
+    const volunteerId = req.params.id;
     const volunteer = await Volunteer.findByPk(volunteerId);
 
     if (!volunteer) {

@@ -1,19 +1,21 @@
 <script setup>
-import { ref} from 'vue'
+import { ref, inject } from 'vue'
 import Checkbox from 'primevue/checkbox'
 import FormParts from '@/util/volunteer_form_parts'
 
-const emit = defineEmits(['dataChanged'])
+const { formData, updateFormData } = inject('formData')
+const VolunteerAvailability = formData.VolunteerAvailability
+const VolunteerSpecialization = formData.VolunteerSpecialization 
 
-const day = ref([])
-const area = ref([])
+const day = ref(VolunteerAvailability.day ? VolunteerAvailability.day.split(',') : [])
+const area = ref(VolunteerSpecialization.area ? VolunteerSpecialization.area.split(',') : [])
 
 const handleDayUpdate = () => {
-  emit('dataChanged', FormParts.VolunteerAvailability, { day: day.value.join(', ') })
+  updateFormData(FormParts.VolunteerAvailability, { day: day.value.join(', ') })
 }
 
 const handleAreaUpdate = () => {
-  emit('dataChanged', FormParts.VolunteerSpecialization, { area: area.value.join(', ') })
+  updateFormData(FormParts.VolunteerSpecialization, { area: area.value.join(', ') })
 }
 </script>
 

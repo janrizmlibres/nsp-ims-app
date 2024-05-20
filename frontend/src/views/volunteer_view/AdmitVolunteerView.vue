@@ -1,23 +1,29 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
-import PersonalInformationForm from '@/components/volunteer_view/PersonalInformationForm.vue'
-import ContactInformationForm from '@/components/volunteer_view/ContactInformationForm.vue'
-import PreferencesForm from '@/components/volunteer_view/PreferencesForm.vue'
+import VolunteerBulkForm from '@/components/volunteer_view/VolunteerBulkForm.vue'
 import AdmitVolunteerHeader from '@/components/volunteer_view/AdmitVolunteerHeader.vue'
 import Button from 'primevue/button'
-import TabView from 'primevue/tabview'
-import TabPanel from 'primevue/tabpanel'
 import { useToast } from 'primevue/usetoast';
 import { useVolunteerStore } from '@/stores/volunteer';
 import FormParts from '../../util/volunteer_form_parts'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
+import { isEqual } from 'lodash'
+import { useConfirm } from 'primevue/useconfirm'
+import { onMounted, ref, computed, provide, watch, readonly } from 'vue'
 
+
+
+const emit = defineEmits(['routeChange'])
+
+const route = useRoute()
 const router = useRouter()
-const volunteerStore = useVolunteerStore();
-const toast = useToast();
+const confirm = useConfirm()
+const toast = useToast()
 
-const formData = {
+const volunteerStore = useVolunteerStore()
+
+const initialData = {
   Volunteer: {
     volunteerId: null,
     affiliation: null,
@@ -72,18 +78,56 @@ const formData = {
   //add work
 }
 
+const formData = ref(structuredClone(initialData))
+
+let isOkToLeave = false
+const updateKey = ref(0)
+
+const headerText = computed(() => {
+  if (!route.params.volunteerId) return 'Add Record'
+  return route.meta.isViewMode ? 'View Record' : 'Edit Record'
+})
+const confirmBtnText = computed(() => (route.meta.isViewMode ? 'Edit' : 'Submit'))
+const cancelBtnText = computed(() => (route.meta.isViewMode ? 'Back' : 'Cancel'))
+const isFormDirty = computed(() => {
+  for (const key in initialData) {
+    if (!isEqual(initialData[key], formData.value[key])) return true
+  }
+  return false
+})
+
+watch(
+  () => route.name,
+  () => emit('routeChange')
+)
+
+provide('formData', readonly({ formData, updateFormData }))
+
 function updateFormData(part, data) {
   const updateMapping = {
     [FormParts.Volunteer]: () => (formData.Volunteer = data),
-    [FormParts.VolunteerPersonalInformation]: () => (formData.VolunteerPersonalInformation = data),
-    [FormParts.VolunteerContactInformation]: () => (formData.VolunteerContactInformation = data),
-    [FormParts.VolunteerEmergency]: () => (formData.VolunteerEmergency = data),
-    [FormParts.VolunteerAvailability]: () => (formData.VolunteerAvailability = data),
-    [FormParts.VolunteerSpecialization]: () => (formData.VolunteerSpecialization = data),
-    [FormParts.StudentVolunteer]: () => (formData.StudentVolunteer = data),
-    [FormParts.ProfessionalVolunteer]: () => (formData.ProfessionalVolunteer = data)
+    [FormParts.VolunteerPersonalInformation]: () => (formData.value.VolunteerPersonalInformation = data),
+    [FormParts.VolunteerContactInformation]: () => (formData.value.VolunteerContactInformation = data),
+    [FormParts.VolunteerEmergency]: () => (formData.value.VolunteerEmergency = data),
+    [FormParts.VolunteerAvailability]: () => (formData.value.VolunteerAvailability = data),
+    [FormParts.VolunteerSpecialization]: () => (formData.value.VolunteerSpecialization = data),
+    [FormParts.StudentVolunteer]: () => (formData.value.StudentVolunteer = data),
+    [FormParts.ProfessionalVolunteer]: () => (formData.value.ProfessionalVolunteer = data)
   }
     updateMapping[part]()
+}
+
+function handleConfirm() {
+  if (route.meta.isViewMode) {
+    router.push({ name: 'edit-volunteer', params: { volunteerId: route.params.volunteerId } })
+  } else {
+    submitForm()
+  }
+}
+
+function handleCancel() {
+  if (route.name === 'admit-volunteers' || route.meta.isViewMode) goToVolunteerView()
+  else router.push({ name: 'view-volunteer', params: { volunteerId: route.params.volunteerId } })
 }
 
 async function goToVolunteerRecords() {
@@ -92,7 +136,11 @@ async function goToVolunteerRecords() {
 
 async function submitForm() {
   try {
-    const result = await volunteerStore.addVolunteer(formData)
+    const result =
+      route.name === 'admit-volunteers'
+        ? await volunteerStore.addVolunteer(formData.value)
+        : await volunteerStore.updateVolunteer(route.params.volunteerId, formData.value)
+
     toast.add({
       severity: 'success',
       summary: 'Success',
@@ -109,47 +157,96 @@ async function submitForm() {
     })
   }
 }
+
+onBeforeRouteLeave((to) => {
+  if (!isFormDirty.value || isOkToLeave) return true
+
+  confirm.require({
+    message: 'Do you really want to leave? You have unsaved changes!',
+    header: 'Redirect Confirmation',
+    accept: async () => {
+      isOkToLeave = true
+      await router.push(to)
+    }
+  })
+
+  return false
+})
+
+onMounted(async () => {
+  if (!route.params.volunteerId) return
+
+  try {
+    const result = await volunteerStore.getVolunteer(route.params.volunteerId)
+    const volunteer = result.data.volunteer
+
+    const filterObject = (obj) => {
+      // eslint-disable-next-line no-unused-vars
+      const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
+      return filteredObj
+    }
+
+    if (volunteer && 'VolunteerPersonalInformation' in volunteer) {
+  const {
+    VolunteerPersonalInformation,
+    VolunteerContactInformation,
+    VolunteerEmergency,
+    VolunteerAvailability,
+    VolunteerSpecialization,
+    ...Volunteer
+  } = volunteer
+} else {
+  console.error('volunteer object is undefined or does not contain VolunteerPersonalInformation');
+}
+
+    initialData.Volunteer = filterObject(Volunteer)
+    initialData.VolunteerPersonalInformation = filterObject(VolunteerPersonalInformation)
+    initialData.VolunteerContactInformation = filterObject(VolunteerContactInformation)
+    initialData.VolunteerEmergency = filterObject(VolunteerEmergency)
+    initialData.VolunteerAvailability = VolunteerAvailability && filterObject(VolunteerAvailability)
+    initialData.VolunteerSpecialization = filterObject(VolunteerSpecialization)
+
+    for (const key in initialData) {
+      formData.value[key] = initialData[key]
+    }
+
+    updateKey.value += 1
+  } catch (error) {
+    console.error('Failed to load volunteer:', error)
+    router.back()
+  }
+})
 </script>
 
 <template>
-  <ContentPane header="Admit Volunteer">
+  <ContentPane :header="`Volunteers / ${headerText}`" subheader="Academic Year 2022 - 2023">
     <div class="flex flex-col gap-3 h-full mr-1">
-      <BaseCard>
-        <AdmitVolunteerHeader @dataChanged="updateFormData" />
-      </BaseCard>
-      <BaseCard class="grow">
-        <TabView>
-          <TabPanel header="Personal Infromation">
-            <PersonalInformationForm @dataChanged="updateFormData" />
-          </TabPanel>
-          <TabPanel header="Contact Infromation">
-            <ContactInformationForm @dataChanged="updateFormData" />
-          </TabPanel>
-          <TabPanel header="Preferences">
-            <PreferencesForm @dataChanged="updateFormData" />
-          </TabPanel>
-        </TabView>
-      </BaseCard>
-
+        <AdmitVolunteerHeader 
+        @dataChanged="updateFormData"
+        :Volunteer="formData.Volunteer"
+        :isViewMode="$route.meta.isViewMode"
+        :key="updateKey" />
+      <VolunteerBulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
       <div class="flex-none text-right">
         <div class="inline-block">
-          <Toast />
-          <Button class="h-10 u-bg-green" @click="submitForm">
+          <Button class="h-10 u-bg-green" @click="handleConfirm">
+            <div>
               <font-awesome-icon
                 icon="fa-solid fa-circle-check"
                 class="absolute top-2/4 -mt-2 left-3"
               />
-              <h2 class="pl-5 font-bold">Submit</h2>
+              <h2 class="pl-5 font-bold">{{ confirmBtnText }}</h2>
+            </div>
           </Button>
           <Button
             class="h-10 ml-2 u-bg-red"
-            label="Cancel"
+            :label="cancelBtnText"
             icon="fa-solid fa-circle-xmark"
-            @click="goToVolunteerRecords"
+            @click="handleCancel"
           />
         </div>
       </div>
     </div>
   </ContentPane>
-  </template>
+</template>
 

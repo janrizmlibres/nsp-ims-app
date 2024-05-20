@@ -1,24 +1,34 @@
 <script setup>
 import InputText from 'primevue/inputtext'
-import { ref } from 'vue'
 import Dropdown from 'primevue/dropdown';
+import BaseCard from '@/components/UI/BaseCard.vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
 import FormParts from '@/util/volunteer_form_parts'
 
 const emit = defineEmits(['dataChanged'])
+const props = defineProps({ Volunteer: Object, isViewMode: Boolean })
+
+const route = useRoute()
+
+const op = ref()
 
 const name = ref({
-  lastName: null,
-  firstName: null,
-  middleName: null
+  lastName: props.Volunteer.lastName,
+  firstName: props.Volunteer.firstName,
+  middleName: props.Volunteer.middleName
 })
-const selectedSuffix = ref(null)
-const selectedAffiliation = ref(null);
-const volunteerId = ref(null);
+
+const volunteerId = ref(props.Volunteer.volunteerId)
+const selectedSuffix = ref(props.Volunteer.suffixName)
+const selectedAffiliation = ref(props.Volunteer.affiliation)
+
+const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 const affiliations = ref([
   'Student',
   'Professional'
 ])
-const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 
 function handleUpdate() {
   const data = {
@@ -34,32 +44,21 @@ function handleUpdate() {
 
 
 <template>
+  <BaseCard>
   <div>
-    <!-- First row for ID and Affiliation -->
-    <div class="flex gap-10 items-center mb-2">
+    <div class="flex gap-10 items-center">
       <div class="basis-32 text-right">
-        <span>ID</span>
+        <span>Last Name</span>
       </div>
       <InputText
-        class="grow h-10 flex-grow"
+        class="grow h-10"
         type="text"
-        v-model="volunteerId"
+        v-model="name.lastName"
         @update:modelValue="handleUpdate"
+        :ptOptions="{ mergeProps: true }"
+        :disabled="isViewMode"
       />
 
-      <div class="basis-32 text-right">
-        <span>Affiliation</span>
-      </div>
-      <Dropdown 
-        v-model="selectedAffiliation" 
-        :options="affiliations"
-        class="grow h-10 flex-grow" 
-        @change="handleUpdate"
-      />
-    </div>
-
-    <!-- Second row for names -->
-    <div class="flex gap-10 items-center">
       <div class="basis-32 text-right">
         <span>First Name</span>
       </div>
@@ -68,6 +67,8 @@ function handleUpdate() {
         type="text"
         v-model="name.firstName"
         @update:modelValue="handleUpdate"
+        :ptOptions="{ mergeProps: true }"
+        :disabled="isViewMode"
       />
 
       <div class="basis-32 text-right">
@@ -78,16 +79,8 @@ function handleUpdate() {
         type="text"
         v-model="name.middleName"
         @update:modelValue="handleUpdate"
-      />
-
-      <div class="basis-32 text-right">
-        <span>Last Name</span>
-      </div>
-      <InputText
-        class="grow h-10"
-        type="text"
-        v-model="name.lastName"
-        @update:modelValue="handleUpdate"
+        :ptOptions="{ mergeProps: true }"
+        :disabled="isViewMode"
       />
 
       <div class="basis-32 text-right">
@@ -97,8 +90,37 @@ function handleUpdate() {
           class="h-10"
           v-model="selectedSuffix"
           :options="suffixes"
-          @update:modelValue="handleUpdate"
+          @change="handleUpdate"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="isViewMode"
         />
     </div>
+
+    <div class="flex gap-10 items-center mt-2">
+      <div class="basis-32 text-right">
+        <span>ID</span>
+      </div>
+      <InputText
+        class="grow h-10 flex-grow"
+        type="text"
+        v-model="volunteerId"
+        @update:modelValue="handleUpdate"
+        :ptOptions="{ mergeProps: true }"
+        :disabled="isViewMode"
+      />
+
+      <div class="basis-32 text-right">
+        <span>Affiliation</span>
+      </div>
+      <Dropdown 
+        v-model="selectedAffiliation"
+        :options="affiliations"
+        class="grow h-10 flex-grow" 
+        @change="handleUpdate"
+        :ptOptions="{ mergeProps: true }" 
+        :disabled="isViewMode"
+      />
+    </div>
   </div>
+  </BaseCard>
 </template>

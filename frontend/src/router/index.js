@@ -247,12 +247,12 @@ const router = createRouter({
           name: 'admit-volunteers',
           component: AdmitVolunteerView
         },
-        /*{
-          path: '/edit-volunteer/:id',
-          name: 'edit-volunteer',
-          component: EditVolunteerView,
-          props: true,
-        },*/
+        {
+          path: ':volunteerId',
+          name: 'view-volunteer',
+          component: AdmitVolunteerView,
+          meta: { isViewMode: true }
+        },
         {
           path: 'staffs',
           beforeEnter: () => {

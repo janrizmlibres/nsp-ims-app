@@ -1,22 +1,24 @@
 <script setup>
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
-import Calendar from 'primevue/calendar';
-import FormParts from '@/util/volunteer_form_parts'
+
+import { ref, computed, watch, onMounted, inject } from 'vue'
+import { getDaysInMonth, format, getYear, getDay, getMonth } from 'date-fns'
+
 import { objectMap } from '@/util/helpers'
+import FormParts from '@/util/volunteer_form_parts'
 
-import { ref, computed, watch, onMounted } from 'vue'
-import { getDaysInMonth, format, getYear } from 'date-fns'
+const { formData, updateFormData } = inject('formData')
 
+const VolunteerPersonalInformation = formData.VolunteerPersonalInformation
+const ProfessionalVolunteer = formData.ProfessionalVolunteer
+const StudentVolunteer = formData.StudentVolunteer
 
-const emit = defineEmits(['dataChanged'])
-
-const nickname = ref(null)
-const work = ref(null)
-const selectedSex = ref(null)
+const nickname = ref(VolunteerPersonalInformation.nickname)
+const work = ref(ProfessionalVolunteer.work)
+const selectedSex = ref(VolunteerPersonalInformation.sex)
 
 const birthday = ref({ month: null, day: null, year: null })
-
 const computedBirthday = computed(() => {
   for (const key in birthday.value) {
     if (birthday.value[key] === null) return null
@@ -27,10 +29,15 @@ const computedBirthday = computed(() => {
 })
 
 const address = ref({
-  housing: { label: 'Blk/Lt/St', data: null },
-  barangay: { label: 'Barangay', data: null },
-  city: { label: 'City', data: null },
-  province: { label: 'Province', data: null }
+  housing: { label: 'Blk/Lt/St', data: VolunteerPersonalInformation.housing },
+  barangay: { label: 'Barangay', data: VolunteerPersonalInformation.barangay },
+  city: { label: 'City', data: VolunteerPersonalInformation.city },
+  province: { label: 'Province', data: VolunteerPersonalInformation.province }
+})
+
+const studentFields = ref({
+  program: { label: 'Program', data: StudentVolunteer.program },
+  year: { label: 'Year Level', data: StudentVolunteer.year }
 })
 
 const sex = ['M', 'F']
@@ -45,11 +52,6 @@ const days = computed(() => {
   return Array.from({ length: dayCount() }, (_, i) => (i + 1).toString())
 })
 const years = ref([])
-
-const studentFields = ref({
-  program: { label: 'Program', data: null },
-  year: { label: 'Year Level', data: null }
-})
 
 watch([() => birthday.value.month, () => birthday.value.year], ([newMonth, newYear]) => {
   const year = newYear === null ? 1970 : getYear(new Date(newYear, 0))
@@ -67,7 +69,7 @@ const handleUpdate = () => {
     sex: selectedSex.value,
     ...objectMap(address.value, (field) => field.data)
   }
-  emit('dataChanged', FormParts.VolunteerPersonalInformation, newData)
+  updateFormData(FormParts.VolunteerPersonalInformation, newData)
 }
 
 onMounted(() => {
@@ -80,18 +82,24 @@ onMounted(() => {
   for (let i = currentYear - 120; i <= currentYear; i++) {
     years.value.push(i.toString())
   }
+
+  if (VolunteerPersonalInformation.birthday) {
+    birthday.value.month = getMonth(VolunteerPersonalInformation.birthday)
+    birthday.value.day = getDay(VolunteerPersonalInformation.birthday).toString()
+    birthday.value.year = getYear(VolunteerPersonalInformation.birthday).toString()
+  }
 })
 
 function updateStudentVolunteer() {
   const data = objectMap(studentFields.value, (field) => field.data)
-  emit('dataChanged', FormParts.StudentVolunteer, data)
+  updateFormData(FormParts.StudentVolunteer, data)
 }
 
 function updateProfessionalVolunteer() {
   const data = {
     work: work.value
   }
-  emit('dataChanged', FormParts.ProfessionalVolunteer, data)
+  updateFormData(FormParts.ProfessionalVolunteer, data)
 }
 </script>
 
@@ -122,6 +130,8 @@ function updateProfessionalVolunteer() {
           v-model="selectedSex" 
           :options="sex" 
           @change="handleUpdate" 
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
           />
         </div>
 
@@ -137,6 +147,8 @@ function updateProfessionalVolunteer() {
             optionValue="code"
             placeholder="Month"
             @change="handleUpdate"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
           />
           <Dropdown
             class="h-10 col-span-3"
@@ -144,6 +156,8 @@ function updateProfessionalVolunteer() {
             :options="days"
             placeholder="Day"
             @change="handleUpdate"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
           />
           <Dropdown
             class="h-10 col-span-4"
@@ -152,6 +166,8 @@ function updateProfessionalVolunteer() {
             filter
             placeholder="Year"
             @change="handleUpdate"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
           />
         </div>
 
@@ -165,6 +181,8 @@ function updateProfessionalVolunteer() {
               type="text"
               v-model="field.data"
               @update:modelValue="updateStudentVolunteer"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
             />
           </template>
         </div>
@@ -178,6 +196,8 @@ function updateProfessionalVolunteer() {
             type="text"
             v-model="work"
             @update:modelValue="updateProfessionalVolunteer"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
           />
         </div>
         
@@ -199,6 +219,8 @@ function updateProfessionalVolunteer() {
               v-model="value.data"
               :placeholder="value.label"
               @update:modelValue="handleUpdate"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
             />
           </div>
         </div>

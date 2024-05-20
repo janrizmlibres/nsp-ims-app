@@ -10,8 +10,8 @@ router.get("/volunteers", isAuth, volunteerController.getAllVolunteers);
 
 router.post("/add-volunteer", isAuth, volunteerController.addVolunteer);
 
-router.get("/:id", isAuth, volunteerController.getVolunteer);
+router.get("/:volunteerId", isAuth, volunteerController.getVolunteer);
 
-router.put("/:id", isAuth, volunteerController.updateVolunteer);
+router.put("/:volunteerId", isAuth, volunteerController.updateVolunteer);
 
 export default router;

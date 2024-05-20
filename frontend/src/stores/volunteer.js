@@ -32,20 +32,20 @@ export const useVolunteerStore = defineStore('volunteer', () => {
     return result
   }
 
-  async function getVolunteer(id) {
+  async function getVolunteer(volunteerId) {
   const authStore = useAuthStore()
 
-  const result = await axios.get(`http://localhost:8080/volunteer/${id}`, {
+  const result = await axios.get(`http://localhost:8080/volunteer/${volunteerId}`, {
     headers: { Authorization: 'Bearer ' + authStore.token }
   })
 
     return result
   }
 
-  async function updateVolunteer(id, formData) {
+  async function updateVolunteer(volunteerId, formData) {
   const authStore = useAuthStore()
 
-  const result = await axios.put(`http://localhost:8080/volunteer/${id}`, formData, {
+  const result = await axios.put(`http://localhost:8080/volunteer/${volunteerId}`, formData, {
     headers: { Authorization: 'Bearer ' + authStore.token }
   })
 
