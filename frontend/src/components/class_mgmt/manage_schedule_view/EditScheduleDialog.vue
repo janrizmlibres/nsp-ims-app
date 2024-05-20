@@ -13,9 +13,11 @@ import { format } from 'date-fns';
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useVolunteerStore } from '@/stores/volunteer';
+import { useClassStore } from '@/stores/class';
 
 const volunteerStore = useVolunteerStore()
 const classLearningStrandStore = useClassLearningStrandStore()
+const classStore = useClassStore()
 
 const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
 const props = defineProps(['data', 'state'])
@@ -29,7 +31,10 @@ const endTime = ref()
 const volunteers = computed(() => volunteerStore.volunteers)
 const days = ref(["M", "T", "W", "TH", "F", "S"]);
 
-watch(() => props.data, (data) => schedule.value = data)
+watch(() => props.data, (data) => {
+    schedule.value = data
+    classStore.leave = false
+})
 
 async function updateSchedule() {
     try {
@@ -47,6 +52,7 @@ async function updateSchedule() {
             life: 3000
         })
 
+        classStore.leave = true
         startTime.value = null
         endTime.value = null
     } catch(error) {
@@ -65,6 +71,7 @@ async function cancel() {
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
         accept: () => {
+            classStore.leave = true
             startTime.value = null
             endTime.value = null
             emit('onUpdateDisplay')
