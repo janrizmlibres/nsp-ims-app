@@ -133,22 +133,22 @@ function changeMode() {
 
         <Column field="first_quarter" header="Q1">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.first_quarter" :disabled="isNotActive || !edit" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.first_quarter" :disabled="!edit" :binary="true" />
             </template>
         </Column>
         <Column field="second_quarter" header="Q2">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.second_quarter" :disabled="isNotActive || !edit" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.second_quarter" :disabled="!edit" :binary="true" />
             </template>
         </Column>
         <Column field="third_quarter" header="Q3">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.third_quarter" :disabled="isNotActive || !edit" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.third_quarter" :disabled="!edit" :binary="true" />
             </template>
         </Column>
         <Column field="fourth_quarter" header="Q4">
             <template #body="slotProps">
-                <Checkbox v-model="slotProps.data.grades.fourth_quarter" :disabled="isNotActive || !edit" :binary="true" />
+                <Checkbox v-model="slotProps.data.grades.fourth_quarter" :disabled="!edit" :binary="true" />
             </template>
         </Column>
         <Column field="remarks" header="Remarks" style="width: 19rem;">
