@@ -25,10 +25,6 @@ const selection = ref([
     {label: 'Multiple', value: 2},
 ])
 
-function resetValues() {
-    date.value = null
-}
-
 function addSelectedDate() {
     sessions.value = []
 
@@ -68,7 +64,7 @@ async function addSession() {
             life: 3000
         })
 
-        date.value = null
+        resetForm()
     } catch (error) {
         toast.add({
             severity: 'error',
@@ -79,8 +75,12 @@ async function addSession() {
     }
 }
 
-watch(() => props.data, (data) => {
+function resetForm() {
     date.value = null
+}
+
+watch(() => props.data, (data) => {
+    resetForm()
     
     if (data) {
         let date = new Date(data.date)
@@ -96,7 +96,7 @@ watch(() => props.data, (data) => {
         <span class="font-semibold text-lg u-txt-active mb-4">Add Session</span>
         <div class="flex flex-col mb-4">
             <label>Selection Type</label>
-            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!data" @update:modelValue="resetValues" />
+            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!data" @update:modelValue="resetForm" />
         </div>
         <div v-if="selectionType === 1" class="flex flex-col gap-4 mb-4">
             <label>Session Date</label>
@@ -106,6 +106,9 @@ watch(() => props.data, (data) => {
             <label>Session Dates</label>
             <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
         </div>
-        <Button type="button" outlined rounded label="Add" :disabled="!date" @click="addSession" />
+        <div class="flex flex-row gap-2">
+            <Button type="button" outlined rounded label="Add" :disabled="!date" @click="addSession" class="w-full" />
+            <Button type="button" outlined rounded label="Reset" :disabled="!date" @click="resetForm" severity="danger" class="w-full" />
+        </div>
     </div>
 </template>
