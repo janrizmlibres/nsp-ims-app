@@ -9,16 +9,20 @@ import { useConfirm } from 'primevue/useconfirm';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
 const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
 const props = defineProps(['id', 'data', 'state'])
 const toast = useToast()
-const classLearningStrandStore = useClassLearningStrandStore()
 const confirm = useConfirm()
+const router = useRouter()
+const classLearningStrandStore = useClassLearningStrandStore()
+
 const state = computed(() => props.state)
 const module = ref()
 const classLearningStrandId = computed(() => props.id)
 const dates = ref([])
+const leave = computed(() => Boolean(dates.value ? !dates.value.length : !dates.value))
 
 watch(() => props.data, (data) => module.value = data)
 
@@ -46,6 +50,8 @@ async function updateModule() {
             detail: 'Module updated successfully!',
             life: 3000
         })
+        
+        dates.value = []
     } catch(error) {
         toast.add({
             severity: 'error',
@@ -57,19 +63,43 @@ async function updateModule() {
 };
 
 async function cancel() {
+    if (dates.value ? dates.value.length : dates.value) {
+        confirm.require({
+            message: 'Do you really want to leave? you have unsaved changes!',
+            header: 'Redirect Confirmation',
+            accept: () => {
+                dates.value = []
+                emit('onUpdateDisplay')
+            }
+        })
+    } else {
+        dates.value = []
+        emit('onUpdateDisplay')
+    }
+}
+
+onBeforeRouteLeave((to) => {
+    if (leave.value) {
+        return true
+    }
+
     confirm.require({
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
-        accept: () => {emit('onUpdateDisplay')}
+        accept: async () => {
+            await router.push(to)
+        }
     })
-}
+
+    return false
+})
 </script>
 
 <template>
     <Dialog v-model:visible="state" modal header="Edit Module" :style="{ width: '20rem' }" :closable="false">
         <div class="flex flex-col gap-4 mb-4">
             <label>Distribution Date - Retrieval Date</label>
-            <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
+            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Update" @click="updateModule"></Button>
