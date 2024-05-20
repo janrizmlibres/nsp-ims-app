@@ -5,18 +5,22 @@ import TabPanel from 'primevue/tabpanel';
 import ProgressSpinner from 'primevue/progressspinner';
 import InputText from 'primevue/inputtext';
 import Divider from 'primevue/divider';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 // // Custom
 import AttendanceTable from '../session_view/AttendanceTable.vue';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
+import { useRoute } from 'vue-router';
 
 
 const props = defineProps(['modelValue'])
 const emit = defineEmits(['onUpdate'])
+const route = useRoute()
 
+const termStatus = computed(() => route.query.status)
 const regular = ref([])
 const hybrid = ref([])
+const drop = ref([])
 const isFetching = ref(true)
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -30,11 +34,9 @@ function updateAttendanceData(data) {
 watch(() => props.modelValue, (data) => {
     isFetching.value = true
     
-    regular.value.length = 0
-    hybrid.value.length = 0
-    
     regular.value = data.regular
     hybrid.value = data.hybrid
+    drop.value = data.drop
     
     isFetching.value = false
 }, {immediate: false})
