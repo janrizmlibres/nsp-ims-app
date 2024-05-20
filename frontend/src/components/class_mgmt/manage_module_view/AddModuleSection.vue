@@ -53,10 +53,14 @@ async function addModule() {
         })
     }
     
+    resetForm()
+    emit('onUpdateDisplay')
+}
+
+function resetForm() {
     min.value = null;
     max.value = null;
     dates.value = null;
-    emit('onUpdateDisplay')
 }
 </script>
 
@@ -75,6 +79,9 @@ async function addModule() {
             <label for="calendar">Distribution Date - Retrieval Date</label>
             <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" :disabled="!classLearningStrandId" />
         </div>
-        <Button type="button" outlined rounded label="Add" :disabled="!min || !max || !dates" @click="addModule" />
+        <div class="flex flex-row gap-2">
+            <Button type="button" outlined rounded label="Add" :disabled="!min || !max || !dates" @click="addModule" class="w-full" />
+            <Button type="button" outlined rounded label="Reset" :disabled="!min && !max && !dates" @click="resetForm" severity="danger" class="w-full" />
+        </div>
     </div>
 </template>
