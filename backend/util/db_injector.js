@@ -5,6 +5,7 @@ import Staff from "../models/staff/staff.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import StudentRequirement from "../models/student_requirement.js";
+import StudentCategory from "../models/student_category.js";
 import Volunteer from "../models/volunteer/volunteer.js";
 import PersonalInfo from "../models/student/personal_info.js";
 import ContactInfo from "../models/student/contact_info.js";
@@ -29,6 +30,7 @@ export async function injectAll() {
   await injectStudent();
   await injectVolunteer();
   await injectStudentRequirement();
+  await injectStudentCategory();
 }
 
 export async function injectStudent() {
@@ -266,6 +268,7 @@ export async function injectStaff() {
         canMgTerm: true,
         canMgLs: true,
         canMgStudReq: true,
+        canMgStudCat: true,
         canMgStaff: true,
       },
       {
@@ -557,6 +560,53 @@ export async function injectStudentRequirement() {
   await Promise.all(
     studentRequirementData.map(async (student_requirement) => {
       await StudentRequirement.create(student_requirement);
+    })
+  );
+}
+
+export async function injectStudentCategory() {
+  const studentCategoryData = [
+    {
+      category_name: "Out-of-School Youth",
+    },
+    {
+      category_name: "Indigenous People",
+    },
+    {
+      category_name: "Person with Disability",
+    },
+    {
+      category_name: "Solo Parent",
+    },
+    {
+      category_name: "Pantawid Pamilyang Pilipino Program (4Ps) Beneficiary",
+    },
+    {
+      category_name: "Child Laborer",
+    },
+    {
+      category_name: "Victim of Child Abuse",
+    },
+    {
+      category_name: "Victim of Human Trafficking",
+    },
+    {
+      category_name: "Street Children",
+    },
+    {
+      category_name: "Drug Dependents",
+    },
+    {
+      category_name: "Children in Conflict with the Law",
+    },
+    {
+      category_name: "Children in Especially Difficult Circumstances",
+    },
+  ];
+
+  await Promise.all(
+    studentCategoryData.map(async (student_category) => {
+      await StudentCategory.create(student_category);
     })
   );
 }

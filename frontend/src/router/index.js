@@ -17,6 +17,7 @@ import ModuleView from '../views/class_mgmt/ModuleView.vue'
 import SessionView from '@/views/class_mgmt/SessionView.vue'
 
 // Utilities Views
+import StudentCategoryView from '@/views/utilities/StudentCategoryView.vue'
 import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
 import LearningStrandView from '@/views/utilities/LearningStrandView.vue'
 import TermView from '@/views/utilities/TermView.vue'
@@ -103,10 +104,10 @@ const router = createRouter({
             {
               path: 'enrolled/view',
               name: 'view-enrolled',
-              query: {
-                studentId: Number,
-                enrollmentId: Number,
-                schoolLevelId: Number,
+              query: { 
+                studentId: Number, 
+                enrollmentId: Number, 
+                schoolLevelId: Number, 
                 studentFullName: String
               },
               component: EnrolledView
@@ -210,8 +211,8 @@ const router = createRouter({
           ]
         },
         {
-          path: '/management/terms',
-          name: 'term-management',
+          path: '/configuration/academic_terms',
+          name: 'academic-term-configuration',
           component: TermView,
           beforeEnter: () => {
             const authStore = useAuthStore()
@@ -219,8 +220,8 @@ const router = createRouter({
           }
         },
         {
-          path: '/management/learning_strands',
-          name: 'learning-strand-management',
+          path: '/configuration/learning_strand',
+          name: 'learning-strand-configuration',
           component: LearningStrandView,
           beforeEnter: () => {
             const authStore = useAuthStore()
@@ -228,12 +229,21 @@ const router = createRouter({
           }
         },
         {
-          path: '/management/student_requirements',
-          name: 'student-requirements-management',
+          path: '/configuration/student_requirement',
+          name: 'student-requirement-configuration',
           component: StudentRequirementView,
           beforeEnter: () => {
             const authStore = useAuthStore()
             return authStore.staff.permissions.canMgStudReq ? true : { name: 'dashboard' }
+          }
+        },
+        {
+          path: '/configuration/student_category',
+          name: 'student-category-configuration',
+          component: StudentCategoryView,
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgStudCat ? true : { name: 'dashboard' }
           }
         },
         {
