@@ -6,7 +6,7 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Toolbar from 'primevue/toolbar';
 import Badge from 'primevue/badge';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import { format } from 'date-fns';
@@ -79,25 +79,6 @@ function updateSessionTable(sessions) {
     isFetching.value = false
 }
 
-function editSession(data) {
-    session.value = {... data}
-    showEditSessionDialog()
-}
-
-function showEditSessionDialog() {
-    editSessionDialog.value = !editSessionDialog.value
-}
-
-function updateSession(data) {
-    updateSessionTable(data)
-    showEditSessionDialog()
-}
-
-watch(() => props.learningStrands, () => {
-    learningStrandInput.value = null
-    sessionByMonths.value = null
-})
-
 watch(() => learningStrandInput.value, (input) => {
     if (input) {
         isFetching.value = true
@@ -118,6 +99,25 @@ watch(() => learningStrandInput.value, (input) => {
         }
     }
 }, {immediate: false})
+
+watch(() => props.learningStrands, () => {
+    learningStrandInput.value = null
+    sessionByMonths.value = null
+})
+
+function editSession(data) {
+    session.value = {... data}
+    showEditSessionDialog()
+}
+
+function showEditSessionDialog() {
+    editSessionDialog.value = !editSessionDialog.value
+}
+
+function updateSession(data) {
+    updateSessionTable(data)
+    showEditSessionDialog()
+}
 
 async function deleteModules() {
     confirm.require({
