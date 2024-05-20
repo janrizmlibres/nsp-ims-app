@@ -7,12 +7,13 @@ import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
 
-const props = defineProps(['id', 'data'])
+const props = defineProps(['id', 'data', 'termStatus'])
 const toast = useToast()
 
 const emit = defineEmits(['onUpdate'])
 const classLearningStrandStore = useClassLearningStrandStore()
 const classLearningStrandId = computed(() => props.id)
+const termStatus = computed(() => props.termStatus)
 const data = computed(() => props.data)
 const sessions = ref([])
 const date = ref()
