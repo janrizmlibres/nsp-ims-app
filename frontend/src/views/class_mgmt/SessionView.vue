@@ -2,12 +2,10 @@
 // Presets
 import { useRoute } from 'vue-router';
 import { ref, watch } from 'vue';
-import Divider from 'primevue/divider';
 import { useToast } from 'primevue/usetoast';
 
 // Custom
 import ContentPane from '@/components/UI/ContentPane.vue';
-import SessionInfoSection from '@/components/class_mgmt/session_view/SessionInfoSection.vue';
 import AttendanceTab from '@/components/class_mgmt/session_view/AttendanceTab.vue';
 
 // stores
