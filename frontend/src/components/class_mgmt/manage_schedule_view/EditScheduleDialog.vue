@@ -13,7 +13,6 @@ import { format } from 'date-fns';
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useVolunteerStore } from '@/stores/volunteer';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
 const volunteerStore = useVolunteerStore()
 const classLearningStrandStore = useClassLearningStrandStore()
@@ -22,7 +21,6 @@ const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
 const props = defineProps(['data', 'state'])
 const toast = useToast()
 const confirm = useConfirm()
-const router = useRouter()
 
 const state = computed(() => props.state)
 const schedule = ref()
@@ -30,7 +28,6 @@ const startTime = ref()
 const endTime = ref()
 const volunteers = computed(() => volunteerStore.volunteers)
 const days = ref(["M", "T", "W", "TH", "F", "S"]);
-const leave = ref(false)
 
 watch(() => props.data, (data) => schedule.value = data)
 
@@ -67,23 +64,6 @@ async function cancel() {
         accept: () => {emit('onUpdateDisplay')}
     })
 }
-
-onBeforeRouteLeave((to) => {
-    if (leave.value) {
-        return true
-    }
-
-    confirm.require({
-        message: 'Do you really want to leave? you have unsaved changes!',
-        header: 'Redirect Confirmation',
-        accept: async () => {
-            leave.value = true
-            await router.push(to)
-        }
-    })
-
-    return false
-})
 </script>
 
 <template>

@@ -9,13 +9,11 @@ import { useConfirm } from 'primevue/useconfirm';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
 const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
 const props = defineProps(['id', 'data', 'state'])
 const toast = useToast()
 const confirm = useConfirm()
-const router = useRouter()
 const classLearningStrandStore = useClassLearningStrandStore()
 
 const state = computed(() => props.state)
@@ -76,25 +74,6 @@ async function cancel() {
         emit('onUpdateDisplay')
     }
 }
-
-onBeforeRouteLeave((to) => {
-    let leave = Boolean(dates.value ? !dates.value.length : !dates.value)
-    if (leave) {
-        return true
-    }
-
-    confirm.require({
-        message: 'Do you really want to leave? you have unsaved changes!',
-        header: 'Redirect Confirmation',
-        accept: async () => {
-            leave = true
-            dates.value = []
-            await router.push(to)
-        }
-    })
-
-    return false
-})
 </script>
 
 <template>
