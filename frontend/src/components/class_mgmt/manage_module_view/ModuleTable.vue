@@ -59,6 +59,11 @@ const meterProgress = ref((data) => {
     }]
 })
 
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+});
+
 function updateModuleTable(modules) {
     allModules.value.length = 0
 
