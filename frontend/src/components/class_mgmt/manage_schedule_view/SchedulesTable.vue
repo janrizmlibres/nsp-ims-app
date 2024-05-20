@@ -125,56 +125,75 @@ async function deleteSchedules() {
 </script>
 
 <template>
-    <DataTable 
-        :value="classData" dataKey="scheduleId"
-        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave" 
-        :ptOptions="{mergeProps:true}"
-        :pt="customPt"
+    <div class="flex h-full w-full">
+        <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
+            <AddScheduleSection :id="classLevelId" :learningStrands="learningStrands" @onUpdate="addSchedule" />
+        </div>
+        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl">
+            <Toolbar class="!p-2 h-16">
+                <template #start>
+                    <span v-if="selectedSchedules.length" class="flex flex-row gap-8 items-center mx-2">
+                        <span class="flex items-center gap-2">
+                            <Button icon="fa fa-circle-xmark fa-lg" text aria-label="Edit Mode" style="height: 2rem; width: 2rem;" @click="deselect"/>
+                            <p>
+                                {{ selectedSchedules.length + ' selected' }}
+                            </p>
+                        </span>
+                        <span class="flex gap-1 items-center">
+                            <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                            <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteSchedules"/>
+                        </span>
+                    </span>
+                </template>
+            </Toolbar>
+            <DataTable :value="classData" dataKey="scheduleId"
+                v-model:selection="selectedSchedules" scrollable style=" overflow: auto;"
+                selectionMode="multiple" :metaKeySelection="metaKey"
+                class="unselectable"
     >
         <template #empty> <div class="text-center">Nothing added.</div> </template>
 
         <ColumnGroup type="header">
             <Row>
+                        <Column header="" :rowspan="2" />
                 <Column header="Learning Strand" :rowspan="2" />
                 <Column header="Teacher" :rowspan="2" />
                 <Column header="Schedule" :colspan="4" />
             </Row>
             <Row>
-                <Column header="Days" field="school_days"/>
-                <Column header="Start Time" field="start_time"/>
-                <Column header="End Time" field="end_time"/>
-                <Column header="" />
+                        <Column header="Days" />
+                        <Column header="Start Time" />
+                        <Column header="End Time" />
+                        <Column header="Updated At" />
             </Row>
         </ColumnGroup>
+
+                <Column :exportable="false" style="width:2rem">
+                    <template #body="slotProps">
+                        <Button icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" />
+                    </template>
+                </Column>
         <Column field="name" />
         <Column field="volunteer">
             <template #body="slotProps">
                 {{ slotProps.data.volunteer.fullname }}
-            </template>
-            <template #editor="{ data, field }">
-                <Dropdown v-model="data[field]" :options="volunteers" optionLabel="fullname" placeholder="data[field].fullname" class="w-full md:w-[14rem]" />
             </template>
         </Column>
         <Column field="school_days">
             <template #body="slotProps">
                 {{ slotProps.data.school_days.toString() }}
             </template>
-            <template #editor="{ data, field }">
-                <MultiSelect v-model="data[field]" :options="days" placeholder="Select Days" :maxSelectedLabels="2" class="w-full xl:w-[14rem]" />
+        </Column>
+                <Column field="start_time" />
+                <Column field="end_time" />
+                <Column field="updatedAt" header="Updated At" sortable style="width: 10rem;">
+                    <template #body="slotProps">
+                        {{ new Date(slotProps.data.updatedAt).toLocaleString() }}
             </template>
         </Column>
-        <Column field="start_time">
-            <template #editor="{ data, field }">
-                <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-            </template>
-        </Column>
-        <Column field="end_time">
-            <template #editor="{ data, field }">
-                <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-            </template>
-        </Column>
-        <Column :rowEditor="props.termStatus" bodyStyle="text-align:center"></Column>
     </DataTable>
+        </div>
+    </div>
 </template>
 
 <style>
