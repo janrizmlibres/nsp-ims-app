@@ -92,7 +92,7 @@ async function updateGrades() {
 
 function resetData() {
     confirm.require({
-        message: 'Do you really want to leave? you have unsaved changes!',
+        message: 'Do you really want to discard the unsaved changes?',
         header: 'Redirect Confirmation',
         accept: async () => {
             grades.value = structuredClone(startingData)
