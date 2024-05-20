@@ -53,6 +53,11 @@ const noChanges = ref(true)
 const startingData = []
 const updatedData = new Set([])
 const leave = ref(true)
+const edit = ref(false)
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+});
 
 watch(() => props.modelValue, (data) => {
     console.log(typeof route.query.status);
