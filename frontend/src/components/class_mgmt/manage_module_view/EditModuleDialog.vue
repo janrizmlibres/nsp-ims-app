@@ -22,7 +22,6 @@ const state = computed(() => props.state)
 const module = ref()
 const classLearningStrandId = computed(() => props.id)
 const dates = ref([])
-const leave = computed(() => Boolean(dates.value ? !dates.value.length : !dates.value))
 
 watch(() => props.data, (data) => module.value = data)
 
@@ -79,7 +78,8 @@ async function cancel() {
 }
 
 onBeforeRouteLeave((to) => {
-    if (leave.value) {
+    let leave = Boolean(dates.value ? !dates.value.length : !dates.value)
+    if (leave) {
         return true
     }
 
@@ -87,6 +87,8 @@ onBeforeRouteLeave((to) => {
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
         accept: async () => {
+            leave = true
+            dates.value = []
             await router.push(to)
         }
     })
