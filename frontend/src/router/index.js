@@ -35,6 +35,8 @@ import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
 import EditVolunteerView from '@/views/volunteer_view/EditVolunteerView.vue';
 
 import { useAuthStore } from '@/stores/auth'
+// import ManageGradeView from '@/views/class_mgmt/ManageGradeView.vue'
+// import ManageSessionView from '@/views/class_mgmt/ManageSessionView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,7 +71,20 @@ const router = createRouter({
             {
               path: 'add',
               name: 'add-student',
-              component: StudentFormView
+              component: StudentFormView,
+              meta: { isViewMode: false }
+            },
+            {
+              path: ':studentId',
+              name: 'view-student',
+              component: StudentFormView,
+              meta: { isViewMode: true }
+            },
+            {
+              path: 'edit/:studentId',
+              name: 'edit-student',
+              component: StudentFormView,
+              meta: { isViewMode: false }
             }
           ]
         },
@@ -89,10 +104,10 @@ const router = createRouter({
             {
               path: 'enrolled/view',
               name: 'view-enrolled',
-              query: { 
-                studentId: Number, 
-                enrollmentId: Number, 
-                schoolLevelId: Number, 
+              query: {
+                studentId: Number,
+                enrollmentId: Number,
+                schoolLevelId: Number,
                 studentFullName: String
               },
               component: EnrolledView
@@ -104,17 +119,62 @@ const router = createRouter({
               beforeEnter: () => {
                 const authStore = useAuthStore()
                 return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
-              },
+              }
             },
             {
               path: 'edit-enrolled',
               name: 'edit-enrolled',
-              query: { studentId: Number, enrollmentId: Number, academicYear: String},
+              query: { studentId: Number, enrollmentId: Number, academicYear: String },
               component: EditEnrolledView,
               beforeEnter: () => {
                 const authStore = useAuthStore()
                 return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              }
+            }
+          ]
+        },
+        {
+          path: 'enrollment',
+          children: [
+            {
+              path: 'current',
+              name: 'current-enrollment',
+              component: CurrentEnrollmentView
+            },
+            {
+              path: 'history',
+              name: 'enrollment-history',
+              component: EnrollmentHistoryView
+            },
+            {
+              path: 'enrolled/view',
+              name: 'view-enrolled',
+              query: {
+                studentId: Number,
+                enrollmentId: Number,
+                schoolLevelId: Number,
+                studentFullName: String
               },
+              component: EnrolledView
+            },
+            {
+              path: 'enroll-learners',
+              name: 'enroll-learners',
+              component: EnrollLearnersView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              }
+            },
+            {
+              path: 'edit-enrolled',
+              name: 'edit-enrolled',
+              query: { studentId: Number, enrollmentId: Number, academicYear: String },
+              component: EditEnrolledView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              }
             }
           ]
         },
@@ -147,7 +207,7 @@ const router = createRouter({
               beforeEnter: (to) => {
                 return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
               }
-            },
+            }
           ]
         },
         {
