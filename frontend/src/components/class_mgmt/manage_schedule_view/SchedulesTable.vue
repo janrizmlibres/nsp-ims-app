@@ -19,8 +19,7 @@ import { useToast } from 'primevue/usetoast';
 const volunteerStore = useVolunteerStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['modelValue', 'state', 'termStatus'])
-const emit = defineEmits(['updateSchedule'])
+const props = defineProps(['classLevel', 'termStatus'])
 const toast = useToast()
 
 const classData = ref([])
