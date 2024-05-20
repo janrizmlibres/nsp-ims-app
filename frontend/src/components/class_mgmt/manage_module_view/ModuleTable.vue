@@ -232,7 +232,7 @@ onBeforeUnmount(() => {
 <template>
     <div class="flex h-full w-full">
         <div class="flex flex-col w-[17%] rounded-md mr-10 p-2 gap-4" >
-            <AddModuleSection :id="classLearningStrandId"  @onUpdate="updateModuleTable" /> 
+            <AddModuleSection :id="classLearningStrandId" :termStatus="termStatus"  @onUpdate="updateModuleTable" /> 
             
             <div class="mt-2 p-4">
                 <label>Module Progress</label>
