@@ -74,37 +74,33 @@ watch(() => props.classLevel, (data) => {
     }
 }, { immediate: true })
 
-    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
-        if (newData.start_time instanceof Date) newData.start_time = format(newData.start_time, "HH:mm")
-        else newData.start_time = to24hr(newData.start_time)
-
-        if (newData.end_time instanceof Date) newData.end_time = format(newData.end_time, "HH:mm")
-        else newData.end_time = to24hr(newData.end_time)
-        
+async function addSchedule(learningStrand, form) {
         try {
-            await classLearningStrandStore.updateSchedule(data.scheduleId, {
-                volunteerId: newData.volunteer.id,
-                days: newData.school_days.length === 0 ? data.school_days.toString() : newData.school_days.toString(),
-                start_time: newData.start_time,
-                end_time: newData.end_time
+        await classLearningStrandStore.addSchedule(learningStrand.id, {
+            volunteer: form.volunteer,
+            days: form.school_days.toString(),
+            start_time: format(new Date(form.start_time), "HH:mm"),
+            end_time: format(new Date(form.end_time), "HH:mm"),
             })
             
-            emit('updateSchedule', newData.classLevelId)
+        updateScheduleTable(learningStrand.classLevelId)
+
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: "Updated learning strand schedule successfully!",
+            detail: "Added schedule successfully!",
                 life: 3000
             })
-        } catch(error) {
+    } catch (error) {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: error,
+            detail: "Unexpected error encountered.",
                 life: 3000
             })
         }
     }
+
 async function deleteSchedules() {
     confirm.require({
         message: 'Do you really want to delete?',
