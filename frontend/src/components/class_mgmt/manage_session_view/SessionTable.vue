@@ -225,13 +225,18 @@ function onCollapseRow() {
             <DataTable v-model:expandedRows="selectedRow" :value="sessionByMonths" dataKey="id"
                 v-model:selection="selectedMonth" selectionMode="single" 
                 @rowSelect="onExpandRow(selectedMonth ? selectedMonth.id : null)" @rowUnselect="onCollapseRow()"
+                @row-expand="onExpandRow(selectedMonth ? selectedMonth.id : null)"
                 scrollable style=" overflow: auto;"
             >
                 <template #empty> <div class="text-center">No records found.</div> </template>
 
                 <Column expander style="width: 5rem" />
                 <Column field="id" header="Id" />
-                <Column field="month" header="Month" />
+                <Column field="month" header="Month">
+                    <template #body="slotProps">
+                        <p v-if="slotProps.data" class="font-semibold">{{ slotProps.data.month }}</p>
+                    </template>
+                </Column>
                 <Column field="count" header="Sessions">
                     <template #body="slotProps">
                         <Badge v-if="slotProps.data" :value="slotProps.data.count" :severity="slotProps.data.count === 0 ? 'danger': 'info'"></Badge>
@@ -239,7 +244,7 @@ function onCollapseRow() {
                 </Column>
                 
                 <template #expansion="slotProps">
-                    <DataTable 
+                    <DataTable v-if="slotProps.data"
                         :value="slotProps.data.sessions" dataKey="id"
                         v-model:selection="selectedSessions"
                         selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewSession" @blur="deselect()"
