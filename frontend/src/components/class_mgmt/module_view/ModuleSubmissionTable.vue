@@ -184,27 +184,35 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-    <div class="bg-white shadow-xl rounded-md p-5">
+    <div class="flex flex-col h-full overflow-hidden bg-white shadow-xl rounded-md p-5">
+        <div class="flex flex-row justify-between">
         <div class="flex flex-row gap-4 items-center px-4">
             <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
             <span class="font-semibold text-3xl u-txt-active">Submissions</span>
+            </div>
+            <span class="relative">
+                <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal" showClear />
+            </span>
         </div>
         <Divider />
         <DataTable 
-            :value="learners" dataKey="id" 
+            :value="learners" dataKey="id" scrollable style=" overflow: auto;"
             sortField="lastName" :sortOrder="1" removableSort
-            ref="exportRef"
-            :paginator="learners.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-            :pt="customPt" :ptOptions="{mergeProps:true}"
+            v-model:filters="filters" filterDisplay="menu"
+            :globalFilterFields="['lastName', 'firstName', 'status', 'remarks']"
         >
             <template #empty> <div class="text-center">No records found.</div> </template>
 
             <Column field="lastName" header="Last Name" frozen sortable />
             <Column field="firstName" header="First Name" frozen sortable />
             <Column field="middleName" header="Middle Name" />
-            <Column field="status" header="Status" sortable>
-                <template #body="slotProps">
-                    <Dropdown v-model="slotProps.data.status" :options="statuses" optionLabel="label" optionValue="value" :placeholder="slotProps.data.status" :disabled="status === 'false'" autofocus >
+            <Column field="status" header="Status" sortable style="width: 14rem;" >
+                <template #body="slotProps" v-if="!edit">
+                    <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
+                </template>
+                <template #body="slotProps" v-else>
+                    <Dropdown v-model="slotProps.data.status" :options="statuses" optionLabel="label" optionValue="value" :placeholder="slotProps.data.status" :disabled="status === 'false'">
                         <template #value="slotProps">
                             <Tag :value="slotProps.placeholder" :severity="getStatusLabel(slotProps.placeholder)" />
                         </template>
@@ -213,37 +221,59 @@ onBeforeRouteLeave((to) => {
                         </template>
                     </Dropdown>
                 </template>
+                <template #filter="{ filterModel }">
+                    <Dropdown v-model="filterModel.value" :options="statuses" optionLabel="label" optionValue="value"  placeholder="Select One" class="p-column-filter" showClear>
+                        <template #option="slotProps">
+                            <Tag :value="slotProps.option.label" :severity="getStatusLabel(slotProps.option.value)" />
+                        </template>
+                    </Dropdown>
+                </template>
             </Column>
-            <Column field="date_submitted" header="Submission Date" sortable>
-                <template #body="slotProps">
-                    <Calendar v-model="slotProps.data.date_submitted" id="calendar" showIcon iconDisplay="input" :disabled="status === 'false'" autofocus>
+            <Column field="date_submitted" header="Submission Date" style="width: 14rem;" sortable>
+                <template #body="slotProps" v-if="!edit">
+                    <p v-if="slotProps.data.date_submitted">
+                        {{ slotProps.data.date_submitted.toDateString() }}
+                    </p>
+                </template>
+                <template #body="slotProps" v-else>
+                    <Calendar v-model="slotProps.data.date_submitted" id="calendar" showIcon iconDisplay="input" :disabled="status === 'false'" showButtonBar inputStyle="width: 12rem;">
                         <template #value="slotProps">
                             {{ slotProps.data.date_submitted.toDateString() }}
                         </template>
                     </Calendar>
                 </template>
             </Column>
-            <Column field="remarks" header="Remarks">
-                <template #body="slotProps">
-                    <InputText v-model="slotProps.data.remarks" :disabled="status === 'false'" autofocus />
+            <Column field="score" header="Score" style="width: 8rem;" sortable>
+                <template #body="slotProps" v-if="!edit">
+                    {{ slotProps.data.score }}
+                </template>
+                <template #body="slotProps" v-else>
+                    <InputNumber v-model="slotProps.data.score" inputId="score" inputStyle="width: 6rem;" />
                 </template>
             </Column>
-            <Column field="updatedAt" header="Updated At" sortable>
+            <Column field="remarks" header="Remarks" style="width: 20rem;">
+                <template #body="slotProps" v-if="!edit">
+                    {{ slotProps.data.remarks }}
+                </template>
+                <template #body="slotProps" v-else>
+                    <Textarea v-model="slotProps.data.remarks" rows="5" cols="30" />
+                </template>
+            </Column>
+            <Column field="updatedAt" header="Updated At" style="width: 10rem;" sortable>
                 <template #body="slotProps">
                     {{ slotProps.data.updatedAt.toLocaleString() }}
                 </template>
             </Column>
-            <template #paginatorstart>
-            
-            </template>
-            <template #paginatorend>
-                <Button type="button" icon="pi pi-download" @click="exportCSV" text />
+            <template #footer>
+                <div class="flex flex-row justify-end items-center">
+                    <div v-if="edit" class="flex flex-row gap-4">
+                        <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined @click="updateSubmissions"/>
+                        <Button icon="fa fa-xmark" label="Discard" aria-label="Discard Changes" iconClass="['mr-4']" size="small" rounded outlined @click="resetData"/>
+                    </div>
+                    <Button v-else-if="status === 'true'" icon="fa fa-pencil" label="Edit Submissions" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined @click="changeMode"/>
+                </div>
             </template>
         </DataTable>
-        <div v-if="status === 'true'" class="flex justify-end gap-2 mt-4">
-            <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateSubmissions"></Button>
-            <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
-        </div>
     </div>
 </template>
 
