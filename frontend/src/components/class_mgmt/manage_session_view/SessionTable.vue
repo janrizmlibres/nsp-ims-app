@@ -67,8 +67,6 @@ function updateSessionTable(sessions) {
         return months
     })()
 
-    console.log(sessionByMonths.value);
-
     sessions.reduce((months, obj) => {
         const month = new Date(obj.date).getMonth()
         
