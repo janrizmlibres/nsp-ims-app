@@ -204,7 +204,7 @@ onBeforeUnmount(() => {
 <template>
     <div class="flex h-full w-full">
         <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
-            <AddSessionSection :id="classLearningStrandId" :data="selectedMonth" @onUpdate="updateSessionTable" />
+            <AddSessionSection :id="classLearningStrandId" :data="selectedMonth" :termStatus="termStatus" @onUpdate="updateSessionTable" />
         </div>
         <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl">
             <Toolbar class="!p-2">
