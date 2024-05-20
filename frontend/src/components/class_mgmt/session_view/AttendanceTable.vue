@@ -2,9 +2,10 @@
 // Presets
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import RadioButton from 'primevue/radiobutton';
+import InputSwitch from 'primevue/inputswitch';
+import Textarea from 'primevue/textarea';
+import Tag from 'primevue/tag';
 import { computed, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
@@ -106,18 +107,18 @@ function resetData() {
         message: 'Do you really want to discard the unsaved changes?',
         header: 'Redirect Confirmation',
         accept: async () => {
-    learners.value = structuredClone(startingData)
-    updatedData.clear()
+            learners.value = structuredClone(startingData)
+            updatedData.clear()
 
-    for (const datum of learners.value) {
-        watch(datum, (newData) => {
-        updatedData.add(newData)
-        leave.value = false
-        noChanges.value = false
-        })
-    }
+            for (const datum of learners.value) {
+                watch(datum, (newData) => {
+                updatedData.add(newData)
+                leave.value = false
+                noChanges.value = false
+                })
+            }
 
-    noChanges.value = true
+            noChanges.value = true
             changeMode()
         }
     })
@@ -148,39 +149,39 @@ onBeforeRouteLeave((to) => {
 
 <template>
     <div class="flex flex-col h-full w-full">
-    <DataTable 
+        <DataTable 
             :value="learners" dataKey="id" scrollable style=" overflow: auto;"
-        sortField="lastName" :sortOrder="1" removableSort
+            sortField="lastName" :sortOrder="1" removableSort
             v-model:filters="filters" filterDisplay="menu"
             :globalFilterFields="['lastName', 'firstName', 'status', 'remarks']"
-    >
-        <template #empty> <div class="text-center">No records found.</div> </template>
-        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+        >
+            <template #empty> <div class="text-center">No records found.</div> </template>
+            <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
-        <Column field="lastName" header="Last Name" frozen sortable />
-        <Column field="firstName" header="First Name" frozen sortable />
-        <Column field="middleName" header="Middle Name" />
+            <Column field="lastName" header="Last Name" frozen sortable />
+            <Column field="firstName" header="First Name" frozen sortable />
+            <Column field="middleName" header="Middle Name" />
             <Column field="status" header="Status" sortable>
                 <template #body="slotProps" v-if="!edit">
                     <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                 </template>
                 <template #body="slotProps" v-else>
                     <InputSwitch v-model="slotProps.data.status" trueValue="Present" falseValue="Absent" />
-            </template>
-        </Column>
+                </template>
+            </Column>
             <Column field="remarks" header="Remarks" style="width: 20rem;">
                 <template #body="slotProps" v-if="!edit">
                     {{ slotProps.data.remarks }}
                 </template>
                 <template #body="slotProps" v-else>
                     <Textarea v-model="slotProps.data.remarks" rows="5" cols="30" />
-            </template>
-        </Column>
+                </template>
+            </Column>
             <Column field="updatedAt" header="Updated At" style="width: 10rem;" sortable>
-            <template #body="slotProps">
-                {{ slotProps.data.updatedAt.toLocaleString() }}
-            </template>
-        </Column>
+                <template #body="slotProps">
+                    {{ slotProps.data.updatedAt.toLocaleString() }}
+                </template>
+            </Column>
             <template #footer>
                 <div class="flex flex-row justify-end items-center">
                     <div v-if="edit" class="flex flex-row gap-4">
@@ -189,8 +190,8 @@ onBeforeRouteLeave((to) => {
                     </div>
                     <Button v-else-if="termStatus === 'true'" icon="fa fa-pencil" label="Edit Attendances" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined @click="changeMode"/>
                 </div>
-        </template>
-    </DataTable>
+            </template>
+        </DataTable>
     </div>
 </template>
 
