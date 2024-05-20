@@ -492,3 +492,21 @@ export async function updateSchedule(req, res, next) {
         return error;
     }
 }
+
+export async function deleteSchedules(req, res, next) {
+    const { scheduleIds } = req.body
+
+    try {
+        await ClassSchedule.destroy({
+            where: { id: scheduleIds }
+        })
+
+        res.status(200).json({ message: "Deleted Schedules Successfully!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    } 
+}
