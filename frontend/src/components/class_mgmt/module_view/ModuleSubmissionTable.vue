@@ -96,10 +96,10 @@ watch(() => props.modelValue, (data) => {
 
 const getStatusLabel = (status) => {
     switch (status) {
-        case 'Complete':
+        case 'Graded':
             return 'success';
 
-        case 'Lacking':
+        case 'Submitted':
             return 'warning';
 
         case 'No Submission':
