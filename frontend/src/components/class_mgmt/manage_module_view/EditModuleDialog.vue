@@ -50,7 +50,7 @@ async function updateModule() {
             detail: 'Module updated successfully!',
             life: 3000
         })
-        
+
         dates.value = []
     } catch(error) {
         toast.add({
@@ -102,7 +102,7 @@ onBeforeRouteLeave((to) => {
             <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
         </div>
         <div class="flex justify-end gap-2">
-            <Button type="button" label="Update" @click="updateModule"></Button>
+            <Button type="button" label="Update" :disabled="dates ? (dates[1] === null) : !dates" @click="updateModule"></Button>
             <Button type="button" label="Cancel" severity="danger" @click="cancel"></Button>
         </div>
     </Dialog>
