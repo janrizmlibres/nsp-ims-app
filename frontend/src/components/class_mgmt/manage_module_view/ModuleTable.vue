@@ -8,6 +8,7 @@ import Toolbar from 'primevue/toolbar';
 import MeterGroup from 'primevue/metergroup';
 import Tag from 'primevue/tag';
 import Badge from 'primevue/badge';
+import InputText from 'primevue/inputtext';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
@@ -19,6 +20,7 @@ import EditModuleDialog from './EditModuleDialog.vue';
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useConfirm } from 'primevue/useconfirm';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
@@ -242,17 +244,22 @@ function showEditModuleDialog() {
                     </span>
                 </template>
                 <template #end>
-                    <div class="flex flex-row gap-4 items-center">
+                    <div class="flex flex-row gap-4 items-center mr-4">
                         <label class="font-semibold">Learning Strand:</label>
                         <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="deselect" /> 
                     </div>
+                    <span class="relative">
+                        <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                        <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal"/>
+                    </span>
                 </template>
             </Toolbar>
             <DataTable 
-                :value="allModules" dataKey="id" 
+                :value="allModules" dataKey="id" v-model:filters="filters"
                 v-model:selection="selectedModules" scrollable style=" overflow: auto;"
                 selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewModule"
-                sortField="title" :sortOrder="1" removableSort class="unselectable"
+                sortField="title" :sortOrder="1" removableSort class="unselectable" filterDisplay="menu"
+                :globalFilterFields="['title', 'distribution_date', 'retrieval_date', 'status']"
             >
                 <template #empty> <div class="text-center">No records found.</div> </template>
 
