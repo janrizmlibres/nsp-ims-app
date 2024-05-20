@@ -268,6 +268,7 @@ export async function injectStaff() {
         canMgTerm: true,
         canMgLs: true,
         canMgStudReq: true,
+        canMgStudCat: true,
         canMgStaff: true,
       },
       {
