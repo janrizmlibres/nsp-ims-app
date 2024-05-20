@@ -72,7 +72,8 @@ function updateModuleTable(modules) {
             lacking: module.lacking,
             complete: module.complete,
             total: module.total,
-            status: module.status
+            status: module.status,
+            updatedAt: module.updatedAt
         })
     }
 }
@@ -273,6 +274,11 @@ function showEditModuleDialog() {
                         <Tag :value="slotProps.data.status ? 'Done' : 'Not Done'" :severity="getStatusLabel(slotProps.data.status)" />
                     </template>
                 </Column>
+                <Column field="updatedAt" header="Updated At" sortable style="width: 10rem;">
+                    <template #body="slotProps">
+                        {{ new Date(slotProps.data.updatedAt).toLocaleString() }}
+                    </template>
+                </Column>
             </DataTable>
         </div>
     </div>
@@ -280,13 +286,4 @@ function showEditModuleDialog() {
 </template>
 
 <style>
-.unselectable {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
-}
-
 </style>
