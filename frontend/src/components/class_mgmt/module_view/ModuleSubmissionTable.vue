@@ -132,6 +132,7 @@ async function updateSubmissions() {
 
         leave.value = true
         noChanges.value = true
+        changeMode()
     } catch (error) {
         toast.add({
             severity: 'error',
@@ -163,6 +164,10 @@ function resetData() {
         }
     })
 }
+
+function changeMode() {
+    edit.value = !edit.value
+    leave.value = !leave.value
 }
 
 onBeforeRouteLeave((to) => {
