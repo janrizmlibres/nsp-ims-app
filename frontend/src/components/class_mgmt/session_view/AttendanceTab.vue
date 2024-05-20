@@ -15,6 +15,10 @@ const emit = defineEmits(['onUpdate'])
 const regular = ref([])
 const hybrid = ref([])
 const isFetching = ref(true)
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+});
 
 function updateAttendanceData(data) {
     emit('onUpdate', data)
