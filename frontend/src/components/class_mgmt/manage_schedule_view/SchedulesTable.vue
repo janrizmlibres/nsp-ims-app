@@ -34,6 +34,7 @@ const selectedSchedules = ref([])
 const metaKey = ref(true)
 const editScheduleDialog = ref(false)
 const schedule = ref()
+
 function updateScheduleTable(classId) {
     classData.value.length = 0
 
@@ -75,31 +76,31 @@ watch(() => props.classLevel, (data) => {
 }, { immediate: true })
 
 async function addSchedule(learningStrand, form) {
-        try {
+    try {
         await classLearningStrandStore.addSchedule(learningStrand.id, {
             volunteer: form.volunteer,
             days: form.school_days.toString(),
             start_time: format(new Date(form.start_time), "HH:mm"),
             end_time: format(new Date(form.end_time), "HH:mm"),
-            })
-            
+        })
+
         updateScheduleTable(learningStrand.classLevelId)
 
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
             detail: "Added schedule successfully!",
-                life: 3000
-            })
+            life: 3000
+        })
     } catch (error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
             detail: "Unexpected error encountered.",
-                life: 3000
-            })
-        }
+            life: 3000
+        })
     }
+}
 
 async function deleteSchedules() {
     confirm.require({
@@ -128,6 +129,21 @@ async function deleteSchedules() {
         }
     })
 }
+
+function updateSchedule(data) {
+    updateScheduleTable(data)
+    showEditScheduleDialog()
+}
+
+function editSchedule(data) {
+    schedule.value = {... data}
+    showEditScheduleDialog()
+}
+
+function showEditScheduleDialog() {
+    editScheduleDialog.value = !editScheduleDialog.value
+}
+
 function deselect() {
     selectedSchedules.value = []
 }
@@ -159,50 +175,51 @@ function deselect() {
                 v-model:selection="selectedSchedules" scrollable style=" overflow: auto;"
                 selectionMode="multiple" :metaKeySelection="metaKey"
                 class="unselectable"
-    >
-        <template #empty> <div class="text-center">Nothing added.</div> </template>
+            >
+                <template #empty> <div class="text-center">Nothing added.</div> </template>
 
-        <ColumnGroup type="header">
-            <Row>
+                <ColumnGroup type="header">
+                    <Row>
                         <Column header="" :rowspan="2" />
-                <Column header="Learning Strand" :rowspan="2" />
-                <Column header="Teacher" :rowspan="2" />
-                <Column header="Schedule" :colspan="4" />
-            </Row>
-            <Row>
+                        <Column header="Learning Strand" :rowspan="2" />
+                        <Column header="Teacher" :rowspan="2" />
+                        <Column header="Schedule" :colspan="4" />
+                    </Row>
+                    <Row>
                         <Column header="Days" />
                         <Column header="Start Time" />
                         <Column header="End Time" />
                         <Column header="Updated At" />
-            </Row>
-        </ColumnGroup>
+                    </Row>
+                </ColumnGroup>
 
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">
                         <Button icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" />
                     </template>
                 </Column>
-        <Column field="name" />
-        <Column field="volunteer">
-            <template #body="slotProps">
-                {{ slotProps.data.volunteer.fullname }}
-            </template>
-        </Column>
-        <Column field="school_days">
-            <template #body="slotProps">
-                {{ slotProps.data.school_days.toString() }}
-            </template>
-        </Column>
+                <Column field="name" />
+                <Column field="volunteer">
+                    <template #body="slotProps">
+                        {{ slotProps.data.volunteer.fullname }}
+                    </template>
+                </Column>
+                <Column field="school_days">
+                    <template #body="slotProps">
+                        {{ slotProps.data.school_days.toString() }}
+                    </template>
+                </Column>
                 <Column field="start_time" />
                 <Column field="end_time" />
                 <Column field="updatedAt" header="Updated At" sortable style="width: 10rem;">
                     <template #body="slotProps">
                         {{ new Date(slotProps.data.updatedAt).toLocaleString() }}
-            </template>
-        </Column>
-    </DataTable>
+                    </template>
+                </Column>
+            </DataTable>
         </div>
     </div>
+    <EditScheduleDialog :data="schedule" :state="editScheduleDialog" @onUpdate="updateSchedule" @onUpdateDisplay="showEditScheduleDialog" />
 </template>
 
 <style>
