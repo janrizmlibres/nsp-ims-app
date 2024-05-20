@@ -277,9 +277,16 @@ function showEditModuleDialog() {
                         <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
                     </template>
                 </Column>
-                <Column field="status" header="Status">
+                <Column field="status" header="Status" :filterMenuStyle="{ width: '14rem' }">
                     <template #body="slotProps">
                         <Tag :value="slotProps.data.status ? 'Done' : 'Not Done'" :severity="getStatusLabel(slotProps.data.status)" />
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <Dropdown v-model="filterModel.value" :options="statuses" optionLabel="label" optionValue="value"  placeholder="Select One" class="p-column-filter" showClear>
+                            <template #option="slotProps">
+                                <Tag :value="slotProps.option.label" :severity="getStatusLabel(slotProps.option.value)" />
+                            </template>
+                        </Dropdown>
                     </template>
                 </Column>
                 <Column field="updatedAt" header="Updated At" sortable style="width: 10rem;">
