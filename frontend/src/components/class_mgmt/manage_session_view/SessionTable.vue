@@ -149,7 +149,7 @@ async function deleteModules() {
 }
 
 function viewSession() {
-    router.push({ name: 'session-info', query: { id: selectedSessions.value[selectedSessions.value.length-1].id, status: termStatus } })
+    router.push({ name: 'session-info', query: { id: selectedSessions.value[selectedSessions.value.length-1].id, status: termStatus.value } })
 }
 
 const getNumericLabel = (field) => {
