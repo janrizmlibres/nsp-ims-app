@@ -121,6 +121,8 @@ async function deleteSchedules() {
         }
     })
 }
+function deselect() {
+    selectedSchedules.value = []
 }
 </script>
 
