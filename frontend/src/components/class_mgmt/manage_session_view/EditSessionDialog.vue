@@ -56,10 +56,8 @@ async function cancel() {
 <template>
     <Dialog v-model:visible="state" modal header="Edit Session" :style="{ width: '20rem' }" :closable="false">
         <div class="flex flex-col gap-4 mb-4">
-            <div class="flex flex-col">
-                <label>Remarks</label>
-                <Textarea v-model="session.remarks" rows="5" cols="30" />
-            </div>
+            <label>Remarks</label>
+            <Textarea v-model="session.remarks" rows="5" cols="30" />
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Update" @click="updateSession"></Button>

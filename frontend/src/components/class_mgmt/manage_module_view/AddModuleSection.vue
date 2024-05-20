@@ -4,7 +4,7 @@ import Button from 'primevue/button';
 import InputNumber from 'primevue/inputnumber';
 import Calendar from 'primevue/calendar';
 import { useToast } from 'primevue/usetoast';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
@@ -72,10 +72,8 @@ async function addModule() {
             <InputNumber v-model="max" inputId="max" :disabled="!classLearningStrandId" />
         </div>
         <div class="flex flex-col gap-4 mb-4">
-            <div class="flex flex-col">
-                <label for="calendar">Distribution Date - Retrieval Date</label>
-                <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" :disabled="!classLearningStrandId" />
-            </div>
+            <label for="calendar">Distribution Date - Retrieval Date</label>
+            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" :disabled="!classLearningStrandId" />
         </div>
         <Button type="button" outlined rounded label="Add" :disabled="!min || !max || !dates" @click="addModule" />
     </div>

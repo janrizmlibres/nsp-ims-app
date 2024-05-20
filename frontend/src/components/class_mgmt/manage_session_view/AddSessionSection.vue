@@ -99,16 +99,12 @@ watch(() => props.data, (data) => {
             <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!data" @update:modelValue="resetValues" />
         </div>
         <div v-if="selectionType === 1" class="flex flex-col gap-4 mb-4">
-            <div class="flex flex-col">
-                <label>Session Date</label>
-                <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data" @update:modelValue="addSelectedDate" />
-            </div>
+            <label>Session Date</label>
+            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data" @update:modelValue="addSelectedDate" />
         </div>
         <div v-if="selectionType === 2" class="flex flex-col gap-4 mb-4">
-            <div class="flex flex-col">
-                <label>Session Dates</label>
-                <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
-            </div>
+            <label>Session Dates</label>
+            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
         </div>
         <Button type="button" outlined rounded label="Add" :disabled="!date" @click="addSession" />
     </div>

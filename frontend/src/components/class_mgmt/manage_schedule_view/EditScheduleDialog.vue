@@ -69,28 +69,20 @@ async function cancel() {
 <template>
     <Dialog v-model:visible="state" modal header="Edit Schedule" :style="{ width: '20rem' }" :closable="false">
         <div class="flex flex-col gap-4 mb-4">
-            <div class="flex flex-col">
-                <label>Teacher</label>
-                <Dropdown v-model="schedule.volunteer" :options="volunteers" optionLabel="fullname" :placeholder="schedule.volunteer.fullname" />
-            </div>
+            <label>Teacher</label>
+            <Dropdown v-model="schedule.volunteer" :options="volunteers" optionLabel="fullname" :placeholder="schedule.volunteer.fullname" />
         </div>
         <div class="flex flex-col gap-4 mb-4">
-            <div class="flex flex-col">
-                <label>Days</label>
-                <MultiSelect v-model="schedule.school_days" :options="days" placeholder="Select Days" :maxSelectedLabels="2" />
-            </div>
+            <label>Days</label>
+            <MultiSelect v-model="schedule.school_days" :options="days" placeholder="Select Days" :maxSelectedLabels="2" />
         </div>
         <div class="flex flex-col gap-4 mb-4">
-            <div class="flex flex-col">
-                <label>Start Time</label>
-                <Calendar id="calendar-timeonly" v-model="startTime" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-            </div>
+            <label>Start Time</label>
+            <Calendar id="calendar-timeonly" v-model="startTime" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
         </div>
         <div class="flex flex-col gap-4 mb-4">
-            <div class="flex flex-col">
-                <label>End Time</label>
-                <Calendar id="calendar-timeonly" v-model="endTime" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-            </div>
+            <label>End Time</label>
+            <Calendar id="calendar-timeonly" v-model="endTime" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Update" @click="updateSchedule"></Button>

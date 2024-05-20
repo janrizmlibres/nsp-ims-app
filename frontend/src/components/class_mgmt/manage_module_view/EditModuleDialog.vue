@@ -68,10 +68,8 @@ async function cancel() {
 <template>
     <Dialog v-model:visible="state" modal header="Edit Module" :style="{ width: '20rem' }" :closable="false">
         <div class="flex flex-col gap-4 mb-4">
-            <div class="flex flex-col">
-                <label>Distribution Date - Retrieval Date</label>
-                <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
-            </div>
+            <label>Distribution Date - Retrieval Date</label>
+            <Calendar v-model="dates" id="calendar" showIcon iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Update" @click="updateModule"></Button>
