@@ -25,6 +25,7 @@ const ModuleSubmission = sequelize.define("module_submission", {
     },
   },
   date_submitted: DATE,
+  score: INTEGER,
   remarks: STRING,
   status: {
     type: STRING,
