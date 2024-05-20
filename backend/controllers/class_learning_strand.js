@@ -44,18 +44,17 @@ export async function addModule(req, res, next) {
             where: {classLevelId: classLearningStrand.classLevelId}
         })
 
-        titles.map(async title => {
-            const module = await classLearningStrand.createModule({
+        for (const title of titles) {
+            await classLearningStrand.createModule({
                 title: title,
                 distribution_date: distriDate,
                 retrieval_date: retriDate
+            }).then(async (module) => {
+                for (const enrollment of enrollments) {
+                    await module.addEnrollment(enrollment)
+                }
             })
-
-            for (const enrollment of enrollments) {
-                const module_submission = await module.addEnrollment(enrollment)
-                console.log(module_submission);
-            }
-        })
+        }
 
         res.status(201).json({ 
             message: "Learning activity sheets added!"
