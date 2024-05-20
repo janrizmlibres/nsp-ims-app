@@ -32,7 +32,7 @@ import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
 
 import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue'
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
-import EditVolunteerView from '@/views/volunteer_view/EditVolunteerView.vue';
+//import EditVolunteerView from '@/views/volunteer_view/EditVolunteerView.vue';
 
 import { useAuthStore } from '@/stores/auth'
 // import ManageGradeView from '@/views/class_mgmt/ManageGradeView.vue'
@@ -247,12 +247,12 @@ const router = createRouter({
           name: 'admit-volunteers',
           component: AdmitVolunteerView
         },
-        {
+        /*{
           path: '/edit-volunteer/:id',
           name: 'edit-volunteer',
           component: EditVolunteerView,
           props: true,
-        },
+        },*/
         {
           path: 'staffs',
           beforeEnter: () => {
