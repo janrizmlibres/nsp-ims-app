@@ -39,7 +39,19 @@ watch(() => props.modelValue, (data) => {
 </script>
 
 <template>
-    <TabView class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
+    <div class="flex flex-col h-full overflow-hidden bg-white shadow-xl rounded-md px-5 pt-5">
+        <div class="flex flex-row justify-between">
+            <div class="flex flex-row gap-4 items-center px-4">
+                <i class="fa fa-calendar-days fa-2xl u-txt-active"></i>
+                <span class="font-semibold text-3xl u-txt-active">Attendances</span>
+            </div>
+            <span class="relative">
+                <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal" showClear />
+            </span>
+        </div>
+        <Divider />
+        <TabView>
         <TabPanel header="Regular">
             <ProgressSpinner v-if="isFetching" class="flex justify-center" />
             <AttendanceTable v-else v-model="regular" @onUpdate="updateAttendanceData" />
