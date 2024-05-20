@@ -48,7 +48,10 @@ const status = computed(() => {
     if (data.length === 1) return data[0] ? true : false
     else return null
 })
-
+const statuses = ref([
+    {label: 'Not Done', value: false},
+    {label: 'Done', value: true}
+]);
 const meterProgress = ref((data) => {
     return [{
         label: `${data.filter((datum) => datum.status === true).length} of ${data.length} completed`, 
