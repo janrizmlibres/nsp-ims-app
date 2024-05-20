@@ -6,9 +6,10 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Toolbar from 'primevue/toolbar';
 import Badge from 'primevue/badge';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
+import { format } from 'date-fns';
 
 // Custom
 import AddSessionSection from './AddSessionSection.vue';
@@ -20,7 +21,7 @@ import { useConfirm } from 'primevue/useconfirm';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
-const props = defineProps(['learningStrands', 'termStatus'])
+const props = defineProps(['term', 'learningStrands', 'termStatus'])
 const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
@@ -33,33 +34,48 @@ const cols = ref([
 
 const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
-const allSessions = ref([])
 const classLearningStrandId = ref()
 const metaKey = ref(true)
 const learningStrandInput = ref()
 const selectedSessions = ref([])
 const session = ref()
 const editSessionDialog = ref(false)
+const sessionByMonths = ref()
+const selectedRow = ref({}) 
+const selectedMonth = ref()
 
 function updateSessionTable(sessions) {
     isFetching.value = true
-    allSessions.value.length = 0
     
-    for (const session of sessions) {
-        let date = new Date(session.date)
+    sessionByMonths.value = (function() {
+        let start = new Date(props.term.start_date)
+        let end = new Date(props.term.end_date)
+        let months = []
+
+        while (start <= end) {
+            months[start.getMonth()] = {
+                id: start.getMonth()+1,
+                month: format(start, "MMMM yyyy"),
+                date: start.toLocaleDateString(),
+                sessions: [],
+                count: 0
+            }
+            
+            start.setMonth(start.getMonth() + 1);
+        }
+
+        return months
+    })()
+
+    console.log(sessionByMonths.value);
+
+    sessions.reduce((months, obj) => {
+        const month = new Date(obj.date).getMonth()
         
-        const temp = ref({
-            id: session.id,
-            date: date,
-            absent: session.absent,
-            present: session.present,
-            total: session.total,
-            remarks: session.remarks,
-            updatedAt: session.updatedAt
-        })
-        allSessions.value.push(temp.value)
-    }
-    
+        sessionByMonths.value[month].sessions.push(obj);
+        sessionByMonths.value[month].count += 1
+    }, {});
+
     isFetching.value = false
 }
 
@@ -79,7 +95,7 @@ function updateSession(data) {
 
 watch(() => props.learningStrands, () => {
     learningStrandInput.value = null
-    allSessions.value.length = 0
+    sessionByMonths.value = null
 })
 
 watch(() => learningStrandInput.value, (input) => {
@@ -102,10 +118,6 @@ watch(() => learningStrandInput.value, (input) => {
         }
     }
 }, {immediate: false})
-
-function deselect() {
-    selectedSessions.value = []
-}
 
 async function deleteModules() {
     confirm.require({
@@ -156,12 +168,38 @@ const getNumericLabel = (field) => {
             return null;
     }
 }
+
+function deselect() {
+    selectedSessions.value = []
+}
+
+function onExpandRow(id) {
+    if (id) {
+        deselect()
+        selectedRow.value = {}
+        const checkProp = id in selectedRow.value
+        if (checkProp) delete selectedRow.value[id]
+        else selectedRow.value[id] = true
+        selectedRow.value = { ...selectedRow.value }
+    }
+}
+
+function onCollapseRow() {
+    deselect()
+    selectedRow.value = {}
+}
+
+// onMounted(() => {
+//     document.addEventListener
+//     document.addEventListener('click', this.onClickOutside);
+// })
+
 </script>
 
 <template>
     <div class="flex h-full w-full">
         <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
-            <AddSessionSection :classLearningStrandId="classLearningStrandId" @onUpdate="updateSessionTable" />
+            <AddSessionSection :id="classLearningStrandId" :data="selectedMonth" @onUpdate="updateSessionTable" />
         </div>
         <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl">
             <Toolbar class="!p-2">
@@ -186,41 +224,57 @@ const getNumericLabel = (field) => {
                     </div>
                 </template>
             </Toolbar>
-            <DataTable 
-                :value="allSessions" dataKey="id"
-                v-model:selection="selectedSessions" scrollable style=" overflow: auto;"
-                selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewSession"
-                sortField="date" :sortOrder="1" removableSort class="unselectable"
+            <DataTable v-model:expandedRows="selectedRow" :value="sessionByMonths" dataKey="id"
+                v-model:selection="selectedMonth" selectionMode="single" 
+                @rowSelect="onExpandRow(selectedMonth ? selectedMonth.id : null)" @rowUnselect="onCollapseRow()"
+                scrollable style=" overflow: auto;"
             >
                 <template #empty> <div class="text-center">No records found.</div> </template>
 
-                <Column :exportable="false" style="width:2rem">
+                <Column expander style="width: 5rem" />
+                <Column field="id" header="Id" />
+                <Column field="month" header="Month" />
+                <Column field="count" header="Sessions">
                     <template #body="slotProps">
-                        <Button icon="fa fa-pencil" text @click="editSession(slotProps.data)" />
+                        <Badge v-if="slotProps.data" :value="slotProps.data.count" :severity="slotProps.data.count === 0 ? 'danger': 'info'"></Badge>
                     </template>
                 </Column>
-                <Column field="date" header="Session Date" sortable>
-                    <template #body="slotProps">
-                        {{ slotProps.data.date.toDateString() }}
-                    </template>
-                </Column>
-                <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header">
-                    <template #body="{ data, field }">
-                        <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
-                    </template>
-                </Column>
-                <Column field="remarks" header="Remarks" style="width: 16rem;">
-                    <template #body="slotProps">
-                        {{ slotProps.data.remarks }}
-                    </template>
-                </Column>
-                <Column field="updatedAt" header="Updated At" style="width: 10rem;" sortable>
-                    <template #body="slotProps">
-                        {{ new Date(slotProps.data.updatedAt).toLocaleString() }}
-                    </template>
-                </Column>
-                <template #footer>
-                    
+                
+                <template #expansion="slotProps">
+                    <DataTable 
+                        :value="slotProps.data.sessions" dataKey="id"
+                        v-model:selection="selectedSessions"
+                        selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewSession" @blur="deselect()"
+                        sortField="date" :sortOrder="1" removableSort class="unselectable"
+                    >
+                        <template #empty> <div class="text-center">No records found.</div> </template>
+
+                        <Column :exportable="false" style="width:2rem">
+                            <template #body="slotProps">
+                                <Button icon="fa fa-pencil" text @click="editSession(slotProps.data)" />
+                            </template>
+                        </Column>
+                        <Column field="date" header="Session Date" sortable>
+                            <template #body="slotProps">
+                                {{ new Date(slotProps.data.date).toDateString() }}
+                            </template>
+                        </Column>
+                        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header">
+                            <template #body="{ data, field }">
+                                <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
+                            </template>
+                        </Column>
+                        <Column field="remarks" header="Remarks" style="width: 16rem;">
+                            <template #body="slotProps">
+                                {{ slotProps.data.remarks }}
+                            </template>
+                        </Column>
+                        <Column field="updatedAt" header="Updated At" style="width: 10rem;" sortable>
+                            <template #body="slotProps">
+                                {{ new Date(slotProps.data.updatedAt).toLocaleString() }}
+                            </template>
+                        </Column>
+                    </DataTable>
                 </template>
             </DataTable>
         </div>
