@@ -20,7 +20,8 @@ const toast = useToast()
 const confirm = useConfirm()
 
 const emit = defineEmits(['onUpdate'])
-const props = defineProps(['modelValue', 'isNotActive', 'id', 'mode'])
+const props = defineProps(['modelValue', 'isNotActive', 'id', 'mode', 'filters'])
+const filters = computed(() => props.filters)
 const isNotActive = computed(() => props.isNotActive)
 const classLearningStrandId = computed(() => props.id)
 const edit = ref(false)
@@ -121,7 +122,8 @@ function changeMode() {
 <template>
     <DataTable 
         :value="grades" dataKey="id" scrollable style=" overflow: auto;"
-        sortField="lastName" :sortOrder="1" removableSort
+        sortField="lastName" :sortOrder="1" removableSort v-model:filters="filters"
+        :globalFilterFields="['lastName', 'firstName', 'remarks']"
     >
         <template #empty> <div class="text-center">No records found.</div> </template>
 

@@ -4,6 +4,7 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Dropdown from 'primevue/dropdown';
 import Toolbar from 'primevue/toolbar';
+import InputText from 'primevue/inputtext';
 import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
@@ -12,6 +13,7 @@ import GradesTable from '@/components/class_mgmt/manage_grade_view/GradesTable.v
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { FilterMatchMode } from 'primevue/api';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
@@ -25,6 +27,9 @@ const inactive = ref([])
 const drop = ref([])
 const isFetching = ref(true)
 const learningStrandInput = ref()
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+});
 
 function updateGradesData(data) {
     isFetching.value = true
@@ -85,21 +90,25 @@ watch(() => learningStrandInput.value, (input) => {
     <div class="relative flex flex-col h-full">
         <Toolbar class="!p-2">
             <template #end>
-                <div class="flex flex-row gap-4 items-center">
+                <div class="flex flex-row gap-4 items-center mr-4">
                     <label class="font-semibold">Learning Strand:</label>
                     <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;"/> 
                 </div>
+                <span class="relative">
+                    <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                    <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal" showClear />
+                </span>
             </template>
         </Toolbar>
         <TabView>
             <TabPanel header="Active">
-                <GradesTable v-model="active" :id="classLearningStrandId" :isNotActive="!termStatus" @onUpdate="updateGradesData" />
+                <GradesTable v-model="active" :id="classLearningStrandId" :isNotActive="!termStatus" :filters="filters" @onUpdate="updateGradesData" />
             </TabPanel>
             <TabPanel header="Inactive">
-                <GradesTable v-model="inactive" :id="classLearningStrandId" :isNotActive="!termStatus" @onUpdate="updateGradesData" />
+                <GradesTable v-model="inactive" :id="classLearningStrandId" :isNotActive="!termStatus" :filters="filters" @onUpdate="updateGradesData" />
             </TabPanel>
             <TabPanel header="Dropped">
-                <GradesTable v-model="drop" :id="classLearningStrandId" :isNotActive="true" @onUpdate="updateGradesData" />
+                <GradesTable v-model="drop" :id="classLearningStrandId" :isNotActive="true" :filters="filters" @onUpdate="updateGradesData" />
             </TabPanel>
         </TabView>
     </div>
