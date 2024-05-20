@@ -3,19 +3,22 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
 
-const props = defineProps(['id'])
+const props = defineProps(['id', 'data'])
 const toast = useToast()
 
 const emit = defineEmits(['onUpdate'])
 const classLearningStrandStore = useClassLearningStrandStore()
 const classLearningStrandId = computed(() => props.id)
-
+const data = computed(() => props.data)
 const sessions = ref([])
 const date = ref()
+const minDate = ref()
+const maxDate = ref()
+const currentMonth = ref()
 const selectionType = ref(1)
 const selection = ref([
     {label: 'Single', value: 1},
@@ -75,6 +78,17 @@ async function addSession() {
         })
     }
 }
+
+watch(() => props.data, (data) => {
+    date.value = null
+    
+    if (data) {
+        let date = new Date(data.date)
+        minDate.value = new Date(date.getFullYear(), date.getMonth(), 1);
+        maxDate.value = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+        currentMonth.value = minDate.value.getMonth()
+    }
+})
 </script>
 
 <template>
@@ -82,18 +96,18 @@ async function addSession() {
         <span class="font-semibold text-lg u-txt-active mb-4">Add Session</span>
         <div class="flex flex-col mb-4">
             <label>Selection Type</label>
-            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!classLearningStrandId" @update:modelValue="resetValues" />
+            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!data" @update:modelValue="resetValues" />
         </div>
         <div v-if="selectionType === 1" class="flex flex-col gap-4 mb-4">
             <div class="flex flex-col">
                 <label>Session Date</label>
-                <Calendar v-model="date" id="calendar" showIcon showButtonBar iconDisplay="input" :disabled="!classLearningStrandId" @update:modelValue="addSelectedDate" />
+                <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data" @update:modelValue="addSelectedDate" />
             </div>
         </div>
         <div v-if="selectionType === 2" class="flex flex-col gap-4 mb-4">
             <div class="flex flex-col">
                 <label>Session Dates</label>
-                <Calendar v-model="date" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
+                <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
             </div>
         </div>
         <Button type="button" outlined rounded label="Add" :disabled="!date" @click="addSession" />
