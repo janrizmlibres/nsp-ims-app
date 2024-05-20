@@ -3,10 +3,13 @@
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import ProgressSpinner from 'primevue/progressspinner';
+import InputText from 'primevue/inputtext';
+import Divider from 'primevue/divider';
 import { ref, watch } from 'vue';
 
 // // Custom
 import AttendanceTable from '../session_view/AttendanceTable.vue';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 
 const props = defineProps(['modelValue'])
@@ -52,15 +55,15 @@ watch(() => props.modelValue, (data) => {
         </div>
         <Divider />
         <TabView>
-        <TabPanel header="Regular">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+            <TabPanel header="Regular">
+                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
                 <AttendanceTable v-else v-model="regular" :filters="filters" @onUpdate="updateAttendanceData" />
-        </TabPanel>
-        <TabPanel header="Hybrid">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+            </TabPanel>
+            <TabPanel header="Hybrid">
+                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
                 <AttendanceTable v-else v-model="hybrid" :filters="filters" @onUpdate="updateAttendanceData" />
-        </TabPanel>
-    </TabView>
+            </TabPanel>
+        </TabView>
     </div>
 </template>
 
