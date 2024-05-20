@@ -53,6 +53,24 @@ onMounted(async () => {
         })
     }
 })
+
+
+onBeforeRouteLeave((to) => {
+    if (classStore.leave) {
+        return true
+    }
+
+    confirm.require({
+        message: 'Do you really want to leave? you have unsaved changes!',
+        header: 'Redirect Confirmation',
+        accept: async () => {
+            classStore.leave = true
+            await router.push(to)
+        }
+    })
+
+    return false
+})
 </script>
 
 <template>
