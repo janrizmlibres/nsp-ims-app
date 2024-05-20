@@ -8,8 +8,19 @@
       <Column header="Actions">
         <template #body="slotProps">
           <div class="flex">
-            <Button class="h-8 mr-2" label="Edit" icon="fa-solid fa-user-pen" outlined />
-            <Button class="h-8" label="Delete" icon="pi pi-trash" outlined />
+            <Button 
+            class="h-8 mr-2" 
+            label="Edit" 
+            icon="fa-solid fa-user-pen" 
+            outlined 
+            @click="editVolunteer(slotProps.data.volunteerId)" 
+            />
+            <Button 
+            class="h-8" 
+            label="Delete" 
+            icon="pi pi-trash" 
+            outlined 
+            />
           </div>
         </template>
       </Column>
@@ -33,6 +44,7 @@ import Column from 'primevue/column';
 import TheHeader from '@/components/volunteer_view/VolunteerHeader.vue';
 import Button from 'primevue/button';
 import { FilterMatchMode } from 'primevue/api';
+import { useRouter } from 'vue-router';
 
 export default {
   components: {
@@ -43,6 +55,7 @@ export default {
     Button,
   },
   setup() {
+    const router = useRouter();
     const volunteerStore = useVolunteerStore();
     const volunteers = ref([]);
     const filters = ref({
@@ -71,6 +84,10 @@ export default {
     const updateGlobalFilter = (newValue) => {
       filters.value.global.value = newValue;
     };
+
+    function editVolunteer(id) {
+      router.push(`/update-volunteer/${id}`);
+    }
 
     onMounted(async () => {
       await volunteerStore.getAllVolunteers();
@@ -105,7 +122,12 @@ export default {
   );
 });
 
-    return { filteredVolunteers, columns, filters, updateGlobalFilter, recordCount };
+    return { filteredVolunteers, 
+              columns, 
+              filters, 
+              updateGlobalFilter, 
+              recordCount,
+              editVolunteer};
   },
 };
 </script>

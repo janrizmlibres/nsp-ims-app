@@ -92,3 +92,68 @@ export async function addVolunteer(req, res, next) {
     next(error);
   }
 }
+
+export async function getVolunteer(req, res, next) {
+  try {
+    const id = req.params.id;
+    const volunteer = await Volunteer.findByPk(id, {
+      include: [VolunteerPersonalInformation, 
+                VolunteerContactInformation, 
+                VolunteerSpecialization,
+                VolunteerAvailability,
+                VolunteerEmergency,
+                StudentVolunteer,
+                ProfessionalVolunteer]
+    });
+
+    if (!volunteer) {
+      return res.status(404).json({ message: 'Volunteer not found' });
+    }
+
+    res.status(200).json({ 
+      message: "Fetched Volunteer Successfully!", 
+      data: volunteer
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
+export async function updateVolunteer(req, res, next) {
+  const volunteerId = req.params.volunteerId;
+
+  try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
+      error.statusCode = 422;
+      throw error;
+    }
+
+    const volunteer = await Volunteer.findByPk(volunteerId);
+
+    if (!volunteer) {
+      const error = new Error("Could not find volunteer.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    volunteer.set(req.body);
+    const result = await volunteer.save();
+
+    res.status(200).json({
+      message: "Volunteer updated!",
+      volunteer: result,
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}

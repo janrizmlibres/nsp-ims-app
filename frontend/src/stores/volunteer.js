@@ -31,6 +31,26 @@ export const useVolunteerStore = defineStore('volunteer', () => {
 
     return result
   }
+
+  async function getVolunteer(id) {
+  const authStore = useAuthStore()
+
+  const result = await axios.get(`http://localhost:8080/volunteer/${id}`, {
+    headers: { Authorization: 'Bearer ' + authStore.token }
+  })
+
+    return result
+  }
+
+  async function updateVolunteer(id, formData) {
+  const authStore = useAuthStore()
+
+  const result = await axios.put(`http://localhost:8080/volunteer/${id}`, formData, {
+    headers: { Authorization: 'Bearer ' + authStore.token }
+  })
+
+    return result
+  }
   
-  return { volunteers, getAllVolunteers, addVolunteer }
+  return { volunteers, getAllVolunteers, addVolunteer, getVolunteer, updateVolunteer }
 })

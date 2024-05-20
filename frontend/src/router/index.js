@@ -32,6 +32,7 @@ import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
 
 import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue'
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
+import EditVolunteerView from '@/views/volunteer_view/EditVolunteerView.vue';
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -185,6 +186,12 @@ const router = createRouter({
           path: '/admit-volunteers', // New route object
           name: 'admit-volunteers',
           component: AdmitVolunteerView
+        },
+        {
+          path: '/update-volunteer/:id',
+          name: 'EditVolunteer',
+          component: EditVolunteerView,
+          props: true,
         },
         {
           path: 'staffs',
