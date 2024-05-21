@@ -19,6 +19,7 @@ const volunteerStore = useVolunteerStore()
 const volunteers = computed(() => volunteerStore.volunteers)
 const learningStrands = computed(() => props.learningStrands)
 const learningStrandInput = ref()
+const invalid = ref()
 
 onMounted(() => {
     try {
@@ -53,11 +54,23 @@ const enableResetButton = computed(() => {
 })
 
 function addSchedule() {
+    if ((formData.value.start_time.getHours() >= formData.value.end_time.getHours()) && (formData.value.start_time.getMinutes() >= formData.value.end_time.getMinutes())) {
+        toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Incorrect input range!',
+                life: 3000
+            })
+            invalid.value = true
+            return
+    }
+
     emit('onUpdate', learningStrandInput.value, formData.value)
     resetForm()
 }
 
 function resetForm() {
+    invalid.value = false
     learningStrandInput.value = null
     formData.value = {
         volunteer: null,
@@ -85,11 +98,11 @@ function resetForm() {
         </div>
         <div class="flex flex-col mb-4">
             <label>Start Time</label>
-            <Calendar id="calendar-timeonly" v-model="formData.start_time" timeOnly hourFormat="12" :disabled="!termStatus" />
+            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.start_time" timeOnly hourFormat="12" :disabled="!termStatus" />
         </div>
         <div class="flex flex-col mb-4">
             <label>End Time</label>
-            <Calendar id="calendar-timeonly" v-model="formData.end_time" timeOnly hourFormat="12" :disabled="!termStatus" />
+            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.end_time" timeOnly hourFormat="12" :disabled="!termStatus" />
         </div>
         <div class="flex flex-row gap-2">
             <Button type="button" outlined rounded label="Add" :disabled="disableSubmitButton" @click="addSchedule" class="w-full" />
