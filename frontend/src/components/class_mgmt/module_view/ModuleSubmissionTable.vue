@@ -45,7 +45,7 @@ watch(() => props.modelValue, (data) => {
     isFetching.value = true
     learners.value.length = 0
 
-    for (const moduleSubmission of data.module_submissions) {
+    for (const moduleSubmission of data) {
         if (moduleSubmission.date_submitted !== null) {
             moduleSubmission.date_submitted = new Date(moduleSubmission.date_submitted)
         }
