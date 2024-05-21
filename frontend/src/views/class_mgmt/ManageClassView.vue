@@ -19,6 +19,7 @@ import TheHeader from '@/components/class_mgmt/TheHeader.vue';
 // stores
 import { useUtilitiesStore } from '@/stores/utilities';
 import { useClassStore } from '@/stores/class';
+import ManageStudentView from './ManageStudentView.vue';
 
 const utilitiesStore = useUtilitiesStore()
 const classStore = useClassStore()
@@ -86,6 +87,15 @@ onBeforeRouteLeave((to) => {
     <ContentPane v-else header="Class" subheader="Management">
         <TheHeader @updateState="updateState" :state="state" />
         <TabView v-if="state" class="bg-white shadow-xl rounded-md">
+            <TabPanel>
+                <template #header>
+                    <div class="flex items-center gap-2">
+                        <i class="fa fa-user" />
+                        <span class="u-txt-active">Students</span>
+                    </div>
+                </template>
+                <ManageStudentView :learningStrands="learningStrands" :termStatus="termStatus" />
+            </TabPanel>
             <TabPanel>
                 <template #header>
                     <div class="flex items-center gap-2">
