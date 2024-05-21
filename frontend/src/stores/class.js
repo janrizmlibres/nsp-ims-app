@@ -6,38 +6,10 @@ import { ref } from 'vue'
 export const useClassStore = defineStore('class', () => {
     const leave = ref(true)
 
-    async function getClass(classId) {
-        const authStore = useAuthStore()
-
-        const result = await axios.get(`http://localhost:8080/class/${classId}`, {
-            headers: {Authorization: 'Bearer ' + authStore.token},
-        })
-
-        return result.data.data
-    }
-
-    async function addSchedule(classId, form) {
-        const authStore = useAuthStore()
-
-        await axios.post(`http://localhost:8080/class/${classId}/learningStrand/schedule/add`, form, {
-            headers: {Authorization: 'Bearer ' + authStore.token},
-        })
-    }
-
     async function getAllLearningStrands(classId) {
         const authStore = useAuthStore()
 
         const result = await axios.get(`http://localhost:8080/class/${classId}/classLearningStrands`, {
-            headers: {Authorization: 'Bearer ' + authStore.token},
-        })
-        
-        return result.data.data
-    }
-
-    async function getAllModules(classId) {
-        const authStore = useAuthStore()
-
-        const result = await axios.get(`http://localhost:8080/class/${classId}/modules`, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
@@ -54,17 +26,17 @@ export const useClassStore = defineStore('class', () => {
         return result.data.data
     }
 
-    async function getAllGrades(classId) {
+    async function getStudent(classId, enrollmentId) {
         const authStore = useAuthStore()
 
-        const result = await axios.get(`http://localhost:8080/class/${classId}/grades`, {
+        const result = await axios.get(`http://localhost:8080/class/${classId}/${enrollmentId}/student`, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
         return result.data.data
     }
 
-    return { leave, getClass, addSchedule, getAllLearningStrands, getAllModules, getAllStudents, getAllGrades }
+    return { leave, getAllLearningStrands, getAllStudents, getStudent }
 })
 
 
