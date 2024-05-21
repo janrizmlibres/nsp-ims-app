@@ -152,7 +152,7 @@ onBeforeRouteLeave((to) => {
         <DataTable 
             :value="learners" dataKey="id" scrollable style=" overflow: auto;"
             sortField="lastName" :sortOrder="1" removableSort
-            v-model:filters="filters" filterDisplay="menu"
+            v-model:filters="filters"
             :globalFilterFields="['lastName', 'firstName', 'status', 'remarks']"
         >
             <template #empty> <div class="text-center">No records found.</div> </template>
