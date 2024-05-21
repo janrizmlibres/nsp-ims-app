@@ -37,7 +37,6 @@ async function addTerm() {
             academic_year: range.value[0].getFullYear() + '-' + range.value[1].getFullYear(),
             start_date: range.value[0],
             end_date: range.value[1],
-            status: true
         })
 
         await termStore.getTerms()

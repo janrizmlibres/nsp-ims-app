@@ -18,12 +18,6 @@ export async function addTerm(req, res, next) {
     const termTemp = await Term.findOne({
       where: {academic_year: academic_year}
     })
-  
-    await Term.create(req.body)
-    
-    res.status(201).json({ 
-      message: "New Academic Term Created!"
-    });
 
     if (termTemp) {
       const error = new Error("Academic Term already exists.");
@@ -46,6 +40,10 @@ export async function addTerm(req, res, next) {
       start_date: start_date,
       end_date: end_date,
       status: true
+    });
+    
+    res.status(201).json({ 
+      message: "New Academic Term Created!"
     });
 
     const classLevelData = [
