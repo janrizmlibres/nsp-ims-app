@@ -186,25 +186,25 @@ onMounted(async () => {
       return filteredObj
     }
 
-    if (volunteer && 'VolunteerPersonalInformation' in volunteer) {
   const {
-    VolunteerPersonalInformation,
-    VolunteerContactInformation,
-    VolunteerEmergency,
-    VolunteerAvailability,
-    VolunteerSpecialization,
-    ...Volunteer
+    volunteer_personal_information,
+    volunteer_contact_information,
+    volunteer_emergency_contact,
+    volunteer_availability,
+    volunteer_specialization,
+    student_volunteer,
+    professional_volunteer,
+    ...identity
   } = volunteer
-} else {
-  console.error('volunteer object is undefined or does not contain VolunteerPersonalInformation');
-}
 
-    initialData.Volunteer = filterObject(Volunteer)
-    initialData.VolunteerPersonalInformation = filterObject(VolunteerPersonalInformation)
-    initialData.VolunteerContactInformation = filterObject(VolunteerContactInformation)
-    initialData.VolunteerEmergency = filterObject(VolunteerEmergency)
-    initialData.VolunteerAvailability = VolunteerAvailability && filterObject(VolunteerAvailability)
-    initialData.VolunteerSpecialization = filterObject(VolunteerSpecialization)
+    initialData.Volunteer = filterObject(identity)
+    initialData.VolunteerPersonalInformation = filterObject(volunteer_personal_information)
+    initialData.VolunteerContactInformation = filterObject(volunteer_contact_information)
+    initialData.VolunteerEmergency = filterObject(volunteer_emergency_contact)
+    initialData.VolunteerAvailability = filterObject(volunteer_availability)
+    initialData.VolunteerSpecialization = filterObject(volunteer_specialization)
+    initialData.StudentVolunteer = filterObject(student_volunteer)
+    initialData.ProfessionalVolunteer = filterObject(professional_volunteer)
 
     for (const key in initialData) {
       formData.value[key] = initialData[key]

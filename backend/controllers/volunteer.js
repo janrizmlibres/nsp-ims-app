@@ -23,7 +23,7 @@ export async function getAllVolunteers(req, res, next) {
 
     res.status(201).json({ 
       message: "Fetched Volunteers Successfully!", 
-      data: volunteers
+      volunteers: volunteers
     });
   } catch (error) {
     if (!error.statusCode) {
@@ -94,8 +94,8 @@ export async function addVolunteer(req, res, next) {
 }
 
 export async function getVolunteer(req, res, next) {
+  const volunteerId = req.params.volunteerId;
   try {
-    const volunteerId = req.params.volunteerId;
     const volunteer = await Volunteer.findByPk(volunteerId, {
       include: [VolunteerPersonalInformation, 
                 VolunteerContactInformation, 
@@ -107,13 +107,12 @@ export async function getVolunteer(req, res, next) {
     });
 
     if (!volunteer) {
-      return res.status(404).json({ message: 'Volunteer not found' });
+      const error = Error("Volunteer not found.");
+      error.statusCode = 404;
+      throw error;
     }
 
-    res.status(200).json({ 
-      message: "Fetched Volunteer Successfully!", 
-      data: volunteer
-    });
+    res.status(200).json({ message: "Volunteer fetched.", volunteer: volunteer });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;

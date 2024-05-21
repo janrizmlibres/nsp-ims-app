@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useVolunteerStore } from '@/stores/volunteer';
 import ContentPane from "@/components/UI/ContentPane.vue";
 import DataTable from 'primevue/datatable';
@@ -9,7 +9,7 @@ import Button from 'primevue/button';
 import { FilterMatchMode } from 'primevue/api';
 
 const volunteerStore = useVolunteerStore();
-const volunteers = ref([]);
+
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
@@ -17,7 +17,9 @@ const filters = ref({
 const columns = ref([
   { field: 'volunteerId', header: 'Volunteer ID' },
   { field: 'fullname', header: 'Full Name' },
-  { field: 'affiliation', header: 'Affiliation' }
+  { field: 'sex', header: 'Sex'},
+  { field: 'affiliation', header: 'Affiliation' },
+  { field: 'contactNumber', header: 'Contact Number' },
 ]);
 
 const updateGlobalFilter = (newValue) => {
@@ -25,45 +27,24 @@ const updateGlobalFilter = (newValue) => {
 };
 
 onMounted(async () => {
-  await volunteerStore.getAllVolunteers();
-  volunteers.value = volunteerStore.volunteers.map(volunteer => ({
-    ...volunteer,
-    personalInformation: volunteer.volunteer_personal_information,
-    contactInformation: volunteer.volunteer_contact_information,
-    specialization: volunteer.volunteer_specialization,
-    availability: volunteer.volunteer_availability,
-    emergencyContact: volunteer.volunteer_emergency_contact,
-    student: volunteer.student_volunteer,
-    professional: volunteer.professional_volunteer,
-  }));
-});
-
-const recordCount = computed(() => volunteers.value.length);
-
-const filteredVolunteers = computed(() => {
-  if (!filters.value.global.value) {
-    return volunteers.value;
+  try{
+    await volunteerStore.getAllVolunteers();
+  } catch (error) {
+    console.log(error);
   }
-  const searchValue = filters.value.global.value.toLowerCase();
-  return volunteers.value.filter(volunteer =>
-    Object.values(volunteer).some(value => {
-      if (typeof value === 'object' && value !== null) {
-        return Object.values(value).some(nestedValue =>
-          nestedValue && nestedValue.toString().toLowerCase().includes(searchValue)
-        );
-      }
-      return value && value.toString().toLowerCase().includes(searchValue);
-    })
-  );
 });
 </script>
 
 <template>
   <ContentPane header="Volunteer Records">
-    <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
-    <DataTable :value="filteredVolunteers" :filters="filters" scrollable style=" overflow: auto;">
-      <template #empty> No volunteers found. </template>
-      <template #loading> Loading volunteers data. Please wait. </template>
+    <TheHeader ::globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+    
+    <DataTable 
+      :value="volunteerStore.volunteersNormalized"
+      v-model:filters="filters"
+      :globalFilterFields="['volunteerId', 'firstName', 'lastName', 'affiliation']"
+      scrollable
+      removableSort>
 
       <Column header="">
         <template #body="slotProps">
@@ -76,15 +57,16 @@ const filteredVolunteers = computed(() => {
       </Column>
 
       <Column 
-      v-for="(column, index) in columns" 
-      :key="index" 
-      :field="column.field" 
-      :header="column.header" 
-      sortable></Column>
+      v-for="col of columns"
+        :key="col.field"
+        :field="col.field"
+        :header="col.header"
+        sortable
+      ></Column>
     </DataTable>
     <div class="pl-8 pt-2 font-medium">
       <p>
-        Total Record(s): <span class="u-txt-red">{{ recordCount }} </span>
+        Record(s) count: <span class="u-txt-red"> {{ volunteerStore.volunteers.length }} </span>
       </p>
     </div>
   </ContentPane>
