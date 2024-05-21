@@ -17,9 +17,9 @@ const filters = ref({
 const columns = ref([
   { field: 'volunteerId', header: 'Volunteer ID' },
   { field: 'fullname', header: 'Full Name' },
-  { field: 'sex', header: 'Sex'},
+  { field: 'volunteer_personal_information.sex', header: 'Sex'},
   { field: 'affiliation', header: 'Affiliation' },
-  { field: 'contactNumber', header: 'Contact Number' },
+  { field: 'volunteer_contact_information.contactNumber', header: 'Contact Number' },
 ]);
 
 const updateGlobalFilter = (newValue) => {
@@ -37,10 +37,10 @@ onMounted(async () => {
 
 <template>
   <ContentPane header="Volunteer Records">
-    <TheHeader ::globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+    <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
     
     <DataTable 
-      :value="volunteerStore.volunteersNormalized"
+      :value="volunteerStore.volunteers"
       v-model:filters="filters"
       :globalFilterFields="['volunteerId', 'firstName', 'lastName', 'affiliation']"
       scrollable
@@ -49,15 +49,15 @@ onMounted(async () => {
       <Column header="">
         <template #body="slotProps">
           <div class="flex">
-            <RouterLink :to="{ name: 'view-volunteer', params: { volunteerId: slotProps.data.id } }">
-              <Button class="h-8" label="View" icon="fa-solid fa-eye" outlined @click="console.log(slotProps.data.id)"/>
+            <RouterLink :to="{ name: 'view-volunteer', params: { id: slotProps.data.id } }">
+              <Button class="h-8" label="View" icon="fa-solid fa-eye" outlined />
             </RouterLink>
           </div>
         </template>
       </Column>
 
       <Column 
-      v-for="col of columns"
+        v-for="col of columns"
         :key="col.field"
         :field="col.field"
         :header="col.header"

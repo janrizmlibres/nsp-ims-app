@@ -21,7 +21,7 @@ const name = ref({
 })
 
 const volunteerId = ref(props.Volunteer.volunteerId)
-console.log("VolunteerId: " + volunteerId.value)
+//console.log("Volunteer: " + props.volunteerId.value)
 const selectedSuffix = ref(props.Volunteer.suffix)
 const selectedAffiliation = ref(props.Volunteer.affiliation)
 
@@ -38,7 +38,7 @@ function handleUpdate() {
     affiliation: selectedAffiliation.value,
     suffix:selectedSuffix.value,
   }
-
+  
   emit('dataChanged', FormParts.Volunteer, data)
 }
 </script>

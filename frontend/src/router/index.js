@@ -248,10 +248,16 @@ const router = createRouter({
           component: AdmitVolunteerView
         },
         {
-          path: ':volunteerId',
+          path: '/volunteer/:id',
           name: 'view-volunteer',
           component: AdmitVolunteerView,
           meta: { isViewMode: true }
+        },
+        {
+          path: 'edit/:id',
+          name: 'edit-volunteer',
+          component: AdmitVolunteerView,
+          meta: { isViewMode: false }
         },
         {
           path: 'staffs',

@@ -24,7 +24,7 @@ const toast = useToast()
 const volunteerStore = useVolunteerStore()
 
 const initialData = {
-  Volunteer: {
+  volunteerHeader: {
     volunteerId: null,
     affiliation: null,
     firstName: null,
@@ -33,7 +33,7 @@ const initialData = {
     suffix: null,
   },
 
-  VolunteerPersonalInformation: {
+  personalInformation: {
     nickname: null,
     birthday: null,
     sex: null,
@@ -43,13 +43,13 @@ const initialData = {
     province: null
   },
 
-  VolunteerContactInformation: {
+  contactInformation: {
     contactNumber: null,
     email: null,
     facebook: null,
   },
 
-  VolunteerEmergency: {
+  emergency: {
     lastName: null,
     firstName: null,
     middleName: null,
@@ -58,20 +58,20 @@ const initialData = {
     relationship: null,
   },
 
-  VolunteerAvailability: {
+  availability: {
     day: null,
   },
 
-  VolunteerSpecialization: {
+  specialization: {
     area: null,
   },
 
-  StudentVolunteer: {
+  student: {
     program: null,
     year: null,
   },
 
-  ProfessionalVolunteer: {
+  professional: {
     work: null,
   },
 
@@ -84,7 +84,7 @@ let isOkToLeave = false
 const updateKey = ref(0)
 
 const headerText = computed(() => {
-  if (!route.params.volunteerId) return 'Add Record'
+  if (!route.params.id) return 'Add Record'
   return route.meta.isViewMode ? 'View Record' : 'Edit Record'
 })
 const confirmBtnText = computed(() => (route.meta.isViewMode ? 'Edit' : 'Submit'))
@@ -105,29 +105,30 @@ provide('formData', readonly({ formData, updateFormData }))
 
 function updateFormData(part, data) {
   const updateMapping = {
-    [FormParts.Volunteer]: () => (formData.Volunteer = data),
-    [FormParts.VolunteerPersonalInformation]: () => (formData.value.VolunteerPersonalInformation = data),
-    [FormParts.VolunteerContactInformation]: () => (formData.value.VolunteerContactInformation = data),
-    [FormParts.VolunteerEmergency]: () => (formData.value.VolunteerEmergency = data),
-    [FormParts.VolunteerAvailability]: () => (formData.value.VolunteerAvailability = data),
-    [FormParts.VolunteerSpecialization]: () => (formData.value.VolunteerSpecialization = data),
-    [FormParts.StudentVolunteer]: () => (formData.value.StudentVolunteer = data),
-    [FormParts.ProfessionalVolunteer]: () => (formData.value.ProfessionalVolunteer = data)
+    [FormParts.Volunteer]: () => (formData.data.volunteerHeader = data),
+    [FormParts.VolunteerPersonalInformation]: () => (formData.value.personalInformation = data),
+    [FormParts.VolunteerContactInformation]: () => (formData.value.contactInformation = data),
+    [FormParts.VolunteerEmergency]: () => (formData.value.emergency = data),
+    [FormParts.VolunteerAvailability]: () => (formData.value.availability = data),
+    [FormParts.VolunteerSpecialization]: () => (formData.value.specialization = data),
+    [FormParts.StudentVolunteer]: () => (formData.value.student = data),
+    [FormParts.ProfessionalVolunteer]: () => (formData.value.professional = data)
   }
+  console.log(formData.value);
     updateMapping[part]()
 }
 
 function handleConfirm() {
   if (route.meta.isViewMode) {
-    router.push({ name: 'edit-volunteer', params: { volunteerId: route.params.volunteerId } })
+    router.push({ name: 'edit-volunteer', params: { id: route.params.id } })
   } else {
     submitForm()
   }
 }
 
 function handleCancel() {
-  if (route.name === 'admit-volunteers' || route.meta.isViewMode) goToVolunteerView()
-  else router.push({ name: 'view-volunteer', params: { volunteerId: route.params.volunteerId } })
+  if (route.name === 'admit-volunteers' || route.meta.isViewMode) goToVolunteerRecords()
+  else router.push({ name: 'view-volunteer', params: { id: route.params.id } })
 }
 
 async function goToVolunteerRecords() {
@@ -139,7 +140,7 @@ async function submitForm() {
     const result =
       route.name === 'admit-volunteers'
         ? await volunteerStore.addVolunteer(formData.value)
-        : await volunteerStore.updateVolunteer(route.params.volunteerId, formData.value)
+        : await volunteerStore.updateVolunteer(route.params.id, formData.value)
 
     toast.add({
       severity: 'success',
@@ -147,6 +148,7 @@ async function submitForm() {
       detail: result.data.message,
       life: 5000
     })
+    isOkToLeave = true
     await goToVolunteerRecords()
   } catch (error) {
     toast.add({
@@ -174,17 +176,16 @@ onBeforeRouteLeave((to) => {
 })
 
 onMounted(async () => {
-  if (!route.params.volunteerId) return
+  if (!route.params.id) return
 
   try {
-    const result = await volunteerStore.getVolunteer(route.params.volunteerId)
-    console.log(result) // Log the result
+    const result = await volunteerStore.getVolunteer(route.params.id)
     const volunteer = result.data.volunteer
 
     /* try to see why this won't work:
     const filterObject = (obj) => {
       // eslint-disable-next-line no-unused-vars
-      const { createdAt, updatedAt, volunteerId, ...filteredObj } = obj
+      const { createdAt, updatedAt, id, ...filteredObj } = obj
       return filteredObj
     }*/
 
@@ -203,17 +204,18 @@ onMounted(async () => {
     volunteer_specialization,
     student_volunteer,
     professional_volunteer,
-    ...identity
+    //...identity
   } = volunteer
 
-    initialData.Volunteer = filterObject(identity)
-    initialData.VolunteerPersonalInformation = filterObject(volunteer_personal_information)
-    initialData.VolunteerContactInformation = filterObject(volunteer_contact_information)
-    initialData.VolunteerEmergency = filterObject(volunteer_emergency_contact)
-    initialData.VolunteerAvailability = filterObject(volunteer_availability)
-    initialData.VolunteerSpecialization = filterObject(volunteer_specialization)
-    initialData.StudentVolunteer = filterObject(student_volunteer)
-    initialData.ProfessionalVolunteer = filterObject(professional_volunteer)
+    //initialData.Volunteer = filterObject(identity)
+    initialData.volunteerHeader = filterObject(volunteer)
+    initialData.personalInformation = filterObject(volunteer_personal_information)
+    initialData.contactInformation = filterObject(volunteer_contact_information)
+    initialData.emergency = filterObject(volunteer_emergency_contact)
+    initialData.availability = filterObject(volunteer_availability)
+    initialData.specialization = filterObject(volunteer_specialization)
+    initialData.student = filterObject(student_volunteer)
+    initialData.professional = filterObject(professional_volunteer)
 
     for (const key in initialData) {
       formData.value[key] = initialData[key]
@@ -230,11 +232,12 @@ onMounted(async () => {
 <template>
   <ContentPane :header="`Volunteers / ${headerText}`" subheader="Academic Year 2022 - 2023">
     <div class="flex flex-col gap-3 h-full mr-1">
-        <AdmitVolunteerHeader 
+      <AdmitVolunteerHeader 
         @dataChanged="updateFormData"
-        :Volunteer="formData.Volunteer"
+        :identity="formData.volunteerHeader"
         :isViewMode="$route.meta.isViewMode"
-        :key="updateKey" />
+        :key="updateKey"
+      />
       <VolunteerBulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
       <div class="flex-none text-right">
         <div class="inline-block">

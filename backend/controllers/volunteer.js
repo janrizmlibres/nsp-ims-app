@@ -94,9 +94,9 @@ export async function addVolunteer(req, res, next) {
 }
 
 export async function getVolunteer(req, res, next) {
-  const volunteerId = req.params.volunteerId;
+  const id = req.params.id;
   try {
-    const volunteer = await Volunteer.findByPk(volunteerId, {
+    const volunteer = await Volunteer.findByPk(id, {
       include: [VolunteerPersonalInformation, 
                 VolunteerContactInformation, 
                 VolunteerSpecialization,
@@ -131,8 +131,9 @@ export async function updateVolunteer(req, res, next) {
       throw error;
     }
 
-    const volunteerId = req.params.id;
-    const volunteer = await Volunteer.findByPk(volunteerId);
+    const id = req.params.id;
+    console.log(req.body)
+    const volunteer = await Volunteer.findByPk(id);
 
     if (!volunteer) {
       const error = new Error("Could not find volunteer.");
@@ -140,8 +141,53 @@ export async function updateVolunteer(req, res, next) {
       throw error;
     }
 
-    volunteer.set(req.body);
-    const result = await volunteer.save();
+    const {
+      volunteerHeader,
+      personalInformation,
+      contactInformation,
+      emergency,
+      availability,
+      specialization,
+      student,
+      professional
+    } = req.body;
+
+    const personalInformationInstance = await VolunteerPersonalInformation.findOne({
+      where: { id: volunteer.id },
+    });
+
+    const contactInformationInstance = await VolunteerContactInformation.findOne({
+      where: { id: volunteer.id },
+    });
+
+    const emergencyInstance = await VolunteerEmergency.findOne({
+      where: { id: volunteer.id },
+    });
+
+    const specializationInstance = await VolunteerSpecialization.findOne({
+      where: { id: volunteer.id },
+    });
+
+    const availabilityInstance = await VolunteerAvailability.findOne({
+      where: { id: volunteer.id },
+    });
+
+    const studentInstance = await StudentVolunteer.findOne({
+      where: { id: volunteer.id },
+    });
+
+    const professionalInstance = await ProfessionalVolunteer.findOne({
+      where: { id: volunteer.id },
+    });
+
+    await volunteer.update(volunteerHeader);
+    await personalInformationInstance.update(personalInformation);
+    await contactInformationInstance.update(contactInformation);
+    await emergencyInstance.update(emergency);
+    await specializationInstance.update(specialization);
+    await availabilityInstance.update(availability);
+    await studentInstance.update(student);
+    await professionalInstance.update(professional);
 
     res.status(200).json({
       message: "Volunteer updated!",

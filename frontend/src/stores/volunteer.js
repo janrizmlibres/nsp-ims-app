@@ -6,7 +6,7 @@ import axios from 'axios'
 export const useVolunteerStore = defineStore('volunteer', () => {
   const volunteers = ref([])
 
-  const volunteersNormalized = computed(() => {
+  /*const volunteersNormalized = computed(() => {
   return volunteers.value.map((volunteer) => {
     const { volunteer_personal_information, volunteer_contact_information, ...identity } = volunteer
 
@@ -15,7 +15,7 @@ export const useVolunteerStore = defineStore('volunteer', () => {
 
     return { ...identity, ...volunteer_personal_information, ...volunteer_contact_information }
   })
-})
+})*/
 
   async function getAllVolunteers() {
     const authStore = useAuthStore()
@@ -37,25 +37,25 @@ export const useVolunteerStore = defineStore('volunteer', () => {
     return result
   }
 
-  async function getVolunteer(volunteerId) {
+  async function getVolunteer(id) {
   const authStore = useAuthStore()
 
-  const result = await axios.get(`http://localhost:8080/volunteer/${volunteerId}`, {
+  const result = await axios.get(`http://localhost:8080/volunteer/${id}`, {
     headers: { Authorization: 'Bearer ' + authStore.token }
   })
 
     return result
   }
 
-  async function updateVolunteer(volunteerId, formData) {
+  async function updateVolunteer(id, formData) {
   const authStore = useAuthStore()
 
-  const result = await axios.put(`http://localhost:8080/volunteer/${volunteerId}`, formData, {
+  const result = await axios.put(`http://localhost:8080/volunteer/update-volunteer/${id}`, formData, {
     headers: { Authorization: 'Bearer ' + authStore.token }
   })
-
+  
     return result
   }
   
-  return { volunteers, getAllVolunteers, addVolunteer, getVolunteer, updateVolunteer, volunteersNormalized }
+  return { volunteers, getAllVolunteers, addVolunteer, getVolunteer, updateVolunteer, /*volunteersNormalized*/ }
 })
