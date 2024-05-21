@@ -90,8 +90,8 @@ watch(() => dates.value, (data) => {
             <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
         </div>
         <div class="flex justify-end gap-2">
-            <Button type="button" label="Update" :disabled="dates ? (dates[1] === null) : !dates" @click="updateModule"></Button>
-            <Button type="button" label="Cancel" severity="danger" @click="cancel"></Button>
+            <Button type="button" outlined rounded label="Update" :disabled="dates ? (dates.length === 0 || dates[1] === null) : !dates" @click="updateModule"></Button>
+            <Button type="button" outlined rounded label="Cancel" severity="danger" @click="cancel"></Button>
         </div>
     </Dialog>
 </template>
