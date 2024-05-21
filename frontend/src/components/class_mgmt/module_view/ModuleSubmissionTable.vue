@@ -169,18 +169,7 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-    <div class="flex flex-col h-full overflow-hidden bg-white shadow-xl rounded-md p-5">
-        <div class="flex flex-row justify-between">
-            <div class="flex flex-row gap-4 items-center px-4">
-                <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
-                <span class="font-semibold text-3xl u-txt-active">Submissions</span>
-            </div>
-            <span class="relative">
-                <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
-                <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal" showClear />
-            </span>
-        </div>
-        <Divider />
+    <div class="flex flex-col h-full w-full">
         <DataTable 
             :value="learners" dataKey="id" scrollable style=" overflow: auto;"
             sortField="lastName" :sortOrder="1" removableSort
