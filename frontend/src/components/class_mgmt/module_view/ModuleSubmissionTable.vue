@@ -107,7 +107,7 @@ async function updateSubmissions() {
         toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Updated Grades Successfully',
+            detail: 'Updated Module Submissions Successfully',
             life: 5000
         })
 
