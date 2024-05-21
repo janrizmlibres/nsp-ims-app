@@ -197,7 +197,7 @@ onBeforeRouteLeave((to) => {
                     <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                 </template>
                 <template #body="slotProps" v-else>
-                    <Dropdown v-model="slotProps.data.status" :options="statuses" optionLabel="label" optionValue="value" :placeholder="slotProps.data.status" :disabled="status === 'false'">
+                    <Dropdown v-model="slotProps.data.status" :options="statuses" optionLabel="label" optionValue="value" :placeholder="slotProps.data.status">
                         <template #value="slotProps">
                             <Tag :value="slotProps.placeholder" :severity="getStatusLabel(slotProps.placeholder)" />
                         </template>
@@ -221,7 +221,7 @@ onBeforeRouteLeave((to) => {
                     </p>
                 </template>
                 <template #body="slotProps" v-else>
-                    <Calendar v-model="slotProps.data.date_submitted" id="calendar" showIcon iconDisplay="input" :disabled="status === 'false'" showButtonBar inputStyle="width: 12rem;">
+                    <Calendar v-model="slotProps.data.date_submitted" id="calendar" showIcon iconDisplay="input" showButtonBar inputClass="w-48">
                         <template #value="slotProps">
                             {{ slotProps.data.date_submitted.toDateString() }}
                         </template>
@@ -233,7 +233,7 @@ onBeforeRouteLeave((to) => {
                     {{ slotProps.data.score }}
                 </template>
                 <template #body="slotProps" v-else>
-                    <InputNumber v-model="slotProps.data.score" inputId="score" inputStyle="width: 6rem;" />
+                    <InputNumber v-model="slotProps.data.score" inputId="score" inputClass="w-16" />
                 </template>
             </Column>
             <Column field="remarks" header="Remarks" style="width: 20rem;">
