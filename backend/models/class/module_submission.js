@@ -25,7 +25,10 @@ const ModuleSubmission = sequelize.define("module_submission", {
     },
   },
   date_submitted: DATE,
-  score: INTEGER,
+  score: {
+    type: INTEGER,
+    defaultValue: 0
+  },
   remarks: STRING,
   status: {
     type: STRING,
