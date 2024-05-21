@@ -21,7 +21,8 @@ const name = ref({
 })
 
 const volunteerId = ref(props.Volunteer.volunteerId)
-const selectedSuffix = ref(props.Volunteer.suffixName)
+console.log("VolunteerId: " + volunteerId.value)
+const selectedSuffix = ref(props.Volunteer.suffix)
 const selectedAffiliation = ref(props.Volunteer.affiliation)
 
 const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])

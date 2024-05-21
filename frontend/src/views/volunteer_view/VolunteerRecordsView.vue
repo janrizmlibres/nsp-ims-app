@@ -50,7 +50,7 @@ onMounted(async () => {
         <template #body="slotProps">
           <div class="flex">
             <RouterLink :to="{ name: 'view-volunteer', params: { volunteerId: slotProps.data.id } }">
-              <Button class="h-8" label="View" icon="fa-solid fa-eye" outlined />
+              <Button class="h-8" label="View" icon="fa-solid fa-eye" outlined @click="console.log(slotProps.data.id)"/>
             </RouterLink>
           </div>
         </template>

@@ -568,6 +568,8 @@ export async function injectVolunteer() {
       affiliation: "Student",
       lastName: "Dela Cruz",
       firstName: "Shelly",
+      middleName: "eyy",
+      suffix: "Jr.",
     },
     {
       volunteerId: 2,
@@ -634,7 +636,7 @@ export async function injectVolunteer() {
   const volunteerPersonalInformationData = [
     {
       nickname: "Shelly",
-      sex: "Female",
+      sex: "F",
       birthday: new Date(1980, 1, 1),
       housing: "123 Main St",
       barangay: "Barangay 1",
@@ -643,7 +645,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Alonzo",
-      sex: "Male",
+      sex: "M",
       birthday: new Date(1985, 1, 1),
       housing: "456 Maple Ave",
       barangay: "Barangay 2",
@@ -652,7 +654,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Alejandra",
-      sex: "Female",
+      sex: "F",
       birthday: new Date(1990, 1, 1),
       housing: "789 Oak St",
       barangay: "Barangay 3",
@@ -661,7 +663,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Gabriel",
-      sex: "Male",
+      sex: "M",
       birthday: new Date(1995, 1, 1),
       housing: "1011 Pine Ave",
       barangay: "Barangay 4",
@@ -670,7 +672,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "John",
-      sex: "Male",
+      sex: "M",
       birthday: new Date(1985, 1, 1),
       housing: "1213 Birch Blvd",
       barangay: "Barangay 5",
@@ -679,7 +681,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Job",
-      sex: "Male",
+      sex: "M",
       birthday: new Date(1990, 1, 1),
       housing: "1415 Cedar Ct",
       barangay: "Barangay 6",
@@ -688,7 +690,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Wilson",
-      sex: "Male",
+      sex: "M",
       birthday: new Date(1995, 1, 1),
       housing: "1617 Dogwood Dr",
       barangay: "Barangay 7",
@@ -697,7 +699,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Felixson",
-      sex: "Male",
+      sex: "M",
       birthday: new Date(2000, 1, 1),
       housing: "1819 Elm St",
       barangay: "Barangay 8",
@@ -706,7 +708,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Fernan",
-      sex: "Female",
+      sex: "F",
       birthday: new Date(1980, 1, 1),
       housing: "2021 Fir St",
       barangay: "Barangay 9",
@@ -715,7 +717,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Kenneth",
-      sex: "Male",
+      sex: "M",
       birthday: new Date(1985, 1, 1),
       housing: "2223 Grove St",
       barangay: "Barangay 10",
@@ -724,7 +726,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Daisy",
-      sex: "Female",
+      sex: "F",
       birthday: new Date(1990, 1, 1),
       housing: "2425 Hickory St",
       barangay: "Barangay 11",

@@ -118,6 +118,8 @@ function updateProfessionalVolunteer() {
             type="text"
             v-model="nickname"
             @update:modelValue="handleUpdate"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
           />
         </div>
 

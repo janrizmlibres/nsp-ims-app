@@ -29,27 +29,27 @@ const handleAreaUpdate = () => {
             <span>Availability</span>
           </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="m" name="mon" value="Monday" @change="handleDayUpdate" />
+                <Checkbox v-model="day" inputId="m" name="mon" value="M" @change="handleDayUpdate" />
                 <label for="mon" class="ml-2"> M </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="t" name="tue" value="Tuesday" @change="handleDayUpdate" />
+                <Checkbox v-model="day" inputId="t" name="tue" value="T" @change="handleDayUpdate" />
                 <label for="tue" class="ml-2"> T </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="w" name="wed" value="Wednesday" @change="handleDayUpdate" />
+                <Checkbox v-model="day" inputId="w" name="wed" value="W" @change="handleDayUpdate" />
                 <label for="wed" class="ml-2"> W </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="th" name="thu" value="Thursday" @change="handleDayUpdate" />
+                <Checkbox v-model="day" inputId="th" name="thu" value="T" @change="handleDayUpdate" />
                 <label for="thu" class="ml-2"> Th </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="f" name="fri" value="Friday" @change="handleDayUpdate" />
+                <Checkbox v-model="day" inputId="f" name="fri" value="F" @change="handleDayUpdate" />
                 <label for="fri" class="ml-2"> F </label>
             </div>
             <div class="flex align-items-center">
-                <Checkbox v-model="day" inputId="s" name="sat" value="Saturday" @change="handleDayUpdate" />
+                <Checkbox v-model="day" inputId="s" name="sat" value="S" @change="handleDayUpdate" />
                 <label for="sat" class="ml-2"> S </label>
             </div>
         </div>

@@ -178,9 +178,18 @@ onMounted(async () => {
 
   try {
     const result = await volunteerStore.getVolunteer(route.params.volunteerId)
+    console.log(result) // Log the result
     const volunteer = result.data.volunteer
 
+    /* try to see why this won't work:
     const filterObject = (obj) => {
+      // eslint-disable-next-line no-unused-vars
+      const { createdAt, updatedAt, volunteerId, ...filteredObj } = obj
+      return filteredObj
+    }*/
+
+    const filterObject = (obj) => {
+      if (!obj) return {}
       // eslint-disable-next-line no-unused-vars
       const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
       return filteredObj
