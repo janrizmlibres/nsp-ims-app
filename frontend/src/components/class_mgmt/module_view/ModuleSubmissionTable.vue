@@ -73,7 +73,7 @@ watch(() => props.modelValue, (data) => {
     }
     
     isFetching.value = false
-}, {immediate: false})
+}, {immediate: true})
 
 const getStatusLabel = (status) => {
     switch (status) {
