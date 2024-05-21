@@ -1,8 +1,9 @@
 <script setup>
+import StudentsTable from '@/components/class_mgmt/manage_student_view/StudentsTable.vue';
+
+const props = defineProps(['classLevel'])
 </script>
 
 <template>
-    <div>
-        
-    </div>
+    <StudentsTable :classLevel="props.classLevel" />
 </template>
