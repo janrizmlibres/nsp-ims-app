@@ -67,6 +67,7 @@ const filters = ref({
 });
 
 const dt = ref()
+const dtDiv = ref()
 
 function updateModuleTable(modules) {
     allModules.value.length = 0
@@ -217,7 +218,7 @@ function showEditModuleDialog() {
 }
 
 function onClickOutside(event) {
-    if (dt.value && !dt.value.$el.contains(event.target)) deselect()
+    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
 }
 
 onMounted(() => {
@@ -239,7 +240,7 @@ onBeforeUnmount(() => {
                 <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" class="font-semibold" />
             </div>
         </div>
-        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl">
+        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl" ref="dtDiv">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">

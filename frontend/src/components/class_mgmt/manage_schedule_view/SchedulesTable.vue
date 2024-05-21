@@ -36,6 +36,7 @@ const metaKey = ref(true)
 const editScheduleDialog = ref(false)
 const schedule = ref()
 const dt = ref()
+const dtDiv = ref()
 
 function updateScheduleTable(classId) {
     classData.value.length = 0
@@ -111,6 +112,7 @@ async function deleteSchedules() {
         accept: async () => {
             try {
                 const scheduleIds = selectedSchedules.value.map(schedule => schedule.scheduleId)
+                console.log(selectedSchedules.value);
                 await classLearningStrandStore.deleteSchedules({scheduleIds: scheduleIds})
                 deselect()
                 toast.add({
@@ -151,7 +153,7 @@ function deselect() {
 }
 
 function onClickOutside(event) {
-    if (dt.value && !dt.value.$el.contains(event.target)) deselect()
+    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
 }
 
 onMounted(() => {
@@ -168,7 +170,7 @@ onBeforeUnmount(() => {
         <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
             <AddScheduleSection :id="classLevelId" :learningStrands="learningStrands" :termStatus="termStatus" @onUpdate="addSchedule" />
         </div>
-        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl">
+        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl" ref="dtDiv">
             <Toolbar class="!p-2 h-16">
                 <template #start>
                     <span v-if="selectedSchedules.length" class="flex flex-row gap-8 items-center mx-2">
