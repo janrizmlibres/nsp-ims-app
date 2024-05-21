@@ -1,28 +1,27 @@
 import { expect } from "chai";
-
 import * as adminController from "../controllers/admin.js";
+import { resetDb, resCopy } from "./helpers.js";
 
-import sequelize from "../util/database.js";
-import { injectAll } from "../util/db_injector.js";
-import setAssociations from "../util/associations.js";
+let res = { ...resCopy };
+
+function expectError(result, message, code) {
+  expect(result).to.be.an("error");
+  expect(result.message).to.be.equal(message);
+  expect(result.statusCode).to.be.equal(code);
+}
+
+function expectStaffFound(res, message, code, id) {
+  expect(res.statusCode).to.be.equal(code);
+  expect(res.body.message).to.be.equal(message);
+  expect(res.body).to.have.property("staff");
+  expect(res.body.staff.id).to.be.equal(id);
+}
 
 describe("Admin Controller (Staffs)", () => {
   before(async () => await resetDb());
   after(async () => await resetDb());
 
-  beforeEach(() => {
-    res = {
-      statusCode: null,
-      body: null,
-      status: function (code) {
-        this.statusCode = code;
-        return this;
-      },
-      json: function (data) {
-        this.body = data;
-      },
-    };
-  });
+  beforeEach(() => (res = { ...resCopy }));
 
   it("should be able to get staffs from the database", async () => {
     const req = { query: { includePerms: false, includeAudit: false } };
@@ -80,38 +79,19 @@ describe("Admin Controller (Staffs)", () => {
     await adminController.updateStaff(req, res, () => {});
     expectStaffFound(res, "Staff updated!", 200, test_id);
   });
+
+  it("should create an audit trail when staff is found", async () => {
+    const req = {
+      body: {
+        userId: 91267,
+        description: "Testing",
+        date: new Date(),
+      },
+    };
+
+    await adminController.addAudit(req, res, () => {});
+
+    expect(res.statusCode).to.be.equal(200);
+    expect(res.body.message).to.be.equal("Audit created.");
+  });
 });
-
-let res = {
-  statusCode: null,
-  body: null,
-  status: function (code) {
-    this.statusCode = code;
-    return this;
-  },
-  json: function (data) {
-    this.body = data;
-  },
-};
-
-function expectError(result, message, code) {
-  expect(result).to.be.an("error");
-  expect(result.message).to.be.equal(message);
-  expect(result.statusCode).to.be.equal(code);
-}
-
-function expectStaffFound(res, message, code, id) {
-  expect(res.statusCode).to.be.equal(code);
-  expect(res.body.message).to.be.equal(message);
-  expect(res.body).to.have.property("staff");
-  expect(res.body.staff.id).to.be.equal(id);
-}
-
-async function resetDb() {
-  await sequelize.query("SET FOREIGN_KEY_CHECKS=0");
-  await sequelize.drop();
-  await sequelize.query("SET FOREIGN_KEY_CHECKS=1");
-  setAssociations();
-  await sequelize.sync({ force: true });
-  await injectAll();
-}

@@ -13,7 +13,7 @@ const EmergencyPerson = sequelize.define("emergency_person", {
     allowNull: false,
   },
   middleName: STRING,
-  lastName: {
+  firstName: {
     type: STRING,
     allowNull: false,
   },

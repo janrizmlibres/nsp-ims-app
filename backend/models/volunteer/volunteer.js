@@ -26,7 +26,6 @@ const Volunteer = sequelize.define("volunteer", {
   },
   middleName: STRING,
   suffix: STRING,
-
   fullname: {
     type: VIRTUAL,
     get() {

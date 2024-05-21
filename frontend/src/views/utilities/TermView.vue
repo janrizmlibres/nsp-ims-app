@@ -8,9 +8,10 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { useToast } from 'primevue/usetoast'
 import { ref, watch, onMounted } from 'vue'
-import { useTermStore } from '@/stores/term'
 
-const termStore = useTermStore()
+import { useUtilitiesStore } from '@/stores/utilities';
+
+const termStore = useUtilitiesStore()
 const toast = useToast()
 
 const terms = ref([])
@@ -18,10 +19,16 @@ const editingRows = ref([])
 
 const onRowEditSave = async (event) => {
   let { data, newData } = event
-  console.log(newData)
 
   if (JSON.stringify(data) !== JSON.stringify(newData)) {
     try {
+      await termStore.updateTerm(newData.id, {
+        start_date: newData.start_date,
+        end_date: newData.end_date
+      })
+      
+      await termStore.getTerms()
+
       toast.add({
         severity: 'success',
         summary: 'Success',
@@ -84,7 +91,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
         v-model:value="terms"
         dataKey="id"
         sortField="id"
-        :sortOrder="1"
+        :sortOrder="-1"
         removableSort
         resizableColumns
         columnResizeMode="fit"
@@ -170,7 +177,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
           <div class="text-center">Loading academic terms records. Please wait.</div>
         </template>
 
-        <Column field="id" header="Batch No." />
+        <Column field="id" header="Batch No."/>
         <Column field="academic_year" header="Academic Year" />
         <Column field="start_date" header="Start Date">
           <template #body="slotProps">
@@ -205,23 +212,10 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
             {{ slotProps.data.status ? 'Active' : 'Inactive' }}
           </template>
         </Column>
-        <Column
-          :rowEditor="true"
-          bodyStyle="text-align:center"
-          class="sticky right-0"
-          style="width: 5rem"
-        />
-        <template #footer>
-          <Button
-            class="u-txt-link"
-            icon="fa fa-plus"
-            label="Create an Academic Term"
-            text
-            raised
-            rounded
-            @click="termStore.showHideAddTermDialog"
-          />
-          <AddTermDialog />
+        <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
+        <template #footer> 
+            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create an Academic Term" text raised rounded @click="termStore.showHideAddTermDialog"/>
+            <AddTermDialog />
         </template>
       </DataTable>
     </div>

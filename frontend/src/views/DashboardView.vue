@@ -117,13 +117,44 @@ export default {
     left: 104.600rem;
     z-index: 3;
   }
+  .student-widget {
+    margin-bottom: 1.25rem;
+    margin-right: 1.25rem;
+    animation: slide-back 0.5s ease 0s 1 normal forwards;
+  }
+  .year-button {
+    position: absolute;
+    display: block;
+    top: 10rem;
+    left: 104.600rem;
+    z-index: 3;
+  }
 
   .header-container {
     display: flex;
     align-items: center; /* This will vertically align the items */
     margin-bottom: 1.25rem;
   }
+  .header-container {
+    display: flex;
+    align-items: center; /* This will vertically align the items */
+    margin-bottom: 1.25rem;
+  }
 
+  .dashboard-text {
+    font-weight: bold;
+    position: absolute;
+    font-size: 1.875rem;
+    margin-top: 3rem;
+    margin-left: 0.625rem;
+  }
+  
+  .student-dashboard-panels {
+    position: absolute;
+    margin-top: 5rem;
+    margin-left: 0.625rem;
+    margin-right: 0.625rem;
+  }
   .dashboard-text {
     font-weight: bold;
     position: absolute;
@@ -149,7 +180,23 @@ export default {
     position: absolute;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
+  .line-chart {
+    position: absolute;
+    animation: slide-back 0.5s ease 0s 1 normal forwards;
+  }
+  
+  .bar-chart {
+    margin-top: 20.0625rem;
+    position: absolute;
+    animation: slide-back 0.5s ease 0s 1 normal forwards;
+  }
 
+  :root {
+    --translate-x: 0rem;
+    --translate-y: 0rem;
+    --initial-x: 0rem;
+    --initial-y: 0rem;
+  }
   :root {
     --translate-x: 0rem;
     --translate-y: 0rem;
@@ -175,6 +222,9 @@ export default {
   }
 }
 
+  .animate-student-widget {
+    animation: slide 0.5s ease 0s 1 normal forwards;
+  }
   .animate-student-widget {
     animation: slide 0.5s ease 0s 1 normal forwards;
   }

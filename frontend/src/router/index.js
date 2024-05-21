@@ -4,13 +4,20 @@ import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/login/LoginView.vue'
 import TheRootView from '../views/TheRootView.vue'
 
+// Enrollment Views
+import CurrentEnrollmentView from '@/views/enrollment/CurrentEnrollmentView.vue'
+import EnrollmentHistoryView from '@/views/enrollment/EnrollmentHistoryView.vue'
+import EnrollLearnersView from '@/views/enrollment/EnrollLearnersView.vue'
+import EditEnrolledView from '@/views/enrollment/EditEnrolledView.vue'
+import EnrolledView from '@/views/enrollment/EnrolledView.vue'
+
 // Class Management Views
-import ClassesView from '../views/class_mgmt/ClassesView.vue'
-import ClassView from '../views/class_mgmt/ClassView.vue'
-import StrandView from '../views/class_mgmt/StrandView.vue'
+import ManageClassView from '@/views/class_mgmt/ManageClassView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
+import SessionView from '@/views/class_mgmt/SessionView.vue'
 
 // Utilities Views
+import StudentCategoryView from '@/views/utilities/StudentCategoryView.vue'
 import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
 import LearningStrandView from '@/views/utilities/LearningStrandView.vue'
 import TermView from '@/views/utilities/TermView.vue'
@@ -28,6 +35,8 @@ import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vu
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
 
 import { useAuthStore } from '@/stores/auth'
+// import ManageGradeView from '@/views/class_mgmt/ManageGradeView.vue'
+// import ManageSessionView from '@/views/class_mgmt/ManageSessionView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,7 +71,110 @@ const router = createRouter({
             {
               path: 'add',
               name: 'add-student',
-              component: StudentFormView
+              component: StudentFormView,
+              meta: { isViewMode: false }
+            },
+            {
+              path: ':studentId',
+              name: 'view-student',
+              component: StudentFormView,
+              meta: { isViewMode: true }
+            },
+            {
+              path: 'edit/:studentId',
+              name: 'edit-student',
+              component: StudentFormView,
+              meta: { isViewMode: false }
+            }
+          ]
+        },
+        {
+          path: 'enrollment',
+          children: [
+            {
+              path: 'current',
+              name: 'current-enrollment',
+              component: CurrentEnrollmentView
+            },
+            {
+              path: 'history',
+              name: 'enrollment-history',
+              component: EnrollmentHistoryView
+            },
+            {
+              path: 'enrolled/view',
+              name: 'view-enrolled',
+              query: { 
+                studentId: Number, 
+                enrollmentId: Number, 
+                schoolLevelId: Number, 
+                studentFullName: String
+              },
+              component: EnrolledView
+            },
+            {
+              path: 'enroll-learners',
+              name: 'enroll-learners',
+              component: EnrollLearnersView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              }
+            },
+            {
+              path: 'edit-enrolled',
+              name: 'edit-enrolled',
+              query: { studentId: Number, enrollmentId: Number, academicYear: String },
+              component: EditEnrolledView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              }
+            }
+          ]
+        },
+        {
+          path: 'enrollment',
+          children: [
+            {
+              path: 'current',
+              name: 'current-enrollment',
+              component: CurrentEnrollmentView
+            },
+            {
+              path: 'history',
+              name: 'enrollment-history',
+              component: EnrollmentHistoryView
+            },
+            {
+              path: 'enrolled/view',
+              name: 'view-enrolled',
+              query: {
+                studentId: Number,
+                enrollmentId: Number,
+                schoolLevelId: Number,
+                studentFullName: String
+              },
+              component: EnrolledView
+            },
+            {
+              path: 'enroll-learners',
+              name: 'enroll-learners',
+              component: EnrollLearnersView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              }
+            },
+            {
+              path: 'edit-enrolled',
+              name: 'edit-enrolled',
+              query: { studentId: Number, enrollmentId: Number, academicYear: String },
+              component: EditEnrolledView,
+              beforeEnter: () => {
+                const authStore = useAuthStore()
+                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+              }
             }
           ]
         },
@@ -75,38 +187,32 @@ const router = createRouter({
           children: [
             {
               path: '/class',
-              name: 'class',
-              component: ClassView,
-              query: {
-                id: Number,
-                action: String
-              },
-              beforeEnter: (to) => {
-                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
-              }
-            },
-            {
-              path: '/strand',
-              name: 'strand-info',
-              component: StrandView,
-              query: { id: Number }
+              name: 'class-management',
+              component: ManageClassView
             },
             {
               path: '/module',
               name: 'module-info',
               component: ModuleView,
-              query: { id: Number }
+              query: { id: Number, status: Boolean },
+              beforeEnter: (to) => {
+                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
+              }
             },
             {
-              path: 'classes',
-              name: 'class-records',
-              component: ClassesView
+              path: '/session',
+              name: 'session-info',
+              component: SessionView,
+              query: { id: Number, status: Boolean },
+              beforeEnter: (to) => {
+                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
+              }
             }
           ]
         },
         {
-          path: '/management/terms',
-          name: 'term-management',
+          path: '/configuration/academic_terms',
+          name: 'academic-term-configuration',
           component: TermView,
           beforeEnter: () => {
             const authStore = useAuthStore()
@@ -114,8 +220,8 @@ const router = createRouter({
           }
         },
         {
-          path: '/management/learning_strands',
-          name: 'learning-strand-management',
+          path: '/configuration/learning_strand',
+          name: 'learning-strand-configuration',
           component: LearningStrandView,
           beforeEnter: () => {
             const authStore = useAuthStore()
@@ -123,12 +229,21 @@ const router = createRouter({
           }
         },
         {
-          path: '/management/student_requirements',
-          name: 'student-requirements-management',
+          path: '/configuration/student_requirement',
+          name: 'student-requirement-configuration',
           component: StudentRequirementView,
           beforeEnter: () => {
             const authStore = useAuthStore()
             return authStore.staff.permissions.canMgStudReq ? true : { name: 'dashboard' }
+          }
+        },
+        {
+          path: '/configuration/student_category',
+          name: 'student-category-configuration',
+          component: StudentCategoryView,
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return authStore.staff.permissions.canMgStudCat ? true : { name: 'dashboard' }
           }
         },
         {

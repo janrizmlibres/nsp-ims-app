@@ -8,24 +8,10 @@ import { computed, ref } from 'vue'
 
 // Stores
 import { useSidebarStore } from '@/stores/sidebar'
-import { useTermStore } from '@/stores/term'
 import { useAuthStore } from '@/stores/auth'
 
 const sidebarStore = useSidebarStore()
-const termStore = useTermStore()
 const authStore = useAuthStore()
-
-const gradeSchool = computed(() =>
-  termStore.activeTerm.class_levels.find((obj) => {
-    return obj.school_level === 'Grade School'
-  })
-)
-
-const juniorHighSchool = computed(() =>
-  termStore.activeTerm.class_levels.find((obj) => {
-    return obj.school_level === 'Junior High School'
-  })
-)
 
 const items = computed(() => [
   {
@@ -68,19 +54,19 @@ const items = computed(() => [
         key: '3-1',
         label: 'Academic Year',
         icon: 'fa fa-calendar-week',
-        route: { name: 'dashboard' }
+        route: { name: 'current-enrollment' }
       },
       {
         key: '3-2',
         label: 'Enrollment Records',
         icon: 'fa fa-scroll',
-        route: { name: 'dashboard' }
+        route: { name: 'enrollment-history' }
       },
       {
         key: '3-3',
         label: 'Enroll Students',
         icon: 'fa fa-school-flag',
-        route: { name: 'dashboard' }
+        route: { name: 'enroll-learners' }
       }
     ]
   },
@@ -107,47 +93,13 @@ const items = computed(() => [
     key: '5',
     label: 'Class Management',
     icon: 'fa fa-book-open',
-    items: [
-      {
-        key: '5-1',
-        label: 'Active Classes',
-        icon: 'fa fa-book-bookmark',
-        items: termStore.activeTerm
-          ? [
-              {
-                key: '5-1-1',
-                label: 'Grade School',
-                icon: 'fa fa-user-plus',
-                route: {
-                  name: 'class',
-                  query: { id: gradeSchool.value.id }
-                }
-              },
-              {
-                key: '5-1-2',
-                label: 'Junior High School',
-                icon: 'fa fa-user-plus',
-                route: {
-                  name: 'class',
-                  query: { id: juniorHighSchool.value.id }
-                }
-              }
-            ]
-          : null
-      },
-      {
-        key: '5-2',
-        label: 'Class Records',
-        icon: 'fa fa-scroll',
-        route: { name: 'class-records' }
-      }
-    ]
+    route: { name: 'class-management' }
   },
   {
     key: '6',
-    label: 'Term Management',
+    label: 'Academic Term Configuration',
     icon: 'fa fa-calendar-days',
-    route: { name: 'term-management' }
+    route: { name: 'academic-term-configuration' }
   },
   {
     key: '7',
@@ -181,24 +133,30 @@ const items = computed(() => [
     items: [
       {
         key: '8-1',
-        label: 'Learning Strand Config',
+        label: 'Learning Strand Configuration',
         icon: 'fa fa-book',
-        route: { name: 'learning-strand-management' }
+        route: { name: 'learning-strand-configuration' }
       },
       {
         key: '8-2',
-        label: 'Student Requirements Config',
+        label: 'Student Requirement Configuration',
         icon: 'fa fa-list',
-        route: { name: 'student-requirements-management' }
+        route: { name: 'student-requirement-configuration' }
       },
       {
         key: '8-3',
+        label: 'Student Category Configuration',
+        icon: 'fa fa-layer-group',
+        route: { name: 'student-category-configuration' }
+      },
+      {
+        key: '8-4',
         label: 'Generate Reports',
         icon: 'fa fa-note-sticky',
         route: { name: 'dashboard' }
       },
       {
-        key: '8-4',
+        key: '8-5',
         label: 'Audit Trails',
         icon: 'fa fa-clock-rotate-left',
         route: { name: 'audit-trails' }
@@ -335,7 +293,8 @@ function setVisibility(keyValue) {
     6: 'canMgTerm',
     7: 'canMgLs',
     8: 'canMgStudReq',
-    9: 'canMgStaff'
+    9: 'canMgStudCat',
+    10: 'canMgStaff'
   }
 
   const hasNoPermission = (keyValue) => {

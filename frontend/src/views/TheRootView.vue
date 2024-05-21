@@ -1,17 +1,12 @@
 <script setup>
 import TheSidebar from '@/components/TheSidebar.vue'
-import { useTermStore } from '@/stores/term'
-import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
+import { ref } from 'vue'
 
-const termStore = useTermStore()
-
-onMounted(async () => {
-  await termStore.getActiveTerm()
-})
+const updateKey = ref(0)
 </script>
 
 <template>
   <TheSidebar />
-  <RouterView />
+  <RouterView @routeChange="updateKey += 1" :key="updateKey" />
 </template>

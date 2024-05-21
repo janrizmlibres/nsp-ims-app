@@ -5,10 +5,10 @@ import Calendar from 'primevue/calendar';
 import { useToast } from 'primevue/usetoast';
 import { ref } from 'vue';
 
-import { useTermStore } from '@/stores/term';
+import { useUtilitiesStore } from '@/stores/utilities';
 
 const toast = useToast()
-const termStore = useTermStore()
+const termStore = useUtilitiesStore()
 
 const dates = ref(null);
 
@@ -25,6 +25,7 @@ async function addTerm() {
     }
 
     const range = ref([])
+
     try {
         for (let date of dates.value) {
             const offset = date.getTimezoneOffset()
@@ -32,12 +33,14 @@ async function addTerm() {
             range.value.push(date)
         }
         
-        console.log(range.value[0].getFullYear());
         await termStore.addTerm({
             academic_year: range.value[0].getFullYear() + '-' + range.value[1].getFullYear(),
             start_date: range.value[0],
-            end_date: range.value[1]
+            end_date: range.value[1],
+            status: true
         })
+
+        await termStore.getTerms()
 
         toast.add({
             severity: 'success',
@@ -54,7 +57,6 @@ async function addTerm() {
         })
     }
 
-    await termStore.getTerms()
     dates.value = null;
     termStore.showHideAddTermDialog()
 }

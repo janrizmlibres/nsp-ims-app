@@ -1,4 +1,8 @@
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 import express from "express";
+import multer from "multer";
+import { v4 as uuidv4 } from "uuid";
 
 import sequelize from "./util/database.js";
 import { injectAll } from "./util/db_injector.js";
@@ -6,9 +10,10 @@ import setAssociations from "./util/associations.js";
 
 import adminRoutes from "./routes/admin.js";
 import authRoutes from "./routes/auth.js";
+import enrollmentRoutes from "./routes/enrollment.js";
 import termRoutes from "./routes/term.js";
 import classRoutes from "./routes/class.js";
-import strandRoutes from "./routes/strand.js";
+import classLearningStrandRoutes from "./routes/class_learning_strand.js";
 import utilitiesRoutes from "./routes/utilities.js";
 import volunteerRoutes from "./routes/volunteer.js";
 import profileRoutes from "./routes/profile.js";
@@ -17,7 +22,27 @@ const app = express();
 const port = process.env.PORT || 3000;
 setAssociations();
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "images"),
+  filename: (req, file, cb) => cb(null, uuidv4() + "-" + file.originalname),
+});
+
+const fileFilter = (req, file, cb) => {
+  if (["image/png", "image/jpg", "image/jpeg"].includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
 app.use(express.json());
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -40,13 +65,14 @@ app.get("/", (_, res) => {
 app.use("/profile", profileRoutes);
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
+app.use("/enrollment", enrollmentRoutes);
 app.use("/term", termRoutes);
 app.use("/class", classRoutes);
-app.use("/strand", strandRoutes);
+app.use("/classLearningStrand", classLearningStrandRoutes);
 app.use("/utilities", utilitiesRoutes);
 app.use("/volunteer", volunteerRoutes);
 
-app.use((error, _req, res) => {
+app.use((error, _req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
