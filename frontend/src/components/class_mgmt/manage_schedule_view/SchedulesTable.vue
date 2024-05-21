@@ -69,6 +69,7 @@ watch(() => props.classLevel, (data) => {
         
         isFetching.value = false
     } catch (error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -96,6 +97,7 @@ async function addSchedule(learningStrand, form) {
             life: 3000
         })
     } catch (error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',

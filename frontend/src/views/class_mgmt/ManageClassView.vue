@@ -54,6 +54,7 @@ onMounted(async () => {
         await utilitiesStore.getTerms()
         isLoading.value = false
     } catch(error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -94,7 +95,7 @@ onBeforeRouteLeave((to) => {
                         <span class="u-txt-active">Students</span>
                     </div>
                 </template>
-                <ManageStudentView :learningStrands="learningStrands" :termStatus="termStatus" />
+                <ManageStudentView :classLevel="classLevel" />
             </TabPanel>
             <TabPanel>
                 <template #header>

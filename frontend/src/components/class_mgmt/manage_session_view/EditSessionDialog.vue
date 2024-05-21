@@ -42,6 +42,7 @@ async function updateSession() {
 
         classStore.leave = true
     } catch(error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',

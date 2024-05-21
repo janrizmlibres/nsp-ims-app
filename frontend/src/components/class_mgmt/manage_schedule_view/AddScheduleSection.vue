@@ -25,6 +25,7 @@ onMounted(() => {
     try {
         volunteerStore.getAllVolunteers()
     } catch(error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',

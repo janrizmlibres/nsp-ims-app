@@ -34,6 +34,7 @@ watch(() => route.query, (query) => {
             strand.value = data.class_learning_strand.learning_strand.name
         })
     } catch (error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',

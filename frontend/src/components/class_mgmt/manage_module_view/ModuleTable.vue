@@ -166,6 +166,7 @@ watch(() => learningStrandInput.value, (input) => {
             
             isFetching.value = false
         } catch (error) {
+            console.log(error);
             toast.add({
                 severity: 'error',
                 summary: 'Error',

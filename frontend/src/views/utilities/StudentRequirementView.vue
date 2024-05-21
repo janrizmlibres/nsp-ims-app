@@ -20,6 +20,7 @@ onMounted(async () => {
     try {
         await requirementStore.getRequirements()
     } catch(error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -41,6 +42,7 @@ async function deleteRequirement(id) {
                 life: 3000
         })
     } catch(error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -69,6 +71,7 @@ const onRowEditSave = async (event) => {
                 life: 3000
             })
         } catch(error) {
+            console.log(error);
             toast.add({
                 severity: 'error',
                 summary: 'Error',

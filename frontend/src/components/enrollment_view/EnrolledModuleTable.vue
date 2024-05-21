@@ -27,6 +27,7 @@ async function getLearningStrands() {
 
     console.log("Learning Strands: ", learningStrands.value)
   } catch (error) {
+    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',
@@ -42,6 +43,7 @@ async function getEnrolledModules() {
 
     console.log("Module Status " , enrollmentStore.modules)
   } catch (error) {
+    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',
