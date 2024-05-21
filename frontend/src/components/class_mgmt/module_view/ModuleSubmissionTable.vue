@@ -1,11 +1,9 @@
 <script setup>
 // Presets
-import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dropdown from 'primevue/dropdown';
 import Textarea from 'primevue/textarea';
-import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import Calendar from 'primevue/calendar';
 import Tag from 'primevue/tag';
@@ -17,7 +15,6 @@ import { useConfirm } from 'primevue/useconfirm';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
@@ -26,9 +23,8 @@ const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
 
-const props = defineProps(['modelValue'])
+const props = defineProps(['modelValue', 'isNotActive', 'filters'])
 const emit = defineEmits(['onUpdate'])
-const status = computed(() => route.query.status)
 const isFetching = ref(false)
 const learners = ref([])
 const noChanges = ref(true)
@@ -36,10 +32,8 @@ const startingData = []
 const updatedData = new Set([])
 const leave = ref(true)
 const edit = ref(false)
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-});
+const filters = computed(() => props.filters)
+const isNotActive = computed(() => props.isNotActive)
 
 watch(() => props.modelValue, (data) => {
     isFetching.value = true
