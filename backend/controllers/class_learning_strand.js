@@ -196,6 +196,7 @@ export async function updateModuleSubmissions(req, res, next) {
             await moduleSubmissionInstance.update({
                 status: moduleSubmission.status,
                 date_submitted: moduleSubmission.date_submitted,
+                score: moduleSubmission.score,
                 remarks: moduleSubmission.remarks
             });
         }
