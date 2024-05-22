@@ -52,7 +52,7 @@ watch(() => props.state, (data) => dialogState.value = data)
                     </div>
                 </template>
             </Toolbar>
-            <TabView class="bg-white shadow-xl rounded-md">
+            <TabView v-model:activeIndex="activeTab">
                 <TabPanel>
                     <template #header>
                         <div class="flex items-center gap-2">
