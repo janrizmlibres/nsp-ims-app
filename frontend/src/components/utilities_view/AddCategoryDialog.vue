@@ -14,20 +14,49 @@ const categoryStore = useUtilitiesStore()
 const name = ref(null);
 
 async function addCategory() {
-    if (!name.value) {
+    if (!name.value.trim()) {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
             detail: "Please fill all necessary information",
             life: 3000
         })
-
         return
     }
 
+    if (categoryStore.categories.some(category => category.category_name === name.value.trim())) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Student Category already exists.',
+            life: 3000
+        })
+        return
+    }
+
+    if (name.value.trim().length > 100) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Student Category should not exceed 100 characters.',
+            life: 3000
+        })
+        return
+    }
+
+    if (name.value.trim().length < 3) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Student Category should be at least 3 characters.',
+            life: 3000
+        })
+        return
+    }
+    
     try {
         await categoryStore.addCategory({
-            category_name: name.value
+            category_name: name.value.trim()
         })
 
         await categoryStore.getCategories()
@@ -41,8 +70,8 @@ async function addCategory() {
     } catch(error) {
         toast.add({
             severity: 'error',
-            summary: 'Duplicated Student Category',
-            detail: error.response.data.message,
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
             life: 3000
         })
     }
