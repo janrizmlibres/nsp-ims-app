@@ -43,8 +43,8 @@ watch(() => props.state, (data) => dialogState.value = data)
                     (props.data.middleName ? ', ' + props.data.middleName + ' ' : '') }}</p>
             </div>
         </template>
-        <div class="relative flex flex-col h-full">
-            <Toolbar class="!p-2">
+        <div class="relative flex flex-col h-full shadow-xl">
+            <Toolbar class="!p-2 h-16">
                 <template #end>
                     <div v-if="activeTab !== 1" class="flex flex-row gap-4 items-center mr-4">
                         <label class="font-semibold">Learning Strand:</label>
