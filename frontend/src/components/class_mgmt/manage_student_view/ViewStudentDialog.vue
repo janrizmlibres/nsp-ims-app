@@ -78,6 +78,7 @@ watch(() => props.state, (data) => dialogState.value = data)
                             <span class="u-txt-active">Attendances</span>
                         </div>
                     </template>
+                    <AttendanceTable :data="attendances" />
                 </TabPanel>
             </TabView>
         </div>
