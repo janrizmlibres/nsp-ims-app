@@ -32,7 +32,7 @@ const startingData = []
 const updatedData = new Set([])
 const leave = ref(true)
 const edit = ref(false)
-const filters = computed(() => props.filters)
+const filters = ref(props.filters)
 const isNotActive = computed(() => props.isNotActive)
 
 watch(() => props.modelValue, (data) => {
