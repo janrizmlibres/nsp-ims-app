@@ -175,7 +175,7 @@ onBeforeRouteLeave((to) => {
             <Column field="lastName" header="Last Name" frozen sortable />
             <Column field="firstName" header="First Name" frozen sortable />
             <Column field="middleName" header="Middle Name" />
-            <Column field="status" header="Status" sortable style="width: 14rem;" >
+            <Column field="status" header="Status" style="width: 14rem;" >
                 <template #body="slotProps" v-if="!edit">
                     <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
                 </template>
