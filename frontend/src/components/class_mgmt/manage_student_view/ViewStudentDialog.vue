@@ -5,6 +5,7 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Toolbar from 'primevue/toolbar';
 import Dropdown from 'primevue/dropdown';
+import Avatar from 'primevue/avatar';
 import { computed, ref, watch } from 'vue';
 
 import ModuleTable from './ModuleTable.vue';
@@ -23,8 +24,11 @@ const learningStrands = ref()
 const modules = computed(() => learningStrandInput.value ? learningStrandInput.value.modules : null)
 const attendances = computed(() => learningStrandInput.value ? learningStrandInput.value.sessions : null)
 const activeTab = ref(0)
+const photoUrl = ref()
 
 watch(() => props.data, (data) => {
+    photoUrl.value = data.photoUrl && `http://localhost:8080/${data.photoUrl}`
+
     classStore.getStudent(data.classLevelId, data.id).then((data) => {
         learningStrands.value = data
     })
@@ -46,16 +50,26 @@ watch(() => props.state, (data) => dialogState.value = data)
         }" :ptOptions="{mergeProps: true}" 
     >
         <template #header>
-            <div class="ml-4 mt-4">
-                <span class="font-bold text-3xl">
-                    {{ 
-                        props.data.lastName + 
-                        (props.data.suffix ? ' ' + props.data.suffix + ', ' : ', ') + 
-                        props.data.firstName + ' ' +
-                        (props.data.middleName ? props.data.middleName : '')
-                    }}
-                </span>
-                <p class="font-semibold text-lg">{{ props.data.category }}</p>
+            <div class="flex flex-row ml-4 mt-4">
+                <Avatar
+                    :image="photoUrl"
+                    size="xlarge"
+                    :pt="{
+                        root: 'bg-white shadow-md border-2 rounded mr-4'
+                    }"
+                    :ptOptions="{ mergeProps: true }"
+                />
+                <div>
+                    <span class="font-bold text-3xl">
+                        {{ 
+                            props.data.lastName + 
+                            (props.data.suffix ? ' ' + props.data.suffix + ', ' : ', ') + 
+                            props.data.firstName + ' ' +
+                            (props.data.middleName ? props.data.middleName : '')
+                        }}
+                    </span>
+                    <p class="font-semibold text-lg">{{ props.data.category }}</p>
+                </div>
             </div>
         </template>
         <div class="relative flex flex-col h-full shadow-xl">
