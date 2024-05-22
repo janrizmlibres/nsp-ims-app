@@ -22,24 +22,24 @@ const enableLearningStrandDropdown = ref(false)
 
 function updateTerm() {
     classLevelInput.value = null
-    emit('updateState', classLevelInput.value, termInput.value.status)
+    emit('updateState', termInput.value, classLevelInput.value)
 }
 
 function updateClassLevel() {
     enableLearningStrandDropdown.value = true; 
     
-    emit('updateState', classLevelInput.value, termInput.value.status)
+    emit('updateState', termInput.value, classLevelInput.value)
 }
 </script>
 
 <template>
-    <div class="flex gap-4 bg-white rounded-md shadow-xl p-4 px-6 mb-2">
-        <div class="flex flex-col gap-1">
-            <label>Academic Year</label>
+    <div class="flex gap-4 bg-white rounded-md shadow-xl py-2 px-6 mb-2">
+        <div class="flex flex-row gap-4 items-center">
+            <label class="font-semibold w-full">Academic Year:</label>
             <Dropdown v-model="termInput" :options="terms" optionLabel="academic_year" placeholder="Select an Academic Year" class="w-full" @update:modelValue="updateTerm" />
         </div>
-        <div class="flex flex-col gap-1">
-            <label>Class Level</label>
+        <div class="flex flex-row gap-4 items-center">
+            <label class="font-semibold w-full">Class Level:</label>
             <Dropdown v-model="classLevelInput" :options="classes" optionLabel="school_level" placeholder="Select a Level" class="w-full" @update:modelValue="updateClassLevel" />
         </div>
     </div>

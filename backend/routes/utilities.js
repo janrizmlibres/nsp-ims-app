@@ -21,4 +21,10 @@ router.get("/requirements", isAuth, utilitiesController.getRequirements);
 router.patch("/requirement/:requirementId/update", isAuth, utilitiesController.updateRequirement);
 router.delete("/requirement/:requirementId/delete", isAuth, utilitiesController.deleteRequirement);
 
+// for Student Category Creation Operations
+router.post("/category/create", isAuth, utilitiesController.addCategory);
+router.get("/categories", isAuth, utilitiesController.getCategories);
+router.patch("/category/:categoryId/update", isAuth, utilitiesController.updateCategory);
+router.delete("/category/:categoryId/delete", isAuth, utilitiesController.deleteCategory);
+
 export default router;

@@ -26,6 +26,7 @@ async function getLearningStrands() {
 
     console.log("Learning Strands: ", learningStrands.value)
   } catch (error) {
+    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',
@@ -40,6 +41,7 @@ async function getEnrolledAttendance() {
     await enrollmentStore.getEnrolledAttendance(props.enrollmentId, learningStrandInput.value.id)
   
   } catch (error) {
+    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',

@@ -55,16 +55,56 @@ const editingRows = ref([])
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        if (!newData.requirement_name.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "The field cannot be empty. Please provide a requirement.",
+                life: 3000
+            })
+            return
+        }
+
+        if (requirementStore.requirements.some(requirement => requirement.requirement_name === newData.requirement_name.trim() && requirement.id !== newData.id)) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Requirement',
+                detail: "Please provide a unique student requirement.",
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.requirement_name.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Requirement Too Long',
+                detail: 'The requirement should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.requirement_name.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Requirement Too Short',
+                detail: 'The requirement should be at least 3 characters.',
+                life: 3000
+            })
+            return
+        }
+
         try {
             await requirementStore.updateRequirement(newData.id, {
-                requirement_name: newData.requirement_name
+                requirement_name: newData.requirement_name.trim()
             })
 
             await requirementStore.getRequirements()
 
             toast.add({
                 severity: 'success',
-                summary: 'Success',
+                summary: 'Update Successful',
                 detail: 'Student Requirement updated successfully!',
                 life: 3000
             })
@@ -72,7 +112,7 @@ const onRowEditSave = async (event) => {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Unexpected error encountered.',
+                detail: 'Unexpected error encountered. Please try again.',
                 life: 3000
             })
         }

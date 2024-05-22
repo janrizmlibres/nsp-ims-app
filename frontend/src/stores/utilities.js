@@ -10,6 +10,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
     const visibleAddStrandDialog = ref(false)
     const requirements = ref([])
     const visibleAddRequirementDialog = ref(false)
+    const categories = ref([])
+    const visibleAddCategoryDialog = ref(false)
 
     // for Academic Term Creation Operations
     async function addTerm(dates) {
@@ -120,5 +122,72 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         })
     }
 
-    return { terms, visibleAddTermDialog, addTerm, getTerms, showHideAddTermDialog, updateTerm, strands, visibleAddStrandDialog, addLearningStrand, getLearningStrands, showHideAddStrandDialog, updateLearningStrand, deleteLearningStrand, requirements, visibleAddRequirementDialog, addRequirement, getRequirements, showHideAddRequirementDialog, updateRequirement, deleteRequirement}
+    // for Student Categories Creation Operations
+    async function addCategory(category) {
+        const authStore = useAuthStore()
+
+        await axios.post('http://localhost:8080/utilities/category/create', category, {
+        headers: {Authorization: 'Bearer ' + authStore.token}
+        })
+    }
+
+    async function getCategories() {
+        const authStore = useAuthStore()
+
+        const result = await axios.get('http://localhost:8080/utilities/categories', {
+        headers: {Authorization: 'Bearer ' + authStore.token}
+        })
+        console.log(result.data.data);
+        categories.value = result.data.data
+    }
+
+    function showHideAddCategoryDialog() {
+        visibleAddCategoryDialog.value = !visibleAddCategoryDialog.value
+    }
+
+    async function updateCategory(categoryId, form) {
+        const authStore = useAuthStore()
+
+        await axios.patch(`http://localhost:8080/utilities/category/${categoryId}/update`, form, {
+        headers: {Authorization: 'Bearer ' + authStore.token}
+        })
+    }
+
+    async function deleteCategory(categoryId) {
+        const authStore = useAuthStore()
+
+        await axios.delete(`http://localhost:8080/utilities/category/${categoryId}/delete`, {
+        headers: {Authorization: 'Bearer ' + authStore.token}
+        })
+    }
+
+    return {
+        terms,
+        visibleAddTermDialog,
+        addTerm,
+        getTerms,
+        showHideAddTermDialog,
+        updateTerm,
+        strands,
+        visibleAddStrandDialog,
+        addLearningStrand,
+        getLearningStrands,
+        showHideAddStrandDialog,
+        updateLearningStrand,
+        deleteLearningStrand,
+        requirements,
+        visibleAddRequirementDialog,
+        addRequirement,
+        getRequirements,
+        showHideAddRequirementDialog,
+        updateRequirement,
+        deleteRequirement,
+        categories,
+        visibleAddCategoryDialog,
+        addCategory,
+        getCategories,
+        showHideAddCategoryDialog,
+        updateCategory,
+        deleteCategory
+    }
 })

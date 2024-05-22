@@ -5,6 +5,7 @@ import Staff from "../models/staff/staff.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import StudentRequirement from "../models/student_requirement.js";
+import StudentCategory from "../models/student_category.js";
 import Volunteer from "../models/volunteer/volunteer.js";
 import PersonalInfo from "../models/student/personal_info.js";
 import ContactInfo from "../models/student/contact_info.js";
@@ -29,6 +30,7 @@ export async function injectAll() {
   await injectStudent();
   await injectVolunteer();
   await injectStudentRequirement();
+  await injectStudentCategory();
 }
 
 export async function injectStudent() {
@@ -266,6 +268,7 @@ export async function injectStaff() {
         canMgTerm: true,
         canMgLs: true,
         canMgStudReq: true,
+        canMgStudCat: true,
         canMgStaff: true,
       },
       {
@@ -394,56 +397,56 @@ export async function injectStaff() {
 export async function injectAcademicYear() {
   const termData = [
     {
-      batch_number: 1,
-      academic_year: "2015-2016",
-      start_date: new Date("2015-06-01"),
-      end_date: new Date("2016-03-31"),
-      status: false,
-    },
-    {
-      batch_number: 2,
+      id: 1,
       academic_year: "2016-2017",
       start_date: new Date("2016-06-01"),
       end_date: new Date("2017-03-31"),
       status: false,
     },
     {
-      batch_number: 3,
+      id: 2,
       academic_year: "2017-2018",
       start_date: new Date("2017-06-01"),
       end_date: new Date("2018-03-31"),
       status: false,
     },
     {
-      batch_number: 4,
+      id: 3,
       academic_year: "2018-2019",
       start_date: new Date("2018-06-01"),
       end_date: new Date("2019-03-31"),
       status: false,
     },
     {
-      batch_number: 5,
+      id: 4,
       academic_year: "2019-2020",
+      start_date: new Date("2019-06-01"),
+      end_date: new Date("2020-03-31"),
+      status: false,
+    },
+    {
+      id: 5,
+      academic_year: "2020-2021",
       start_date: new Date("2020-08-01"),
       end_date: new Date("2021-05-31"),
       status: false,
     },
     {
-      batch_number: 6,
+      id: 6,
       academic_year: "2021-2022",
       start_date: new Date("2021-08-01"),
       end_date: new Date("2022-05-31"),
       status: false,
     },
     {
-      batch_number: 7,
+      id: 7,
       academic_year: "2022-2023",
       start_date: new Date("2022-08-01"),
       end_date: new Date("2023-05-31"),
       status: false,
     },
     {
-      batch_number: 8,
+      id: 8,
       academic_year: "2023-2024",
       start_date: new Date("2023-08-01"),
       end_date: new Date("2024-05-31"),
@@ -557,6 +560,53 @@ export async function injectStudentRequirement() {
   await Promise.all(
     studentRequirementData.map(async (student_requirement) => {
       await StudentRequirement.create(student_requirement);
+    })
+  );
+}
+
+export async function injectStudentCategory() {
+  const studentCategoryData = [
+    {
+      category_name: "Out-of-School Youth",
+    },
+    {
+      category_name: "Indigenous People",
+    },
+    {
+      category_name: "Person with Disability",
+    },
+    {
+      category_name: "Solo Parent",
+    },
+    {
+      category_name: "Pantawid Pamilyang Pilipino Program (4Ps) Beneficiary",
+    },
+    {
+      category_name: "Child Laborer",
+    },
+    {
+      category_name: "Victim of Child Abuse",
+    },
+    {
+      category_name: "Victim of Human Trafficking",
+    },
+    {
+      category_name: "Street Children",
+    },
+    {
+      category_name: "Drug Dependents",
+    },
+    {
+      category_name: "Children in Conflict with the Law",
+    },
+    {
+      category_name: "Children in Especially Difficult Circumstances",
+    },
+  ];
+
+  await Promise.all(
+    studentCategoryData.map(async (student_category) => {
+      await StudentCategory.create(student_category);
     })
   );
 }

@@ -23,9 +23,22 @@ const customPreset = usePassThrough(
         }
       }
     },
+    tabview: {
+      root: {
+          class: ['relative flex flex-col h-full overflow-hidden']
+      },
+      panelContainer: {
+          class: ['relative h-full overflow-hidden']
+      },
+      tabpanel: {
+          content: {
+              class: ['h-full overflow-hidden']
+          }
+      }
+    },
     datatable: {
       root: {
-        class: ['flex flex-col h-full pt-2 justify-between overflow-auto']
+        class: ['flex flex-col h-full pt-2 overflow-auto']
       },
       column: {
         headercell: ({ context, props }) => ({

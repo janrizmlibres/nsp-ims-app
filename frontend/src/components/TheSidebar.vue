@@ -97,9 +97,9 @@ const items = computed(() => [
   },
   {
     key: '6',
-    label: 'Term Management',
+    label: 'Academic Term Configuration',
     icon: 'fa fa-calendar-days',
-    route: { name: 'term-management' }
+    route: { name: 'academic-term-configuration' }
   },
   {
     key: '7',
@@ -133,24 +133,30 @@ const items = computed(() => [
     items: [
       {
         key: '8-1',
-        label: 'Learning Strand Config',
+        label: 'Learning Strand Configuration',
         icon: 'fa fa-book',
-        route: { name: 'learning-strand-management' }
+        route: { name: 'learning-strand-configuration' }
       },
       {
         key: '8-2',
-        label: 'Student Requirements Config',
+        label: 'Student Requirement Configuration',
         icon: 'fa fa-list',
-        route: { name: 'student-requirements-management' }
+        route: { name: 'student-requirement-configuration' }
       },
       {
         key: '8-3',
+        label: 'Student Category Configuration',
+        icon: 'fa fa-layer-group',
+        route: { name: 'student-category-configuration' }
+      },
+      {
+        key: '8-4',
         label: 'Generate Reports',
         icon: 'fa fa-note-sticky',
         route: { name: 'dashboard' }
       },
       {
-        key: '8-4',
+        key: '8-5',
         label: 'Audit Trails',
         icon: 'fa fa-clock-rotate-left',
         route: { name: 'audit-trails' }
@@ -287,7 +293,8 @@ function setVisibility(keyValue) {
     6: 'canMgTerm',
     7: 'canMgLs',
     8: 'canMgStudReq',
-    9: 'canMgStaff'
+    9: 'canMgStudCat',
+    10: 'canMgStaff'
   }
 
   const hasNoPermission = (keyValue) => {
