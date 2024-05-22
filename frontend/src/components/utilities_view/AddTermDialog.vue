@@ -20,12 +20,41 @@ async function addTerm() {
             detail: "Please fill all necessary information",
             life: 3000
         })
+        return
+    }
 
+    const term = termStore.terms.find(term => term.start_date === dates.value[0] && term.end_date === dates.value[1])
+    if (term) {
+        toast.add({
+            severity: 'error',
+            summary: 'Duplicated Academic Term',
+            detail: 'Academic Term already exists.',
+            life: 3000
+        })
+        return
+    }
+
+    if (dates.value[1].getFullYear() - dates.value[0].getFullYear() !== 1) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Start Date and End Date must only be a year apart.',
+            life: 3000
+        })
+        return
+    }
+    
+    if (dates.value[0] > dates.value[1]) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'End Date cannot be earlier than the Start Date.',
+            life: 3000
+        })
         return
     }
 
     const range = ref([])
-
     try {
         for (let date of dates.value) {
             const offset = date.getTimezoneOffset()
