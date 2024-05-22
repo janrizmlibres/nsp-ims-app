@@ -20,7 +20,6 @@ onMounted(async () => {
     try {
         await strandStore.getLearningStrands()
     } catch(error) {
-        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -42,7 +41,6 @@ async function deleteLearningStrand(id) {
                 life: 3000
         })
     } catch(error) {
-        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -57,10 +55,90 @@ const editingRows = ref([])
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        if (!newData.code.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "Learning Strand Code cannot be empty.",
+                life: 3000
+            })
+            return
+        }
+
+        if (!newData.name.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "Learning Strand Name cannot be empty.",
+                life: 3000
+            })
+            return
+        }
+
+        if (strandStore.strands.some(strand => strand.code === newData.code.trim() && strand.id !== newData.id)) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Learning Strand Code already exists.',
+                life: 3000
+            })
+            return
+        }
+
+        if (strandStore.strands.some(strand => strand.name === newData.name.trim() && strand.id !== newData.id)) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Learning Strand Name already exists.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.code.trim().length > 25) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Learning Strand Code should not exceed 25 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.name.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Learning Strand Name should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.code.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Learning Strand Code should be at least 3 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.name.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Learning Strand Name should be at least 3 characters.',
+                life: 3000
+            })
+            return
+        }
+
         try {
             await strandStore.updateLearningStrand(newData.id, {
-                code: newData.code,
-                name: newData.name
+                code: newData.code.trim(),
+                name: newData.name.trim()
             })
 
             await strandStore.getLearningStrands()
@@ -72,7 +150,6 @@ const onRowEditSave = async (event) => {
                 life: 3000
             })
         } catch(error) {
-            console.log(error);
             toast.add({
                 severity: 'error',
                 summary: 'Error',
