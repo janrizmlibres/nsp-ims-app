@@ -19,7 +19,6 @@ const editingRows = ref([])
 
 const onRowEditSave = async (event) => {
   let { data, newData } = event
-  console.log(newData)
 
   if (JSON.stringify(data) !== JSON.stringify(newData)) {
     try {

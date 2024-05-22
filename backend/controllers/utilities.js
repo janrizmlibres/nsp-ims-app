@@ -4,6 +4,7 @@ import ClassLevel from "../models/class/class_level.js";
 import LearningStrand from "../models/learning_strand.js";
 import ClassLearningStrand from "../models/class/class_learning_strand.js"
 import StudentRequirement from "../models/student_requirement.js";
+import StudentCategory from "../models/student_category.js";
 
 // for Academic Term Creation Operations
 export async function addTerm(req, res, next) {
@@ -17,12 +18,6 @@ export async function addTerm(req, res, next) {
     const termTemp = await Term.findOne({
       where: {academic_year: academic_year}
     })
-  
-    await Term.create(req.body)
-    
-    res.status(201).json({ 
-      message: "New Academic Term Created!"
-    });
 
     if (termTemp) {
       const error = new Error("Academic Term already exists.");
@@ -45,6 +40,10 @@ export async function addTerm(req, res, next) {
       start_date: start_date,
       end_date: end_date,
       status: true
+    });
+    
+    res.status(201).json({ 
+      message: "New Academic Term Created!"
     });
 
     const classLevelData = [
@@ -274,6 +273,88 @@ export async function deleteRequirement(req, res, next) {
 
     res.status(200).json({ 
       message: "Student Requirement deleted successfully!"
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
+// for Student Category Creation Operations
+export async function addCategory(req, res, next) {
+  try {
+    const category = await StudentCategory.findOne({
+      where: {
+        category_name: req.body.category_name
+      }
+    })
+
+    await StudentCategory.create(req.body)
+
+    res.status(201).json({ 
+      message: "New Student Category Created!"
+    });
+
+    if (category) {
+      const error = new Error("Student Category already exists.");
+      error.statusCode = 422;
+      throw error;
+    }
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
+export async function getCategories(req, res, next) {
+  try {
+    const categories = await StudentCategory.findAll()
+
+    res.status(200).json({ 
+      message: "Student Categories fetched successfully!",
+      data: categories
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
+export async function updateCategory(req, res, next) {
+  const categoryId = req.params.categoryId
+
+  try {
+      await StudentCategory.update(
+          req.body,
+          { where: { id: categoryId }
+      });
+
+      res.status(200).json({ message: "Student Category updated successfully!" });
+  } catch (error) {
+      if (!error.statusCode) {
+          error.statusCode = 500;
+      }
+      next(error);
+      return error;
+  }
+}
+
+export async function deleteCategory(req, res, next) {
+  try {
+    await StudentCategory.destroy({
+      where: {
+        id: req.params.categoryId
+      }
+    })
+
+    res.status(200).json({ 
+      message: "Student Category deleted successfully!"
     });
   } catch (error) {
     if (!error.statusCode) {
