@@ -31,7 +31,10 @@ const onRowEditSave = async (event) => {
           return
         }
 
-        if (terms.value.some(term => term.academic_year === newData.academic_year)) {
+        let startDateYear = newData.start_date.getFullYear();
+        let endDateYear = newData.end_date.getFullYear();
+
+        if (termStore.terms.some(term => term.academic_year === startDateYear + '-' + endDateYear) && termStore.terms.find(term => term.id === newData.id).academic_year !== startDateYear + '-' + endDateYear) {
             toast.add({
               severity: 'error',
               summary: 'Duplicated Academic Term',
@@ -40,9 +43,6 @@ const onRowEditSave = async (event) => {
             })
           return
         }
-
-        let startDateYear = newData.start_date.getFullYear();
-        let endDateYear = newData.end_date.getFullYear();
 
         if (endDateYear - startDateYear !== 1) {
             toast.add({
@@ -68,7 +68,7 @@ const onRowEditSave = async (event) => {
             await termStore.updateTerm(newData.id, {
                 start_date: newData.start_date,
                 end_date: newData.end_date,
-                academic_year: newData.start_date.getFullYear() + '-' + newData.end_date.getFullYear()
+                academic_year: startDateYear + '-' + endDateYear
             })
 
             await termStore.getTerms()
