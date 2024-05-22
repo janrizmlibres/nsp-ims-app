@@ -17,6 +17,9 @@ const dialogState = ref()
 const student = ref()
 const learningStrandInput = ref()
 const learningStrands = ref()
+const modules = computed(() => learningStrandInput.value ? learningStrandInput.value.modules : null)
+const attendances = computed(() => learningStrandInput.value ? learningStrandInput.value.sessions : null)
+const activeTab = ref(0)
 
 watch(() => props.data, (data) => {
     classStore.getStudent(data.classLevelId, data.id).then((data) => {
