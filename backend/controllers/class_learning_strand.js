@@ -358,6 +358,7 @@ export async function getSession(req, res, next) {
         
         const regularAttendances = await Attendance.findAll({
             where: {
+                sessionId: sessionId,
                 '$enrollment.regularity$': 'Regular',
                 '$enrollment.status$': {[Op.not]: 'Drop'}
             }, include: [{model: Enrollment, include: [Student]}]
@@ -365,6 +366,7 @@ export async function getSession(req, res, next) {
 
         const hybridAttendances = await Attendance.findAll({
             where: {
+                sessionId: sessionId,
                 '$enrollment.regularity$': 'Hybrid',
                 '$enrollment.status$': {[Op.not]: 'Drop'}
             }, include: [{model: Enrollment, include: [Student]}]
@@ -372,6 +374,7 @@ export async function getSession(req, res, next) {
 
         const dropAttendances = await Attendance.findAll({
             where: {
+                sessionId: sessionId,
                 '$enrollment.status$': 'Drop'
             }, include: [{model: Enrollment, include: [Student]}]
         })
