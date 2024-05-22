@@ -29,7 +29,10 @@ const ModuleSubmission = sequelize.define("module_submission", {
     type: INTEGER,
     defaultValue: 0
   },
-  remarks: STRING,
+  remarks: {
+    type: STRING,
+    defaultValue: ""
+  },
   status: {
     type: STRING,
     defaultValue: 'No Submission'
