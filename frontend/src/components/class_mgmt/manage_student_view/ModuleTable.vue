@@ -1,8 +1,6 @@
 <script setup>
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';
-import Row from 'primevue/row';
 import Badge from 'primevue/badge';
 import Tag from 'primevue/tag';
 import InputText from 'primevue/inputtext';
