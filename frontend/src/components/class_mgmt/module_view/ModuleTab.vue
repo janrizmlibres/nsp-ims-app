@@ -5,19 +5,15 @@ import TabPanel from 'primevue/tabpanel';
 import ProgressSpinner from 'primevue/progressspinner';
 import InputText from 'primevue/inputtext';
 import Toolbar from 'primevue/toolbar';
-import { computed, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 // // Custom
 import ModuleSubmissionTable from './ModuleSubmissionTable.vue';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import { useRoute } from 'vue-router';
-
 
 const props = defineProps(['modelValue'])
 const emit = defineEmits(['onUpdate'])
-const route = useRoute()
 
-const termStatus = computed(() => route.query.status)
 const active = ref([])
 const inactive = ref([])
 const drop = ref([])
@@ -78,15 +74,15 @@ watch(() => props.modelValue, (data) => {
         <TabView>
             <TabPanel header="Active">
                 <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <ModuleSubmissionTable v-else v-model="active" :isNotActive="!termStatus" :filters="filters" @onUpdate="updateModuleData" />
+                <ModuleSubmissionTable v-else v-model="active" :disableEdit="false" :filters="filters" @onUpdate="updateModuleData" />
             </TabPanel>
             <TabPanel header="Inactive">
                 <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <ModuleSubmissionTable v-else v-model="inactive" :isNotActive="!termStatus" :filters="filters" @onUpdate="updateModuleData" />
+                <ModuleSubmissionTable v-else v-model="inactive" :disableEdit="false" :filters="filters" @onUpdate="updateModuleData" />
             </TabPanel>
             <TabPanel header="Drop">
                 <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <ModuleSubmissionTable v-else v-model="drop" :isNotActive="true" :filters="filters" @onUpdate="updateModuleData" />
+                <ModuleSubmissionTable v-else v-model="drop" :disableEdit="true" :filters="filters" @onUpdate="updateModuleData" />
             </TabPanel>
         </TabView>
     </div>
