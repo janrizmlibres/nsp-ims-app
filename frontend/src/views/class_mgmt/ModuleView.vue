@@ -27,20 +27,22 @@ function updateModuleSubmissionTable(data) {
 }
 
 watch(() => route.query, (query) => {
-    try {
-        classLearningStrandStore.getModule(query.id).then((data) => {
-            updateModuleSubmissionTable(data)
-            name.value = data.title
-            strand.value = data.class_learning_strand.learning_strand.name
-        })
-    } catch (error) {
-        console.log(error);
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: "Unexpected error encountered!",
-            life: 3000
-        })
+    if (route.name === 'module-info') {
+        try {
+            classLearningStrandStore.getModule(query.id).then((data) => {
+                updateModuleSubmissionTable(data)
+                name.value = data.title
+                strand.value = data.class_learning_strand.learning_strand.name
+            })
+        } catch (error) {
+            console.log(error);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: "Unexpected error encountered!",
+                life: 3000
+            })
+        }
     }
 }, {immediate: true})
 </script>
