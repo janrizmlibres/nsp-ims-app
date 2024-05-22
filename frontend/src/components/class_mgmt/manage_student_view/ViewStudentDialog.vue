@@ -36,11 +36,16 @@ watch(() => props.state, (data) => dialogState.value = data)
         }" :ptOptions="{mergeProps: true}" 
     >
         <template #header>
-            <div class="flex flex-col gap-2 ml-4 mt-4">
-                <span class="font-bold text-3xl">{{ props.data.lastName + (props.data.suffix ? ' ' + props.data.suffix + ',' : ',') }}</span>
-                <p class="font-bold text-xl">{{ 
-                    props.data.firstName + 
-                    (props.data.middleName ? ', ' + props.data.middleName + ' ' : '') }}</p>
+            <div class="ml-4 mt-4">
+                <span class="font-bold text-3xl">
+                    {{ 
+                        props.data.lastName + 
+                        (props.data.suffix ? ' ' + props.data.suffix + ', ' : ', ') + 
+                        props.data.firstName + ' ' +
+                        (props.data.middleName ? props.data.middleName : '')
+                    }}
+                </span>
+                <p class="font-semibold text-lg">{{ props.data.category }}</p>
             </div>
         </template>
         <div class="relative flex flex-col h-full shadow-xl">
