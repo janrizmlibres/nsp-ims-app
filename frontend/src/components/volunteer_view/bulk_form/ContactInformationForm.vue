@@ -8,24 +8,24 @@ import { objectMap } from '@/util/helpers'
 
 const { formData, updateFormData } = inject('formData')
 
-const contactInformation = formData. contactInformation
-const emergency = formData.emergency
+const VolunteerContactInformation = formData. VolunteerContactInformation
+const VolunteerEmergency = formData.VolunteerEmergency
 
 const leftFields = ref({
-  contactNumber: { label: 'Contact Number', data: contactInformation.contactNumber },
-  email: { label: 'Email Address', data: contactInformation.email },
-  facebook: { label: 'Facebook', data: contactInformation.facebook }
+  contactNumber: { label: 'Contact Number', data: VolunteerContactInformation.contactNumber },
+  email: { label: 'Email Address', data: VolunteerContactInformation.email },
+  facebook: { label: 'Facebook', data: VolunteerContactInformation.facebook }
 })
 
 const rightFields = ref({
-  lastName: { label: 'Last Name', data: emergency.lastName },
-  firstName: { label: 'First Name', data: emergency.firstName },
-  middleName: { label: 'Middle Name', data: emergency.middleName },
-  suffixName: { label: 'Suffix', data: emergency.suffixName },
-  contactNumber: { label: 'Contact Number', data: emergency.contactNumber }
+  lastName: { label: 'Last Name', data: VolunteerEmergency.lastName },
+  firstName: { label: 'First Name', data: VolunteerEmergency.firstName },
+  middleName: { label: 'Middle Name', data: VolunteerEmergency.middleName },
+  suffixName: { label: 'Suffix', data: VolunteerEmergency.suffixName },
+  contactNumber: { label: 'Contact Number', data: VolunteerEmergency.contactNumber }
 })
 
-const relationship = ref(emergency.relationship)
+const relationship = ref(VolunteerEmergency.relationship)
 
 const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 

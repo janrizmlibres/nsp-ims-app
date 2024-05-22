@@ -10,13 +10,13 @@ import FormParts from '@/util/volunteer_form_parts'
 
 const { formData, updateFormData } = inject('formData')
 
-const personalInformation = formData.personalInformation
-const professional = formData.professional
-const student = formData.student
+const VolunteerPersonalInformation = formData.VolunteerPersonalInformation
+const ProfessionalVolunteer = formData.ProfessionalVolunteer
+const StudentVolunteer = formData.StudentVolunteer
 
-const nickname = ref(personalInformation.nickname)
-const work = ref(professional.work)
-const selectedSex = ref(personalInformation.sex)
+const nickname = ref(VolunteerPersonalInformation.nickname)
+const work = ref(ProfessionalVolunteer.work)
+const selectedSex = ref(VolunteerPersonalInformation.sex)
 
 const birthday = ref({ month: null, day: null, year: null })
 const computedBirthday = computed(() => {
@@ -29,15 +29,15 @@ const computedBirthday = computed(() => {
 })
 
 const address = ref({
-  housing: { label: 'Blk/Lt/St', data: personalInformation.housing },
-  barangay: { label: 'Barangay', data: personalInformation.barangay },
-  city: { label: 'City', data: personalInformation.city },
-  province: { label: 'Province', data: personalInformation.province }
+  housing: { label: 'Blk/Lt/St', data: VolunteerPersonalInformation.housing },
+  barangay: { label: 'Barangay', data: VolunteerPersonalInformation.barangay },
+  city: { label: 'City', data: VolunteerPersonalInformation.city },
+  province: { label: 'Province', data: VolunteerPersonalInformation.province }
 })
 
 const studentFields = ref({
-  program: { label: 'Program', data: student.program },
-  year: { label: 'Year Level', data: student.year }
+  program: { label: 'Program', data: StudentVolunteer.program },
+  year: { label: 'Year Level', data: StudentVolunteer.year }
 })
 
 const sex = ['M', 'F']
@@ -83,10 +83,10 @@ onMounted(() => {
     years.value.push(i.toString())
   }
 
-  if (personalInformation.birthday) {
-    birthday.value.month = getMonth(personalInformation.birthday)
-    birthday.value.day = getDay(personalInformation.birthday).toString()
-    birthday.value.year = getYear(personalInformation.birthday).toString()
+  if (VolunteerPersonalInformation.birthday) {
+    birthday.value.month = getMonth(VolunteerPersonalInformation.birthday)
+    birthday.value.day = getDay(VolunteerPersonalInformation.birthday).toString()
+    birthday.value.year = getYear(VolunteerPersonalInformation.birthday).toString()
   }
 })
 
