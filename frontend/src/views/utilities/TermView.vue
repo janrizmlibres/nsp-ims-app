@@ -31,10 +31,10 @@ const onRowEditSave = async (event) => {
           return
         }
 
-        if (terms.value.some(term => term.start_date.getFullYear() === newData.start_date.getFullYear() && term.end_date.getFullYear() === newData.end_date.getFullYear())) {
+        if (terms.value.some(term => term.academic_year === newData.academic_year)) {
             toast.add({
               severity: 'error',
-              summary: 'Error',
+              summary: 'Duplicated Academic Term',
               detail: 'Academic Term already exists.',
               life: 3000
             })
