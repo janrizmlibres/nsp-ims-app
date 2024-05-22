@@ -57,6 +57,7 @@ const statuses = ref([
 const meterProgress = ref((data) => {
     return [{
         label: `${data.filter((datum) => datum.status === true).length} of ${data.length} completed`, 
+        color: '#265492',
         value: data.filter(datum => datum.status === true).length
     }]
 })
@@ -233,10 +234,10 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="flex h-full w-full">
-        <div class="flex flex-col w-[17%] rounded-md mr-10 p-2 gap-4" >
+        <div class="flex flex-col w-[17%] rounded-md mr-10 p-2 gap-8" >
             <AddModuleSection :id="classLearningStrandId" :termStatus="termStatus"  @onUpdate="updateModuleTable" /> 
             
-            <div class="mt-2 p-4">
+            <div class="u-bg-scolor shadow-xl rounded-md mt-2 p-4 text-surface-0">
                 <label>Module Progress</label>
                 <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" class="font-semibold" />
             </div>
