@@ -27,19 +27,22 @@ function updateAttendanceTable(data) {
 }
 
 watch(() => route.query, (query) => {
-    try {
-        classLearningStrandStore.getSession(query.id).then((data) => {
-            updateAttendanceTable(data)
-            strand.value = data.classLearningStrand.learning_strand.name
-        })
-    } catch (error) {
-        console.log(error);
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: "Unexpected error encountered!",
-            life: 3000
-        })
+    if (route.name === 'session-info') {
+        try {
+            classLearningStrandStore.getSession(query.id).then((data) => {
+                updateAttendanceTable(data)
+                console.log(data);
+                strand.value = data.classLearningStrand.learning_strand.name
+            })
+        } catch (error) {
+            console.log(error);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: "Unexpected error encountered!",
+                life: 3000
+            })
+        }
     }
 }, {immediate: true})
 </script>
