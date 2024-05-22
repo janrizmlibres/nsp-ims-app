@@ -36,7 +36,6 @@ const filters = ref(props.filters)
 const disableEdit = ref(props.disableEdit)
 
 watch(() => props.modelValue, (data) => {
-    console.log(typeof route.query.status);
     isFetching.value = true
     learners.value.length = 0
 
