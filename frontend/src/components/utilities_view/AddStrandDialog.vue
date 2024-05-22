@@ -14,21 +14,80 @@ const code = ref(null);
 const name = ref(null);
 
 async function addLearningStrand() {
-    if (!code.value || !name.value) {
+    if (!code.value.trim() || !name.value.trim()) {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
             detail: "Please fill all necessary information",
             life: 3000
         })
+        return
+    }
 
+    if (strandStore.strands.some(strand => strand.code === code.value.trim())) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Learning Strand Code already exists.',
+            life: 3000
+        })
+        return
+    }
+
+    if (strandStore.strands.some(strand => strand.name === name.value.trim())) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Learning Strand Name already exists.',
+            life: 3000
+        })
+        return
+    }
+    
+    if (code.value.trim().length > 25) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Learning Strand Code should not exceed 25 characters.',
+            life: 3000
+        })
+        return
+    }
+
+    if (name.value.trim().length > 100) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Learning Strand Name should not exceed 100 characters.',
+            life: 3000
+        })
+        return
+    }
+
+    if (code.value.trim().length < 3) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Learning Strand Code should be at least 3 characters.',
+            life: 3000
+        })
+        return
+    }
+
+    if (name.value.trim().length < 3) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Learning Strand Name should be at least 3 characters.',
+            life: 3000
+        })
         return
     }
 
     try {
         await strandStore.addLearningStrand({
-            code: code.value,
-            name: name.value
+            code: code.value.trim(),
+            name: name.value.trim()
         })
 
         await strandStore.getLearningStrands()
@@ -39,12 +98,11 @@ async function addLearningStrand() {
             detail: 'Learning Strand added successfully!',
             life: 3000
         })
-                
     } catch(error) {
         toast.add({
             severity: 'error',
-            summary: 'Duplicated Learning Strand',
-            detail: error.response.data.message,
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
             life: 3000
         })
     }
