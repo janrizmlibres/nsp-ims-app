@@ -20,8 +20,7 @@ const learningStrands = ref()
 
 watch(() => props.data, (data) => {
     classStore.getStudent(data.classLevelId, data.id).then((data) => {
-        student.value = data
-        console.log(student.value);
+        learningStrands.value = data
     })
 })
 watch(() => props.state, (data) => dialogState.value = data)
