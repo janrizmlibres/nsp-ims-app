@@ -36,6 +36,7 @@ const onRowEditSave = async (event) => {
         life: 3000
       })
     } catch (error) {
+      console.log(error);
       toast.add({
         severity: 'error',
         summary: 'Error',
@@ -50,6 +51,7 @@ onMounted(async () => {
   try {
     await termStore.getTerms()
   } catch (error) {
+    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',

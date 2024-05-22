@@ -1,10 +1,10 @@
 <script setup>
 // Presets
-import Divider from 'primevue/divider';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Dropdown from 'primevue/dropdown';
-import InputText from 'primevue/inputtext';
+import Textarea from 'primevue/textarea';
+import InputNumber from 'primevue/inputnumber';
 import Calendar from 'primevue/calendar';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
@@ -23,97 +23,23 @@ const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
 
-const customPt = {
-    root: {
-        class: ['flex flex-col pt-2 justify-between']
-    },
-    table: {
-        class: 'bg-white border-spacing-0 border-separate',
-    },
-    thead: {
-        class: 'bg-surface-0 top-0 z-40 sticky'
-    },
-    tbody: {
-        class: 'sticky z-20'
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'font-medium',
-                {
-                'space-nowrap border-y bg-clip-padding': context.resizable
-                // Resizable
-                },
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
-                {'hover:bg-surface-50': context.sorted}
-            ]
-        }),
-            sorticon: ({ context }) => ({
-                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-        }),
-            bodycell: ({ state }) => ({
-                style:  state['d_editing']&&'padding-top: 0.6rem; padding-bottom: 0.6rem',
-                class: 'py-3 '
-        })
-    },
-    bodyrow: ({ context, props }) => ({
-        class: [
-            { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
-            { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
-            { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
-            // State
-            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
-            { 'hover:u-bg-pcolor hover:text-white': props.selectionMode && !context.selected },
-            // Misc
-            { 'cursor-pointer': props.selectionMode }
-        ]
-    }),
-    paginator: {
-        root: {
-            class: ['flex items-center justify-center flex-wrap object-bottom', 'px-4 pt-4 pb-2', 'border-0 rounded-bl-xl rounded-br-xl', 'bg-transparent dark:bg-surface-800', 'text-surface-500 dark:text-white/60']
-        },
-        pagebutton: ({ context }) => ({
-            class: [
-            'relative',
-            // Flex & Alignment
-            'inline-flex items-center justify-center',
-            // Shape
-            'border-0 rounded-full dark:rounded-md',
-            // Size
-            'min-w-[3rem] h-12 m-[0.143rem]',
-            'leading-none',
-            // Color
-            'text-surface-500 dark:text-white/80',
-            {
-                'u-bg-scolor-2 border-primary-50 text-white font-semibold': context.active
-            },
-            // State
-            {
-                'hover:bg-surface-50': !context.disabled && !context.active,
-                'focus:u-ring-scolor': !context.disabled
-            },
-            ]
-        }),
-    }
-}
-
-const props = defineProps(['modelValue'])
+const props = defineProps(['modelValue', 'isNotActive', 'filters'])
 const emit = defineEmits(['onUpdate'])
-const status = computed(() => route.query.status)
 const isFetching = ref(false)
 const learners = ref([])
 const noChanges = ref(true)
 const startingData = []
 const updatedData = new Set([])
 const leave = ref(true)
+const edit = ref(false)
+const filters = ref(props.filters)
+const isNotActive = computed(() => props.isNotActive)
 
 watch(() => props.modelValue, (data) => {
-    console.log(typeof route.query.status);
     isFetching.value = true
     learners.value.length = 0
 
-    for (const moduleSubmission of data.module_submissions) {
+    for (const moduleSubmission of data) {
         if (moduleSubmission.date_submitted !== null) {
             moduleSubmission.date_submitted = new Date(moduleSubmission.date_submitted)
         }
@@ -125,6 +51,7 @@ watch(() => props.modelValue, (data) => {
             middleName: moduleSubmission.enrollment.student.middleName,
             status: moduleSubmission.status,
             date_submitted: moduleSubmission.date_submitted,
+            score: moduleSubmission.score,
             remarks: moduleSubmission.remarks,
             updatedAt: new Date(moduleSubmission.updatedAt)
         }
@@ -140,14 +67,14 @@ watch(() => props.modelValue, (data) => {
     }
     
     isFetching.value = false
-}, {immediate: false})
+}, {immediate: true})
 
 const getStatusLabel = (status) => {
     switch (status) {
-        case 'Complete':
+        case 'Graded':
             return 'success';
 
-        case 'Lacking':
+        case 'Submitted':
             return 'warning';
 
         case 'No Submission':
@@ -159,8 +86,8 @@ const getStatusLabel = (status) => {
 };
 
 const statuses = ref([
-    { label: 'Complete', value: 'Complete' },
-    { label: 'Lacking', value: 'Lacking' },
+    { label: 'Graded', value: 'Graded' },
+    { label: 'Submitted', value: 'Submitted' },
     { label: 'No Submission', value: 'No Submission' }
 ]);
 
@@ -174,12 +101,12 @@ async function updateSubmissions() {
         toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Updated Grades Successfully',
+            detail: 'Updated Module Submissions Successfully',
             life: 5000
         })
 
-        leave.value = true
         noChanges.value = true
+        changeMode()
     } catch (error) {
         toast.add({
             severity: 'error',
@@ -191,24 +118,30 @@ async function updateSubmissions() {
 }
 
 function resetData() {
-    learners.value = structuredClone(startingData)
-    updatedData.clear()
-    leave.value = true
+    confirm.require({
+        message: 'Do you really want to discard the unsaved changes?',
+        header: 'Redirect Confirmation',
+        accept: async () => {
+            learners.value = structuredClone(startingData)
+            updatedData.clear()
 
-    for (const datum of learners.value) {
-        watch(datum, (newData) => {
-        updatedData.add(newData)
-        leave.value = false
-        noChanges.value = false
-        })
-    }
+            for (const datum of learners.value) {
+                watch(datum, (newData) => {
+                updatedData.add(newData)
+                leave.value = false
+                noChanges.value = false
+                })
+            }
 
-    noChanges.value = true
+            noChanges.value = true
+            changeMode()
+        }
+    })
 }
 
-const exportRef = ref()
-function exportCSV() {
-    exportRef.value.exportCSV()
+function changeMode() {
+    edit.value = !edit.value
+    leave.value = !leave.value
 }
 
 onBeforeRouteLeave((to) => {
@@ -230,29 +163,24 @@ onBeforeRouteLeave((to) => {
 </script>
 
 <template>
-    <div class="bg-white shadow-xl rounded-md p-5">
-        <div class="flex flex-row gap-4 items-center px-4">
-            <i class="fa fa-note-sticky fa-2xl u-txt-active"></i>
-            <span class="font-semibold text-3xl u-txt-active">Submissions</span>
-        </div>
-        <Divider />
+    <div class="flex flex-col h-full w-full">
         <DataTable 
-            :value="learners" dataKey="id" 
-            sortField="lastName" :sortOrder="1" removableSort 
-            resizableColumns columnResizeMode="fit" showGridlines ref="exportRef"
-            :paginator="learners.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-            :ptOptions="{mergeProps:true}"
-            :pt="customPt"
+            :value="learners" dataKey="id" scrollable style=" overflow: auto;"
+            sortField="lastName" :sortOrder="1" removableSort
+            v-model:filters="filters" filterDisplay="menu"
+            :globalFilterFields="['lastName', 'firstName', 'status', 'remarks']"
         >
             <template #empty> <div class="text-center">No records found.</div> </template>
-            <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
 
             <Column field="lastName" header="Last Name" frozen sortable />
             <Column field="firstName" header="First Name" frozen sortable />
             <Column field="middleName" header="Middle Name" />
-            <Column field="status" header="Status" sortable>
-                <template #body="slotProps">
-                    <Dropdown v-model="slotProps.data.status" :options="statuses" optionLabel="label" optionValue="value" :placeholder="slotProps.data.status" :disabled="status === 'false'" autofocus >
+            <Column field="status" header="Status" style="width: 14rem;" >
+                <template #body="slotProps" v-if="!edit">
+                    <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
+                </template>
+                <template #body="slotProps" v-else>
+                    <Dropdown v-model="slotProps.data.status" :options="statuses" optionLabel="label" optionValue="value" :placeholder="slotProps.data.status">
                         <template #value="slotProps">
                             <Tag :value="slotProps.placeholder" :severity="getStatusLabel(slotProps.placeholder)" />
                         </template>
@@ -261,37 +189,59 @@ onBeforeRouteLeave((to) => {
                         </template>
                     </Dropdown>
                 </template>
+                <template #filter="{ filterModel }">
+                    <Dropdown v-model="filterModel.value" :options="statuses" optionLabel="label" optionValue="value"  placeholder="Select One" class="p-column-filter" showClear>
+                        <template #option="slotProps">
+                            <Tag :value="slotProps.option.label" :severity="getStatusLabel(slotProps.option.value)" />
+                        </template>
+                    </Dropdown>
+                </template>
             </Column>
-            <Column field="date_submitted" header="Submission Date" sortable>
-                <template #body="slotProps">
-                    <Calendar v-model="slotProps.data.date_submitted" id="calendar" showIcon iconDisplay="input" :disabled="status === 'false'" autofocus>
+            <Column field="date_submitted" header="Submission Date" style="width: 14rem;" sortable>
+                <template #body="slotProps" v-if="!edit">
+                    <p v-if="slotProps.data.date_submitted">
+                        {{ slotProps.data.date_submitted.toDateString() }}
+                    </p>
+                </template>
+                <template #body="slotProps" v-else>
+                    <Calendar v-model="slotProps.data.date_submitted" id="calendar" showIcon iconDisplay="input" showButtonBar inputClass="w-48">
                         <template #value="slotProps">
                             {{ slotProps.data.date_submitted.toDateString() }}
                         </template>
                     </Calendar>
                 </template>
             </Column>
-            <Column field="remarks" header="Remarks">
-                <template #body="slotProps">
-                    <InputText v-model="slotProps.data.remarks" :disabled="status === 'false'" autofocus />
+            <Column field="score" header="Score" style="width: 8rem;" sortable>
+                <template #body="slotProps" v-if="!edit">
+                    {{ slotProps.data.score }}
+                </template>
+                <template #body="slotProps" v-else>
+                    <InputNumber v-model="slotProps.data.score" inputId="score" inputClass="w-16" />
                 </template>
             </Column>
-            <Column field="updatedAt" header="Updated At" sortable>
+            <Column field="remarks" header="Remarks" style="width: 20rem;">
+                <template #body="slotProps" v-if="!edit">
+                    {{ slotProps.data.remarks }}
+                </template>
+                <template #body="slotProps" v-else>
+                    <Textarea v-model="slotProps.data.remarks" rows="5" cols="30" />
+                </template>
+            </Column>
+            <Column field="updatedAt" header="Updated At" style="width: 10rem;" sortable>
                 <template #body="slotProps">
                     {{ slotProps.data.updatedAt.toLocaleString() }}
                 </template>
             </Column>
-            <template #paginatorstart>
-            
-            </template>
-            <template #paginatorend>
-                <Button type="button" icon="pi pi-download" @click="exportCSV" text />
+            <template #footer>
+                <div class="flex flex-row justify-end items-center">
+                    <div v-if="edit" class="flex flex-row gap-4">
+                        <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined @click="updateSubmissions"/>
+                        <Button icon="fa fa-xmark" label="Discard" severity="danger" aria-label="Discard Changes" iconClass="['mr-4']" size="small" rounded outlined @click="resetData"/>
+                    </div>
+                    <Button v-else-if="!isNotActive" icon="fa fa-pencil" label="Edit Submissions" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined @click="changeMode"/>
+                </div>
             </template>
         </DataTable>
-        <div v-if="status === 'true'" class="flex justify-end gap-2 mt-4">
-            <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateSubmissions"></Button>
-            <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
-        </div>
     </div>
 </template>
 

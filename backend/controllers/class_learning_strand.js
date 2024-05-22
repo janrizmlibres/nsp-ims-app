@@ -9,12 +9,14 @@ import Session from "../models/class/session.js";
 import Student from "../models/student/student.js";
 import Volunteer from "../models/volunteer/volunteer.js";
 import ModuleSubmission from "../models/class/module_submission.js";
+import { Op } from "sequelize";
 
 export async function addModule(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
 
     const {
-        title,
+        min,
+        max,
         distriDate,
         retriDate
     } = req.body
@@ -22,32 +24,40 @@ export async function addModule(req, res, next) {
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
 
-        const mod = await Module.findOne({
-            where: {title: title, classLearningStrandId: classLearningStrandId}
+        const titles = []
+
+        for(let i = min; i < max+1; i++) {
+            titles.push("LAS " + i)
+        }
+
+        const modules = await Module.findAll({
+            where: {title: {[Op.in]: titles}, classLearningStrandId: classLearningStrandId}
         })
 
-        if (mod) {
-            const error = new Error("Module exists already!");
+        if (modules.length) {
+            const error = new Error("Module(s) exist(s) already!");
             error.statusCode = 404;
             throw error;
         }
-
-        const module = await classLearningStrand.createModule({
-            title: title,
-            distribution_date: distriDate,
-            retrieval_date: retriDate
-        })
 
         const enrollments = await Enrollment.findAll({
             where: {classLevelId: classLearningStrand.classLevelId}
         })
 
-        for (const enrollment of enrollments) {
-            await module.addEnrollment(enrollment)
+        for (const title of titles) {
+            await classLearningStrand.createModule({
+                title: title,
+                distribution_date: distriDate,
+                retrieval_date: retriDate
+            }).then(async (module) => {
+                for (const enrollment of enrollments) {
+                    await module.addEnrollment(enrollment)
+                }
+            })
         }
 
         res.status(201).json({ 
-            message: "Module added!"
+            message: "Learning activity sheets added!"
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -141,6 +151,43 @@ export async function updateModule(req, res, next) {
     } 
 }
 
+export async function updateModuleStatus(req, res, next) {
+    const { status, moduleIds } = req.body
+
+    try {
+        await Module.update(
+            { status: !status },
+            { where: { id: moduleIds }
+        });
+
+        res.status(200).json({ message: "Module updated!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    } 
+}
+
+export async function deleteModules(req, res, next) {
+    const { moduleIds } = req.body
+
+    try {
+        await Module.destroy({
+            where: { id: moduleIds }
+        })
+
+        res.status(200).json({ message: "Deleted Modules Successfully!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    } 
+}
+
 export async function updateModuleSubmissions(req, res, next) {
     try {
         for (const moduleSubmission of req.body.updatedData) {
@@ -149,6 +196,7 @@ export async function updateModuleSubmissions(req, res, next) {
             await moduleSubmissionInstance.update({
                 status: moduleSubmission.status,
                 date_submitted: moduleSubmission.date_submitted,
+                score: moduleSubmission.score,
                 remarks: moduleSubmission.remarks
             });
         }
@@ -216,37 +264,39 @@ export async function addSession(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
 
     const {
-        date,
+        dates,
     } = req.body
 
     try {
-        const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
-
-        const sesh = await Session.findOne({
-            where: {date: date, classLearningStrandId: classLearningStrandId}
+        const sesh = await Session.findAll({
+            where: {date: {[Op.in]: dates}, classLearningStrandId: classLearningStrandId}
         })
-
-        if (sesh) {
-            const error = new Error("Session exists already!");
+    
+        if (sesh.length) {
+            const error = new Error("Session(s) exist(s) already!");
             error.statusCode = 404;
             throw error;
         }
 
-        const session = await classLearningStrand.createSession({
-            date: date,
-        })
+        const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
 
         const enrollments = await Enrollment.findAll({
             where: {classLevelId: classLearningStrand.classLevelId}, 
             include: [Student]
         })
 
-        for (const enrollment of enrollments) {
-            await session.addEnrollment(enrollment)
+        for (const date of dates) {
+            const session = await classLearningStrand.createSession({
+                date: date,
+            })
+
+            for (const enrollment of enrollments) {
+                await session.addEnrollment(enrollment)
+            }
         }
 
         res.status(201).json({ 
-            message: "Session added!"
+            message: "Session(s) added!"
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -268,11 +318,13 @@ export async function getAllSessions(req, res, next) {
 
         for (const session of sessions) {
             const absent = await session.countAttendances({
-                where: {status: 'Absent'}
+                where: {status: 'Absent'},
+                include: {model: Enrollment, where:{status: {[Op.not]: 'Drop'}}}
             })
 
             const present = await session.countAttendances({
-                where: {status: 'Present'}
+                where: {status: 'Present'},
+                include: {model: Enrollment, where:{status: {[Op.not]: 'Drop'}}}
             })
     
             const total = absent + present
@@ -307,12 +359,20 @@ export async function getSession(req, res, next) {
         const regularAttendances = await Attendance.findAll({
             where: {
                 '$enrollment.regularity$': 'Regular',
+                '$enrollment.status$': {[Op.not]: 'Drop'}
             }, include: [{model: Enrollment, include: [Student]}]
         })
 
         const hybridAttendances = await Attendance.findAll({
             where: {
                 '$enrollment.regularity$': 'Hybrid',
+                '$enrollment.status$': {[Op.not]: 'Drop'}
+            }, include: [{model: Enrollment, include: [Student]}]
+        })
+
+        const dropAttendances = await Attendance.findAll({
+            where: {
+                '$enrollment.status$': 'Drop'
             }, include: [{model: Enrollment, include: [Student]}]
         })
         
@@ -323,7 +383,8 @@ export async function getSession(req, res, next) {
             session: classLearningStrand.sessions[0],
             attendances: {
                 regular: regularAttendances,
-                hybrid: hybridAttendances
+                hybrid: hybridAttendances,
+                drop: dropAttendances
             }
         },
         });
@@ -353,6 +414,24 @@ export async function updateSession(req, res, next) {
         next(error);
         return error;
     }
+}
+
+export async function deleteSessions(req, res, next) {
+    const { sessionIds } = req.body
+
+    try {
+        await Session.destroy({
+            where: { id: sessionIds }
+        })
+
+        res.status(200).json({ message: "Deleted Sessions Successfully!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    } 
 }
 
 export async function updateAttendances(req, res, next) {
@@ -424,4 +503,22 @@ export async function updateSchedule(req, res, next) {
         next(error);
         return error;
     }
+}
+
+export async function deleteSchedules(req, res, next) {
+    const { scheduleIds } = req.body
+
+    try {
+        await ClassSchedule.destroy({
+            where: { id: scheduleIds }
+        })
+
+        res.status(200).json({ message: "Deleted Schedules Successfully!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+        return error;
+    } 
 }

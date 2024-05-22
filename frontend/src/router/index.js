@@ -302,6 +302,9 @@ const router = createRouter({
   ]
 })
 
+router.getRoutes().forEach(route => {
+  route.components ? route.components.default.name=route.name : null
+});
 router.beforeEach((to) => {
   const authStore = useAuthStore()
 

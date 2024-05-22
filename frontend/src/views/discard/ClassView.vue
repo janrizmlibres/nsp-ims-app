@@ -37,6 +37,7 @@ watch(() => route.query, (query) => {
         })
         classStore.getAllStudents(query.id).then((data) => students.value = data)
     } catch (error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',

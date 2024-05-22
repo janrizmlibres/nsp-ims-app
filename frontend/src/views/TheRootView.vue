@@ -8,5 +8,9 @@ const updateKey = ref(0)
 
 <template>
   <TheSidebar />
-  <RouterView @routeChange="updateKey += 1" :key="updateKey" />
+  <RouterView @routeChange="updateKey += 1" :key="updateKey" v-slot="{ Component }">
+    <keep-alive exclude="dashboard">
+      <component :is="Component" />
+    </keep-alive>
+  </RouterView>
 </template>
