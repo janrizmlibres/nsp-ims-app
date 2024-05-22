@@ -6,7 +6,7 @@ import { useConfirm } from 'primevue/useconfirm'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
-import AddForm from '@/components/staff_mgmt/AddForm.vue'
+import AddForm from '@/components/user_mgmt/AddForm.vue'
 
 import { useUsersStore } from '@/stores/users'
 import router from '@/router'

@@ -44,7 +44,7 @@ onMounted(async () => {
     <DataTable
       :value="studentsStore.studentsNormalized"
       v-model:filters="filters"
-      :globalFilterFields="['lrn', 'firstName', 'lastName', 'facebook']"
+      :users="['lrn', 'firstName', 'lastName', 'facebook']"
       scrollable
       removableSort
     >

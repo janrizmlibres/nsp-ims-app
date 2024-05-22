@@ -7,7 +7,7 @@ import { useToast } from 'primevue/usetoast'
 import { FilterMatchMode } from 'primevue/api'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
-import TheHeader from '@/components/staff_mgmt/TheHeader.vue'
+import TheHeader from '@/components/user_mgmt/TheHeader.vue'
 
 import { useUsersStore } from '@/stores/users'
 import { ref, onMounted, watch } from 'vue'
@@ -113,7 +113,7 @@ onMounted(async () => {
     <DataTable
       v-model:filters="filters"
       :value="data"
-      :globalFilterFields="['id', 'fullname']"
+      :users="['id', 'fullname']"
       scrollable
       removableSort
       :ptOptions="{ mergeProps: true }"

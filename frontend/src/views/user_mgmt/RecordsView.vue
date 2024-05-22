@@ -4,15 +4,15 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
-import TheHeader from '@/components/staff_mgmt/TheHeader.vue'
-import ChangePwDialog from '@/components/staff_mgmt/ChangePwDialog.vue'
+import TheHeader from '@/components/user_mgmt/TheHeader.vue'
+import ChangePwDialog from '@/components/user_mgmt/ChangePwDialog.vue'
 
 import { useUsersStore } from '@/stores/users'
 import { FilterMatchMode } from 'primevue/api'
 import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
-const staffsStore = useUsersStore()
+const usersStore = useUsersStore()
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }
@@ -33,7 +33,7 @@ function openPwDialog(userId) {
 
 onMounted(async () => {
   try {
-    await staffsStore.getAllStaff({ includePerms: false })
+    await usersStore.getAllStaff({ includePerms: false })
   } catch (error) {
     console.log(error.response.data.message)
   }
@@ -48,14 +48,14 @@ onMounted(async () => {
 
     <DataTable
       v-model:filters="filters"
-      :value="staffsStore.staffs"
+      :value="usersStore.staffs"
       :loading="isLoading"
       :globalFilterFields="['id', 'fullname']"
       scrollable
       :ptOptions="{ mergeProps: true }"
     >
-      <template #empty> No staffs found. </template>
-      <template #loading> Loading staffs data. Please wait. </template>
+      <template #empty> No users found. </template>
+      <template #loading> Loading users data. Please wait. </template>
 
       <Column header="" class="max-w-28">
         <template #body="slotProps">
@@ -78,7 +78,7 @@ onMounted(async () => {
 
     <div class="pl-8 pt-2 font-medium">
       <p>
-        Record(s) count: <span class="u-txt-red"> {{ staffsStore.staffs.length }} </span>
+        Record(s) count: <span class="u-txt-red"> {{ usersStore.staffs.length }} </span>
       </p>
     </div>
   </ContentPane>
