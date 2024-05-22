@@ -11,16 +11,10 @@ import AddForm from '@/components/user_mgmt/AddForm.vue'
 import { useUsersStore } from '@/stores/users'
 import router from '@/router'
 
-import { ref, onMounted } from 'vue'
-import { onBeforeRouteLeave } from 'vue-router'
+import { ref, onMounted, computed } from 'vue'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 
-const props = defineProps({
-  userId: {
-    type: String,
-    default: null
-  }
-})
-
+const route = useRoute()
 const usersStore = useUsersStore()
 
 const formData = ref({
@@ -34,14 +28,14 @@ const formData = ref({
   position: ''
 })
 
-const headerName = ref(props.userId === null ? 'Add Record' : 'Edit Record')
-const submitLabel = ref(props.userId === null ? 'Submit' : 'Save')
-
 const isLoading = ref(false)
 const okToLeave = ref(true)
 const isInitialState = ref(true)
 const updateKey = ref(0)
-const isEditView = ref(props.userId === null)
+
+const headerName = computed(() => (route.params.userId ? 'Edit Record' : 'Add Record'))
+const submitLabel = computed(() => (route.params.userId ? 'Save' : 'Submit'))
+const isEditView = computed(() => !route.params.userId)
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -56,10 +50,9 @@ async function submitData() {
   try {
     isLoading.value = true
 
-    const result =
-      props.userId !== null
-        ? await usersStore.updateUser(props.userId, formData.value)
-        : await usersStore.addUser(formData.value)
+    const result = route.params.userId
+      ? await usersStore.updateUser(route.params.userId, formData.value)
+      : await usersStore.addUser(formData.value)
 
     toast.add({
       severity: 'success',
@@ -104,12 +97,10 @@ onBeforeRouteLeave((to) => {
 })
 
 onMounted(async () => {
-  if (props.userId === null) {
-    return
-  }
+  if (!route.params.userId) return
 
   try {
-    const result = await usersStore.getUser(props.userId)
+    const result = await usersStore.getUser(route.params.userId)
     const user = result.data.user
 
     formData.value = {

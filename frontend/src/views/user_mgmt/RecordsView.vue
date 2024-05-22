@@ -21,6 +21,7 @@ const filters = ref({
 
 const isLoading = ref(true)
 const visible = ref(false)
+const tabindex = ref(0)
 const pwUpdateUserId = ref(null)
 
 function updateGlobalFilter(newValue) {
@@ -31,6 +32,10 @@ function openPwDialog(userId) {
   pwUpdateUserId.value = userId
   visible.value = true
 }
+
+function finishLoad() {
+  isLoading.value = false
+}
 </script>
 
 <template>
@@ -38,13 +43,15 @@ function openPwDialog(userId) {
     <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
 
     <BaseCard>
-      <TabView>
+      <TabView :tabindex="tabindex">
         <TabPanel header="Sub-Admins">
           <RecordsTable
-            :data="usersStore.staffs"
-            emptyText="No staff found."
-            loadingText="Loading staff data. Please wait."
+            :data="usersStore.subadmins"
+            :filtersProp="filters"
+            emptyText="No sub-admins found."
+            loadingText="Loading sub-admin data. Please wait."
             :isLoading="isLoading"
+            @loadingDone="finishLoad"
             @emitClick="openPwDialog"
           />
         </TabPanel>
@@ -52,9 +59,11 @@ function openPwDialog(userId) {
         <TabPanel header="Staff">
           <RecordsTable
             :data="usersStore.staffs"
+            :filtersProp="filters"
             emptyText="No staff found."
             loadingText="Loading staff data. Please wait."
             :isLoading="isLoading"
+            @loadingDone="finishLoad"
             @emitClick="openPwDialog"
           />
         </TabPanel>
@@ -63,7 +72,10 @@ function openPwDialog(userId) {
 
     <div class="pl-8 pt-2 font-medium">
       <p>
-        Record(s) count: <span class="u-txt-red"> {{ usersStore.users.length }} </span>
+        Record(s) count:
+        <span class="u-txt-red">
+          {{ tabindex ? usersStore.staffs.length : usersStore.subadmins.length }}
+        </span>
       </p>
     </div>
   </ContentPane>

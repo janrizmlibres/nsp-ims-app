@@ -1,18 +1,26 @@
 <script setup>
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import Button from 'primevue/button'
+
+import { RouterLink } from 'vue-router'
 import { onMounted, ref } from 'vue'
+
 import { useUsersStore } from '@/stores/users'
 import { AccessLevels } from '@/util/user_utils'
 
 const props = defineProps({
   data: Object,
+  filtersProp: Object,
   emptyText: String,
   loadingText: String,
   isLoading: Boolean
 })
+
 const emit = defineEmits(['loadingDone', 'emitClick'])
 
 const usersStore = useUsersStore()
-const isLoading = ref(props.isLoading)
+const filters = ref(props.filtersProp)
 
 onMounted(async () => {
   try {
@@ -24,7 +32,6 @@ onMounted(async () => {
     console.log(error.response.data.message)
   }
 
-  isLoading.value = false
   emit('loadingDone')
 })
 </script>
@@ -32,14 +39,14 @@ onMounted(async () => {
 <template>
   <DataTable
     v-model:filters="filters"
-    :value="usersStore.subadmins"
+    :value="data"
     :loading="isLoading"
     :globalFilterFields="['id', 'fullname']"
     scrollable
     :ptOptions="{ mergeProps: true }"
   >
-    <template #empty> No sub-admins found. </template>
-    <template #loading> Loading users data. Please wait. </template>
+    <template #empty>{{ emptyText }}</template>
+    <template #loading> {{ loadingText }}</template>
 
     <Column header="" class="max-w-28">
       <template #body="slotProps">
