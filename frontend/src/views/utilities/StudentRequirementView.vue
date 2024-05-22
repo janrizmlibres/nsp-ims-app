@@ -20,7 +20,6 @@ onMounted(async () => {
     try {
         await requirementStore.getRequirements()
     } catch(error) {
-        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -42,7 +41,6 @@ async function deleteRequirement(id) {
                 life: 3000
         })
     } catch(error) {
-        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -57,9 +55,49 @@ const editingRows = ref([])
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        if (!newData.requirement_name.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "Student Requirement cannot be empty.",
+                life: 3000
+            })
+            return
+        }
+
+        if (requirementStore.requirements.some(requirement => requirement.requirement_name === newData.requirement_name.trim() && requirement.id !== newData.id)) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Student Requirement already exists.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.requirement_name.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Student Requirement should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.requirement_name.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Student Requirement should be at least 3 characters.',
+                life: 3000
+            })
+            return
+        }
+
         try {
             await requirementStore.updateRequirement(newData.id, {
-                requirement_name: newData.requirement_name
+                requirement_name: newData.requirement_name.trim()
             })
 
             await requirementStore.getRequirements()
@@ -71,7 +109,6 @@ const onRowEditSave = async (event) => {
                 life: 3000
             })
         } catch(error) {
-            console.log(error);
             toast.add({
                 severity: 'error',
                 summary: 'Error',
