@@ -59,7 +59,7 @@ const onRowEditSave = async (event) => {
             toast.add({
                 severity: 'error',
                 summary: 'Incomplete Form',
-                detail: "Student Category cannot be empty.",
+                detail: "The field cannot be empty. Please provide a category.",
                 life: 3000
             })
             return
@@ -68,8 +68,8 @@ const onRowEditSave = async (event) => {
         if (categoryStore.categories.some(category => category.category_name === newData.category_name.trim() && category.id !== newData.id)) {
             toast.add({
                 severity: 'error',
-                summary: 'Error',
-                detail: 'Student Category already exists.',
+                summary: 'Duplicate Category',
+                detail: "Please provide a unique student category.",
                 life: 3000
             })
             return
@@ -78,8 +78,8 @@ const onRowEditSave = async (event) => {
         if (newData.category_name.trim().length > 100) {
             toast.add({
                 severity: 'error',
-                summary: 'Error',
-                detail: 'Student Category should not exceed 100 characters.',
+                summary: 'Category Too Long',
+                detail: 'The category should not exceed 100 characters.',
                 life: 3000
             })
             return
@@ -88,8 +88,8 @@ const onRowEditSave = async (event) => {
         if (newData.category_name.trim().length < 3) {
             toast.add({
                 severity: 'error',
-                summary: 'Error',
-                detail: 'Student Category should be at least 3 characters.',
+                summary: 'Category Too Short',
+                detail: 'The category should be at least 3 characters.',
                 life: 3000
             })
             return
@@ -104,7 +104,7 @@ const onRowEditSave = async (event) => {
 
             toast.add({
                 severity: 'success',
-                summary: 'Success',
+                summary: 'Update Successful',
                 detail: 'Student Category updated successfully!',
                 life: 3000
             })
@@ -112,7 +112,7 @@ const onRowEditSave = async (event) => {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Unexpected error encountered.',
+                detail: 'Unexpected error encountered. Please try again.',
                 life: 3000
             })
         }

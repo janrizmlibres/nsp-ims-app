@@ -17,7 +17,7 @@ async function addRequirement() {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
-            detail: "Please fill all necessary information",
+            detail: "The field cannot be empty. Please provide a student requirement.",
             life: 3000
         })
         return
@@ -26,8 +26,8 @@ async function addRequirement() {
     if (requirementStore.requirements.some(requirement => requirement.requirement_name === name.value.trim())) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Student Requirement already exists.',
+            summary: 'Duplicate Requirement',
+            detail: "Please provide a unique student requirement.",
             life: 3000
         })
         return
@@ -36,8 +36,8 @@ async function addRequirement() {
     if (name.value.trim().length > 100) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Student Requirement should not exceed 100 characters.',
+            summary: 'Requirement Too Long',
+            detail: 'The requirement should not exceed 100 characters.',
             life: 3000
         })
         return
@@ -46,8 +46,8 @@ async function addRequirement() {
     if (name.value.trim().length < 3) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Student Requirement should be at least 3 characters.',
+            summary: 'Requirement Too Short',
+            detail: 'The requirement should be at least 3 characters.',
             life: 3000
         })
         return
@@ -70,7 +70,7 @@ async function addRequirement() {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered.',
+            detail: 'Unexpected error encountered. Please try again.',
             life: 3000
         })
     }

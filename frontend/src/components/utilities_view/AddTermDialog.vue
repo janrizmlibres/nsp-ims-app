@@ -17,7 +17,7 @@ async function addTerm() {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
-            detail: "Please fill all necessary information",
+            detail: "Please fill up the date range field.",
             life: 3000
         })
         return
@@ -27,8 +27,8 @@ async function addTerm() {
     if (term) {
         toast.add({
             severity: 'error',
-            summary: 'Duplicated Academic Term',
-            detail: 'Academic Term already exists.',
+            summary: 'Duplicate Academic Term',
+            detail: 'An Academic Term already exists.',
             life: 3000
         })
         return
@@ -37,8 +37,8 @@ async function addTerm() {
     if (dates.value[1].getFullYear() - dates.value[0].getFullYear() !== 1) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Start Date and End Date must only be a year apart.',
+            summary: 'Invalid Date Range',
+            detail: 'The start and end dates must be exactly one year apart.',
             life: 3000
         })
         return
@@ -47,8 +47,8 @@ async function addTerm() {
     if (dates.value[0] > dates.value[1]) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'End Date cannot be earlier than the Start Date.',
+            summary: 'Invalid Date Range',
+            detail: 'The start date cannot be later than the end date.',
             life: 3000
         })
         return
@@ -79,8 +79,8 @@ async function addTerm() {
     } catch(error) {
         toast.add({
             severity: 'error',
-            summary: 'Duplicated Academic Term',
-            detail: error.response.data.message,
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please try again.',
             life: 3000
         })
     }

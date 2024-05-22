@@ -18,7 +18,7 @@ async function addLearningStrand() {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
-            detail: "Please fill all necessary information",
+            detail: "The fields cannot be empty. Please ensure all fields are filled.",
             life: 3000
         })
         return
@@ -27,8 +27,8 @@ async function addLearningStrand() {
     if (strandStore.strands.some(strand => strand.code === code.value.trim())) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Learning Strand Code already exists.',
+            summary: 'Duplicate Code',
+            detail: "Please provide a unique code.",
             life: 3000
         })
         return
@@ -37,8 +37,8 @@ async function addLearningStrand() {
     if (strandStore.strands.some(strand => strand.name === name.value.trim())) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Learning Strand Name already exists.',
+            summary: 'Duplicate Name',
+            detail: "Please provide a unique name.",
             life: 3000
         })
         return
@@ -47,8 +47,8 @@ async function addLearningStrand() {
     if (code.value.trim().length > 25) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Learning Strand Code should not exceed 25 characters.',
+            summary: 'Code Too Long',
+            detail: 'It should not exceed 25 characters.',
             life: 3000
         })
         return
@@ -57,8 +57,8 @@ async function addLearningStrand() {
     if (name.value.trim().length > 100) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Learning Strand Name should not exceed 100 characters.',
+            summary: 'Name Too Long',
+            detail: 'It should not exceed 100 characters.',
             life: 3000
         })
         return
@@ -67,8 +67,8 @@ async function addLearningStrand() {
     if (code.value.trim().length < 3) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Learning Strand Code should be at least 3 characters.',
+            summary: 'Code Too Short',
+            detail: 'It should be at least 3 characters long.',
             life: 3000
         })
         return
@@ -77,8 +77,8 @@ async function addLearningStrand() {
     if (name.value.trim().length < 3) {
         toast.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Learning Strand Name should be at least 3 characters.',
+            summary: 'Name Too Short',
+            detail: 'It should be at least 3 characters long.',
             life: 3000
         })
         return
@@ -102,7 +102,7 @@ async function addLearningStrand() {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered.',
+            detail: 'Unexpected error encountered. Please try again.',
             life: 3000
         })
     }

@@ -21,24 +21,16 @@ const onRowEditSave = async (event) => {
     let { data, newData } = event
     if (JSON.stringify(data) !== JSON.stringify(newData)) {
 
-        if (newData.start_date === null || newData.end_date === null) {
-            toast.add({
-              severity: 'error',
-              summary: 'Incomplete Form',
-              detail: 'Please fill all necessary information',
-              life: 3000
-            })
-          return
-        }
-
         let startDateYear = newData.start_date.getFullYear();
         let endDateYear = newData.end_date.getFullYear();
 
+        // Check if there's an existing term with the same academic year as the new data
+        // And the academic year of the term being edited is not the same as the new academic yea
         if (termStore.terms.some(term => term.academic_year === startDateYear + '-' + endDateYear) && termStore.terms.find(term => term.id === newData.id).academic_year !== startDateYear + '-' + endDateYear) {
             toast.add({
               severity: 'error',
-              summary: 'Duplicated Academic Term',
-              detail: 'Academic Term already exists.',
+              summary: 'Duplicate Academic Term',
+              detail: 'An Academic Term already exists.',
               life: 3000
             })
           return
@@ -47,8 +39,8 @@ const onRowEditSave = async (event) => {
         if (endDateYear - startDateYear !== 1) {
             toast.add({
                 severity: 'error',
-                summary: 'Error',
-                detail: 'Start Date and End Date must only be a year apart.',
+                summary: 'Invalid Date Range',
+                detail: 'The start and end dates must be exactly one year apart.',
                 life: 3000
             })
           return
@@ -57,8 +49,8 @@ const onRowEditSave = async (event) => {
         if (newData.start_date > newData.end_date) {
             toast.add({
               severity: 'error',
-              summary: 'Error',
-              detail: 'End Date cannot be earlier than the Start Date.',
+              summary: 'Invalid Date Range',
+              detail: 'The start date cannot be later than the end date.',
               life: 3000
             })
           return
@@ -75,15 +67,15 @@ const onRowEditSave = async (event) => {
 
             toast.add({
               severity: 'success',
-              summary: 'Success',
-              detail: 'Date Range updated successfully!',
+              summary: 'Update Successful',
+              detail: 'The date range has been updated successfully!',
               life: 3000
             })
         } catch (error) {
             toast.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Unexpected error encountered.',
+              detail: 'Unexpected error encountered. Please try again.',
               life: 3000
             })
         }
@@ -97,7 +89,7 @@ onMounted(async () => {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: 'Unexpected error encountered.',
+      detail: 'Unexpected error encountered. Please try again.',
       life: 3000
     })
   }
