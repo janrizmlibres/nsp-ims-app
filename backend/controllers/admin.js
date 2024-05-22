@@ -7,7 +7,7 @@ import Audit from "../models/user/audit.js";
 
 export async function getUsers(req, res, next) {
   try {
-    let { includePerms, includeAudit } = req.query;
+    let { includePerms, includeAudit, levelsToFetch } = req.query;
     let associations = [];
 
     if (includePerms) associations.push(Permission);
@@ -15,7 +15,7 @@ export async function getUsers(req, res, next) {
 
     const users = await User.findAll({
       include: associations,
-      where: { accessLevel: [2, 3] },
+      where: { accessLevel: levelsToFetch },
     });
 
     res.status(200).json({

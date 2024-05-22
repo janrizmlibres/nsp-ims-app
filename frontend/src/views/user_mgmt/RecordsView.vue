@@ -1,16 +1,17 @@
 <script setup>
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import Button from 'primevue/button'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
+import BaseCard from '@/components/UI/BaseCard.vue'
 import TheHeader from '@/components/user_mgmt/TheHeader.vue'
 import ChangePwDialog from '@/components/user_mgmt/ChangePwDialog.vue'
+import RecordsTable from '@/components/user_mgmt/RecordsTable.vue'
+
+import { FilterMatchMode } from 'primevue/api'
+import { ref } from 'vue'
 
 import { useUsersStore } from '@/stores/users'
-import { FilterMatchMode } from 'primevue/api'
-import { onMounted, ref } from 'vue'
-import { RouterLink } from 'vue-router'
 
 const usersStore = useUsersStore()
 
@@ -30,51 +31,35 @@ function openPwDialog(userId) {
   pwUpdateUserId.value = userId
   visible.value = true
 }
-
-onMounted(async () => {
-  try {
-    await usersStore.getAllUser({ includePerms: false })
-  } catch (error) {
-    console.log(error.response.data.message)
-  }
-
-  isLoading.value = false
-})
 </script>
 
 <template>
   <ContentPane header="User Records">
     <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
 
-    <DataTable
-      v-model:filters="filters"
-      :value="usersStore.users"
-      :loading="isLoading"
-      :globalFilterFields="['id', 'fullname']"
-      scrollable
-      :ptOptions="{ mergeProps: true }"
-    >
-      <template #empty> No users found. </template>
-      <template #loading> Loading users data. Please wait. </template>
-
-      <Column header="" class="max-w-28">
-        <template #body="slotProps">
-          <RouterLink :to="{ name: 'edit-user', params: { userId: slotProps.data.id } }">
-            <Button class="h-8" label="Edit" icon="fa-solid fa-user-pen" outlined />
-          </RouterLink>
-          <Button
-            class="h-8 ml-2"
-            label="Change Pasword"
-            icon="fa-solid fa-key"
-            outlined
-            @click="openPwDialog(slotProps.data.id)"
+    <BaseCard>
+      <TabView>
+        <TabPanel header="Sub-Admins">
+          <RecordsTable
+            :data="usersStore.staffs"
+            emptyText="No staff found."
+            loadingText="Loading staff data. Please wait."
+            :isLoading="isLoading"
+            @emitClick="openPwDialog"
           />
-        </template>
-      </Column>
+        </TabPanel>
 
-      <Column field="id" header="User ID" sortable></Column>
-      <Column field="fullname" header="Full Name" sortable></Column>
-    </DataTable>
+        <TabPanel header="Staff">
+          <RecordsTable
+            :data="usersStore.staffs"
+            emptyText="No staff found."
+            loadingText="Loading staff data. Please wait."
+            :isLoading="isLoading"
+            @emitClick="openPwDialog"
+          />
+        </TabPanel>
+      </TabView>
+    </BaseCard>
 
     <div class="pl-8 pt-2 font-medium">
       <p>

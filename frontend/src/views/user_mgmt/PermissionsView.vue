@@ -11,6 +11,7 @@ import TheHeader from '@/components/user_mgmt/TheHeader.vue'
 
 import { useUsersStore } from '@/stores/users'
 import { ref, onMounted, watch } from 'vue'
+import { AccessLevels } from '@/util/user_utils'
 
 const usersStore = useUsersStore()
 const toast = useToast()
@@ -78,7 +79,7 @@ function resetData() {
 
 onMounted(async () => {
   try {
-    await usersStore.getAllUser({ includePerms: true })
+    await usersStore.getAllUser({ includePerms: true, levelsToFetch: [AccessLevels.Staff] })
 
     for (const user of usersStore.users) {
       const permissionData = user.permission

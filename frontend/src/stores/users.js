@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from './auth'
 
 export const useUsersStore = defineStore('users', () => {
   const users = ref([])
+  const subadmins = computed(() => users.value.filter((user) => user.accessLevel === 2))
+  const staffs = computed(() => users.value.filter((user) => user.accessLevel === 3))
 
   async function getAllUser(config) {
     const authStore = useAuthStore()
@@ -102,6 +104,8 @@ export const useUsersStore = defineStore('users', () => {
 
   return {
     users,
+    subadmins,
+    staffs,
     getAllUser,
     addUser,
     getUser,

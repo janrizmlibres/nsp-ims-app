@@ -8,6 +8,7 @@ import Column from 'primevue/column'
 
 import { useUsersStore } from '@/stores/users'
 import { onMounted, ref, watch } from 'vue'
+import { AccessLevels } from '@/util/user_utils'
 
 const usersStore = useUsersStore()
 
@@ -26,7 +27,10 @@ watch(selectedUser, () => {
 
 onMounted(async () => {
   try {
-    await usersStore.getAllUser({ includeAudit: true })
+    await usersStore.getAllUser({
+      includeAudit: true,
+      levelsToFetch: [AccessLevels.Admin, AccessLevels.SubAdmin, AccessLevels.Staff]
+    })
 
     usersStore.users.forEach((user) => {
       user.audits.forEach((audit) => {

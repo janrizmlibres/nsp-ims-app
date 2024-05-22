@@ -1,4 +1,4 @@
-const FormParts = Object.freeze({
+export const FormParts = Object.freeze({
   Identity: Symbol(0),
   Personal: Symbol(1),
   Contact: Symbol(2),
@@ -6,5 +6,3 @@ const FormParts = Object.freeze({
   Parental: Symbol(4),
   PrevSchool: Symbol(5)
 })
-
-export default FormParts
