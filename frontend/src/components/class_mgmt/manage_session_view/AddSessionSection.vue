@@ -108,7 +108,7 @@ watch(() => props.data, (data) => {
             <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data || !termStatus" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
         </div>
         <div class="flex flex-row gap-2">
-            <Button type="button" outlined rounded label="Add" :disabled="!date" @click="addSession" class="w-full" />
+            <Button type="button" outlined rounded label="Add" :disabled="(date ? (date.length === 0 || date[1] === null) : !date)" @click="addSession" class="w-full" />
             <Button type="button" outlined rounded label="Reset" :disabled="!date" @click="resetForm" severity="danger" class="w-full" />
         </div>
     </div>
