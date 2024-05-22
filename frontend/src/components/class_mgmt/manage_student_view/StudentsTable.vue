@@ -38,6 +38,7 @@ onMounted(() => {
                 firstName: enrollment.student.firstName,
                 middleName: enrollment.student.middleName,
                 suffixName : enrollment.student.suffixName,
+                category: enrollment.student.category,
                 sex: enrollment.student.personal_info ? enrollment.student.personal_info.sex : null,
                 civilStatus: enrollment.student.personal_info ? enrollment.student.personal_info.civilStatus : null,
                 contactNum: enrollment.student.contact_info ? enrollment.student.contact_info.contactNum : null,
