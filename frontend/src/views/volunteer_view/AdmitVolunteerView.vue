@@ -1,16 +1,18 @@
 <script setup>
+import Button from 'primevue/button'
+import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
+
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
+import { onMounted, ref, computed, provide, watch, readonly } from 'vue'
+
 import ContentPane from '@/components/UI/ContentPane.vue'
-import BaseCard from '@/components/UI/BaseCard.vue'
 import VolunteerBulkForm from '@/components/volunteer_view/VolunteerBulkForm.vue'
 import AdmitVolunteerHeader from '@/components/volunteer_view/AdmitVolunteerHeader.vue'
-import Button from 'primevue/button'
-import { useToast } from 'primevue/usetoast';
-import { useVolunteerStore } from '@/stores/volunteer';
+import { useVolunteerStore } from '@/stores/volunteer'
+
 import FormParts from '../../util/volunteer_form_parts'
-import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { isEqual } from 'lodash'
-import { useConfirm } from 'primevue/useconfirm'
-import { onMounted, ref, computed, provide, watch, readonly } from 'vue'
 
 const emit = defineEmits(['routeChange'])
 
@@ -181,19 +183,19 @@ onMounted(async () => {
     const result = await volunteerStore.getVolunteer(route.params.id)
     const volunteer = result.data.volunteer
 
-    /* try to see why this won't work:
+    //try to see why this won't work:
     const filterObject = (obj) => {
-      // eslint-disable-next-line no-unused-vars
-      const { createdAt, updatedAt, id, ...filteredObj } = obj
-      return filteredObj
-    }*/
-
-    const filterObject = (obj) => {
-      if (!obj) return {}
       // eslint-disable-next-line no-unused-vars
       const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
       return filteredObj
     }
+
+    /*const filterObject = (obj) => {
+      if (!obj) return {}
+      // eslint-disable-next-line no-unused-vars
+      const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
+      return filteredObj
+    }*/
 
   const {
     volunteer_personal_information,
@@ -214,7 +216,7 @@ onMounted(async () => {
     initialData.availability = filterObject(volunteer_availability)
     initialData.specialization = filterObject(volunteer_specialization)
     initialData.student = filterObject(student_volunteer)
-    initialData.professional = filterObject(professional_volunteer)
+    initialData.professional = professional_volunteer ? filterObject(professional_volunteer) : {};
 
     for (const key in initialData) {
       formData.value[key] = initialData[key]

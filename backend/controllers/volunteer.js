@@ -190,8 +190,13 @@ export async function updateVolunteer(req, res, next) {
     await specializationInstance.update(specialization);
     await availabilityInstance.update(availability);
     await studentInstance.update(student);
-    if (professionalInstance != null){
+    //await professionalInstance.update(professional);
+    if (professionalInstance) {
       await professionalInstance.update(professional);
+    } else if (Object.keys(professional).length > 0) {
+      // Create a new ProfessionalVolunteer entry only if professional is not empty
+      professional.id = volunteer.id; // Assuming the volunteer id should be used as the id for the new entry
+      await ProfessionalVolunteer.create(professional);
     }
 
     res.status(200).json({ message: "Volunteer information updated!" });
