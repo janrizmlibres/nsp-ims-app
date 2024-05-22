@@ -60,6 +60,7 @@ watch(() => props.state, (data) => dialogState.value = data)
                             <span class="u-txt-active">Modules</span>
                         </div>
                     </template>
+                    <ModuleTable :data="modules" />
                 </TabPanel>
                 <TabPanel>
                     <template #header>
