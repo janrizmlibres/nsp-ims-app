@@ -2,7 +2,7 @@
 // Presets
 import Dropdown from 'primevue/dropdown';
 import Panel from 'primevue/panel';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 // stores
 import { useUtilitiesStore } from '@/stores/utilities';
@@ -20,8 +20,15 @@ const classLevelInput = ref()
 
 const enableLearningStrandDropdown = ref(false)
 
+watch(() => terms.value, () => {
+    termInput.value = terms.value.find(term => term.status === true)
+
+    updateTerm()
+})
+
 function updateTerm() {
     classLevelInput.value = null
+
     emit('updateState', termInput.value, classLevelInput.value)
 }
 
