@@ -50,7 +50,7 @@ const disableSubmitButton = computed(() => {
 })
 
 const enableResetButton = computed(() => {
-    if(formData.value.volunteer != null || formData.value.start_time != null || formData.value.end_time != null || formData.value.school_days.length != 0) return false
+    if(learningStrandInput.value || formData.value.volunteer != null || formData.value.start_time != null || formData.value.end_time != null || formData.value.school_days.length != 0) return false
     else return true
 })
 
