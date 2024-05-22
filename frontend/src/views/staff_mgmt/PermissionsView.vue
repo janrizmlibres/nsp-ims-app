@@ -28,6 +28,7 @@ const updatedData = new Set([])
 const columns = [
   { field: 'canMgStuds', header: 'Manage Students' },
   { field: 'canMgStudReq', header: 'Manage Student Requirements' },
+  { field: 'canMgStudCat', header: 'Manage Student Categories' },
   { field: 'canMgTerm', header: 'Manage Terms' },
   { field: 'canMgLs', header: 'Manage Learning Strands' },
   { field: 'canMgClass', header: 'Manage Classes' },
@@ -133,6 +134,11 @@ onMounted(async () => {
           <Checkbox
             v-else-if="col.field === 'canMgStudReq'"
             v-model="slotProps.data.canMgStudReq"
+            :binary="true"
+          />
+          <Checkbox
+            v-else-if="col.field === 'canMgStudCat'"
+            v-model="slotProps.data.canMgStudCat"
             :binary="true"
           />
           <Checkbox

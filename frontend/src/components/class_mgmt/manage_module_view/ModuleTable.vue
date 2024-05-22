@@ -3,22 +3,25 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
-import Calendar from 'primevue/calendar';
-import { computed, ref, watch } from 'vue';
+import Toolbar from 'primevue/toolbar';
+import MeterGroup from 'primevue/metergroup';
+import Tag from 'primevue/tag';
+import Badge from 'primevue/badge';
+import InputText from 'primevue/inputtext';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
-import { useConfirm } from 'primevue/useconfirm';
+import { useRouter } from 'vue-router';
 
 // Custom
-import AddModuleDialog from './AddModuleDialog.vue';
+import AddModuleSection from './AddModuleSection.vue';
+import EditModuleDialog from './EditModuleDialog.vue';
 
 // stores
-import { useClassesStore } from '@/stores/classes';
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useConfirm } from 'primevue/useconfirm';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
-const classesStore = useClassesStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 
 const props = defineProps(['learningStrands', 'termStatus'])
@@ -33,56 +36,39 @@ const cols = ref([
     {field: 'total', header: 'Total'},
 ])
 
-const customPt = {
-    root: {
-        class: ['flex flex-col pt-2 justify-between']
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'font-medium',
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active'
-            ]
-        }),
-            sorticon: ({ context }) => ({
-                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-        }),
-    },
-    paginator: {
-        root: {
-            class: ['flex items-center justify-center flex-wrap object-bottom', 'px-4 pt-4 pb-2', 'border-0 rounded-bl-xl rounded-br-xl', 'bg-transparent dark:bg-surface-800', 'text-surface-500 dark:text-white/60']
-        },
-        pagebutton: ({ context }) => ({
-            class: [
-            'relative',
-            // Flex & Alignment
-            'inline-flex items-center justify-center',
-            // Shape
-            'border-0 rounded-full dark:rounded-md',
-            // Size
-            'min-w-[3rem] h-12 m-[0.143rem]',
-            'leading-none',
-            // Color
-            'text-surface-500 dark:text-white/80',
-            {
-                'u-bg-scolor-2 border-primary-50 text-white font-semibold': context.active
-            },
-            // State
-            {
-                'hover:bg-surface-50': !context.disabled && !context.active,
-                'focus:u-ring-scolor': !context.disabled
-            },
-            ]
-        }),
-    }
-}
-
 const termStatus = computed(() => props.termStatus)
 const isFetching = ref(false)
 const allModules = ref([])
+const module = ref()
 const classLearningStrandId = ref()
 const learningStrandInput = ref()
+const selectedModules = ref([])
+const metaKey = ref(true)
+const editModuleDialog = ref(false)
+const status = computed(() => {
+    let data = [... new Set(selectedModules.value.map(module => module.status))]
+    if (data.length === 1) return data[0] ? true : false
+    else return null
+})
+const statuses = ref([
+    {label: 'Not Done', value: false},
+    {label: 'Done', value: true}
+]);
+const meterProgress = ref((data) => {
+    return [{
+        label: `${data.filter((datum) => datum.status === true).length} of ${data.length} completed`, 
+        color: '#265492',
+        value: data.filter(datum => datum.status === true).length
+    }]
+})
+
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+});
+
+const dt = ref()
+const dtDiv = ref()
 
 function updateModuleTable(modules) {
     allModules.value.length = 0
@@ -99,9 +85,70 @@ function updateModuleTable(modules) {
             no_submissions: module.noSubmissions,
             lacking: module.lacking,
             complete: module.complete,
-            total: module.total
+            total: module.total,
+            status: module.status,
+            updatedAt: module.updatedAt
         })
     }
+}
+
+async function deleteModules() {
+    confirm.require({
+        message: 'Do you really want to delete?',
+        header: 'Delete Confirmation',
+        accept: async () => {
+            try {
+                const moduleIds = selectedModules.value.map(module => module.id)
+                await classLearningStrandStore.deleteModules({moduleIds: moduleIds})
+                deselect()
+                toast.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: 'Module(s) deleted successfully!',
+                    life: 3000
+                })
+            } catch(error) {
+                console.log(error);
+            }
+
+            try {
+                classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
+                    updateModuleTable(data)
+                })
+            } catch(error) {
+                console.log(error);
+            }
+        }
+    })
+}
+
+async function markAs() {
+    try {
+        const moduleIds = selectedModules.value.map(module => module.id)
+        await classLearningStrandStore.updateModuleStatus({
+            status: status.value,
+            moduleIds: moduleIds
+        })
+
+        classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
+            updateModuleTable(data)
+        })
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+function viewModule() {
+    router.push({ name: 'module-info', query: {id: selectedModules.value[selectedModules.value.length-1].id, status: termStatus.value} })
+}
+
+function updateModule(data) {
+    updateModuleTable(data)
+    showEditModuleDialog()
+}
+
+function deselect() {
+    selectedModules.value = []
 }
 
 watch(() => props.learningStrands, () => {
@@ -120,6 +167,7 @@ watch(() => learningStrandInput.value, (input) => {
             
             isFetching.value = false
         } catch (error) {
+            console.log(error);
             toast.add({
                 severity: 'error',
                 summary: 'Error',
@@ -130,117 +178,150 @@ watch(() => learningStrandInput.value, (input) => {
     }
 })
 
+const getStatusLabel = (status) => {
+    switch (status) {
+        case true:
+            return 'success';
 
-const editingRows = ref([]);
-const leave = ref(true)
+        case false:
+            return 'warning';
 
-watch(() =>  editingRows.value, (data) => {
-    if (data.length === 0) leave.value = true
-    else leave.value = false
-})
-
-const onRowEditSave = async (event) => {
-    let { data, newData } = event;
-    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
-        isFetching.value = true
-        try {
-            await classLearningStrandStore.updateModule(newData.id, {
-                title: newData.title,
-                distribution_date: newData.distribution_date,
-                retrieval_date: newData.retrieval_date
-            })
-
-            classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
-                updateModuleTable(data)
-            })
-
-            isFetching.value = false
-
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Module updated successfully!',
-                life: 3000
-            })
-        } catch(error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Unexpected error encountered.',
-                life: 3000
-            })
-        }
+        default:
+            return null;
     }
 };
 
-onBeforeRouteLeave((to) => {
-    if (leave.value) {
-        return true
+const getNumericLabel = (field) => {
+    switch (field) {
+        case 'no_submissions':
+            return 'danger';
+
+        case 'lacking':
+            return 'warning';
+
+        case 'complete':
+            return 'success';
+
+        case 'total':
+            return 'info';
+
+        default:
+            return null;
     }
+}
 
-    confirm.require({
-        message: 'Do you really want to leave? you have unsaved changes!',
-        header: 'Redirect Confirmation',
-        accept: async () => {
-            leave.value = true
-            await router.push(to)
-        }
-    })
+function editModule(data) {
+    module.value = {... data}
+    showEditModuleDialog()
+}
 
-    return false
+function showEditModuleDialog() {
+    editModuleDialog.value = !editModuleDialog.value
+}
+
+function onClickOutside(event) {
+    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
+}
+
+onMounted(() => {
+    document.addEventListener('click', onClickOutside);
+})
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', onClickOutside);
 })
 </script>
 
 <template>
-    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
-    <DataTable 
-        :value="allModules" dataKey="id" 
-        :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
-        resizableColumns columnResizeMode="fit" showGridlines
-        v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
-        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-        :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        :ptOptions="{mergeProps:true}"
-        :pt="customPt"
-    >
-        <template #empty> <div class="text-center">No records found.</div> </template>
-        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+    <div class="flex h-full w-full">
+        <div class="flex flex-col w-[17%] rounded-md mr-10 p-2 gap-8" >
+            <AddModuleSection :id="classLearningStrandId" :termStatus="termStatus"  @onUpdate="updateModuleTable" /> 
+            
+            <div class="u-bg-scolor shadow-xl rounded-md mt-2 p-4 text-surface-0">
+                <label>Module Progress</label>
+                <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" class="font-semibold" />
+            </div>
+        </div>
+        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl" ref="dtDiv">
+            <Toolbar class="!p-2">
+                <template #start>
+                    <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">
+                        <span class="flex items-center gap-2">
+                            <Button icon="fa fa-circle-xmark fa-lg" text aria-label="Edit Mode" style="height: 2rem; width: 2rem;" @click="deselect"/>
+                            <p>
+                                {{ selectedModules.length + ' selected' }}
+                            </p>
+                        </span>
+                        <span class="flex gap-1 items-center">
+                            <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                            <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
+                            <Button v-if="status === false" label="mark as done" text aria-label="mark-as-done" size="small" @click="markAs"/>
+                            <Button v-if="status === true" label="mark as undone" text aria-label="mark-as-undone" size="small" @click="markAs"/>
+                        </span>
+                    </span>
+                </template>
+                <template #end>
+                    <div class="flex flex-row gap-4 items-center mr-4">
+                        <label class="font-semibold">Learning Strand:</label>
+                        <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="deselect" /> 
+                    </div>
+                    <span class="relative">
+                        <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                        <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal"/>
+                    </span>
+                </template>
+            </Toolbar>
+            <DataTable 
+                :value="allModules" dataKey="id" v-model:filters="filters"
+                v-model:selection="selectedModules" scrollable style=" overflow: auto;"
+                selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewModule"
+                sortField="title" :sortOrder="1" removableSort class="unselectable" filterDisplay="menu"
+                :globalFilterFields="['title', 'distribution_date', 'retrieval_date', 'status']" ref="dt"
+            >
+                <template #empty> <div class="text-center">No records found.</div> </template>
 
-        <Column header="" class="u-txt-active text-center">
-            <template #body="slotProps">
-                <RouterLink :to="{ name: 'module-info', query: {id: slotProps.data.id, status: termStatus} }">
-                    <i class="fa fa-eye" />
-                </RouterLink>
-            </template>
-        </Column>
-        <Column field="title" header="Title" sortable>
-            <template #editor="{ data, field }">
-                <InputText v-model="data[field]" autofocus />
-            </template>
-        </Column>
-        <Column field="distribution_date" header="Distribution Date" sortable>
-            <template #body="slotProps">
-                {{ slotProps.data.distribution_date.toDateString() }}
-            </template>
-            <template #editor="{ data, field }">
-                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-            </template>
-        </Column>
-        <Column field="retrieval_date" header="Retrieval Date" sortable>
-            <template #body="slotProps">
-                {{ slotProps.data.retrieval_date.toDateString() }}
-            </template>
-            <template #editor="{ data, field }">
-                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-            </template>
-        </Column>
-        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
-        <Column :rowEditor="termStatus" bodyStyle="text-align:center" frozen class="right-0" />
-        <template #footer v-if="termStatus && learningStrandInput"> 
-            <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
-            <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
-        </template>
-    </DataTable>
+                <Column :exportable="false" style="width:2rem">
+                    <template #body="slotProps">
+                        <Button icon="fa fa-pencil" text @click="editModule(slotProps.data)" />
+                    </template>
+                </Column>
+                <Column field="title" header="Title" sortable />
+                <Column field="distribution_date" header="Distribution Date" sortable>
+                    <template #body="slotProps">
+                        {{ slotProps.data.distribution_date.toDateString() }}
+                    </template>
+                </Column>
+                <Column field="retrieval_date" header="Retrieval Date" sortable>
+                    <template #body="slotProps">
+                        {{ slotProps.data.retrieval_date.toDateString() }}
+                    </template>
+                </Column>
+                <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header">
+                    <template #body="{ data, field }">
+                        <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
+                    </template>
+                </Column>
+                <Column field="status" header="Status" :filterMenuStyle="{ width: '14rem' }">
+                    <template #body="slotProps">
+                        <Tag :value="slotProps.data.status ? 'Done' : 'Not Done'" :severity="getStatusLabel(slotProps.data.status)" />
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <Dropdown v-model="filterModel.value" :options="statuses" optionLabel="label" optionValue="value"  placeholder="Select One" class="p-column-filter" showClear>
+                            <template #option="slotProps">
+                                <Tag :value="slotProps.option.label" :severity="getStatusLabel(slotProps.option.value)" />
+                            </template>
+                        </Dropdown>
+                    </template>
+                </Column>
+                <Column field="updatedAt" header="Updated At" sortable style="width: 10rem;">
+                    <template #body="slotProps">
+                        {{ new Date(slotProps.data.updatedAt).toLocaleString() }}
+                    </template>
+                </Column>
+            </DataTable>
+        </div>
+    </div>
+    <EditModuleDialog :id="classLearningStrandId" :data="module" :state="editModuleDialog" @onUpdate="updateModule" @onUpdateDisplay="showEditModuleDialog" />
 </template>
 
 <style>

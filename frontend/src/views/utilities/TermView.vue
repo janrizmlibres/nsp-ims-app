@@ -19,7 +19,6 @@ const editingRows = ref([])
 
 const onRowEditSave = async (event) => {
   let { data, newData } = event
-  console.log(newData)
 
   if (JSON.stringify(data) !== JSON.stringify(newData)) {
     try {
@@ -37,6 +36,7 @@ const onRowEditSave = async (event) => {
         life: 3000
       })
     } catch (error) {
+      console.log(error);
       toast.add({
         severity: 'error',
         summary: 'Error',
@@ -51,6 +51,7 @@ onMounted(async () => {
   try {
     await termStore.getTerms()
   } catch (error) {
+    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',

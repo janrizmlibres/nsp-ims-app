@@ -20,6 +20,7 @@ onMounted(async () => {
     try {
         await strandStore.getLearningStrands()
     } catch(error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -41,6 +42,7 @@ async function deleteLearningStrand(id) {
                 life: 3000
         })
     } catch(error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -70,6 +72,7 @@ const onRowEditSave = async (event) => {
                 life: 3000
             })
         } catch(error) {
+            console.log(error);
             toast.add({
                 severity: 'error',
                 summary: 'Error',

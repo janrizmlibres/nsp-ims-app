@@ -5,14 +5,21 @@ import Staff from "../models/staff/staff.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import StudentRequirement from "../models/student_requirement.js";
+import StudentCategory from "../models/student_category.js";
 import Volunteer from "../models/volunteer/volunteer.js";
-import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
-import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
-import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
-import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
-import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
-import StudentVolunteer from "../models/volunteer/student_volunteer.js";
-import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
+import PersonalInfo from "../models/student/personal_info.js";
+import ContactInfo from "../models/student/contact_info.js";
+import EmergencyPerson from "../models/student/emergency_person.js";
+import PreviousSchool from "../models/student/previous_school.js";
+
+// import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
+// import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
+// import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
+// import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
+// import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
+// import StudentVolunteer from "../models/volunteer/student_volunteer.js";
+// import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
+
 import ClassLevel from "../models/class/class_level.js";
 import ClassLearningStrand from "../models/class/class_learning_strand.js";
 
@@ -23,118 +30,224 @@ export async function injectAll() {
   await injectStudent();
   await injectVolunteer();
   await injectStudentRequirement();
+  await injectStudentCategory();
 }
 
 export async function injectStudent() {
-  const studentData = [
-    {
-      lrn: 1242312145189,
-      lastName: "Dela Cruz",
-      firstName: "Juan",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242312145145,
-      lastName: "Bautista",
-      firstName: "Felix",
-      middleName: "Polso",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Amidrano",
-      firstName: "Nicolette",
-      middleName: "Bucio",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Fernandez",
-      firstName: "Hero",
-      middleName: "Baltazar",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242312145714,
-      lastName: "Santos",
-      firstName: "Dominic",
-      middleName: "Dicolano",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1242562145189,
-      lastName: "Fulminar",
-      firstName: "Ashley",
-      middleName: "De Guzman",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Quintos",
-      firstName: "Ariel",
-      middleName: "Furtonado",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Hilot",
-      firstName: "Van",
-      middleName: "Culminares",
-      category: "Out-of-School Youth",
-    },
-    {
-      lrn: 1247192145189,
-      lastName: "Alonto",
-      firstName: "Princess Aliah",
-      category: "Out-of-School Youth",
-    },
-    {
-      lastName: "Montecillo",
-      firstName: "Dirk",
-      middleName: "Santocildis",
-      category: "Out-of-School Youth",
-    },
-  ];
+  const student1 = await Student.create({
+    lrn: "198765150721",
+    category: "Out-of-School Youth",
+    firstName: "Gordon",
+    lastName: "Ramsay",
+    photoUrl: "images/gordon.jpg",
+  });
 
-  await Promise.all(
-    studentData.map(async (student) => {
-      await Student.create(student);
-    })
-  );
+  await PersonalInfo.create({
+    birthday: new Date(),
+    bloodType: "O+",
+    birthBarangay: "Iponan",
+    birthCity: "New York City",
+    birthProvince: "Misamis Oriental",
+    religion: "Roman Catholic",
+    sex: "M",
+    civilStatus: "Single",
+    homeBlkLtSt: "Lackadaisy Hotel",
+    homeBarangay: "St. Missouri",
+    homeCity: "New York City",
+    homeProvince: "Misamis Oriental",
+    studentId: student1.id,
+  });
 
-  function getRandomStatus() {
-    let status = ["Inactive", "Active", "Drop"];
-    return status[Math.floor(Math.random() * 2)];
-  }
-  
-  function getRegularity() {
-    let status = ["Regular", "Hybrid"];
-    return status[Math.floor(Math.random() * 2)];
-  }
+  await ContactInfo.create({
+    contactNum: "09123456789",
+    studentId: student1.id,
+  });
 
-  const students = await Student.findAll();
-  await Promise.all(    
-    students.map(async (student) => {
-      const class_levels = await ClassLevel.findAll();
-      await Promise.all(
-        class_levels.map(async (class_level) => {
-          const enrollment = await class_level.addStudent(student, {
-            through: {
-              hasEnrollmentForm: true,
-              status: getRandomStatus(),
-              regularity: getRegularity(),
-            },
-          });
+  await EmergencyPerson.create({
+    firstName: "Mitzi",
+    lastName: "May",
+    contactNum: "09987654321",
+    relationship: "Spouse",
+    studentId: student1.id,
+  });
 
-          const classLearningStrands = await ClassLearningStrand.findAll({
-            where: {classLevelId: class_level.id}
-          });
+  await PreviousSchool.create({
+    name: "St. Larlar Musician School",
+    schoolType: "Private",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "1920-1921",
+    highestEducation: "Secondary education",
+    gradeStopped: "Grade 10",
+    reason: "Sleeps anywhere",
+    street: "Marigold St.",
+    barangay: "Balulang",
+    city: "Cagayan de Oro City",
+    province: "Misamis Oriental",
+    studentId: student1.id,
+  });
 
-          await Promise.all(
-            classLearningStrands.map(async (classLearningStrand) => {
-              classLearningStrand.addEnrollment(enrollment)
-            })
-          )
-        })
-      );
-    })
-  );
+  const student2 = await Student.create({
+    lrn: "123456789012345",
+    category: "Teenage Pregnancy",
+    firstName: "Kim",
+    lastName: "Chiu",
+    photoUrl: "images/kim.jpg",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date("1998-05-14"),
+    bloodType: "A-",
+    birthBarangay: "Carmen",
+    birthCity: "Cagayan de Oro City",
+    birthProvince: "Misamis Oriental",
+    religion: "Islam",
+    sex: "F",
+    civilStatus: "Single",
+    homeBlkLtSt: "123 Happy Street",
+    homeBarangay: "Agora",
+    homeCity: "Cagayan de Oro City",
+    homeProvince: "Misamis Oriental",
+    studentId: student2.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09051234567",
+    studentId: student2.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Pedro",
+    lastName: "Cruz",
+    contactNum: "09187654321",
+    relationship: "Father",
+    studentId: student2.id,
+  });
+
+  await PreviousSchool.create({
+    name: "Saint Ignatius School",
+    schoolType: "Private",
+    schoolAffiliation: "Sectarian",
+    lastSyAttended: "2022-2023",
+    highestEducation: "No formal education",
+    gradeStopped: "Kindergarten",
+    reason: "Graduated",
+    street: "Mabini Street",
+    barangay: "Macabalan",
+    city: "Cagayan de Oro City",
+    province: "Misamis Oriental",
+    studentId: student2.id,
+  });
+
+  // const studentData = [
+  //   {
+  //     lrn: 1242312145189,
+  //     lastName: "Dela Cruz",
+  //     firstName: "Juan",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lrn: 1242312145145,
+  //     lastName: "Bautista",
+  //     firstName: "Felix",
+  //     middleName: "Polso",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Amidrano",
+  //     firstName: "Nicolette",
+  //     middleName: "Bucio",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Fernandez",
+  //     firstName: "Hero",
+  //     middleName: "Baltazar",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lrn: 1242312145714,
+  //     lastName: "Santos",
+  //     firstName: "Dominic",
+  //     middleName: "Dicolano",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lrn: 1242562145189,
+  //     lastName: "Fulminar",
+  //     firstName: "Ashley",
+  //     middleName: "De Guzman",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Quintos",
+  //     firstName: "Ariel",
+  //     middleName: "Furtonado",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Hilot",
+  //     firstName: "Van",
+  //     middleName: "Culminares",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lrn: 1247192145189,
+  //     lastName: "Alonto",
+  //     firstName: "Princess Aliah",
+  //     category: "Out-of-School Youth",
+  //   },
+  //   {
+  //     lastName: "Montecillo",
+  //     firstName: "Dirk",
+  //     middleName: "Santocildis",
+  //     category: "Out-of-School Youth",
+  //   },
+  // ];
+
+  // await Promise.all(
+  //   studentData.map(async (student) => {
+  //     await Student.create(student);
+  //   })
+  // );
+
+  // function getRandomStatus() {
+  //   let status = ["Inactive", "Active", "Drop"];
+  //   return status[Math.floor(Math.random() * 2)];
+  // }
+
+  // function getRegularity() {
+  //   let status = ["Regular", "Hybrid"];
+  //   return status[Math.floor(Math.random() * 2)];
+  // }
+
+  // const students = await Student.findAll();
+
+  // await Promise.all(
+  //   students.map(async (student) => {
+  //     const class_levels = await ClassLevel.findAll();
+  //     await Promise.all(
+  //       class_levels.map(async (class_level) => {
+  //         const enrollment = await class_level.addStudent(student, {
+  //           through: {
+  //             hasEnrollmentForm: true,
+  //             status: getRandomStatus(),
+  //             regularity: getRegularity(),
+  //           },
+  //         });
+
+  //         const classLearningStrands = await ClassLearningStrand.findAll({
+  //           where: { classLevelId: class_level.id },
+  //         });
+
+  //         await Promise.all(
+  //           classLearningStrands.map(async (classLearningStrand) => {
+  //             classLearningStrand.addEnrollment(enrollment);
+  //           })
+  //         );
+  //       })
+  //     );
+  //   })
+  // );
 }
 
 export async function injectStaff() {
@@ -155,6 +268,7 @@ export async function injectStaff() {
         canMgTerm: true,
         canMgLs: true,
         canMgStudReq: true,
+        canMgStudCat: true,
         canMgStaff: true,
       },
       {
@@ -355,8 +469,8 @@ export async function injectAcademicYear() {
     })
   );
 
-  const academic_years = await Term.findAll()
-  const learningStrands = await LearningStrand.findAll()
+  const academic_years = await Term.findAll();
+  const learningStrands = await LearningStrand.findAll();
 
   await Promise.all(
     academic_years.map(async (academic_year) => {
@@ -365,9 +479,9 @@ export async function injectAcademicYear() {
           school_level: class_level.school_level,
         });
         learningStrands.map(async (learningStrand) => {
-          await classLevel.addLearning_strand(learningStrand)
-        })
-      })
+          await classLevel.addLearning_strand(learningStrand);
+        });
+      });
     })
   );
 }
@@ -450,6 +564,53 @@ export async function injectStudentRequirement() {
   );
 }
 
+export async function injectStudentCategory() {
+  const studentCategoryData = [
+    {
+      category_name: "Out-of-School Youth",
+    },
+    {
+      category_name: "Indigenous People",
+    },
+    {
+      category_name: "Person with Disability",
+    },
+    {
+      category_name: "Solo Parent",
+    },
+    {
+      category_name: "Pantawid Pamilyang Pilipino Program (4Ps) Beneficiary",
+    },
+    {
+      category_name: "Child Laborer",
+    },
+    {
+      category_name: "Victim of Child Abuse",
+    },
+    {
+      category_name: "Victim of Human Trafficking",
+    },
+    {
+      category_name: "Street Children",
+    },
+    {
+      category_name: "Drug Dependents",
+    },
+    {
+      category_name: "Children in Conflict with the Law",
+    },
+    {
+      category_name: "Children in Especially Difficult Circumstances",
+    },
+  ];
+
+  await Promise.all(
+    studentCategoryData.map(async (student_category) => {
+      await StudentCategory.create(student_category);
+    })
+  );
+}
+
 export async function injectVolunteer() {
   const volunteerData = [
     {
@@ -528,7 +689,7 @@ export async function injectVolunteer() {
       housing: "123 Main St",
       barangay: "Barangay 1",
       city: "City A",
-      province: "Province A"
+      province: "Province A",
     },
     {
       nickname: "Alonzo",
@@ -537,7 +698,7 @@ export async function injectVolunteer() {
       housing: "456 Maple Ave",
       barangay: "Barangay 2",
       city: "City B",
-      province: "Province B"
+      province: "Province B",
     },
     {
       nickname: "Alejandra",
@@ -546,7 +707,7 @@ export async function injectVolunteer() {
       housing: "789 Oak St",
       barangay: "Barangay 3",
       city: "City C",
-      province: "Province C"
+      province: "Province C",
     },
     {
       nickname: "Gabriel",
@@ -555,7 +716,7 @@ export async function injectVolunteer() {
       housing: "1011 Pine Ave",
       barangay: "Barangay 4",
       city: "City D",
-      province: "Province D"
+      province: "Province D",
     },
     {
       nickname: "John",
@@ -564,7 +725,7 @@ export async function injectVolunteer() {
       housing: "1213 Birch Blvd",
       barangay: "Barangay 5",
       city: "City E",
-      province: "Province E"
+      province: "Province E",
     },
     {
       nickname: "Job",
@@ -573,7 +734,7 @@ export async function injectVolunteer() {
       housing: "1415 Cedar Ct",
       barangay: "Barangay 6",
       city: "City F",
-      province: "Province F"
+      province: "Province F",
     },
     {
       nickname: "Wilson",
@@ -582,7 +743,7 @@ export async function injectVolunteer() {
       housing: "1617 Dogwood Dr",
       barangay: "Barangay 7",
       city: "City G",
-      province: "Province G"
+      province: "Province G",
     },
     {
       nickname: "Felixson",
@@ -591,7 +752,7 @@ export async function injectVolunteer() {
       housing: "1819 Elm St",
       barangay: "Barangay 8",
       city: "City H",
-      province: "Province H"
+      province: "Province H",
     },
     {
       nickname: "Fernan",
@@ -600,7 +761,7 @@ export async function injectVolunteer() {
       housing: "2021 Fir St",
       barangay: "Barangay 9",
       city: "City I",
-      province: "Province I"
+      province: "Province I",
     },
     {
       nickname: "Kenneth",
@@ -609,7 +770,7 @@ export async function injectVolunteer() {
       housing: "2223 Grove St",
       barangay: "Barangay 10",
       city: "City J",
-      province: "Province J"
+      province: "Province J",
     },
     {
       nickname: "Daisy",
@@ -618,23 +779,78 @@ export async function injectVolunteer() {
       housing: "2425 Hickory St",
       barangay: "Barangay 11",
       city: "City K",
-      province: "Province K"
+      province: "Province K",
     },
     // ... add more entries here ...
   ];
 
   const volunteerEmergencyContacts = [
-    { firstName: "John", lastName: "Doe", contactNumber: 1234567890, relationship: "Brother" },
-    { firstName: "Jane", lastName: "Doe", contactNumber: 2345678901, relationship: "Sister" },
-    { firstName: "Jim", lastName: "Doe", contactNumber: 3456789012, relationship: "Brother" },
-    { firstName: "Jill", lastName: "Doe", contactNumber: 4567890123, relationship: "Sister" },
-    { firstName: "Joe", lastName: "Doe", contactNumber: 5678901234, relationship: "Brother" },
-    { firstName: "Jenny", lastName: "Doe", contactNumber: 6789012345, relationship: "Sister" },
-    { firstName: "Jerry", lastName: "Doe", contactNumber: 7890123456, relationship: "Brother" },
-    { firstName: "Jess", lastName: "Doe", contactNumber: 8901234567, relationship: "Sister" },
-    { firstName: "Jack", lastName: "Doe", contactNumber: 9012345678, relationship: "Brother" },
-    { firstName: "Jasmine", lastName: "Doe", contactNumber: 1234567890, relationship: "Sister" },
-    { firstName: "Jacob", lastName: "Doe", contactNumber: 2345678901, relationship: "Brother" }
+    {
+      firstName: "John",
+      lastName: "Doe",
+      contactNumber: 1234567890,
+      relationship: "Brother",
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      contactNumber: 2345678901,
+      relationship: "Sister",
+    },
+    {
+      firstName: "Jim",
+      lastName: "Doe",
+      contactNumber: 3456789012,
+      relationship: "Brother",
+    },
+    {
+      firstName: "Jill",
+      lastName: "Doe",
+      contactNumber: 4567890123,
+      relationship: "Sister",
+    },
+    {
+      firstName: "Joe",
+      lastName: "Doe",
+      contactNumber: 5678901234,
+      relationship: "Brother",
+    },
+    {
+      firstName: "Jenny",
+      lastName: "Doe",
+      contactNumber: 6789012345,
+      relationship: "Sister",
+    },
+    {
+      firstName: "Jerry",
+      lastName: "Doe",
+      contactNumber: 7890123456,
+      relationship: "Brother",
+    },
+    {
+      firstName: "Jess",
+      lastName: "Doe",
+      contactNumber: 8901234567,
+      relationship: "Sister",
+    },
+    {
+      firstName: "Jack",
+      lastName: "Doe",
+      contactNumber: 9012345678,
+      relationship: "Brother",
+    },
+    {
+      firstName: "Jasmine",
+      lastName: "Doe",
+      contactNumber: 1234567890,
+      relationship: "Sister",
+    },
+    {
+      firstName: "Jacob",
+      lastName: "Doe",
+      contactNumber: 2345678901,
+      relationship: "Brother",
+    },
   ];
 
   const StudentVolunteer = [
@@ -684,62 +900,61 @@ export async function injectVolunteer() {
     },
   ];
 
-
   const volunteerContactInformationData = [
     {
       contactNumber: "09123456789",
       facebook: "Shelly-Cruz",
-      email: "shelly-cruz@example.com"
+      email: "shelly-cruz@example.com",
     },
     {
       contactNumber: "09123456788",
       facebook: "Alonzo-Fuentes",
-      email: "alonzo-fuentes@example.com"
+      email: "alonzo-fuentes@example.com",
     },
     {
       contactNumber: "09123456787",
       facebook: "Alejandra-Firma",
-      email: "alejandra-firma@example.com"
+      email: "alejandra-firma@example.com",
     },
     {
       contactNumber: "09123456786",
       facebook: "Gabriel-Horticullado",
-      email: "Gabriel-Horticullado@example.com"
+      email: "Gabriel-Horticullado@example.com",
     },
     {
       contactNumber: "09123456785",
       facebook: "John-Santos",
-      email: "John-Santos@example.com"
+      email: "John-Santos@example.com",
     },
     {
       contactNumber: "09123456784",
       facebook: "Job-Dapin",
-      email: "Job-Dapin@example.com"
+      email: "Job-Dapin@example.com",
     },
     {
       contactNumber: "09123456783",
       facebook: "Wilson-Roa",
-      email: "Wilson-Roa@example.com"
+      email: "Wilson-Roa@example.com",
     },
     {
       contactNumber: "09123456782",
       facebook: "Felixson-Dimagiba",
-      email: "Felixson-Dimagiba@example.com"
+      email: "Felixson-Dimagiba@example.com",
     },
     {
       contactNumber: "09123456781",
       facebook: "Fernan-Goma",
-      email: "Fernan-Goma@example.com"
+      email: "Fernan-Goma@example.com",
     },
     {
       contactNumber: "09123456780",
       facebook: "Kenneth-Lopez",
-      email: "Kenneth-Lopez@example.com"
+      email: "Kenneth-Lopez@example.com",
     },
     {
       contactNumber: "09123456779",
       facebook: "Daisy-Sayson",
-      email: "Daisy-Sayson@example.com"
+      email: "Daisy-Sayson@example.com",
     },
     // ... add more entries here ...
   ];
@@ -750,21 +965,35 @@ export async function injectVolunteer() {
   }
 
   function getSpecialization() {
-    let area = ["LS1-E", "LS1-F", "LS2-S", "LS3-M", "LS4-CLS", "LS5-UTS", "LS6-DL", "Homeroom", ];
+    let area = [
+      "LS1-E",
+      "LS1-F",
+      "LS2-S",
+      "LS3-M",
+      "LS4-CLS",
+      "LS5-UTS",
+      "LS6-DL",
+      "Homeroom",
+    ];
     return area[Math.floor(Math.random() * 2)];
   }
 
   await Promise.all(
     volunteerData.map(async (data, index) => {
-
       const volunteer = await Volunteer.create(data);
 
-      volunteer.createStudent_volunteer(StudentVolunteer[index])
-      volunteer.createVolunteer_personal_information(volunteerPersonalInformationData[index])
-      volunteer.createVolunteer_emergency_contact(volunteerEmergencyContacts[index])
-      volunteer.createVolunteer_contact_information(volunteerContactInformationData[index])
-      volunteer.createVolunteer_availability({day: getRandomAvailability()})
-      volunteer.createVolunteer_specialization({area: getSpecialization()})
+      volunteer.createStudent_volunteer(StudentVolunteer[index]);
+      volunteer.createVolunteer_personal_information(
+        volunteerPersonalInformationData[index]
+      );
+      volunteer.createVolunteer_emergency_contact(
+        volunteerEmergencyContacts[index]
+      );
+      volunteer.createVolunteer_contact_information(
+        volunteerContactInformationData[index]
+      );
+      volunteer.createVolunteer_availability({ day: getRandomAvailability() });
+      volunteer.createVolunteer_specialization({ area: getSpecialization() });
     })
   );
 }

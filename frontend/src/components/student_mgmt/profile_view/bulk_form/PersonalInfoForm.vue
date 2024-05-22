@@ -2,18 +2,20 @@
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 
-import { ref, computed, watch, onMounted } from 'vue'
-import { getDaysInMonth, format, getYear } from 'date-fns'
+import { ref, computed, watch, onMounted, inject } from 'vue'
+import { getDaysInMonth, format, getYear, getDay, getMonth } from 'date-fns'
 
 import { objectMap } from '@/util/helpers'
 import FormParts from '@/util/student_form_parts'
 
-const emit = defineEmits(['dataChanged'])
+const { formData, updateFormData } = inject('formData')
 
-const selectedSex = ref(null)
-const selectedBloodType = ref(null)
-const selectedCivilStat = ref(null)
-const selectedReligion = ref(null)
+const personalInfo = formData.personalInfo
+
+const selectedSex = ref(personalInfo.sex)
+const selectedBloodType = ref(personalInfo.bloodType)
+const selectedCivilStat = ref(personalInfo.civilStatus)
+const selectedReligion = ref(personalInfo.religion)
 
 const birthday = ref({ month: null, day: null, year: null })
 const computedBirthday = computed(() => {
@@ -25,12 +27,16 @@ const computedBirthday = computed(() => {
   return new Date(year, month, day)
 })
 
-const birthPlace = ref({ birthBarangay: null, birthCity: null, birthProvince: null })
+const birthPlace = ref({
+  birthBarangay: personalInfo.birthBarangay,
+  birthCity: personalInfo.birthCity,
+  birthProvince: personalInfo.birthProvince
+})
 const address = ref({
-  homeBlkLtSt: { label: 'Blk/Lt/St', data: null },
-  homeBarangay: { label: 'Barangay', data: null },
-  homeCity: { label: 'City', data: null },
-  homeProvince: { label: 'Province', data: null }
+  homeBlkLtSt: { label: 'Blk/Lt/St', data: personalInfo.homeBlkLtSt },
+  homeBarangay: { label: 'Barangay', data: personalInfo.homeBarangay },
+  homeCity: { label: 'City', data: personalInfo.homeCity },
+  homeProvince: { label: 'Province', data: personalInfo.homeProvince }
 })
 
 const sex = ['M', 'F']
@@ -81,7 +87,7 @@ function handleUpdate() {
     ...objectMap(address.value, (field) => field.data)
   }
 
-  emit('dataChanged', FormParts.Personal, data)
+  updateFormData(FormParts.Personal, data)
 }
 
 onMounted(() => {
@@ -93,6 +99,12 @@ onMounted(() => {
 
   for (let i = currentYear - 120; i <= currentYear; i++) {
     years.value.push(i.toString())
+  }
+
+  if (personalInfo.birthday) {
+    birthday.value.month = getMonth(personalInfo.birthday)
+    birthday.value.day = getDay(personalInfo.birthday).toString()
+    birthday.value.year = getYear(personalInfo.birthday).toString()
   }
 })
 </script>
@@ -106,7 +118,15 @@ onMounted(() => {
         </div>
 
         <div class="col-span-3 grid grid-cols-3 gap-6">
-          <Dropdown class="h-10" v-model="selectedSex" :options="sex" @change="handleUpdate" />
+          <Dropdown
+            class="h-10"
+            v-model="selectedSex"
+            :options="sex"
+            @change="handleUpdate"
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+          />
 
           <div class="flex items-center justify-end">
             <span>Blood Type</span>
@@ -116,6 +136,9 @@ onMounted(() => {
             v-model="selectedBloodType"
             :options="bloodTypes"
             @change="handleUpdate"
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
           />
         </div>
 
@@ -127,6 +150,9 @@ onMounted(() => {
           v-model="selectedCivilStat"
           :options="civilStatus"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6">
@@ -141,6 +167,9 @@ onMounted(() => {
             optionValue="code"
             placeholder="Month"
             @change="handleUpdate"
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
           />
           <Dropdown
             class="h-10 col-span-3"
@@ -148,6 +177,9 @@ onMounted(() => {
             :options="days"
             placeholder="Day"
             @change="handleUpdate"
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
           />
           <Dropdown
             class="h-10 col-span-4"
@@ -156,6 +188,9 @@ onMounted(() => {
             filter
             placeholder="Year"
             @change="handleUpdate"
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
           />
         </div>
 
@@ -168,6 +203,9 @@ onMounted(() => {
           v-model="birthPlace.birthBarangay"
           placeholder="Barangay"
           @update:modelValue="handleUpdate"
+          :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
@@ -175,6 +213,9 @@ onMounted(() => {
           v-model="birthPlace.birthCity"
           placeholder="City"
           @update:modelValue="handleUpdate"
+          :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
         <InputText
           class="h-10 col-span-3 col-start-2"
@@ -182,6 +223,9 @@ onMounted(() => {
           v-model="birthPlace.birthProvince"
           placeholder="Province"
           @update:modelValue="handleUpdate"
+          :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
       </div>
     </div>
@@ -197,6 +241,9 @@ onMounted(() => {
           v-model="selectedReligion"
           :options="religions"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
 
         <div class="flex items-center justify-end pr-6">
@@ -211,6 +258,9 @@ onMounted(() => {
           v-model="value.data"
           :placeholder="value.label"
           @update:modelValue="handleUpdate"
+          :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
       </div>
     </div>

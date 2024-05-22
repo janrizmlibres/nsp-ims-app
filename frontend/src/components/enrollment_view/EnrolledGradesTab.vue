@@ -23,6 +23,7 @@ async function getLearningStrands() {
 
     console.log("Learning Strands: ", learningStrands.value)
   } catch (error) {
+    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',
@@ -38,6 +39,7 @@ async function getEnrolledGrades() {
 
     console.log("Grades: ", enrollmentStore.grades)
   } catch (error) {
+    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',

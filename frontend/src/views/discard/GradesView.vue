@@ -24,6 +24,7 @@ async function fetchGrades(query) {
 
         name.value = classLearningStrandStore.strand.learning_strand.name
     } catch (error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
