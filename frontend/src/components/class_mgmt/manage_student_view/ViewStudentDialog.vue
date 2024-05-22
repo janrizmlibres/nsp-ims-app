@@ -5,7 +5,11 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Toolbar from 'primevue/toolbar';
 import Dropdown from 'primevue/dropdown';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+
+import ModuleTable from './ModuleTable.vue';
+import GradeTable from './GradeTable.vue';
+import AttendanceTable from './AttendanceTable.vue';
 
 //  stores
 import { useClassStore } from '@/stores/class';
@@ -14,7 +18,6 @@ const props = defineProps(['data', 'state'])
 const emit = defineEmits(['onUpdateDisplay'])
 const classStore = useClassStore()
 const dialogState = ref()
-const student = ref()
 const learningStrandInput = ref()
 const learningStrands = ref()
 const modules = computed(() => learningStrandInput.value ? learningStrandInput.value.modules : null)
