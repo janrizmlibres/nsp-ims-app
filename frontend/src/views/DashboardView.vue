@@ -1,3 +1,33 @@
+<script setup>
+import { computed, ref, onMounted } from 'vue';
+import ContentPane from "@/components/UI/ContentPane.vue";
+import YearButton from "@/components/dashboard/YearButton.vue";
+import StudentWidget from "@/components/dashboard/StudentWidget.vue";
+import BarChart from "@/components/dashboard/BarChart.vue";
+import LineChart from "@/components/dashboard/LineChart.vue";
+
+import { useSidebarStore } from '@/stores/sidebar.js';
+import { useStudentsStore } from '@/stores/students'
+
+const studentsStore = useStudentsStore();
+const sidebarStore = useSidebarStore();
+
+const isSidebarHovering = computed(() => sidebarStore.isHovering);
+const isSidebarPinned = computed(() => sidebarStore.isPinned);
+
+let totalStudents = ref(0);
+let maleStudents = ref(0);
+let femaleStudents = ref(0);
+
+onMounted(async () => {
+  const genderCount = await studentsStore.getGenderCount();
+  maleStudents.value = genderCount.data.maleCount;
+  femaleStudents.value = genderCount.data.femaleCount;
+  totalStudents.value = maleStudents.value + femaleStudents.value;
+
+});
+</script>
+
 <template>
   <ContentPane>
     <div class="header-container">
@@ -6,10 +36,11 @@
     </div>
     <div class="student-dashboard-panels">
         <StudentWidget 
-        class="student-widget-" 
-        :seriesData="[50, 50]" 
-        widgetTitle="LEARNERS" 
-        :totalText="totalStudents.toString()" />
+          v-if="maleStudents && femaleStudents"
+          class="student-widget-" 
+          :seriesData="[maleStudents, femaleStudents]" 
+          widgetTitle="STUDENTS" 
+          :totalText= totalStudents.toString() />
         <StudentWidget 
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
@@ -39,66 +70,6 @@
     </div>
   </ContentPane>
 </template>
-
-<script>
-import ContentPane from "@/components/UI/ContentPane.vue";
-import YearButton from "@/components/dashboard/YearButton.vue"; // import the YearButton component
-import StudentWidget from "@/components/dashboard/StudentWidget.vue";
-import BarChart from "@/components/dashboard/BarChart.vue"; // import the StudentDashboardPanels component
-import LineChart from "@/components/dashboard/LineChart.vue";
-
-import { useSidebarStore } from '@/stores/sidebar.js';
-import { useStudentsStore } from '@/stores/students'
-
-export default {
-  name: "DashboardView",
-  components: {
-    ContentPane,
-    YearButton, // register the YearButton component
-    StudentWidget, // register the StudentDashboardPanels component
-    BarChart,
-    LineChart,
-  },
-  computed: {
-    isSidebarHovering() {
-      const sidebarStore = useSidebarStore()
-      return sidebarStore.isHovering
-    },
-    isSidebarPinned() {
-      const sidebarStore = useSidebarStore()
-      return sidebarStore.isPinned
-    },
-  },
-
-  data() {
-    return {
-      totalStudents: 0
-    }
-  },
-  async created() {
-  const studentsStore = useStudentsStore()
-  await studentsStore.getStudents()
-  console.log('studentsStore:', studentsStore) // log the entire store
-  console.log('studentsStore.students:', studentsStore.students) // log the students property
-  if (studentsStore.students) {
-    this.totalStudents = studentsStore.students.length
-
-    // Count males and females
-    let maleCount = 0
-    let femaleCount = 0
-    for (let student of studentsStore.students) {
-      if (student.sex === 'male') {
-        maleCount++
-      } else if (student.sex === 'female') {
-        femaleCount++
-      }
-    }
-    console.log('Male students:', maleCount)
-    console.log('Female students:', femaleCount)
-  }
-}
-};
-</script>
 
 <style scoped>
 .charts{

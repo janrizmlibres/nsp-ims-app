@@ -20,6 +20,8 @@ export default {
       type: String,
       required: true
     }
+  },
+  mounted() {
   }
 }
 </script>
