@@ -55,9 +55,49 @@ const editingRows = ref([])
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        if (!newData.category_name.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "Student Category cannot be empty.",
+                life: 3000
+            })
+            return
+        }
+
+        if (categoryStore.categories.some(category => category.category_name === newData.category_name.trim() && category.id !== newData.id)) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Student Category already exists.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.category_name.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Student Category should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.category_name.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Student Category should be at least 3 characters.',
+                life: 3000
+            })
+            return
+        }
+        
         try {
             await categoryStore.updateCategory(newData.id, {
-                category_name: newData.category_name
+                category_name: newData.category_name.trim()
             })
 
             await categoryStore.getCategories()
