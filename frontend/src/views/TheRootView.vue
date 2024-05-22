@@ -5,5 +5,9 @@ import { RouterView } from 'vue-router'
 
 <template>
   <TheSidebar />
-  <RouterView />
+  <RouterView v-slot="{ Component }">
+    <keep-alive exclude="dashboard">
+      <component :is="Component" />
+    </keep-alive>
+  </RouterView>
 </template>
