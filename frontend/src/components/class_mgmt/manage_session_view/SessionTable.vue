@@ -205,10 +205,10 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="flex h-full w-full">
-        <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
+        <div v-if="termStatus" class="flex flex-col mr-10 p-2 gap-4" >
             <AddSessionSection :id="classLearningStrandId" :data="selectedMonth" :termStatus="termStatus" @onUpdate="updateSessionTable" />
         </div>
-        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl" ref="dtDiv">
+        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedSessions.length" class="flex flex-row gap-8 items-center mx-2">
@@ -218,7 +218,7 @@ onBeforeUnmount(() => {
                                 {{ selectedSessions.length + ' selected' }}
                             </p>
                         </span>
-                        <span class="flex gap-1">
+                        <span class="flex gap-1" v-if="termStatus">
                             <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
                             <Button icon="fa fa-trash" text aria-label="Delete Selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
                         </span>
@@ -263,7 +263,7 @@ onBeforeUnmount(() => {
 
                         <Column :exportable="false" style="width:2rem">
                             <template #body="slotProps">
-                                <Button icon="fa fa-pencil" text @click="editSession(slotProps.data)" />
+                                <Button v-if="termStatus" icon="fa fa-pencil" text @click="editSession(slotProps.data)" />
                             </template>
                         </Column>
                         <Column field="date" header="Session Date" sortable>

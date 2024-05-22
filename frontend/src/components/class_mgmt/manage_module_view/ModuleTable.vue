@@ -234,7 +234,7 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="flex h-full w-full">
-        <div class="flex flex-col w-[17%] rounded-md mr-10 p-2 gap-8" >
+        <div v-if="termStatus" class="flex flex-col rounded-md mr-10 p-2 gap-8" >
             <AddModuleSection :id="classLearningStrandId" :termStatus="termStatus"  @onUpdate="updateModuleTable" /> 
             
             <div class="u-bg-scolor shadow-xl rounded-md mt-2 p-4 text-surface-0">
@@ -242,7 +242,7 @@ onBeforeUnmount(() => {
                 <MeterGroup :value="meterProgress(allModules)" :max="allModules.length" class="font-semibold" />
             </div>
         </div>
-        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl" ref="dtDiv">
+        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">
@@ -252,7 +252,7 @@ onBeforeUnmount(() => {
                                 {{ selectedModules.length + ' selected' }}
                             </p>
                         </span>
-                        <span class="flex gap-1 items-center">
+                        <span v-if="termStatus" class="flex gap-1 items-center">
                             <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
                             <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
                             <Button v-if="status === false" label="mark as done" text aria-label="mark-as-done" size="small" @click="markAs"/>
@@ -282,7 +282,7 @@ onBeforeUnmount(() => {
 
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">
-                        <Button icon="fa fa-pencil" text @click="editModule(slotProps.data)" />
+                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editModule(slotProps.data)" />
                     </template>
                 </Column>
                 <Column field="title" header="Title" sortable />

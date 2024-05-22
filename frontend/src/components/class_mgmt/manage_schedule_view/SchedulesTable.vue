@@ -169,10 +169,10 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="flex h-full w-full">
-        <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
+        <div v-if="termStatus" class="flex flex-col mr-10 p-2 gap-4" >
             <AddScheduleSection :id="classLevelId" :learningStrands="learningStrands" :termStatus="termStatus" @onUpdate="addSchedule" />
         </div>
-        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl" ref="dtDiv">
+        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
             <Toolbar class="!p-2 h-16">
                 <template #start>
                     <span v-if="selectedSchedules.length" class="flex flex-row gap-8 items-center mx-2">

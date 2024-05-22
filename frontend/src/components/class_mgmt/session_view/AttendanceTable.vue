@@ -21,10 +21,10 @@ const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
 
-const props = defineProps(['modelValue', 'filters', 'isNotActive'])
+const props = defineProps(['modelValue', 'filters', 'disableEdit'])
 const emit = defineEmits(['onUpdate'])
 const filters = computed(() => props.filters)
-const isNotActive = computed(() => props.isNotActive)
+const disableEdit = ref(props.disableEdit)
 const isFetching = ref(false)
 const learners = ref([])
 const noChanges = ref(true)
@@ -39,7 +39,6 @@ watch(() => props.modelValue, (data) => {
     startingData.length = 0
 
     for (const attendance of data) {
-
         const temp = {
             id: attendance.id,
             lastName: attendance.enrollment.student.lastName,
@@ -182,13 +181,13 @@ onBeforeRouteLeave((to) => {
                     {{ slotProps.data.updatedAt.toLocaleString() }}
                 </template>
             </Column>
-            <template #footer>
+            <template #footer v-if="route.query.status === 'true'">
                 <div class="flex flex-row justify-end items-center">
                     <div v-if="edit" class="flex flex-row gap-4">
                         <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined @click="updateAttendances"/>
                         <Button icon="fa fa-xmark" label="Discard" severity="danger" aria-label="Discard Changes" iconClass="['mr-4']" size="small" rounded outlined @click="resetData"/>
                     </div>
-                    <Button v-else-if="!isNotActive" icon="fa fa-pencil" label="Edit Attendances" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined @click="changeMode"/>
+                    <Button v-else icon="fa fa-pencil" label="Edit Attendances" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableEdit" @click="changeMode"/>
                 </div>
             </template>
         </DataTable>
