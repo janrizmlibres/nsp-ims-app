@@ -9,8 +9,8 @@ const props = defineProps({ Volunteer: Object, isViewMode: Boolean })
 const availability = formData.availability
 const specialization = formData.specialization 
 
-const day = ref(availability.day ? availability.day.split(',') : [])
-const area = ref(specialization.area ? specialization.area.split(',') : [])
+const day = ref(availability.day ? availability.day.split(', ') : [])
+const area = ref(specialization.area ? specialization.area.split(', ') : [])
 
 const handleDayUpdate = () => {
   updateFormData(FormParts.VolunteerAvailability, { day: day.value.join(', ') })
