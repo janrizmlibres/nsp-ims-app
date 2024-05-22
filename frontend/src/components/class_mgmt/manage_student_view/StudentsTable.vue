@@ -59,6 +59,7 @@ const nameColumns = ref([
 ])
 
 const otherColumns = ref([
+    {field: 'category', header: 'Category'},
     {field: 'sex', header: 'Sex'},
     {field: 'civilStatus', header: 'Civil Status'},
     {field: 'contactNum', header: 'Contact Number'},
