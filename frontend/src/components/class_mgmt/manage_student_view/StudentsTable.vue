@@ -110,7 +110,7 @@ function viewStudent(student) {
         <DataTable 
             :value="learners" dataKey="id" v-model:filters="filters"
             scrollable style=" overflow: auto;" filterDisplay="menu"
-            sortField="lastName" :sortOrder="1" removableSort class="unselectable"
+            sortField="lastName" :sortOrder="1" removableSort
             :globalFilterFields="['lastName', 'firstName', 'middleName', 'contactNum']"
         >
             <template #empty> <div class="text-center">No records found.</div> </template>
