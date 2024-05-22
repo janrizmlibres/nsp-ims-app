@@ -20,7 +20,6 @@ onMounted(async () => {
     try {
         await strandStore.getLearningStrands()
     } catch(error) {
-        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -42,7 +41,6 @@ async function deleteLearningStrand(id) {
                 life: 3000
         })
     } catch(error) {
-        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -57,26 +55,105 @@ const editingRows = ref([])
 const onRowEditSave = async (event) => {
     let { data, newData } = event;
     if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
+        if (!newData.code.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "The field cannot be empty. Please provide a code.",
+                life: 3000
+            })
+            return
+        }
+
+        if (!newData.name.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "The field cannot be empty. Please provide a name.",
+                life: 3000
+            })
+            return
+        }
+
+        if (strandStore.strands.some(strand => strand.code === newData.code.trim() && strand.id !== newData.id)) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Code',
+                detail: "Please provide a unique code.",
+                life: 3000
+            })
+            return
+        }
+
+        if (strandStore.strands.some(strand => strand.name === newData.name.trim() && strand.id !== newData.id)) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Name',
+                detail: "Please provide a unique name.",
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.code.trim().length > 25) {
+            toast.add({
+                severity: 'error',
+                summary: 'Code Too Long',
+                detail: 'It should not exceed 25 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.name.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Name Too Long',
+                detail: 'It should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.code.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Code Too Short',
+                detail: 'It should be at least 3 characters long.',
+                life: 3000
+            })
+            return
+        }
+
+        if (newData.name.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Name Too Short',
+                detail: 'It should be at least 3 characters long.',
+                life: 3000
+            })
+            return
+        }
+
         try {
             await strandStore.updateLearningStrand(newData.id, {
-                code: newData.code,
-                name: newData.name
+                code: newData.code.trim(),
+                name: newData.name.trim()
             })
 
             await strandStore.getLearningStrands()
 
             toast.add({
                 severity: 'success',
-                summary: 'Success',
+                summary: 'Update Successful',
                 detail: 'Learning Strand updated successfully!',
                 life: 3000
             })
         } catch(error) {
-            console.log(error);
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Unexpected error encountered.',
+                detail: 'Unexpected error encountered. Please try again.',
                 life: 3000
             })
         }

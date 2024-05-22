@@ -17,15 +17,44 @@ async function addTerm() {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
-            detail: "Please fill all necessary information",
+            detail: "Please fill up the date range field.",
             life: 3000
         })
+        return
+    }
+    
+    const term = termStore.terms.find(term => term.academic_year === dates.value[0].getFullYear() + '-' + dates.value[1].getFullYear());
+    if (term) {
+        toast.add({
+            severity: 'error',
+            summary: 'Duplicate Academic Term',
+            detail: 'An Academic Term already exists.',
+            life: 3000
+        })
+        return
+    }
 
+    if (dates.value[1].getFullYear() - dates.value[0].getFullYear() !== 1) {
+        toast.add({
+            severity: 'error',
+            summary: 'Invalid Date Range',
+            detail: 'The start and end dates must be exactly one year apart.',
+            life: 3000
+        })
+        return
+    }
+    
+    if (dates.value[0] > dates.value[1]) {
+        toast.add({
+            severity: 'error',
+            summary: 'Invalid Date Range',
+            detail: 'The start date cannot be later than the end date.',
+            life: 3000
+        })
         return
     }
 
     const range = ref([])
-
     try {
         for (let date of dates.value) {
             const offset = date.getTimezoneOffset()
@@ -50,8 +79,8 @@ async function addTerm() {
     } catch(error) {
         toast.add({
             severity: 'error',
-            summary: 'Duplicated Academic Term',
-            detail: error.response.data.message,
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please try again.',
             life: 3000
         })
     }

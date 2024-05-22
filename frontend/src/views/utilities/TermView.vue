@@ -18,44 +18,78 @@ const terms = ref([])
 const editingRows = ref([])
 
 const onRowEditSave = async (event) => {
-  let { data, newData } = event
+    let { data, newData } = event
+    if (JSON.stringify(data) !== JSON.stringify(newData)) {
 
-  if (JSON.stringify(data) !== JSON.stringify(newData)) {
-    try {
-      await termStore.updateTerm(newData.id, {
-        start_date: newData.start_date,
-        end_date: newData.end_date
-      })
-      
-      await termStore.getTerms()
+        let startDateYear = newData.start_date.getFullYear();
+        let endDateYear = newData.end_date.getFullYear();
 
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Date range updated successfully!',
-        life: 3000
-      })
-    } catch (error) {
-      console.log(error);
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Unexpected error encountered.',
-        life: 3000
-      })
+        // Check if there's an existing term with the same academic year as the new data
+        // And the academic year of the term being edited is not the same as the new academic yea
+        if (termStore.terms.some(term => term.academic_year === startDateYear + '-' + endDateYear) && termStore.terms.find(term => term.id === newData.id).academic_year !== startDateYear + '-' + endDateYear) {
+            toast.add({
+              severity: 'error',
+              summary: 'Duplicate Academic Term',
+              detail: 'An Academic Term already exists.',
+              life: 3000
+            })
+          return
+        }
+
+        if (endDateYear - startDateYear !== 1) {
+            toast.add({
+                severity: 'error',
+                summary: 'Invalid Date Range',
+                detail: 'The start and end dates must be exactly one year apart.',
+                life: 3000
+            })
+          return
+        }
+
+        if (newData.start_date > newData.end_date) {
+            toast.add({
+              severity: 'error',
+              summary: 'Invalid Date Range',
+              detail: 'The start date cannot be later than the end date.',
+              life: 3000
+            })
+          return
+        }
+
+        try {
+            await termStore.updateTerm(newData.id, {
+                start_date: newData.start_date,
+                end_date: newData.end_date,
+                academic_year: startDateYear + '-' + endDateYear
+            })
+
+            await termStore.getTerms()
+
+            toast.add({
+              severity: 'success',
+              summary: 'Update Successful',
+              detail: 'The date range has been updated successfully!',
+              life: 3000
+            })
+        } catch (error) {
+            toast.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Unexpected error encountered. Please try again.',
+              life: 3000
+            })
+        }
     }
-  }
 }
 
 onMounted(async () => {
   try {
     await termStore.getTerms()
   } catch (error) {
-    console.log(error);
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: 'Unexpected error encountered.',
+      detail: 'Unexpected error encountered. Please try again.',
       life: 3000
     })
   }
@@ -179,7 +213,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
           <div class="text-center">Loading academic terms records. Please wait.</div>
         </template>
 
-        <Column field="id" header="Batch No."/>
+        <Column field="id" header="Batch No." sortable/>
         <Column field="academic_year" header="Academic Year" />
         <Column field="start_date" header="Start Date">
           <template #body="slotProps">
