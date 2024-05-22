@@ -22,8 +22,8 @@ async function addTerm() {
         })
         return
     }
-
-    const term = termStore.terms.find(term => term.start_date === dates.value[0] && term.end_date === dates.value[1])
+    
+    const term = termStore.terms.find(term => term.academic_year === dates.value[0].getFullYear() + '-' + dates.value[1].getFullYear());
     if (term) {
         toast.add({
             severity: 'error',
