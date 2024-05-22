@@ -8,7 +8,7 @@ import InputNumber from 'primevue/inputnumber';
 import Calendar from 'primevue/calendar';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -34,10 +34,12 @@ const leave = ref(true)
 const edit = ref(false)
 const filters = ref(props.filters)
 const disableEdit = ref(props.disableEdit)
+const disableSave = computed(() => JSON.stringify(learners.value) === JSON.stringify(startingData))
 
 watch(() => props.modelValue, (data) => {
     isFetching.value = true
     learners.value.length = 0
+    startingData.length = 0
 
     for (const moduleSubmission of data) {
         if (moduleSubmission.date_submitted !== null) {
@@ -216,7 +218,7 @@ onBeforeRouteLeave((to) => {
                     {{ slotProps.data.score }}
                 </template>
                 <template #body="slotProps" v-else>
-                    <InputNumber v-model="slotProps.data.score" inputId="score" inputClass="w-16" />
+                    <InputNumber v-model="slotProps.data.score" inputId="score" inputClass="w-16" :allowEmpty="false" />
                 </template>
             </Column>
             <Column field="remarks" header="Remarks" style="width: 20rem;">
@@ -235,7 +237,7 @@ onBeforeRouteLeave((to) => {
             <template #footer v-if="route.query.status === 'true'">
                 <div class="flex flex-row justify-end items-center">
                     <div v-if="edit" class="flex flex-row gap-4">
-                        <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined @click="updateSubmissions"/>
+                        <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableSave" @click="updateSubmissions"/>
                         <Button icon="fa fa-xmark" label="Discard" severity="danger" aria-label="Discard Changes" iconClass="['mr-4']" size="small" rounded outlined @click="resetData"/>
                     </div>
                     <Button v-else icon="fa fa-pencil" label="Edit Submissions" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableEdit" @click="changeMode"/>
