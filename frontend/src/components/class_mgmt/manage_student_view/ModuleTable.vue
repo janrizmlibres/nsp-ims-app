@@ -90,9 +90,12 @@ onBeforeUnmount(() => {
             <template #start>
                 <span v-if="selectedModules.length" class="flex items-center gap-2 ml-2">
                     <Button icon="fa fa-circle-xmark fa-lg" text aria-label="Edit Mode" style="height: 2rem; width: 2rem;" @click="deselect"/>
-                    <p>
+                    <p class="mr-6">
                         {{ selectedModules.length + ' selected' }}
                     </p>
+                    <span class="flex gap-1 items-center float-end">
+                        Total Score: {{ sumSelectedModulesScore() }}
+                    </span>
                 </span>
             </template>
             <template #end>
@@ -132,13 +135,6 @@ onBeforeUnmount(() => {
                 </template>
             </Column>
             <Column field="remarks" header="Remarks" />
-            <ColumnGroup type="footer">
-                <Row>
-                    <Column footer="Total:" :colspan="5" footerStyle="text-align:right" />
-                    <Column :footer="sumSelectedModulesScore()" />
-                    <Column />
-                </Row>
-            </ColumnGroup>
         </DataTable>
     </div>
 </template>
