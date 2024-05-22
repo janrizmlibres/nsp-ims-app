@@ -6,11 +6,11 @@ import FormParts from '@/util/volunteer_form_parts'
 const { formData, updateFormData } = inject('formData')
 const props = defineProps({ Volunteer: Object, isViewMode: Boolean })
 
-const VolunteerAvailability = formData.VolunteerAvailability
-const VolunteerSpecialization = formData.VolunteerSpecialization 
+const availability = formData.availability
+const specialization = formData.specialization 
 
-const day = ref(VolunteerAvailability.day ? VolunteerAvailability.day.split(',') : [])
-const area = ref(VolunteerSpecialization.area ? VolunteerSpecialization.area.split(',') : [])
+const day = ref(availability.day ? availability.day.split(',') : [])
+const area = ref(specialization.area ? specialization.area.split(',') : [])
 
 const handleDayUpdate = () => {
   updateFormData(FormParts.VolunteerAvailability, { day: day.value.join(', ') })

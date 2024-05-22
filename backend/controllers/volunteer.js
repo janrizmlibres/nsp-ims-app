@@ -43,40 +43,40 @@ export async function addVolunteer(req, res, next) {
       throw error;
     }
 
-    const volunteer = await Volunteer.create(req.body.Volunteer);
+    const volunteer = await Volunteer.create(req.body.volunteerHeader);
 
     await VolunteerPersonalInformation.create({
-      ...req.body.VolunteerPersonalInformation,
+      ...req.body.personalInformation,
       volunteerId: volunteer.id,
     });
 
     await VolunteerContactInformation.create({
-      ...req.body.VolunteerContactInformation,
+      ...req.body.contactInformation,
       volunteerId: volunteer.id,
     });
 
     await VolunteerEmergency.create({
-      ...req.body.VolunteerEmergency,
+      ...req.body.emergency,
       volunteerId: volunteer.id,
     });
 
     await VolunteerSpecialization.create({
-      ...req.body.VolunteerSpecialization,
+      ...req.body.specialization,
       volunteerId: volunteer.id,
     });
 
     await VolunteerAvailability.create({
-      ...req.body.VolunteerAvailability,
+      ...req.body.availability,
       volunteerId: volunteer.id,
     });
 
     await StudentVolunteer.create({
-      ...req.body.StudentVolunteer,
+      ...req.body.student,
       volunteerId: volunteer.id,
     });
 
     await ProfessionalVolunteer.create({
-      ...req.body.ProfessionalVolunteer,
+      ...req.body.professional,
       volunteerId: volunteer.id,
     });
 
@@ -132,7 +132,6 @@ export async function updateVolunteer(req, res, next) {
     }
 
     const id = req.params.id;
-    console.log(req.body)
     const volunteer = await Volunteer.findByPk(id);
 
     if (!volunteer) {
@@ -179,25 +178,27 @@ export async function updateVolunteer(req, res, next) {
     const professionalInstance = await ProfessionalVolunteer.findOne({
       where: { id: volunteer.id },
     });
-
+    
+    
+    delete volunteerHeader.fullname; // This line will remove fullName from the update
     await volunteer.update(volunteerHeader);
+    delete personalInformation.address;
     await personalInformationInstance.update(personalInformation);
     await contactInformationInstance.update(contactInformation);
+    delete emergency.fullname;
     await emergencyInstance.update(emergency);
     await specializationInstance.update(specialization);
     await availabilityInstance.update(availability);
     await studentInstance.update(student);
-    await professionalInstance.update(professional);
+    if (professionalInstance != null){
+      await professionalInstance.update(professional);
+    }
 
-    res.status(200).json({
-      message: "Volunteer updated!",
-      volunteer: result,
-    });
+    res.status(200).json({ message: "Volunteer information updated!" });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
     }
     next(error);
-    return error;
   }
 }
