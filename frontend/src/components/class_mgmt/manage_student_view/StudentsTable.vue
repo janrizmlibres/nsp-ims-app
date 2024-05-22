@@ -43,6 +43,7 @@ onMounted(() => {
                 civilStatus: enrollment.student.personal_info ? enrollment.student.personal_info.civilStatus : null,
                 contactNum: enrollment.student.contact_info ? enrollment.student.contact_info.contactNum : null,
                 birthday: enrollment.student.personal_info ? enrollment.student.personal_info.birthday : null,
+                photoUrl: enrollment.student.photoUrl
             }
 
             learners.value.push(temp)
