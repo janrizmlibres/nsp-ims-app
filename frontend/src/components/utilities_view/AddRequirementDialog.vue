@@ -13,20 +13,49 @@ const requirementStore = useUtilitiesStore()
 const name = ref(null);
 
 async function addRequirement() {
-    if (!name.value) {
+    if (!name.value.trim()) {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
-            detail: "Please fill all necessary information",
+            detail: "The field cannot be empty. Please provide a student requirement.",
             life: 3000
         })
-
         return
     }
 
+    if (requirementStore.requirements.some(requirement => requirement.requirement_name === name.value.trim())) {
+        toast.add({
+            severity: 'error',
+            summary: 'Duplicate Requirement',
+            detail: "Please provide a unique student requirement.",
+            life: 3000
+        })
+        return
+    }
+
+    if (name.value.trim().length > 100) {
+        toast.add({
+            severity: 'error',
+            summary: 'Requirement Too Long',
+            detail: 'The requirement should not exceed 100 characters.',
+            life: 3000
+        })
+        return
+    }
+
+    if (name.value.trim().length < 3) {
+        toast.add({
+            severity: 'error',
+            summary: 'Requirement Too Short',
+            detail: 'The requirement should be at least 3 characters.',
+            life: 3000
+        })
+        return
+    }
+    
     try {
         await requirementStore.addRequirement({
-            requirement_name: name.value
+            requirement_name: name.value.trim()
         })
 
         await requirementStore.getRequirements()
@@ -40,8 +69,8 @@ async function addRequirement() {
     } catch(error) {
         toast.add({
             severity: 'error',
-            summary: 'Duplicated Student Requirement',
-            detail: error.response.data.message,
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please try again.',
             life: 3000
         })
     }

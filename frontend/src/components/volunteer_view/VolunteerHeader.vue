@@ -18,7 +18,7 @@
         icon="fa-solid fa-user-plus"
         aria-label="Submit"
         class="ml-2 h-10"
-        
+        @click="goToAdmitVolunteerView"
       />
       <Button label="Export Data" icon="fa-solid fa-file-export" class="ml-2 h-10" />
     </div>
@@ -36,6 +36,10 @@ const props = defineProps(['globalFilter'])
 const filter = ref(props.globalFilter)
 
 const emit = defineEmits(['filterChanged'])
+
+async function goToAdmitVolunteerView() {
+  await router.push({ name: 'admit-volunteers' })
+}
 
 const onFilterChange = () => {
   emit('filterChanged', filter.value)

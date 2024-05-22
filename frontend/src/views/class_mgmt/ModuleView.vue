@@ -8,7 +8,7 @@ import { useToast } from 'primevue/usetoast';
 // Custom
 import ContentPane from '@/components/UI/ContentPane.vue';
 import ModuleInfoSection from '@/components/class_mgmt/module_view/ModuleInfoSection.vue';
-import ModuleSubmissionTable from '@/components/class_mgmt/module_view/ModuleSubmissionTable.vue';
+import ModuleTab from '@/components/class_mgmt/module_view/ModuleTab.vue';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
@@ -34,6 +34,7 @@ watch(() => route.query, (query) => {
             strand.value = data.class_learning_strand.learning_strand.name
         })
     } catch (error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -48,7 +49,7 @@ watch(() => route.query, (query) => {
     <ContentPane :header="name" :subheader="strand">
         <ModuleInfoSection v-model="module" />
         <Divider class="before:border-t before:border-surface-400 my-10"/>
-        <ModuleSubmissionTable v-model="module" @onUpdate="updateModuleSubmissionTable" />
+        <ModuleTab v-model="module" @onUpdate="updateModuleSubmissionTable" />
     </ContentPane>
 </template>
 

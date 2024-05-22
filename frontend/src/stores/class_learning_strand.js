@@ -1,12 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { ref } from 'vue'
 import { useAuthStore } from './auth'
 
 export const useClassLearningStrandStore = defineStore('classLearningStrand', () => {
-    const visibleAddModuleDialog = ref(false)
-    const visibleAddSessionDialog = ref(false)
-
     async function getStrand(classLearningStrandId) {
         const authStore = useAuthStore()
 
@@ -53,6 +49,30 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
             form,
             {
             headers: { Authorization: 'Bearer ' + authStore.token }
+            }
+        )
+    }
+
+    async function updateModuleStatus(form) {
+        const authStore = useAuthStore()
+    
+        await axios.patch(
+            `http://localhost:8080/classLearningStrand/modules/update`,
+            form,
+            {
+                headers: { Authorization: 'Bearer ' + authStore.token }
+            }
+        )
+    }
+
+    async function deleteModules(form) {
+        const authStore = useAuthStore()
+    
+        await axios.delete(
+            `http://localhost:8080/classLearningStrand/modules/delete`,
+            {
+                data: form,
+                headers: { Authorization: 'Bearer ' + authStore.token }
             }
         )
     }
@@ -109,6 +129,18 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
         )
     }
 
+    async function deleteSessions(form) {
+        const authStore = useAuthStore()
+    
+        await axios.delete(
+            `http://localhost:8080/classLearningStrand/sessions/delete`,
+            {
+                data: form,
+                headers: { Authorization: 'Bearer ' + authStore.token }
+            }
+        )
+    }
+
     async function updateAttendances(updatedData) {
         const authStore = useAuthStore()
     
@@ -137,6 +169,18 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
         })
     }
 
+    async function deleteSchedules(form) {
+        const authStore = useAuthStore()
+    
+        await axios.delete(
+            `http://localhost:8080/classLearningStrand/schedules/delete`,
+            {
+                data: form,
+                headers: { Authorization: 'Bearer ' + authStore.token }
+            }
+        )
+    }
+
     async function getAllGrades(classLearningStrandId) {
         const authStore = useAuthStore()
 
@@ -161,22 +205,12 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
         })
     }
 
-    function showHideAddModuleDialog() {
-        this.visibleAddModuleDialog = !this.visibleAddModuleDialog
-    }
-
-    function showHideAddSessionDialog() {
-        this.visibleAddSessionDialog = !this.visibleAddSessionDialog
-    }
-
-    return { 
-        visibleAddModuleDialog, visibleAddSessionDialog, 
+    return {
         getStrand, 
-        addModule, getAllModules, getModule, updateModule, updateModuleSubmissions, 
-        addSession, getAllSessions, getSession, updateSession, updateAttendances,
-        addSchedule, updateSchedule, 
-        getAllGrades, updateGrades, 
-        showHideAddModuleDialog, showHideAddSessionDialog
+        addModule, getAllModules, getModule, updateModule, updateModuleStatus, deleteModules, updateModuleSubmissions, 
+        addSession, getAllSessions, getSession, updateSession, deleteSessions, updateAttendances,
+        addSchedule, updateSchedule, deleteSchedules,
+        getAllGrades, updateGrades
     }
 })
 

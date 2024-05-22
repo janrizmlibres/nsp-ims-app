@@ -8,26 +8,54 @@ import { ref } from 'vue';
 import { useUtilitiesStore } from '@/stores/utilities';
 
 const toast = useToast()
-
 const categoryStore = useUtilitiesStore()
 
 const name = ref(null);
 
 async function addCategory() {
-    if (!name.value) {
+    if (!name.value.trim()) {
         toast.add({
             severity: 'error',
             summary: 'Incomplete Form',
-            detail: "Please fill all necessary information",
+            detail: "The field cannot be empty. Please provide a student category.",
             life: 3000
         })
-
         return
     }
 
+    if (categoryStore.categories.some(category => category.category_name === name.value.trim())) {
+        toast.add({
+            severity: 'error',
+            summary: 'Duplicate Category',
+            detail: "Please provide a unique student category.",
+            life: 3000
+        })
+        return
+    }
+
+    if (name.value.trim().length > 100) {
+        toast.add({
+            severity: 'error',
+            summary: 'Category Too Long',
+            detail: 'The category should not exceed 100 characters.',
+            life: 3000
+        })
+        return
+    }
+
+    if (name.value.trim().length < 3) {
+        toast.add({
+            severity: 'error',
+            summary: 'Category Too Short',
+            detail: 'The category should be at least 3 characters.',
+            life: 3000
+        })
+        return
+    }
+    
     try {
         await categoryStore.addCategory({
-            category_name: name.value
+            category_name: name.value.trim()
         })
 
         await categoryStore.getCategories()
@@ -41,8 +69,8 @@ async function addCategory() {
     } catch(error) {
         toast.add({
             severity: 'error',
-            summary: 'Duplicated Student Category',
-            detail: error.response.data.message,
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please try again.',
             life: 3000
         })
     }
