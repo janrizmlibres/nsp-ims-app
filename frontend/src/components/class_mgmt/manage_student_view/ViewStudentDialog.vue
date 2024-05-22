@@ -28,7 +28,12 @@ watch(() => props.state, (data) => dialogState.value = data)
 </script>
 
 <template>
-    <Dialog v-model:visible="dialogState" modal :style="{ width: '80%', height: '80%' }" @after-hide="emit('onUpdateDisplay')"
+    <Dialog v-model:visible="dialogState" modal :style="{ width: '80%', height: '80%' }" 
+        @after-hide="() => {
+            activeTab = 0
+            learningStrandInput = null
+            emit('onUpdateDisplay')
+        }"
         :pt="{
             content: {
                 class: ['h-full']
