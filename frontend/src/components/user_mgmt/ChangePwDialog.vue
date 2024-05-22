@@ -5,13 +5,13 @@ import Button from 'primevue/button'
 import Divider from 'primevue/divider'
 import { useToast } from 'primevue/usetoast'
 
-import { useUsersStore } from '@/stores/staffs'
+import { useUsersStore } from '@/stores/users'
 import { computed, ref } from 'vue'
 
 const props = defineProps(['userId'])
 const emit = defineEmits(['closeDialog'])
 
-const staffsStore = useUsersStore()
+const usersStore = useUsersStore()
 const toast = useToast()
 
 const newPw = ref('')
@@ -30,7 +30,7 @@ function resetInputs() {
 
 async function updatePassword() {
   try {
-    const result = await staffsStore.updatePw(props.userId, newPw.value)
+    const result = await usersStore.updatePw(props.userId, newPw.value)
 
     toast.add({
       severity: 'success',

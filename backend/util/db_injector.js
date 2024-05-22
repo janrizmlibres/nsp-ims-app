@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 
 import Student from "../models/student/student.js";
-import Staff from "../models/staff/staff.js";
+import User from "../models/user/user.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import StudentRequirement from "../models/student_requirement.js";
@@ -12,19 +12,8 @@ import ContactInfo from "../models/student/contact_info.js";
 import EmergencyPerson from "../models/student/emergency_person.js";
 import PreviousSchool from "../models/student/previous_school.js";
 
-// import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
-// import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
-// import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
-// import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
-// import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
-// import StudentVolunteer from "../models/volunteer/student_volunteer.js";
-// import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
-
-import ClassLevel from "../models/class/class_level.js";
-import ClassLearningStrand from "../models/class/class_learning_strand.js";
-
 export async function injectAll() {
-  await injectStaff();
+  await injectUser();
   await injectLearningStrand();
   await injectAcademicYear();
   await injectStudent();
@@ -250,8 +239,8 @@ export async function injectStudent() {
   // );
 }
 
-export async function injectStaff() {
-  const staffData = [
+export async function injectUser() {
+  const userData = [
     [
       {
         lastName: "Istrator",
@@ -380,18 +369,18 @@ export async function injectStaff() {
     ],
   ];
 
-  const createStaff = async (staffData) => {
-    const [staff, perms, audit] = staffData;
+  const createUser = async (userData) => {
+    const [user, perms, audit] = userData;
 
-    staff.hashedPw = await bcrypt.hash(staff.password, 12);
-    delete staff.password;
+    user.hashedPw = await bcrypt.hash(user.password, 12);
+    delete user.password;
 
-    const createdStaff = await Staff.create(staff);
-    await createdStaff.createPermission(perms);
-    await createdStaff.createAudit(audit);
+    const createdUser = await User.create(user);
+    await createdUser.createPermission(perms);
+    await createdUser.createAudit(audit);
   };
 
-  await Promise.all(staffData.map(createStaff));
+  await Promise.all(userData.map(createUser));
 }
 
 export async function injectAcademicYear() {

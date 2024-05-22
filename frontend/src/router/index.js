@@ -22,11 +22,11 @@ import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue
 import LearningStrandView from '@/views/utilities/LearningStrandView.vue'
 import TermView from '@/views/utilities/TermView.vue'
 
-// Staff Management Views
-import RecordsView from '@/views/staff_mgmt/RecordsView.vue'
-import PermissionsView from '@/views/staff_mgmt/PermissionsView.vue'
-import UserFormView from '@/views/staff_mgmt/StaffFormView.vue'
-import AuditView from '@/views/staff_mgmt/AuditView.vue'
+// User Management Views
+import RecordsView from '@/views/user_mgmt/RecordsView.vue'
+import PermissionsView from '@/views/user_mgmt/PermissionsView.vue'
+import UserFormView from '@/views/user_mgmt/UserFormView.vue'
+import AuditView from '@/views/user_mgmt/AuditView.vue'
 
 import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
 import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'

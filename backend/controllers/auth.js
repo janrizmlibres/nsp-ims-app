@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import prand from "pure-rand";
 import { validationResult } from "express-validator";
 
-import Staff from "../models/staff/staff.js";
-import Permission from "../models/staff/permission.js";
+import User from "../models/user/user.js";
+import Permission from "../models/user/permission.js";
 
 // This could be a database or in-memory data structure
 // This is a simple in-memory implementation
@@ -27,15 +27,15 @@ export async function signup(req, res, next) {
 
     const hashedPw = await bcrypt.hash(req.body.password, 12);
     let userId = prand.unsafeUniformIntDistribution(min, max, rng);
-    let staff = await Staff.findByPk(userId);
+    let staff = await User.findByPk(userId);
 
     while (staff !== null) {
       userId = prand.unsafeUniformIntDistribution(min, max, rng);
-      staff = await Staff.findByPk(userId);
+      staff = await User.findByPk(userId);
     }
 
     delete req.body.password;
-    const user = await Staff.create({ id: userId, hashedPw, ...req.body });
+    const user = await User.create({ id: userId, hashedPw, ...req.body });
     await user.createPermission();
 
     res.status(201).json({ message: "User created!", user });
@@ -66,7 +66,7 @@ export async function login(req, res, next) {
   const { userId, password } = req.body;
 
   try {
-    const staff = await Staff.findByPk(userId, { include: Permission });
+    const staff = await User.findByPk(userId, { include: Permission });
 
     if (!staff) {
       const error = new Error("Authentication failed. User not found.");
@@ -180,9 +180,9 @@ export async function logout(req, res, next) {
     error.statusCode = 401;
     throw error;
   }
-  
+
   try {
-    jwt.verify(token, "HEHESECRET")
+    jwt.verify(token, "HEHESECRET");
   } catch (error) {
     invalidatedTokens.push(token);
   }
