@@ -46,7 +46,7 @@ watch(() => props.state, (data) => dialogState.value = data)
         <div class="relative flex flex-col h-full">
             <Toolbar class="!p-2">
                 <template #end>
-                    <div class="flex flex-row gap-4 items-center mr-4">
+                    <div v-if="activeTab !== 1" class="flex flex-row gap-4 items-center mr-4">
                         <label class="font-semibold">Learning Strand:</label>
                         <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" /> 
                     </div>
