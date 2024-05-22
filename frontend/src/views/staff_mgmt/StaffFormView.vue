@@ -8,7 +8,7 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
 import AddForm from '@/components/staff_mgmt/AddForm.vue'
 
-import { useStaffsStore } from '@/stores/staffs'
+import { useUsersStore } from '@/stores/users'
 import router from '@/router'
 
 import { ref, onMounted } from 'vue'
@@ -21,7 +21,7 @@ const props = defineProps({
   }
 })
 
-const staffsStore = useStaffsStore()
+const staffsStore = useUsersStore()
 
 const formData = ref({
   password: '',

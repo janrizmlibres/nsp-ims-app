@@ -5,13 +5,13 @@ import Button from 'primevue/button'
 import Divider from 'primevue/divider'
 import { useToast } from 'primevue/usetoast'
 
-import { useStaffsStore } from '@/stores/staffs'
+import { useUsersStore } from '@/stores/staffs'
 import { computed, ref } from 'vue'
 
 const props = defineProps(['userId'])
 const emit = defineEmits(['closeDialog'])
 
-const staffsStore = useStaffsStore()
+const staffsStore = useUsersStore()
 const toast = useToast()
 
 const newPw = ref('')

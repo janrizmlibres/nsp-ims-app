@@ -6,10 +6,10 @@ import SplitterPanel from 'primevue/splitterpanel'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
-import { useStaffsStore } from '@/stores/staffs'
+import { useUsersStore } from '@/stores/users'
 import { onMounted, ref, watch } from 'vue'
 
-const staffsStore = useStaffsStore()
+const staffsStore = useUsersStore()
 
 const selectedUser = ref(null)
 const userAudits = ref(null)

@@ -3,8 +3,8 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from './auth'
 
-export const useStaffsStore = defineStore('staffs', () => {
-  const staffs = ref([])
+export const useUsersStore = defineStore('users', () => {
+  const users = ref([])
 
   async function getAllStaff(config) {
     const authStore = useAuthStore()
@@ -14,7 +14,7 @@ export const useStaffsStore = defineStore('staffs', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    staffs.value = result.data.staffs
+    users.value = result.data.staffs
   }
 
   async function addStaff(formData) {
@@ -101,7 +101,7 @@ export const useStaffsStore = defineStore('staffs', () => {
   }
 
   return {
-    staffs,
+    staffs: users,
     getAllStaff,
     addStaff,
     getStaff,

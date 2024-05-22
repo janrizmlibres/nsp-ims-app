@@ -1,11 +1,11 @@
 import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 
-import Staff from "../models/staff/staff.js";
-import Permission from "../models/staff/permission.js";
-import Audit from "../models/staff/audit.js";
+import User from "../models/user/user.js";
+import Permission from "../models/user/permission.js";
+import Audit from "../models/user/audit.js";
 
-export async function getStaffs(req, res, next) {
+export async function getUsers(req, res, next) {
   try {
     let { includePerms, includeAudit } = req.query;
     let associations = [];
@@ -13,14 +13,14 @@ export async function getStaffs(req, res, next) {
     if (includePerms) associations.push(Permission);
     if (includeAudit) associations.push(Audit);
 
-    const staffs = await Staff.findAll({
+    const users = await User.findAll({
       include: associations,
       where: { accessLevel: [2, 3] },
     });
 
     res.status(200).json({
       message: "Fetched all staff successfully.",
-      staffs: staffs,
+      users: users,
     });
   } catch (error) {
     if (!error.statusCode) {
@@ -30,19 +30,19 @@ export async function getStaffs(req, res, next) {
   }
 }
 
-export async function getStaff(req, res, next) {
+export async function getUser(req, res, next) {
   const userId = req.params.userId;
 
   try {
-    const staff = await Staff.findByPk(userId);
+    const user = await User.findByPk(userId);
 
-    if (!staff) {
+    if (!user) {
       const error = new Error("Could not find staff.");
       error.statusCode = 404;
       throw error;
     }
 
-    res.status(200).json({ message: "Staff fetched.", staff: staff });
+    res.status(200).json({ message: "Staff fetched.", user: user });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -52,7 +52,7 @@ export async function getStaff(req, res, next) {
   }
 }
 
-export async function updateStaff(req, res, next) {
+export async function updateUser(req, res, next) {
   const userId = req.params.userId;
 
   try {
@@ -64,20 +64,20 @@ export async function updateStaff(req, res, next) {
       throw error;
     }
 
-    const staff = await Staff.findByPk(userId);
+    const user = await User.findByPk(userId);
 
-    if (!staff) {
+    if (!user) {
       const error = new Error("Could not find staff.");
       error.statusCode = 404;
       throw error;
     }
 
-    staff.set(req.body);
-    const result = await staff.save();
+    user.set(req.body);
+    const result = await user.save();
 
     res.status(200).json({
       message: "Staff updated!",
-      staff: result,
+      user: result,
     });
   } catch (error) {
     if (!error.statusCode) {
@@ -90,13 +90,13 @@ export async function updateStaff(req, res, next) {
 
 export async function updatePermissions(req, res, next) {
   try {
-    for (const staff of req.body.updatedData) {
-      const staffInstance = await Staff.findByPk(staff.id, {
+    for (const user of req.body.updatedData) {
+      const userInstance = await User.findByPk(user.id, {
         include: Permission,
       });
 
       const { id, fullname, ...updatedPerms } = staff;
-      await staffInstance.permission.update(updatedPerms);
+      await userInstance.permission.update(updatedPerms);
     }
 
     res.status(200).json({ message: "Permissions Updated!" });
@@ -112,9 +112,9 @@ export async function updatePermissions(req, res, next) {
 export async function updatePassword(req, res, next) {
   try {
     const userId = req.params.userId;
-    const staff = await Staff.findByPk(userId);
+    const user = await User.findByPk(userId);
 
-    if (!staff) {
+    if (!user) {
       const error = Error("Staff not found.");
       error.statusCode = 404;
       throw error;
@@ -122,7 +122,7 @@ export async function updatePassword(req, res, next) {
 
     const hashedPw = await bcrypt.hash(req.body.newPw, 12);
 
-    if (hashedPw === staff.hashedPw) {
+    if (hashedPw === user.hashedPw) {
       const error = Error("New password is the same as the old password.");
 
       // Code for Unprocessable Entity
@@ -132,7 +132,7 @@ export async function updatePassword(req, res, next) {
       throw error;
     }
 
-    await staff.update({ hashedPw });
+    await user.update({ hashedPw });
     res.status(200).json({ message: "Password updated!" });
   } catch (error) {
     if (!error.statusCode) {
@@ -146,15 +146,15 @@ export async function updatePassword(req, res, next) {
 export async function addAudit(req, res, next) {
   try {
     const { userId, description, date } = req.body;
-    const staff = await Staff.findByPk(userId);
+    const user = await User.findByPk(userId);
 
-    if (!staff) {
+    if (!user) {
       const error = new Error("Staff not found.");
       error.statusCode = 404;
       throw error;
     }
 
-    await staff.createAudit({ description, date });
+    await user.createAudit({ description, date });
     res.status(200).json({ message: "Audit created." });
   } catch (error) {
     if (!error.statusCode) {

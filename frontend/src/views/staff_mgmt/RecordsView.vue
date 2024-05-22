@@ -7,12 +7,12 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import TheHeader from '@/components/staff_mgmt/TheHeader.vue'
 import ChangePwDialog from '@/components/staff_mgmt/ChangePwDialog.vue'
 
-import { useStaffsStore } from '@/stores/staffs'
+import { useUsersStore } from '@/stores/users'
 import { FilterMatchMode } from 'primevue/api'
 import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
-const staffsStore = useStaffsStore()
+const staffsStore = useUsersStore()
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }

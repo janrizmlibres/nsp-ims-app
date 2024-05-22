@@ -9,10 +9,10 @@ import { FilterMatchMode } from 'primevue/api'
 import ContentPane from '@/components/UI/ContentPane.vue'
 import TheHeader from '@/components/staff_mgmt/TheHeader.vue'
 
-import { useStaffsStore } from '@/stores/staffs'
+import { useUsersStore } from '@/stores/users'
 import { ref, onMounted, watch } from 'vue'
 
-const staffsStore = useStaffsStore()
+const staffsStore = useUsersStore()
 const toast = useToast()
 
 const filters = ref({
