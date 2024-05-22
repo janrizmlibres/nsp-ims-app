@@ -24,7 +24,7 @@ export const useUsersStore = defineStore('users', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    await addAudit(`Created staff with ID: ${result.data.user.id}`)
+    await addAudit(`Created user with ID: ${result.data.user.id}`)
     return result
   }
 

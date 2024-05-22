@@ -12,7 +12,7 @@ import TheHeader from '@/components/user_mgmt/TheHeader.vue'
 import { useUsersStore } from '@/stores/users'
 import { ref, onMounted, watch } from 'vue'
 
-const staffsStore = useUsersStore()
+const usersStore = useUsersStore()
 const toast = useToast()
 
 const filters = ref({
@@ -38,7 +38,7 @@ const columns = [
 
 async function updatePerms() {
   try {
-    const result = await staffsStore.updatePermissions({ updatedData: Array.from(updatedData) })
+    const result = await usersStore.updatePermissions({ updatedData: Array.from(updatedData) })
 
     toast.add({
       severity: 'success',
@@ -78,22 +78,22 @@ function resetData() {
 
 onMounted(async () => {
   try {
-    await staffsStore.getAllStaff({ includePerms: true })
+    await usersStore.getAllUser({ includePerms: true })
 
-    for (const staff of staffsStore.staffs) {
-      const permissionData = staff.permission
+    for (const user of usersStore.users) {
+      const permissionData = user.permission
 
       /*eslint no-unused-vars: ["error", { "ignoreRestSiblings": true }]*/
-      const { id, staffId, createdAt, updatedAt, ...permissions } = permissionData
+      const { id, userId, createdAt, updatedAt, ...permissions } = permissionData
 
-      const staffData = {
-        id: staff.id,
-        fullname: staff.fullname,
+      const userData = {
+        id: user.id,
+        fullname: user.fullname,
         ...permissions
       }
 
-      const len = data.value.push(staffData)
-      startingData.push(structuredClone(staffData))
+      const len = data.value.push(userData)
+      startingData.push(structuredClone(userData))
 
       watch(data.value[len - 1], (newData) => {
         updatedData.add(newData)
@@ -107,7 +107,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane header="Staff Permissions">
+  <ContentPane header="User Permissions">
     <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
 
     <DataTable
@@ -118,8 +118,8 @@ onMounted(async () => {
       removableSort
       :ptOptions="{ mergeProps: true }"
     >
-      <template #empty> No staffs found. </template>
-      <template #loading> Loading staffs data. Please wait. </template>
+      <template #empty> No users found. </template>
+      <template #loading> Loading users data. Please wait. </template>
 
       <Column field="id" header="User ID" sortable></Column>
       <Column field="fullname" header="Full Name" sortable> </Column>
@@ -168,7 +168,7 @@ onMounted(async () => {
 
     <div class="flex justify-between">
       <p class="pl-8 pt-2 font-medium">
-        Record(s) count: <span class="u-txt-red"> {{ staffsStore.staffs.length }} </span>
+        Record(s) count: <span class="u-txt-red"> {{ usersStore.users.length }} </span>
       </p>
 
       <div class="mt-4">

@@ -21,7 +21,7 @@ const props = defineProps({
   }
 })
 
-const staffsStore = useUsersStore()
+const usersStore = useUsersStore()
 
 const formData = ref({
   password: '',
@@ -58,8 +58,8 @@ async function submitData() {
 
     const result =
       props.userId !== null
-        ? await staffsStore.updateStaff(props.userId, formData.value)
-        : await staffsStore.addStaff(formData.value)
+        ? await usersStore.updateUser(props.userId, formData.value)
+        : await usersStore.addUser(formData.value)
 
     toast.add({
       severity: 'success',
@@ -70,7 +70,7 @@ async function submitData() {
 
     isLoading.value = false
     okToLeave.value = true
-    await router.replace({ name: 'staff-records' })
+    await router.replace({ name: 'user-records' })
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -82,8 +82,8 @@ async function submitData() {
   }
 }
 
-async function goToStaffRecordsView() {
-  await router.push({ name: 'staff-records' })
+async function goToUserRecordsView() {
+  await router.push({ name: 'user-records' })
 }
 
 onBeforeRouteLeave((to) => {
@@ -109,18 +109,18 @@ onMounted(async () => {
   }
 
   try {
-    const result = await staffsStore.getStaff(props.userId)
-    const staff = result.data.staff
+    const result = await usersStore.getUser(props.userId)
+    const user = result.data.user
 
     formData.value = {
       password: '',
-      firstName: staff.firstName,
-      middleName: staff.middleName,
-      lastName: staff.lastName,
-      suffixName: staff.suffixName,
-      email: staff.email,
-      contactNum: staff.contactNum,
-      position: staff.position
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      suffixName: user.suffixName,
+      email: user.email,
+      contactNum: user.contactNum,
+      position: user.position
     }
 
     updateKey.value += 1
@@ -131,7 +131,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane :header="`Staff Management / ${headerName}`">
+  <ContentPane :header="`User Management / ${headerName}`">
     <div class="flex flex-col gap-3 h-full mr-1" :key="updateKey">
       <BaseCard class="grow">
         <AddForm :formDataProp="formData" :isEditView="isEditView" @dataChanged="updateData" />
@@ -161,7 +161,7 @@ onMounted(async () => {
             class="h-10 ml-2 u-bg-red"
             label="Cancel"
             icon="fa-solid fa-circle-xmark"
-            @click="goToStaffRecordsView"
+            @click="goToUserRecordsView"
           />
         </div>
       </div>

@@ -19,7 +19,7 @@ export async function getUsers(req, res, next) {
     });
 
     res.status(200).json({
-      message: "Fetched all staff successfully.",
+      message: "Fetched all user successfully.",
       users: users,
     });
   } catch (error) {
@@ -37,12 +37,12 @@ export async function getUser(req, res, next) {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      const error = new Error("Could not find staff.");
+      const error = new Error("Could not find user.");
       error.statusCode = 404;
       throw error;
     }
 
-    res.status(200).json({ message: "Staff fetched.", user: user });
+    res.status(200).json({ message: "user fetched.", user: user });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -67,7 +67,7 @@ export async function updateUser(req, res, next) {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      const error = new Error("Could not find staff.");
+      const error = new Error("Could not find user.");
       error.statusCode = 404;
       throw error;
     }
@@ -76,7 +76,7 @@ export async function updateUser(req, res, next) {
     const result = await user.save();
 
     res.status(200).json({
-      message: "Staff updated!",
+      message: "User updated!",
       user: result,
     });
   } catch (error) {
@@ -95,7 +95,7 @@ export async function updatePermissions(req, res, next) {
         include: Permission,
       });
 
-      const { id, fullname, ...updatedPerms } = staff;
+      const { id, fullname, ...updatedPerms } = user;
       await userInstance.permission.update(updatedPerms);
     }
 
@@ -115,7 +115,7 @@ export async function updatePassword(req, res, next) {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      const error = Error("Staff not found.");
+      const error = Error("User not found.");
       error.statusCode = 404;
       throw error;
     }
@@ -149,7 +149,7 @@ export async function addAudit(req, res, next) {
     const user = await User.findByPk(userId);
 
     if (!user) {
-      const error = new Error("Staff not found.");
+      const error = new Error("User not found.");
       error.statusCode = 404;
       throw error;
     }

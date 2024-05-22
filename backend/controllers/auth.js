@@ -27,18 +27,22 @@ export async function signup(req, res, next) {
 
     const hashedPw = await bcrypt.hash(req.body.password, 12);
     let userId = prand.unsafeUniformIntDistribution(min, max, rng);
-    let staff = await User.findByPk(userId);
+    let user = await User.findByPk(userId);
 
-    while (staff !== null) {
+    while (user !== null) {
       userId = prand.unsafeUniformIntDistribution(min, max, rng);
-      staff = await User.findByPk(userId);
+      user = await User.findByPk(userId);
     }
 
     delete req.body.password;
-    const user = await User.create({ id: userId, hashedPw, ...req.body });
-    await user.createPermission();
+    const userInstance = await User.create({
+      id: userId,
+      hashedPw,
+      ...req.body,
+    });
+    await userInstance.createPermission();
 
-    res.status(201).json({ message: "User created!", user });
+    res.status(201).json({ message: "User created!", user: userInstance });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -66,15 +70,15 @@ export async function login(req, res, next) {
   const { userId, password } = req.body;
 
   try {
-    const staff = await User.findByPk(userId, { include: Permission });
+    const user = await User.findByPk(userId, { include: Permission });
 
-    if (!staff) {
+    if (!user) {
       const error = new Error("Authentication failed. User not found.");
       error.statusCode = 401;
       throw error;
     }
 
-    const result = await bcrypt.compare(password, staff.hashedPw);
+    const result = await bcrypt.compare(password, user.hashedPw);
 
     if (!result) {
       const error = new Error("Authentication failed. Wrong password.");
@@ -82,11 +86,11 @@ export async function login(req, res, next) {
       throw error;
     }
 
-    const authToken = jwt.sign({ userId: staff.id }, "HEHESECRET", {
+    const authToken = jwt.sign({ userId: user.id }, "HEHESECRET", {
       expiresIn: "1h",
     });
 
-    const refreshToken = jwt.sign({ userId: staff.id }, "HEHESECRET", {
+    const refreshToken = jwt.sign({ userId: user.id }, "HEHESECRET", {
       expiresIn: "10h", // Refresh token valid for 7 days
     });
 
@@ -94,11 +98,11 @@ export async function login(req, res, next) {
       message: "Authentication successful",
       token: authToken,
       refreshToken: refreshToken,
-      staff: {
-        id: staff.id,
-        accessLevel: staff.accessLevel,
-        permissions: staff.permission,
-        userName: staff.fullname,
+      user: {
+        id: user.id,
+        accessLevel: user.accessLevel,
+        permissions: user.permission,
+        userName: user.fullname,
       },
     });
   } catch (error) {

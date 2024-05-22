@@ -166,12 +166,12 @@ const items = computed(() => [
 ])
 
 const role = computed(() => {
-  if (authStore.staff.accessLevel === 1) {
+  if (authStore.user.accessLevel === 1) {
     return 'Admin'
-  } else if (authStore.staff.accessLevel === 2) {
+  } else if (authStore.user.accessLevel === 2) {
     return 'Sub-Admin'
   } else {
-    return 'Staff'
+    return 'User'
   }
 })
 
@@ -283,7 +283,7 @@ function changeState() {
 }
 
 function setVisibility(keyValue) {
-  const permissions = authStore.staff.permissions
+  const permissions = authStore.user.permissions
 
   const permissionMap = {
     2: 'canMgStuds',
@@ -294,7 +294,7 @@ function setVisibility(keyValue) {
     7: 'canMgLs',
     8: 'canMgStudReq',
     9: 'canMgStudCat',
-    10: 'canMgStaff'
+    10: 'canMgUser'
   }
 
   const hasNoPermission = (keyValue) => {

@@ -53,11 +53,11 @@ function setAssociations() {
   Student.hasOne(PreviousSchool);
   PreviousSchool.belongsTo(Student);
 
-  // Staff-Permission Relationship
+  // User-Permission Relationship
   User.hasOne(Permission);
   Permission.belongsTo(User);
 
-  // Staff-Audit Relationship
+  // User-Audit Relationship
   User.hasMany(Audit);
   Audit.belongsTo(User);
 

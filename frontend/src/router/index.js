@@ -60,7 +60,7 @@ const router = createRouter({
           path: 'students',
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.staff.permissions.canMgStuds ? true : { name: 'dashboard' }
+            return authStore.user.permissions.canMgStuds ? true : { name: 'dashboard' }
           },
           children: [
             {
@@ -118,7 +118,7 @@ const router = createRouter({
               component: EnrollLearnersView,
               beforeEnter: () => {
                 const authStore = useAuthStore()
-                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+                return authStore.user.permissions.canMgEnrollment ? true : { name: 'dashboard' }
               }
             },
             {
@@ -128,7 +128,7 @@ const router = createRouter({
               component: EditEnrolledView,
               beforeEnter: () => {
                 const authStore = useAuthStore()
-                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+                return authStore.user.permissions.canMgEnrollment ? true : { name: 'dashboard' }
               }
             }
           ]
@@ -163,7 +163,7 @@ const router = createRouter({
               component: EnrollLearnersView,
               beforeEnter: () => {
                 const authStore = useAuthStore()
-                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+                return authStore.user.permissions.canMgEnrollment ? true : { name: 'dashboard' }
               }
             },
             {
@@ -173,7 +173,7 @@ const router = createRouter({
               component: EditEnrolledView,
               beforeEnter: () => {
                 const authStore = useAuthStore()
-                return authStore.staff.permissions.canMgEnrollment ? true : { name: 'dashboard' }
+                return authStore.user.permissions.canMgEnrollment ? true : { name: 'dashboard' }
               }
             }
           ]
@@ -182,7 +182,7 @@ const router = createRouter({
           path: '',
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.staff.permissions.canMgClass ? true : { name: 'dashboard' }
+            return authStore.user.permissions.canMgClass ? true : { name: 'dashboard' }
           },
           children: [
             {
@@ -216,7 +216,7 @@ const router = createRouter({
           component: TermView,
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.staff.permissions.canMgTerm ? true : { name: 'dashboard' }
+            return authStore.user.permissions.canMgTerm ? true : { name: 'dashboard' }
           }
         },
         {
@@ -225,7 +225,7 @@ const router = createRouter({
           component: LearningStrandView,
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.staff.permissions.canMgLs ? true : { name: 'dashboard' }
+            return authStore.user.permissions.canMgLs ? true : { name: 'dashboard' }
           }
         },
         {
@@ -234,7 +234,7 @@ const router = createRouter({
           component: StudentRequirementView,
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.staff.permissions.canMgStudReq ? true : { name: 'dashboard' }
+            return authStore.user.permissions.canMgStudReq ? true : { name: 'dashboard' }
           }
         },
         {
@@ -243,7 +243,7 @@ const router = createRouter({
           component: StudentCategoryView,
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.staff.permissions.canMgStudCat ? true : { name: 'dashboard' }
+            return authStore.user.permissions.canMgStudCat ? true : { name: 'dashboard' }
           }
         },
         {
@@ -260,7 +260,7 @@ const router = createRouter({
           path: 'users',
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.staff.permissions.canMgStaff ? true : { name: 'dashboard' }
+            return authStore.user.permissions.canMgUser ? true : { name: 'dashboard' }
           },
           children: [
             {
@@ -280,7 +280,7 @@ const router = createRouter({
             },
             {
               path: ':userId',
-              name: 'edit-staff',
+              name: 'edit-user',
               component: UserFormView
             }
           ]

@@ -42,13 +42,13 @@
             class="h-10 ml-2 u-bg-red"
             label="Cancel"
             icon="fa-solid fa-circle-xmark"
-            @click="goToStaffRecordsView"
+            @click="goToUserRecordsView"
           />
         </div>
       </div>
     </div>
   </ContentPane>
-  </template>
+</template>
 
 <script>
 import ContentPane from '@/components/UI/ContentPane.vue'
@@ -63,26 +63,26 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default {
-    name: "VolunteerRecordsView",
-    components: {
-        ContentPane,
-        PersonalInformationForm,
-        ContactInformationForm,
-        PreferencesForm,
-        BaseCard,
-        Button,
-        ProgressSpinner,
-        AdmitVolunteerHeader,
-        TabPanel,
-        TabView,
-    },
+  name: 'VolunteerRecordsView',
+  components: {
+    ContentPane,
+    PersonalInformationForm,
+    ContactInformationForm,
+    PreferencesForm,
+    BaseCard,
+    Button,
+    ProgressSpinner,
+    AdmitVolunteerHeader,
+    TabPanel,
+    TabView
+  },
   data() {
     return {
       volunteer: {
         name: '',
         email: ''
       }
-    };
+    }
   },
   methods: {
     addVolunteer() {
@@ -90,7 +90,7 @@ export default {
       // You'll need to implement this based on how your application should handle new volunteers.
     }
   }
-};
+}
 </script>
 
 <style scoped>

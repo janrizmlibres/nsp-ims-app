@@ -8,9 +8,9 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref(JSON.parse(sessionStorage.getItem('user')) || null)
   const isAuthenticated = computed(() => token.value !== null)
 
-  async function login(inputUserId, password) {
+  async function login(userIdInput, password) {
     const result = await axios.post('http://localhost:8080/auth/login', {
-      userId: inputUserId,
+      userId: userIdInput,
       password
     })
 

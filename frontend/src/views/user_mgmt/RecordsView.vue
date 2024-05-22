@@ -33,7 +33,7 @@ function openPwDialog(userId) {
 
 onMounted(async () => {
   try {
-    await usersStore.getAllStaff({ includePerms: false })
+    await usersStore.getAllUser({ includePerms: false })
   } catch (error) {
     console.log(error.response.data.message)
   }
@@ -43,12 +43,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane header="Staff Records">
+  <ContentPane header="User Records">
     <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
 
     <DataTable
       v-model:filters="filters"
-      :value="usersStore.staffs"
+      :value="usersStore.users"
       :loading="isLoading"
       :globalFilterFields="['id', 'fullname']"
       scrollable
@@ -59,7 +59,7 @@ onMounted(async () => {
 
       <Column header="" class="max-w-28">
         <template #body="slotProps">
-          <RouterLink :to="{ name: 'edit-staff', params: { userId: slotProps.data.id } }">
+          <RouterLink :to="{ name: 'edit-user', params: { userId: slotProps.data.id } }">
             <Button class="h-8" label="Edit" icon="fa-solid fa-user-pen" outlined />
           </RouterLink>
           <Button
@@ -78,7 +78,7 @@ onMounted(async () => {
 
     <div class="pl-8 pt-2 font-medium">
       <p>
-        Record(s) count: <span class="u-txt-red"> {{ usersStore.staffs.length }} </span>
+        Record(s) count: <span class="u-txt-red"> {{ usersStore.users.length }} </span>
       </p>
     </div>
   </ContentPane>
