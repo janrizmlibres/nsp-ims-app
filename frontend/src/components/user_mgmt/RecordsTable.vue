@@ -32,9 +32,9 @@ const filters = ref(props.filtersProp)
     <template #empty>{{ emptyText }}</template>
     <template #loading> {{ loadingText }}</template>
 
-    <Column header="">
+    <Column header="" class="min-w-64">
       <template #body="slotProps">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center justify-center gap-2">
           <RouterLink :to="{ name: 'edit-user', params: { userId: slotProps.data.id } }">
             <Button icon="fa-solid fa-user-pen" text rounded aria-label="Edit" />
           </RouterLink>

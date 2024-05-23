@@ -56,7 +56,6 @@ async function updatePassword() {
   <Dialog
     modal
     header="Change Password"
-    :breakpoints="{ '1199px': '75vw', '575px': '90vw' }"
     @after-hide="resetInputs"
     :pt="{ root: ({ state }) => ({ class: ['w-fit'] }) }"
     :ptOptions="{ mergeProps: true }"
