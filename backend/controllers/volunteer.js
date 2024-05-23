@@ -70,15 +70,21 @@ export async function addVolunteer(req, res, next) {
       volunteerId: volunteer.id,
     });
 
-    await StudentVolunteer.create({
+    //only creates an instance of student volunteer if program and year has an entry
+    if (req.body.student.program && req.body.student.year) {
+      await StudentVolunteer.create({
       ...req.body.student,
       volunteerId: volunteer.id,
-    });
+      });
+    }
 
-    await ProfessionalVolunteer.create({
+    //only creates an instance of professional volunteer if work has an entry
+    if (req.body.professional.work) {
+      await ProfessionalVolunteer.create({
       ...req.body.professional,
       volunteerId: volunteer.id,
-    });
+      });
+    }
 
     res.status(200).json({
       message: "Volunteer record created.",
@@ -189,13 +195,18 @@ export async function updateVolunteer(req, res, next) {
     await emergencyInstance.update(emergency);
     await specializationInstance.update(specialization);
     await availabilityInstance.update(availability);
-    await studentInstance.update(student);
-    //await professionalInstance.update(professional);
+    if (studentInstance) {
+      await studentInstance.update(student);
+    } else if (Object.keys(student).length > 0) {
+      // Create a new StudentVolunteer entry only if student is not empty
+      student.id = volunteer.id; // Assuming the volunteer id should be used as the id for the new entry
+      await StudentVolunteer.create(student);
+    }
     if (professionalInstance) {
       await professionalInstance.update(professional);
     } else if (Object.keys(professional).length > 0) {
       // Create a new ProfessionalVolunteer entry only if professional is not empty
-      professional.id = volunteer.id; // Assuming the volunteer id should be used as the id for the new entry
+      professional.id = volunteer.id; // Assuming the volunteer.id should be used as the id for the new entry
       await ProfessionalVolunteer.create(professional);
     }
 

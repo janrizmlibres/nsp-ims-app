@@ -186,6 +186,7 @@ onMounted(async () => {
     //try to see why this won't work:
     const filterObject = (obj) => {
       // eslint-disable-next-line no-unused-vars
+      //this filtering of volunteerId causes it to not show when viewing volunteer but can still be edited
       const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
       return filteredObj
     }
@@ -215,7 +216,7 @@ onMounted(async () => {
     initialData.emergency = filterObject(volunteer_emergency_contact)
     initialData.availability = filterObject(volunteer_availability)
     initialData.specialization = filterObject(volunteer_specialization)
-    initialData.student = filterObject(student_volunteer)
+    initialData.student = student_volunteer ? filterObject(student_volunteer) : {};
     initialData.professional = professional_volunteer ? filterObject(professional_volunteer) : {};
 
     for (const key in initialData) {

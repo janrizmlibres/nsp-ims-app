@@ -57,5 +57,5 @@ export const useVolunteerStore = defineStore('volunteer', () => {
     return result
   }
   
-  return { volunteers, getAllVolunteers, addVolunteer, getVolunteer, updateVolunteer, /*volunteersNormalized*/ }
+  return { volunteers, getAllVolunteers, addVolunteer, getVolunteer, updateVolunteer /*volunteersNormalized*/ }
 })
