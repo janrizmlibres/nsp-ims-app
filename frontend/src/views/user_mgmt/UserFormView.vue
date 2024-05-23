@@ -6,22 +6,16 @@ import { useConfirm } from 'primevue/useconfirm'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
-import AddForm from '@/components/staff_mgmt/AddForm.vue'
+import AddForm from '@/components/user_mgmt/AddForm.vue'
 
-import { useStaffsStore } from '@/stores/staffs'
+import { useUsersStore } from '@/stores/users'
 import router from '@/router'
 
-import { ref, onMounted } from 'vue'
-import { onBeforeRouteLeave } from 'vue-router'
+import { ref, onMounted, computed } from 'vue'
+import { onBeforeRouteLeave, useRoute } from 'vue-router'
 
-const props = defineProps({
-  userId: {
-    type: String,
-    default: null
-  }
-})
-
-const staffsStore = useStaffsStore()
+const route = useRoute()
+const usersStore = useUsersStore()
 
 const formData = ref({
   password: '',
@@ -34,14 +28,14 @@ const formData = ref({
   position: ''
 })
 
-const headerName = ref(props.userId === null ? 'Add Record' : 'Edit Record')
-const submitLabel = ref(props.userId === null ? 'Submit' : 'Save')
-
 const isLoading = ref(false)
 const okToLeave = ref(true)
 const isInitialState = ref(true)
 const updateKey = ref(0)
-const isEditView = ref(props.userId === null)
+
+const headerName = computed(() => (route.params.userId ? 'Edit Record' : 'Add Record'))
+const submitLabel = computed(() => (route.params.userId ? 'Save' : 'Submit'))
+const isEditView = computed(() => !route.params.userId)
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -56,10 +50,9 @@ async function submitData() {
   try {
     isLoading.value = true
 
-    const result =
-      props.userId !== null
-        ? await staffsStore.updateStaff(props.userId, formData.value)
-        : await staffsStore.addStaff(formData.value)
+    const result = route.params.userId
+      ? await usersStore.updateUser(route.params.userId, formData.value)
+      : await usersStore.addUser(formData.value)
 
     toast.add({
       severity: 'success',
@@ -70,7 +63,7 @@ async function submitData() {
 
     isLoading.value = false
     okToLeave.value = true
-    await router.replace({ name: 'staff-records' })
+    await router.replace({ name: 'user-records' })
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -82,8 +75,8 @@ async function submitData() {
   }
 }
 
-async function goToStaffRecordsView() {
-  await router.push({ name: 'staff-records' })
+async function goToUserRecordsView() {
+  await router.push({ name: 'user-records' })
 }
 
 onBeforeRouteLeave((to) => {
@@ -104,23 +97,21 @@ onBeforeRouteLeave((to) => {
 })
 
 onMounted(async () => {
-  if (props.userId === null) {
-    return
-  }
+  if (!route.params.userId) return
 
   try {
-    const result = await staffsStore.getStaff(props.userId)
-    const staff = result.data.staff
+    const result = await usersStore.getUser(route.params.userId)
+    const user = result.data.user
 
     formData.value = {
       password: '',
-      firstName: staff.firstName,
-      middleName: staff.middleName,
-      lastName: staff.lastName,
-      suffixName: staff.suffixName,
-      email: staff.email,
-      contactNum: staff.contactNum,
-      position: staff.position
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      suffixName: user.suffixName,
+      email: user.email,
+      contactNum: user.contactNum,
+      position: user.position
     }
 
     updateKey.value += 1
@@ -131,7 +122,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane :header="`Staff Management / ${headerName}`">
+  <ContentPane :header="`User Management / ${headerName}`">
     <div class="flex flex-col gap-3 h-full mr-1" :key="updateKey">
       <BaseCard class="grow">
         <AddForm :formDataProp="formData" :isEditView="isEditView" @dataChanged="updateData" />
@@ -161,7 +152,7 @@ onMounted(async () => {
             class="h-10 ml-2 u-bg-red"
             label="Cancel"
             icon="fa-solid fa-circle-xmark"
-            @click="goToStaffRecordsView"
+            @click="goToUserRecordsView"
           />
         </div>
       </div>

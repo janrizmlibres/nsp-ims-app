@@ -30,7 +30,7 @@ const initialData = {
     firstName: null,
     middleName: null,
     lastName: null,
-    suffix: null,
+    suffix: null
   },
 
   personalInformation: {
@@ -46,7 +46,7 @@ const initialData = {
   contactInformation: {
     contactNumber: null,
     email: null,
-    facebook: null,
+    facebook: null
   },
 
   emergency: {
@@ -55,25 +55,25 @@ const initialData = {
     middleName: null,
     suffix: null,
     contactNumber: null,
-    relationship: null,
+    relationship: null
   },
 
   availability: {
-    day: null,
+    day: null
   },
 
   specialization: {
-    area: null,
+    area: null
   },
 
   student: {
     program: null,
-    year: null,
+    year: null
   },
 
   professional: {
-    work: null,
-  },
+    work: null
+  }
 
   //add work
 }
@@ -104,7 +104,7 @@ watch(
 provide('formData', readonly({ formData, updateFormData }))
 
 function updateFormData(part, data) {
- // console.log(formData.value)
+  // console.log(formData.value)
   const updateMapping = {
     [FormParts.Volunteer]: () => (formData.value.volunteerHeader = data),
     [FormParts.VolunteerPersonalInformation]: () => (formData.value.personalInformation = data),
@@ -116,7 +116,7 @@ function updateFormData(part, data) {
     [FormParts.ProfessionalVolunteer]: () => (formData.value.professional = data)
   }
 
-    updateMapping[part]()
+  updateMapping[part]()
 }
 
 function handleConfirm() {
@@ -197,16 +197,16 @@ onMounted(async () => {
       return filteredObj
     }*/
 
-  const {
-    volunteer_personal_information,
-    volunteer_contact_information,
-    volunteer_emergency_contact,
-    volunteer_availability,
-    volunteer_specialization,
-    student_volunteer,
-    professional_volunteer,
-    //...identity
-  } = volunteer
+    const {
+      volunteer_personal_information,
+      volunteer_contact_information,
+      volunteer_emergency_contact,
+      volunteer_availability,
+      volunteer_specialization,
+      student_volunteer,
+      professional_volunteer
+      //...identity
+    } = volunteer
 
     //initialData.Volunteer = filterObject(identity)
     initialData.volunteerHeader = filterObject(volunteer)
@@ -216,7 +216,7 @@ onMounted(async () => {
     initialData.availability = filterObject(volunteer_availability)
     initialData.specialization = filterObject(volunteer_specialization)
     initialData.student = filterObject(student_volunteer)
-    initialData.professional = professional_volunteer ? filterObject(professional_volunteer) : {};
+    initialData.professional = professional_volunteer ? filterObject(professional_volunteer) : {}
 
     for (const key in initialData) {
       formData.value[key] = initialData[key]
@@ -233,7 +233,7 @@ onMounted(async () => {
 <template>
   <ContentPane :header="`Volunteers / ${headerText}`" subheader="Academic Year 2022 - 2023">
     <div class="flex flex-col gap-3 h-full mr-1">
-      <AdmitVolunteerHeader 
+      <AdmitVolunteerHeader
         @dataChanged="updateFormData"
         :Volunteer="formData.volunteerHeader"
         :isViewMode="$route.meta.isViewMode"
@@ -263,4 +263,3 @@ onMounted(async () => {
     </div>
   </ContentPane>
 </template>
-

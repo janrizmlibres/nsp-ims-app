@@ -9,7 +9,7 @@ import Button from 'primevue/button'
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
-import FormParts from '@/util/student_form_parts'
+import { FormParts } from '@/util/student_utils'
 
 const emit = defineEmits(['dataChanged'])
 const props = defineProps({ identity: Object, isViewMode: Boolean })

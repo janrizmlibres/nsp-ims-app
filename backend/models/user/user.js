@@ -1,7 +1,7 @@
 import { INTEGER, DATE, STRING, VIRTUAL } from "sequelize";
 import sequelize from "../../util/database.js";
 
-const Staff = sequelize.define("staff", {
+const User = sequelize.define("user", {
   id: {
     type: INTEGER,
     allowNull: false,
@@ -49,4 +49,4 @@ const Staff = sequelize.define("staff", {
   },
 });
 
-export default Staff;
+export default User;
