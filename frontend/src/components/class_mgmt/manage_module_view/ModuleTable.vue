@@ -107,6 +107,14 @@ async function deleteModules() {
                     detail: 'Module(s) deleted successfully!',
                     life: 3000
                 })
+            }
+
+            try {
+                selectedModules.value.forEach(async (module) => {
+                    await staffsStore.addAudit(
+                        `Deleted: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.school_level}, ${term.academic_year}`
+                    )
+                })
             } catch(error) {
                 console.log(error);
             }
