@@ -8,7 +8,11 @@ import { useRoute } from 'vue-router'
 import FormParts from '@/util/volunteer_form_parts'
 
 const emit = defineEmits(['dataChanged'])
-const props = defineProps({ Volunteer: Object, isViewMode: Boolean })
+const props = defineProps({ 
+  Volunteer: Object, 
+  isViewMode: Boolean,
+  volunteerIdCopy: Number
+})
 
 const route = useRoute()
 
@@ -20,7 +24,7 @@ const name = ref({
   middleName: props.Volunteer.middleName
 })
 
-const volunteerId = ref(props.Volunteer.volunteerId)
+const volunteerId = ref(props.volunteerIdCopy)
 //console.log("Volunteer: " + props.volunteerId.value)
 const selectedSuffix = ref(props.Volunteer.suffix)
 const selectedAffiliation = ref(props.Volunteer.affiliation)

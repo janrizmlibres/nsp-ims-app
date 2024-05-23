@@ -176,12 +176,15 @@ onBeforeRouteLeave((to) => {
   return false
 })
 
+let volunteerIdCopy = ref(null);
+
 onMounted(async () => {
   if (!route.params.id) return
 
   try {
     const result = await volunteerStore.getVolunteer(route.params.id)
     const volunteer = result.data.volunteer
+    volunteerIdCopy = volunteer.volunteerId
 
     //try to see why this won't work:
     const filterObject = (obj) => {
@@ -237,6 +240,7 @@ onMounted(async () => {
       <AdmitVolunteerHeader 
         @dataChanged="updateFormData"
         :Volunteer="formData.volunteerHeader"
+        :volunteerIdCopy="volunteerIdCopy"
         :isViewMode="$route.meta.isViewMode"
         :key="updateKey"
       />
