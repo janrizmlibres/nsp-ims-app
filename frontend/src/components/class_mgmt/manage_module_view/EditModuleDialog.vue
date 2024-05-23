@@ -60,6 +60,15 @@ async function updateModule() {
             life: 3000
         })
     }
+
+    try {
+        await staffsStore.addAudit(
+            `Updated: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.school_level}, ${term.academic_year}`
+        )
+    } catch(error) {
+        console.log(error);
+    }
+
 };
 
 async function cancel() {
