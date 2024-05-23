@@ -1,11 +1,13 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useVolunteerStore } from '@/stores/volunteer';
-import ContentPane from "@/components/UI/ContentPane.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import TheHeader from '@/components/volunteer_view/VolunteerHeader.vue';
 import Button from 'primevue/button';
+
+import TheHeader from '@/components/volunteer_view/VolunteerHeader.vue';
+import ContentPane from "@/components/UI/ContentPane.vue";
+import { useVolunteerStore } from '@/stores/volunteer';
+
+import { ref, onMounted } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 
 const volunteerStore = useVolunteerStore();
@@ -15,6 +17,7 @@ const filters = ref({
 });
 
 const columns = ref([
+  { field: 'id', header: 'Database ID' },
   { field: 'volunteerId', header: 'Volunteer ID' },
   { field: 'fullname', header: 'Full Name' },
   { field: 'volunteer_personal_information.sex', header: 'Sex'},
@@ -23,12 +26,12 @@ const columns = ref([
 ]);
 
 const updateGlobalFilter = (newValue) => {
-  filters.value.global.value = newValue;
+  filters.value.global.value = newValue
 };
 
 onMounted(async () => {
   try{
-    await volunteerStore.getAllVolunteers();
+    await volunteerStore.getAllVolunteers()
   } catch (error) {
     console.log(error);
   }

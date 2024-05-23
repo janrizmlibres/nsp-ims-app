@@ -73,9 +73,7 @@ const initialData = {
 
   professional: {
     work: null,
-  },
-
-  //add work
+  }
 }
 
 const formData = ref(structuredClone(initialData))
@@ -104,7 +102,6 @@ watch(
 provide('formData', readonly({ formData, updateFormData }))
 
 function updateFormData(part, data) {
- // console.log(formData.value)
   const updateMapping = {
     [FormParts.Volunteer]: () => (formData.value.volunteerHeader = data),
     [FormParts.VolunteerPersonalInformation]: () => (formData.value.personalInformation = data),
@@ -142,7 +139,7 @@ async function submitForm() {
       route.name === 'admit-volunteers'
         ? await volunteerStore.addVolunteer(formData.value)
         : await volunteerStore.updateVolunteer(route.params.id, formData.value)
-
+    
     toast.add({
       severity: 'success',
       summary: 'Success',
@@ -228,7 +225,6 @@ onMounted(async () => {
 
     updateKey.value += 1
   } catch (error) {
-    console.error('Failed to load volunteer:', error)
     router.back()
   }
 })
