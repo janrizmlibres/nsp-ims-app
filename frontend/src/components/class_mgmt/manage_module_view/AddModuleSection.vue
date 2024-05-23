@@ -69,6 +69,16 @@ async function addModule() {
         })
     }
     
+    try {
+        await staffsStore.addAudit(
+            min.value === max.value ? 
+            `Added: ${module.title} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.school_level}, ${term.academic_year}` :
+            `Added: LAS ${min.value} to ${max.value} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.school_level}, ${term.academic_year}`
+        )
+    } catch(error) {
+        console.log(error);
+    }
+
     resetForm()
     emit('onUpdateDisplay')
 }
