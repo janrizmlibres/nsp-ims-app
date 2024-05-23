@@ -95,6 +95,13 @@ onMounted(async () => {
         </TabView>
       </template>
     </Card>
+
+    <div class="font-medium mt-4 ml-4">
+      Total users:
+      <span class="u-txt-red">
+        {{ usersStore.users.length }}
+      </span>
+    </div>
   </ContentPane>
 
   <ChangePwDialog

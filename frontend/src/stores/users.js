@@ -77,7 +77,7 @@ export const useUsersStore = defineStore('users', () => {
     const authStore = useAuthStore()
 
     const result = await axios.patch(
-      `http://localhost:8080/admin/user/${userId}`,
+      `http://localhost:8080/admin/user/password/${userId}`,
       { newPw },
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
@@ -85,6 +85,18 @@ export const useUsersStore = defineStore('users', () => {
     )
 
     await addAudit(`Updated password for user with ID: ${userId}`)
+    return result
+  }
+
+  async function updateLastLogin() {
+    const authStore = useAuthStore()
+
+    const result = await axios.patch(
+      `http://localhost:8080/admin/user/last-login/${authStore.user.id}`,
+      { lastLogin: new Date() },
+      { headers: { Authorization: 'Bearer ' + authStore.token } }
+    )
+
     return result
   }
 
@@ -112,6 +124,7 @@ export const useUsersStore = defineStore('users', () => {
     updateUser,
     updatePermissions,
     updatePw,
+    updateLastLogin,
     addAudit
   }
 })

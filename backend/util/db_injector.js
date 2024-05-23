@@ -301,7 +301,7 @@ export async function injectUser() {
         password: "rootpass",
         contactNum: "09987654321",
         position: "Program Coordinator",
-        lastLogin: new Date(),
+        lastLogin: new Date(2023, 1, 20),
       },
       {
         canMgStuds: true,
@@ -328,7 +328,7 @@ export async function injectUser() {
         contactNum: "09987654322",
         position: "Computer Systems Officer",
         email: "test2@gmail.com",
-        lastLogin: new Date(),
+        lastLogin: new Date(2023, 3, 30),
       },
       {
         canMgStuds: true,

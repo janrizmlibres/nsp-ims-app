@@ -6,7 +6,7 @@ import { useConfirm } from 'primevue/useconfirm'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import BaseCard from '@/components/UI/BaseCard.vue'
-import AddForm from '@/components/user_mgmt/AddForm.vue'
+import UserForm from '@/components/user_mgmt/UserForm.vue'
 
 import { useUsersStore } from '@/stores/users'
 import router from '@/router'
@@ -18,19 +18,20 @@ const route = useRoute()
 const usersStore = useUsersStore()
 
 const formData = ref({
-  password: '',
-  firstName: '',
-  middleName: '',
-  lastName: '',
-  suffixName: '',
-  email: '',
-  contactNum: '',
-  position: ''
+  password: null,
+  confirmPass: null,
+  firstName: null,
+  middleName: null,
+  lastName: null,
+  suffixName: null,
+  email: null,
+  contactNum: null,
+  position: null,
+  isSubAdmin: false
 })
 
 const isLoading = ref(false)
 const okToLeave = ref(true)
-const isInitialState = ref(true)
 const updateKey = ref(0)
 
 const headerName = computed(() => (route.params.userId ? 'Edit Record' : 'Add Record'))
@@ -43,36 +44,62 @@ const confirm = useConfirm()
 function updateData(data) {
   okToLeave.value = false
   formData.value = data
-  isInitialState.value = false
 }
 
 async function submitData() {
-  try {
-    isLoading.value = true
-
-    const result = route.params.userId
-      ? await usersStore.updateUser(route.params.userId, formData.value)
-      : await usersStore.addUser(formData.value)
-
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: result.data.message,
-      life: 5000
+  if (formData.value.password !== formData.value.confirmPass) {
+    confirm.require({
+      group: 'user-headless',
+      header: 'Passwords Do Not Match',
+      message: 'Please reconfirm your password',
+      acceptLabel: 'OK',
+      icon: 'fa-solid fa-not-equal'
     })
-
-    isLoading.value = false
-    okToLeave.value = true
-    await router.replace({ name: 'user-records' })
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
-    })
-    isLoading.value = false
+    return
   }
+
+  if (formData.value.password.length < 8) {
+    confirm.require({
+      group: 'user-headless',
+      header: 'Password Requirements Not Met',
+      message: 'Password must be at least 8 characters long',
+      acceptLabel: 'OK',
+      icon: 'fa-solid fa-shield-halved'
+    })
+    return
+  }
+
+  if (formData.value.contactNum)
+    try {
+      isLoading.value = true
+
+      formData.value.accessLevel = formData.value.isSubAdmin ? 2 : 3
+      // eslint-disable-next-line no-unused-vars
+      const { isSubAdmin, confirmPass, ...finalData } = formData.value
+
+      const result = route.params.userId
+        ? await usersStore.updateUser(route.params.userId, finalData)
+        : await usersStore.addUser(finalData)
+
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: result.data.message,
+        life: 5000
+      })
+
+      isLoading.value = false
+      okToLeave.value = true
+      await router.replace({ name: 'user-records' })
+    } catch (error) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.response.data.message,
+        life: 3000
+      })
+      isLoading.value = false
+    }
 }
 
 async function goToUserRecordsView() {
@@ -85,8 +112,12 @@ onBeforeRouteLeave((to) => {
   }
 
   confirm.require({
-    message: 'Do you really want to leave? You have unsaved changes!',
+    group: 'user-headless',
     header: 'Redirect Confirmation',
+    message: 'Do you really want to leave? You have unsaved changes!',
+    acceptLabel: 'Yes',
+    rejectLabel: 'No',
+    icon: 'fa-solid fa-diamond-turn-right',
     accept: async () => {
       okToLeave.value = true
       await router.push(to)
@@ -111,7 +142,8 @@ onMounted(async () => {
       suffixName: user.suffixName,
       email: user.email,
       contactNum: user.contactNum,
-      position: user.position
+      position: user.position,
+      isSubAdmin: user.accessLevel === 2
     }
 
     updateKey.value += 1
@@ -123,39 +155,29 @@ onMounted(async () => {
 
 <template>
   <ContentPane :header="`User Management / ${headerName}`">
-    <div class="flex flex-col gap-3 h-full mr-1" :key="updateKey">
-      <BaseCard class="grow">
-        <AddForm :formDataProp="formData" :isEditView="isEditView" @dataChanged="updateData" />
-      </BaseCard>
+    <form @submit.prevent="submitData">
+      <div class="flex flex-col gap-3" :key="updateKey">
+        <BaseCard class="grow">
+          <UserForm :formDataProp="formData" :isEditView="isEditView" @dataChanged="updateData" />
+        </BaseCard>
 
-      <div class="flex-none text-right">
-        <div class="inline-block">
-          <Button class="h-10 u-bg-green" :disabled="isInitialState" @click="submitData">
-            <ProgressSpinner
-              v-if="isLoading"
-              style="width: 50px; height: 50px"
-              strokeWidth="8"
-              class="fill-surface-0 dark:fill-surface-800"
-              animationDuration=".5s"
-              aria-label="Custom ProgressSpinner"
+        <div class="flex-none text-right">
+          <div class="inline-block">
+            <Button
+              class="h-10 u-bg-green"
+              :label="submitLabel"
+              type="submit"
+              icon="fa-solid fa-circle-check"
             />
-
-            <div v-else>
-              <font-awesome-icon
-                icon="fa-solid fa-circle-check"
-                class="absolute top-2/4 -mt-2 left-3"
-              />
-              <h2 class="pl-5 font-bold">{{ submitLabel }}</h2>
-            </div>
-          </Button>
-          <Button
-            class="h-10 ml-2 u-bg-red"
-            label="Cancel"
-            icon="fa-solid fa-circle-xmark"
-            @click="goToUserRecordsView"
-          />
+            <Button
+              class="h-10 ml-2 u-bg-red"
+              label="Cancel"
+              icon="fa-solid fa-circle-xmark"
+              @click="goToUserRecordsView"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   </ContentPane>
 </template>

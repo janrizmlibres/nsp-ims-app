@@ -38,7 +38,6 @@ const User = sequelize.define("user", {
   accessLevel: {
     type: INTEGER,
     allowNull: false,
-    defaultValue: 3,
   },
   fullname: {
     type: VIRTUAL,
