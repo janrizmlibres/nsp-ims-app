@@ -248,6 +248,8 @@ export async function injectUser() {
         id: "91267",
         accessLevel: 1,
         password: "rootpass",
+        contactNum: "09052153867",
+        position: "Administrator",
       },
       {
         canMgStuds: true,
@@ -272,6 +274,8 @@ export async function injectUser() {
         id: "11267",
         accessLevel: 2,
         password: "rootpass",
+        contactNum: "09123456789",
+        position: "Program Head",
       },
       {
         canMgStuds: true,
@@ -295,6 +299,9 @@ export async function injectUser() {
         id: "21267",
         accessLevel: 2,
         password: "rootpass",
+        contactNum: "09987654321",
+        position: "Program Coordinator",
+        lastLogin: new Date(),
       },
       {
         canMgStuds: true,
@@ -318,6 +325,10 @@ export async function injectUser() {
         id: "53697",
         accessLevel: 3,
         password: "nazpass",
+        contactNum: "09987654322",
+        position: "Computer Systems Officer",
+        email: "test2@gmail.com",
+        lastLogin: new Date(),
       },
       {
         canMgStuds: true,
@@ -336,6 +347,9 @@ export async function injectUser() {
         id: "55166",
         accessLevel: 3,
         password: "xandpass",
+        contactNum: "09987654323",
+        position: "Executive Officer",
+        lastLogin: new Date(2020, 11, 29),
       },
       {
         canMgStuds: true,
@@ -356,6 +370,9 @@ export async function injectUser() {
         id: "57381",
         accessLevel: 3,
         password: "acepass",
+        contactNum: "09987654324",
+        position: "Information Executive",
+        email: "test@gmail.com",
       },
       {
         canMgVolunteer: true,
@@ -973,12 +990,22 @@ export async function injectVolunteer() {
     volunteerData.map(async (data, index) => {
       const volunteer = await Volunteer.create(data);
 
-    await volunteer.createStudent_volunteer(StudentVolunteer[index]);
-    await volunteer.createVolunteer_personal_information(volunteerPersonalInformationData[index]);
-    await volunteer.createVolunteer_emergency_contact(volunteerEmergencyContacts[index]);
-    await volunteer.createVolunteer_contact_information(volunteerContactInformationData[index]);
-    await volunteer.createVolunteer_availability({day: getRandomAvailability()});
-    await volunteer.createVolunteer_specialization({area: getSpecialization()});
-  })
-);
+      await volunteer.createStudent_volunteer(StudentVolunteer[index]);
+      await volunteer.createVolunteer_personal_information(
+        volunteerPersonalInformationData[index]
+      );
+      await volunteer.createVolunteer_emergency_contact(
+        volunteerEmergencyContacts[index]
+      );
+      await volunteer.createVolunteer_contact_information(
+        volunteerContactInformationData[index]
+      );
+      await volunteer.createVolunteer_availability({
+        day: getRandomAvailability(),
+      });
+      await volunteer.createVolunteer_specialization({
+        area: getSpecialization(),
+      });
+    })
+  );
 }
