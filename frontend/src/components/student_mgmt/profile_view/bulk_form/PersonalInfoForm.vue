@@ -6,7 +6,7 @@ import { ref, computed, watch, onMounted, inject } from 'vue'
 import { getDaysInMonth, format, getYear, getDay, getMonth } from 'date-fns'
 
 import { objectMap } from '@/util/helpers'
-import FormParts from '@/util/student_form_parts'
+import { FormParts } from '@/util/student_utils'
 
 const { formData, updateFormData } = inject('formData')
 

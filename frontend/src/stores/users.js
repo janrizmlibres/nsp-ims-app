@@ -1,52 +1,54 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from './auth'
 
-export const useStaffsStore = defineStore('staffs', () => {
-  const staffs = ref([])
+export const useUsersStore = defineStore('users', () => {
+  const users = ref([])
+  const subadmins = computed(() => users.value.filter((user) => user.accessLevel === 2))
+  const staffs = computed(() => users.value.filter((user) => user.accessLevel === 3))
 
-  async function getAllStaff(config) {
+  async function getAllUser(config) {
     const authStore = useAuthStore()
 
-    const result = await axios.get('http://localhost:8080/admin/staffs', {
+    const result = await axios.get('http://localhost:8080/admin/users', {
       params: config,
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    staffs.value = result.data.staffs
+    users.value = result.data.users
   }
 
-  async function addStaff(formData) {
+  async function addUser(formData) {
     const authStore = useAuthStore()
 
     const result = await axios.post('http://localhost:8080/auth/signup', formData, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    await addAudit(`Created staff with ID: ${result.data.user.id}`)
+    await addAudit(`Created user with ID: ${result.data.user.id}`)
     return result
   }
 
-  async function getStaff(userId) {
+  async function getUser(userId) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(`http://localhost:8080/admin/staff/${userId}`, {
+    const result = await axios.get(`http://localhost:8080/admin/user/${userId}`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
     return result
   }
 
-  async function updateStaff(userId, formData) {
+  async function updateUser(userId, formData) {
     const authStore = useAuthStore()
 
     delete formData.password
-    const result = await axios.put(`http://localhost:8080/admin/staff/${userId}`, formData, {
+    const result = await axios.put(`http://localhost:8080/admin/user/${userId}`, formData, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
-    await addAudit(`Updated staff with ID: ${userId}`)
+    await addAudit(`Updated user with ID: ${userId}`)
     return result
   }
 
@@ -54,7 +56,7 @@ export const useStaffsStore = defineStore('staffs', () => {
     const authStore = useAuthStore()
 
     const result = await axios.put(
-      'http://localhost:8080/admin/staffs/update-permissions',
+      'http://localhost:8080/admin/users/update-permissions',
       updatedData,
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
@@ -63,11 +65,11 @@ export const useStaffsStore = defineStore('staffs', () => {
 
     const idList = []
 
-    updatedData.updatedData.forEach((staff) => {
-      idList.push(staff.id)
+    updatedData.updatedData.forEach((user) => {
+      idList.push(user.id)
     })
 
-    await addAudit(`Updated permissions for staffs with ID/s: ${idList.join(', ')}`)
+    await addAudit(`Updated permissions for users with ID/s: ${idList.join(', ')}`)
     return result
   }
 
@@ -75,14 +77,14 @@ export const useStaffsStore = defineStore('staffs', () => {
     const authStore = useAuthStore()
 
     const result = await axios.patch(
-      `http://localhost:8080/admin/staff/${userId}`,
+      `http://localhost:8080/admin/user/${userId}`,
       { newPw },
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
       }
     )
 
-    await addAudit(`Updated password for staff with ID: ${userId}`)
+    await addAudit(`Updated password for user with ID: ${userId}`)
     return result
   }
 
@@ -90,8 +92,8 @@ export const useStaffsStore = defineStore('staffs', () => {
     const authStore = useAuthStore()
 
     const result = await axios.post(
-      `http://localhost:8080/admin/staff/add-audit`,
-      { userId: authStore.staff.id, description, date: new Date() },
+      `http://localhost:8080/admin/user/add-audit`,
+      { userId: authStore.user.id, description, date: new Date() },
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
       }
@@ -101,11 +103,13 @@ export const useStaffsStore = defineStore('staffs', () => {
   }
 
   return {
+    users,
+    subadmins,
     staffs,
-    getAllStaff,
-    addStaff,
-    getStaff,
-    updateStaff,
+    getAllUser,
+    addUser,
+    getUser,
+    updateUser,
     updatePermissions,
     updatePw,
     addAudit

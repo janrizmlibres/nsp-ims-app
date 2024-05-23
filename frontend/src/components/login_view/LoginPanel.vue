@@ -20,14 +20,14 @@ const isUsernameInvalid = ref(false)
 const isPasswordInvalid = ref(false)
 
 function checkInputEmpty(input, isInvalid) {
-  const inputValue = input.value || '';
+  const inputValue = input.value || ''
 
   if (inputValue.trim() === '') {
-    isInvalid.value = true;
-    return true;
+    isInvalid.value = true
+    return true
   } else {
     isInvalid.value = false
-    return false;
+    return false
   }
 }
 
@@ -54,6 +54,8 @@ async function submitEvent() {
     await authStore.login(id, password)
     await router.replace({ name: 'dashboard' })
   } catch (error) {
+    console.log(error)
+
     toast.add({
       severity: 'error',
       summary: 'Error Logging In',
