@@ -3,7 +3,7 @@ import InputText from 'primevue/inputtext'
 import Dropdown from 'primevue/dropdown'
 import { inject, ref } from 'vue'
 
-import FormParts from '@/util/student_form_parts'
+import { FormParts } from '@/util/student_utils'
 import { objectMap } from '@/util/helpers'
 
 const { formData, updateFormData } = inject('formData')

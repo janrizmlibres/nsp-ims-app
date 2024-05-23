@@ -5,12 +5,12 @@ import isAuth from "../middleware/is_auth.js";
 
 const router = express.Router();
 
-router.get("/staffs", isAuth, adminController.getStaffs);
+router.get("/users", isAuth, adminController.getUsers);
 
-router.get("/staff/:userId", isAuth, adminController.getStaff);
+router.get("/user/:userId", isAuth, adminController.getUser);
 
 router.put(
-  "/staff/:userId",
+  "/user/:userId",
   isAuth,
   [
     body("firstName").trim().isAlpha("en-US"),
@@ -26,22 +26,22 @@ router.put(
       .trim()
       .isMobilePhone("en-PH"),
   ],
-  adminController.updateStaff
+  adminController.updateUser
 );
 
 router.put(
-  "/staffs/update-permissions",
+  "/users/update-permissions",
   isAuth,
   adminController.updatePermissions
 );
 
 router.patch(
-  "/staff/:userId",
+  "/user/:userId",
   isAuth,
   [body("newPw").isStrongPassword({ minLength: 8 })],
   adminController.updatePassword
 );
 
-router.post("/staff/add-audit", isAuth, adminController.addAudit);
+router.post("/user/add-audit", isAuth, adminController.addAudit);
 
 export default router;

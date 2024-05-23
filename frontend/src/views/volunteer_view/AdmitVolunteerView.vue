@@ -30,7 +30,7 @@ const initialData = {
     firstName: null,
     middleName: null,
     lastName: null,
-    suffix: null,
+    suffix: null
   },
 
   personalInformation: {
@@ -46,7 +46,7 @@ const initialData = {
   contactInformation: {
     contactNumber: null,
     email: null,
-    facebook: null,
+    facebook: null
   },
 
   emergency: {
@@ -55,20 +55,20 @@ const initialData = {
     middleName: null,
     suffix: null,
     contactNumber: null,
-    relationship: null,
+    relationship: null
   },
 
   availability: {
-    day: null,
+    day: null
   },
 
   specialization: {
-    area: null,
+    area: null
   },
 
   student: {
     program: null,
-    year: null,
+    year: null
   },
 
   professional: {
@@ -113,7 +113,7 @@ function updateFormData(part, data) {
     [FormParts.ProfessionalVolunteer]: () => (formData.value.professional = data)
   }
 
-    updateMapping[part]()
+  updateMapping[part]()
 }
 
 function handleConfirm() {
@@ -198,16 +198,16 @@ onMounted(async () => {
       return filteredObj
     }*/
 
-  const {
-    volunteer_personal_information,
-    volunteer_contact_information,
-    volunteer_emergency_contact,
-    volunteer_availability,
-    volunteer_specialization,
-    student_volunteer,
-    professional_volunteer,
-    //...identity
-  } = volunteer
+    const {
+      volunteer_personal_information,
+      volunteer_contact_information,
+      volunteer_emergency_contact,
+      volunteer_availability,
+      volunteer_specialization,
+      student_volunteer,
+      professional_volunteer
+      //...identity
+    } = volunteer
 
     //initialData.Volunteer = filterObject(identity)
     initialData.volunteerHeader = filterObject(volunteer)
@@ -233,7 +233,7 @@ onMounted(async () => {
 <template>
   <ContentPane :header="`Volunteers / ${headerText}`" subheader="Academic Year 2022 - 2023">
     <div class="flex flex-col gap-3 h-full mr-1">
-      <AdmitVolunteerHeader 
+      <AdmitVolunteerHeader
         @dataChanged="updateFormData"
         :Volunteer="formData.volunteerHeader"
         :volunteerIdCopy="volunteerIdCopy"
@@ -264,4 +264,3 @@ onMounted(async () => {
     </div>
   </ContentPane>
 </template>
-

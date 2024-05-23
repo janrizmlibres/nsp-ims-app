@@ -8,8 +8,8 @@ import { ref } from 'vue'
 const props = defineProps(['globalFilter'])
 const filter = ref(props.globalFilter)
 
-async function goToAddStaffview() {
-  await router.push({ name: 'add-staff' })
+async function goToAddUserView() {
+  await router.push({ name: 'add-user' })
 }
 </script>
 
@@ -23,7 +23,7 @@ async function goToAddStaffview() {
         />
         <InputText
           v-model="filter"
-          placeholder="Search Staff"
+          placeholder="Search User"
           size="small"
           class="pl-10"
           @update:modelValue="$emit('filterChanged', filter)"
@@ -33,7 +33,7 @@ async function goToAddStaffview() {
         icon="fa-solid fa-user-plus"
         aria-label="Submit"
         class="ml-2 h-10"
-        @click="goToAddStaffview"
+        @click="goToAddUserView"
       />
       <Button label="Export Data" icon="fa-solid fa-file-export" class="ml-2 h-10" />
     </div>

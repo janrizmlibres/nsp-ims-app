@@ -48,7 +48,7 @@ const Permission = sequelize.define("permission", {
     allowNull: false,
     defaultValue: false,
   },
-  canMgStaff: {
+  canMgUser: {
     type: BOOLEAN,
     allowNull: false,
     defaultValue: false,
