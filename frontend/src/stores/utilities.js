@@ -161,6 +161,16 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         })
     }
 
+    async function countClassLevels() {
+        const authStore = useAuthStore()
+
+        const response = await axios.get('http://localhost:8080/utilities/count-class-levels', {
+            headers: { Authorization: 'Bearer ' + authStore.token }
+        })
+
+        return response.data
+    }
+
     return {
         terms,
         visibleAddTermDialog,
@@ -188,6 +198,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         getCategories,
         showHideAddCategoryDialog,
         updateCategory,
-        deleteCategory
+        deleteCategory,
+        countClassLevels
     }
 })

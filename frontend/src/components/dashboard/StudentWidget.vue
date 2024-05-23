@@ -35,9 +35,9 @@ export default {
         <div class="widget-title">{{ widgetTitle }}</div>
         <div class="gender-container">
           <div class="male-icon"></div>
-          <div class="male-text">Male</div>
+          <div class="male-text">Male ({{ seriesData[1] }})</div>
           <div class="female-icon"></div>
-          <div class="female-text">Female</div>
+          <div class="female-text">Female ({{ seriesData[0] }})</div>
         </div>
         <div class="total-container">
           <div class="total-text">{{ totalText }}</div>
@@ -138,6 +138,7 @@ export default {
 .male-icon {
   margin-top: 7px;
   margin-left: 60px;
+  margin-right: 5px;
   width: 10px;
   height: 10px;
   background-color: #265492;
@@ -146,6 +147,7 @@ export default {
 .female-icon {
   margin-top: 7px;
   margin-left: 40px;
+  margin-right: 5px;
   width: 10px;
   height: 10px;
   background-color: #bf9039;

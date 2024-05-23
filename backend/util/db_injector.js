@@ -126,7 +126,263 @@ export async function injectStudent() {
     province: "Misamis Oriental",
     studentId: student2.id,
   });
+  const student3 = await Student.create({
+    lrn: "1242312145189",
+    lastName: "Dela Cruz",
+    firstName: "Juan",
+    category: "Out-of-School Youth",
+  });
 
+  await PersonalInfo.create({
+    birthday: new Date(),
+    bloodType: "O+",
+    birthBarangay: "Iponan",
+    birthCity: "New York City",
+    birthProvince: "Misamis Oriental",
+    religion: "Roman Catholic",
+    sex: "F",
+    civilStatus: "Single",
+    homeBlkLtSt: "Lackadaisy Hotel",
+    homeBarangay: "St. Missouri",
+    homeCity: "New York City",
+    homeProvince: "Misamis Oriental",
+    studentId: student3.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09123456789",
+    studentId: student3.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Mitzi",
+    lastName: "May",
+    contactNum: "09987654321",
+    relationship: "Spouse",
+    studentId: student3.id,
+  });
+
+  await PreviousSchool.create({
+    name: "St. Larlar Musician School",
+    schoolType: "Private",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "1920-1921",
+    highestEducation: "Secondary education",
+    gradeStopped: "Grade 10",
+    reason: "Sleeps anywhere",
+    street: "Marigold St.",
+    barangay: "Balulang",
+    city: "Cagayan de Oro City",
+    province: "Misamis Oriental",
+    studentId: student3.id,
+  });
+  const student4 = await Student.create({
+    lrn: "1242312145145",
+    lastName: "Bautista",
+    firstName: "Felix",
+    middleName: "Polso",
+    category: "Out-of-School Youth",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date(),
+    bloodType: "O+",
+    birthBarangay: "Iponan",
+    birthCity: "New York City",
+    birthProvince: "Misamis Oriental",
+    religion: "Roman Catholic",
+    sex: "M",
+    civilStatus: "Single",
+    homeBlkLtSt: "Lackadaisy Hotel",
+    homeBarangay: "St. Missouri",
+    homeCity: "New York City",
+    homeProvince: "Misamis Oriental",
+    studentId: student4.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09123456789",
+    studentId: student4.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Mitzi",
+    lastName: "May",
+    contactNum: "09987654321",
+    relationship: "Spouse",
+    studentId: student4.id,
+  });
+
+  await PreviousSchool.create({
+    name: "St. Larlar Musician School",
+    schoolType: "Private",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "1920-1921",
+    highestEducation: "Secondary education",
+    gradeStopped: "Grade 10",
+    reason: "Sleeps anywhere",
+    street: "Marigold St.",
+    barangay: "Balulang",
+    city: "Cagayan de Oro City",
+    province: "Misamis Oriental",
+    studentId: student4.id,
+  });
+  const student5 = await Student.create({
+    lrn: "1242312145714",
+    lastName: "Santos",
+    firstName: "Dominic",
+    middleName: "Dicolano",
+    category: "Out-of-School Youth",
+    sex: "F",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date(),
+    bloodType: "O+",
+    birthBarangay: "Iponan",
+    birthCity: "New York City",
+    birthProvince: "Misamis Oriental",
+    religion: "Roman Catholic",
+    sex: "F",
+    civilStatus: "Single",
+    homeBlkLtSt: "Lackadaisy Hotel",
+    homeBarangay: "St. Missouri",
+    homeCity: "New York City",
+    homeProvince: "Misamis Oriental",
+    studentId: student5.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09123456789",
+    studentId: student5.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Mitzi",
+    lastName: "May",
+    contactNum: "09987654321",
+    relationship: "Spouse",
+    studentId: student5.id,
+  });
+
+  await PreviousSchool.create({
+    name: "St. Larlar Musician School",
+    schoolType: "Private",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "1920-1921",
+    highestEducation: "Secondary education",
+    gradeStopped: "Grade 10",
+    reason: "Sleeps anywhere",
+    street: "Marigold St.",
+    barangay: "Balulang",
+    city: "Cagayan de Oro City",
+    province: "Misamis Oriental",
+    studentId: student5.id,
+  });
+
+  const student6 = await Student.create({
+    lrn: "1242562145189",
+    lastName: "Fulminar",
+    firstName: "Ashley",
+    middleName: "De Guzman",
+    category: "Out-of-School Youth",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date(),
+    bloodType: "O+",
+    birthBarangay: "Iponan",
+    birthCity: "New York City",
+    birthProvince: "Misamis Oriental",
+    religion: "Roman Catholic",
+    sex: "M",
+    civilStatus: "Single",
+    homeBlkLtSt: "Lackadaisy Hotel",
+    homeBarangay: "St. Missouri",
+    homeCity: "New York City",
+    homeProvince: "Misamis Oriental",
+    studentId: student6.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09123456789",
+    studentId: student6.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Mitzi",
+    lastName: "May",
+    contactNum: "09987654321",
+    relationship: "Spouse",
+    studentId: student6.id,
+  });
+
+  await PreviousSchool.create({
+    name: "St. Larlar Musician School",
+    schoolType: "Private",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "1920-1921",
+    highestEducation: "Secondary education",
+    gradeStopped: "Grade 10",
+    reason: "Sleeps anywhere",
+    street: "Marigold St.",
+    barangay: "Balulang",
+    city: "Cagayan de Oro City",
+    province: "Misamis Oriental",
+    studentId: student6.id,
+  });
+
+  const student7 = await Student.create({
+    lrn: "1247192145189",
+    lastName: "Alonto",
+    firstName: "Princess Aliah",
+    category: "Out-of-School Youth",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date(),
+    bloodType: "O+",
+    birthBarangay: "Iponan",
+    birthCity: "New York City",
+    birthProvince: "Misamis Oriental",
+    religion: "Roman Catholic",
+    sex: "M",
+    civilStatus: "Single",
+    homeBlkLtSt: "Lackadaisy Hotel",
+    homeBarangay: "St. Missouri",
+    homeCity: "New York City",
+    homeProvince: "Misamis Oriental",
+    studentId: student7.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09123456789",
+    studentId: student7.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Mitzi",
+    lastName: "May",
+    contactNum: "09987654321",
+    relationship: "Spouse",
+    studentId: student7.id,
+  });
+
+  await PreviousSchool.create({
+    name: "St. Larlar Musician School",
+    schoolType: "Private",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "1920-1921",
+    highestEducation: "Secondary education",
+    gradeStopped: "Grade 10",
+    reason: "Sleeps anywhere",
+    street: "Marigold St.",
+    barangay: "Balulang",
+    city: "Cagayan de Oro City",
+    province: "Misamis Oriental",
+    studentId: student7.id,
+  });
+  
   // const studentData = [
   //   {
   //     lrn: 1242312145189,

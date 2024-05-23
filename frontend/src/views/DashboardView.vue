@@ -7,10 +7,12 @@ import BarChart from "@/components/dashboard/BarChart.vue";
 import LineChart from "@/components/dashboard/LineChart.vue";
 
 import { useSidebarStore } from '@/stores/sidebar.js';
-import { useStudentsStore } from '@/stores/students'
+import { useStudentsStore } from '@/stores/students';
+import { useUtilitiesStore } from '@/stores/utilities';
 
 const studentsStore = useStudentsStore();
 const sidebarStore = useSidebarStore();
+const utilitiesStore = useUtilitiesStore();
 
 const isSidebarHovering = computed(() => sidebarStore.isHovering);
 const isSidebarPinned = computed(() => sidebarStore.isPinned);
@@ -18,9 +20,15 @@ const isSidebarPinned = computed(() => sidebarStore.isPinned);
 let totalStudents = ref(0);
 let maleStudents = ref(0);
 let femaleStudents = ref(0);
+let gradeSchool = ref(0);
+let juniorHighSchool = ref(0);
 
 onMounted(async () => {
   const genderCount = await studentsStore.getGenderCount();
+  const classLevelsCount = await utilitiesStore.countClassLevels();
+
+  gradeSchool.value = classLevelsCount.gradeSchoolCount;
+  juniorHighSchool.value = classLevelsCount.juniorHighSchoolCount;
   maleStudents.value = genderCount.data.maleCount;
   femaleStudents.value = genderCount.data.femaleCount;
   totalStudents.value = maleStudents.value + femaleStudents.value;
@@ -38,26 +46,26 @@ onMounted(async () => {
         <StudentWidget 
           v-if="maleStudents && femaleStudents"
           class="student-widget-" 
-          :seriesData="[maleStudents, femaleStudents]" 
+          :seriesData="[femaleStudents, maleStudents]" 
           widgetTitle="STUDENTS" 
           :totalText= totalStudents.toString() />
         <StudentWidget 
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
-          :seriesData="[30, 70]" 
-          widgetTitle="ELEMENTARY" 
-          totalText="60" />
+          :seriesData="[1, 1]" 
+          widgetTitle="GRADE SCHOOL" 
+          :totalText= gradeSchool.toString() />
         <StudentWidget 
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 52.5rem; --translate-y: -21.25rem`"
-          :seriesData="[80, 20]" 
+          :seriesData="[1, 1]" 
           widgetTitle="JUNIOR HIGH" 
-          totalText="120" />
+          :totalText= juniorHighSchool.toString() />
         <StudentWidget
         :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
         :style="`--translate-x: 78.75rem; --translate-y: -31.875rem`"
-          :seriesData="[60, 40]" 
-          widgetTitle="ACTIVE LEARNERS" 
+          :seriesData="[1, 1]" 
+          widgetTitle="ACTIVE STUDENTS" 
           totalText="180" />
     </div>
     <div class="charts">
@@ -65,7 +73,9 @@ onMounted(async () => {
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-line-chart' : 'line-chart'"
           :style="`--initial-x: 28.125rem; --initial-y: 0.9375rem; --translate-x: 53.125rem; --translate-y: 13.125rem;`" />
       <BarChart 
+          v-if="totalStudents"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-bar-chart' : 'bar-chart'"
+          :chartData="[totalStudents, gradeSchool, juniorHighSchool, 0]"
           :style="`--initial-x: 28.125rem; --initial-y: 2.125rem; --translate-x: 0.625rem; --translate-y: -6.9375rem;`" />
     </div>
   </ContentPane>
