@@ -145,4 +145,6 @@ router.put("/update-volunteer/:id",
     professionalValidator,
     volunteerController.updateVolunteer);
 
+router.delete("/delete-volunteer/:id", isAuth, volunteerController.deleteVolunteer);
+
 export default router;

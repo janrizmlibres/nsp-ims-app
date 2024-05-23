@@ -10,6 +10,12 @@ import { useVolunteerStore } from '@/stores/volunteer';
 import { ref, onMounted } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
 
+import ConfirmDialog from 'primevue/confirmdialog';
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
+
+const confirm = useConfirm();
+const toast = useToast();
 const volunteerStore = useVolunteerStore();
 
 const filters = ref({
@@ -17,7 +23,6 @@ const filters = ref({
 });
 
 const columns = ref([
-  { field: 'id', header: 'Database ID' },
   { field: 'volunteerId', header: 'Volunteer ID' },
   { field: 'fullname', header: 'Full Name' },
   { field: 'volunteer_personal_information.sex', header: 'Sex'},
@@ -28,6 +33,31 @@ const columns = ref([
 const updateGlobalFilter = (newValue) => {
   filters.value.global.value = newValue
 };
+
+const confirmDelete = (id) => {
+    confirm.require({
+        message: 'Do you want to delete this record?',
+        header: 'Danger Zone',
+        icon: 'pi pi-info-circle',
+        rejectLabel: 'Cancel',
+        acceptLabel: 'Delete',
+        rejectClass: 'p-button-secondary p-button-outlined',
+        acceptClass: 'p-button-danger',
+        accept: () => {
+            handleDelete(id)
+            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
+        }
+    });
+};
+
+async function handleDelete(id) {
+  try {
+    volunteerStore.deleteVolunteer(id);
+    window.location.reload();
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 onMounted(async () => {
   try{
@@ -55,6 +85,7 @@ onMounted(async () => {
             <RouterLink :to="{ name: 'view-volunteer', params: { id: slotProps.data.id } }">
               <Button class="h-8" label="View" icon="fa-solid fa-eye" outlined />
             </RouterLink>
+            <Button severity="danger" class="h-8 ml-2" label="Delete" icon="pi pi-trash" outlined @click="confirmDelete(slotProps.data.id)"/>
           </div>
         </template>
       </Column>

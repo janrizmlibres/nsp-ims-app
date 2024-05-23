@@ -12,6 +12,7 @@ import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js
 export async function getAllVolunteers(req, res, next) {
   try {
     const volunteers = await Volunteer.findAll({
+      where: { isArchived: false },
       include: [VolunteerPersonalInformation, 
                 VolunteerContactInformation, 
                 VolunteerSpecialization,
@@ -211,6 +212,26 @@ export async function updateVolunteer(req, res, next) {
     }
 
     res.status(200).json({ message: "Volunteer information updated!" });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
+export async function deleteVolunteer(req, res, next) {
+  const id = req.params.id;
+  try {
+    const volunteer = await Volunteer.findByPk(id);
+    if (!volunteer) {
+      const error = new Error("Could not find volunteer.");
+      error.statusCode = 404;
+      throw error;
+    }
+    volunteer.isArchived = true;
+    await volunteer.save();
+    res.status(200).json({ message: "Volunteer archived." });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
