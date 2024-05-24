@@ -80,6 +80,7 @@ async function updateSchedule() {
             })
 
             onSubmit(schedule.value.classLevelId) 
+            editScheduleDialogState.value = false
 
             try {
                 await staffsStore.addAudit(
@@ -148,11 +149,11 @@ onBeforeRouteLeave(() => {
         </div>
         <div class="flex flex-col gap-4 mb-4">
             <label>Start Time</label>
-            <Calendar id="calendar-timeonly" v-model="startTime" timeOnly hourFormat="12" :invalid="invalid" iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+            <Calendar id="calendar-timeonly" v-model="startTime" timeOnly hourFormat="12" :invalid="invalid" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" @update:modelValue="invalid = false" />
         </div>
         <div class="flex flex-col gap-4 mb-4">
             <label>End Time</label>
-            <Calendar id="calendar-timeonly" v-model="endTime" timeOnly hourFormat="12" :invalid="invalid" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
+            <Calendar id="calendar-timeonly" v-model="endTime" timeOnly hourFormat="12" :invalid="invalid" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" @update:modelValue="invalid = false" />
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" label="Update" :disabled="disableUpdate" outlined rounded @click="updateSchedule"></Button>
