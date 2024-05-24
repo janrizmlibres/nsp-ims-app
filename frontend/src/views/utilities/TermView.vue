@@ -75,7 +75,7 @@ const onRowEditSave = async (event) => {
             toast.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Unexpected error encountered. Please try again.',
+              detail: 'Unexpected error encountered. Please refresh this page.',
               life: 3000
             })
         }
@@ -89,7 +89,7 @@ onMounted(async () => {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: 'Unexpected error encountered. Please try again.',
+      detail: 'Unexpected error encountered. Please refresh this page.',
       life: 3000
     })
   }

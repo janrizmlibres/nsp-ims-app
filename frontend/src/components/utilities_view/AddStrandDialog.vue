@@ -14,77 +14,77 @@ const code = ref(null);
 const name = ref(null);
 
 async function addLearningStrand() {
-    if (!code.value.trim() || !name.value.trim()) {
-        toast.add({
-            severity: 'error',
-            summary: 'Incomplete Form',
-            detail: "The fields cannot be empty. Please ensure all fields are filled.",
-            life: 3000
-        })
-        return
-    }
+    try {        
+        if (!code.value.trim() || !name.value.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "The fields cannot be empty. Please ensure all fields are filled.",
+                life: 3000
+            })
+            return
+        }
 
-    if (strandStore.strands.some(strand => strand.code === code.value.trim())) {
-        toast.add({
-            severity: 'error',
-            summary: 'Duplicate Code',
-            detail: "Please provide a unique code.",
-            life: 3000
-        })
-        return
-    }
+        if (strandStore.strands.some(strand => strand.code === code.value.trim())) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Code',
+                detail: "Please provide a unique code.",
+                life: 3000
+            })
+            return
+        }
 
-    if (strandStore.strands.some(strand => strand.name === name.value.trim())) {
-        toast.add({
-            severity: 'error',
-            summary: 'Duplicate Name',
-            detail: "Please provide a unique name.",
-            life: 3000
-        })
-        return
-    }
+        if (strandStore.strands.some(strand => strand.name === name.value.trim())) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Name',
+                detail: "Please provide a unique name.",
+                life: 3000
+            })
+            return
+        }
     
-    if (code.value.trim().length > 25) {
-        toast.add({
-            severity: 'error',
-            summary: 'Code Too Long',
-            detail: 'It should not exceed 25 characters.',
-            life: 3000
-        })
-        return
-    }
+        if (code.value.trim().length > 25) {
+            toast.add({
+                severity: 'error',
+                summary: 'Code Too Long',
+                detail: 'It should not exceed 25 characters.',
+                life: 3000
+            })
+            return
+        }
 
-    if (name.value.trim().length > 100) {
-        toast.add({
-            severity: 'error',
-            summary: 'Name Too Long',
-            detail: 'It should not exceed 100 characters.',
-            life: 3000
-        })
-        return
-    }
+        if (name.value.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Name Too Long',
+                detail: 'It should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
 
-    if (code.value.trim().length < 3) {
-        toast.add({
-            severity: 'error',
-            summary: 'Code Too Short',
-            detail: 'It should be at least 3 characters long.',
-            life: 3000
-        })
-        return
-    }
+        if (code.value.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Code Too Short',
+                detail: 'It should be at least 3 characters long.',
+                life: 3000
+            })
+            return
+        }
 
-    if (name.value.trim().length < 3) {
-        toast.add({
-            severity: 'error',
-            summary: 'Name Too Short',
-            detail: 'It should be at least 3 characters long.',
-            life: 3000
-        })
-        return
-    }
+        if (name.value.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Name Too Short',
+                detail: 'It should be at least 3 characters long.',
+                life: 3000
+            })
+            return
+        }
 
-    try {
         await strandStore.addLearningStrand({
             code: code.value.trim(),
             name: name.value.trim()
@@ -102,7 +102,7 @@ async function addLearningStrand() {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered. Please try again.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }

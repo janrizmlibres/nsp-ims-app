@@ -13,47 +13,47 @@ const requirementStore = useUtilitiesStore()
 const name = ref(null);
 
 async function addRequirement() {
-    if (!name.value.trim()) {
-        toast.add({
-            severity: 'error',
-            summary: 'Incomplete Form',
-            detail: "The field cannot be empty. Please provide a student requirement.",
-            life: 3000
-        })
-        return
-    }
+    try {  
+        if (!name.value.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "The field cannot be empty. Please provide a student requirement.",
+                life: 3000
+            })
+            return
+        }
 
-    if (requirementStore.requirements.some(requirement => requirement.requirement_name === name.value.trim())) {
-        toast.add({
-            severity: 'error',
-            summary: 'Duplicate Requirement',
-            detail: "Please provide a unique student requirement.",
-            life: 3000
-        })
-        return
-    }
+        if (requirementStore.requirements.some(requirement => requirement.requirement_name === name.value.trim())) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Requirement',
+                detail: "Please provide a unique student requirement.",
+                life: 3000
+            })
+            return
+        }
 
-    if (name.value.trim().length > 100) {
-        toast.add({
-            severity: 'error',
-            summary: 'Requirement Too Long',
-            detail: 'The requirement should not exceed 100 characters.',
-            life: 3000
-        })
-        return
-    }
+        if (name.value.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Requirement Too Long',
+                detail: 'The requirement should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
 
-    if (name.value.trim().length < 3) {
-        toast.add({
-            severity: 'error',
-            summary: 'Requirement Too Short',
-            detail: 'The requirement should be at least 3 characters.',
-            life: 3000
-        })
-        return
-    }
-    
-    try {
+        if (name.value.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Requirement Too Short',
+                detail: 'The requirement should be at least 3 characters.',
+                life: 3000
+            })
+            return
+        }
+
         await requirementStore.addRequirement({
             requirement_name: name.value.trim()
         })
@@ -70,7 +70,7 @@ async function addRequirement() {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered. Please try again.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }

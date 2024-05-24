@@ -13,47 +13,47 @@ const categoryStore = useUtilitiesStore()
 const name = ref(null);
 
 async function addCategory() {
-    if (!name.value.trim()) {
-        toast.add({
-            severity: 'error',
-            summary: 'Incomplete Form',
-            detail: "The field cannot be empty. Please provide a student category.",
-            life: 3000
-        })
-        return
-    }
+    try {  
+        if (!name.value.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "The field cannot be empty. Please provide a student category.",
+                life: 3000
+            })
+            return
+        }
 
-    if (categoryStore.categories.some(category => category.category_name === name.value.trim())) {
-        toast.add({
-            severity: 'error',
-            summary: 'Duplicate Category',
-            detail: "Please provide a unique student category.",
-            life: 3000
-        })
-        return
-    }
+        if (categoryStore.categories.some(category => category.category_name === name.value.trim())) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Category',
+                detail: "Please provide a unique student category.",
+                life: 3000
+            })
+            return
+        }
 
-    if (name.value.trim().length > 100) {
-        toast.add({
-            severity: 'error',
-            summary: 'Category Too Long',
-            detail: 'The category should not exceed 100 characters.',
-            life: 3000
-        })
-        return
-    }
+        if (name.value.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Category Too Long',
+                detail: 'The category should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
 
-    if (name.value.trim().length < 3) {
-        toast.add({
-            severity: 'error',
-            summary: 'Category Too Short',
-            detail: 'The category should be at least 3 characters.',
-            life: 3000
-        })
-        return
-    }
-    
-    try {
+        if (name.value.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Category Too Short',
+                detail: 'The category should be at least 3 characters.',
+                life: 3000
+            })
+            return
+        }
+
         await categoryStore.addCategory({
             category_name: name.value.trim()
         })
@@ -70,7 +70,7 @@ async function addCategory() {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered. Please try again.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }

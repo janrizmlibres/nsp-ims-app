@@ -23,7 +23,7 @@ onMounted(async () => {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     } 
@@ -44,7 +44,7 @@ async function deleteLearningStrand(id) {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }
@@ -153,7 +153,7 @@ const onRowEditSave = async (event) => {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Unexpected error encountered. Please try again.',
+                detail: 'Unexpected error encountered. Please refresh this page.',
                 life: 3000
             })
         }
