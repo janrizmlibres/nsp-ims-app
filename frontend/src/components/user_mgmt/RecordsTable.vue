@@ -47,6 +47,7 @@ onMounted(() => emit('dtReferred', dt.value))
             label="Change Pasword"
             icon="fa-solid fa-key"
             outlined
+            raised
             size="small"
             @click="$emit('emitClick', slotProps.data.id, slotProps.data.fullname)"
           />

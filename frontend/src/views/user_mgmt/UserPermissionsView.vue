@@ -124,8 +124,8 @@ onMounted(async () => {
           removableSort
           :ptOptions="{ mergeProps: true }"
         >
-          <template #empty> No users found. </template>
-          <template #loading> Loading users data. Please wait. </template>
+          <template #empty> No staff found. </template>
+          <template #loading> Loading staff data. Please wait. </template>
 
           <Column field="id" header="User ID" sortable></Column>
           <Column field="fullname" header="Full Name" sortable> </Column>
