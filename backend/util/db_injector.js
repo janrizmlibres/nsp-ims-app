@@ -210,44 +210,44 @@ export async function injectStudent() {
   //   })
   // );
 
-  // function getRandomStatus() {
-  //   let status = ["Inactive", "Active", "Drop"];
-  //   return status[Math.floor(Math.random() * 2)];
-  // }
+  function getRandomStatus() {
+    let status = ["Inactive", "Active", "Drop"];
+    return status[Math.floor(Math.random() * 2)];
+  }
 
-  // function getRegularity() {
-  //   let status = ["Regular", "Hybrid"];
-  //   return status[Math.floor(Math.random() * 2)];
-  // }
+  function getRegularity() {
+    let status = ["Regular", "Hybrid"];
+    return status[Math.floor(Math.random() * 2)];
+  }
 
-  // const students = await Student.findAll();
+  const students = await Student.findAll();
 
-  // await Promise.all(
-  //   students.map(async (student) => {
-  //     const class_levels = await ClassLevel.findAll();
-  //     await Promise.all(
-  //       class_levels.map(async (class_level) => {
-  //         const enrollment = await class_level.addStudent(student, {
-  //           through: {
-  //             hasEnrollmentForm: true,
-  //             status: getRandomStatus(),
-  //             regularity: getRegularity(),
-  //           },
-  //         });
+  await Promise.all(
+    students.map(async (student) => {
+      const class_levels = await ClassLevel.findAll();
+      await Promise.all(
+        class_levels.map(async (class_level) => {
+          const enrollment = await class_level.addStudent(student, {
+            through: {
+              hasEnrollmentForm: true,
+              status: getRandomStatus(),
+              regularity: getRegularity(),
+            },
+          });
 
-  //         const classLearningStrands = await ClassLearningStrand.findAll({
-  //           where: { classLevelId: class_level.id },
-  //         });
+          const classLearningStrands = await ClassLearningStrand.findAll({
+            where: { classLevelId: class_level.id },
+          });
 
-  //         await Promise.all(
-  //           classLearningStrands.map(async (classLearningStrand) => {
-  //             classLearningStrand.addEnrollment(enrollment);
-  //           })
-  //         );
-  //       })
-  //     );
-  //   })
-  // );
+          await Promise.all(
+            classLearningStrands.map(async (classLearningStrand) => {
+              classLearningStrand.addEnrollment(enrollment);
+            })
+          );
+        })
+      );
+    })
+  );
 }
 
 export async function injectStaff() {
