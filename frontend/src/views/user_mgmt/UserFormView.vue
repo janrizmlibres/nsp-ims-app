@@ -46,26 +46,28 @@ function updateData(data) {
 }
 
 async function submitData() {
-  if (formData.value.password !== formData.value.confirmPass) {
-    confirm.require({
-      group: 'user-headless',
-      header: 'Passwords Do Not Match',
-      message: 'Please reconfirm your password',
-      acceptLabel: 'OK',
-      icon: 'fa-solid fa-not-equal'
-    })
-    return
-  }
+  if (isEditView.value) {
+    if (formData.value.password !== formData.value.confirmPass) {
+      confirm.require({
+        group: 'user-headless',
+        header: 'Passwords Do Not Match',
+        message: 'Please reconfirm your password',
+        acceptLabel: 'OK',
+        icon: 'fa-solid fa-not-equal'
+      })
+      return
+    }
 
-  if (formData.value.password.length < 8) {
-    confirm.require({
-      group: 'user-headless',
-      header: 'Password Requirements Not Met',
-      message: 'Password must be at least 8 characters long',
-      acceptLabel: 'OK',
-      icon: 'fa-solid fa-shield-halved'
-    })
-    return
+    if (formData.value.password.length < 8) {
+      confirm.require({
+        group: 'user-headless',
+        header: 'Password Requirements Not Met',
+        message: 'Password must be at least 8 characters long',
+        acceptLabel: 'OK',
+        icon: 'fa-solid fa-shield-halved'
+      })
+      return
+    }
   }
 
   try {

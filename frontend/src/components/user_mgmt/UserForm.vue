@@ -91,7 +91,7 @@ const confirmPassInvalid = computed(() => formData.password !== formData.confirm
             v-model="formData.password"
             toggleMask
             class="grow h-10"
-            required
+            :required="isEditView"
             @change="$emit('dataChanged', formData)"
           >
             <template #header>
@@ -119,7 +119,7 @@ const confirmPassInvalid = computed(() => formData.password !== formData.confirm
           <Password
             class="grow h-10"
             v-model="formData.confirmPass"
-            required
+            :required="isEditView"
             :feedback="false"
             toggleMask
             :invalid="confirmPassInvalid"
