@@ -16,6 +16,77 @@ describe('Volunteer Controller', () => {
     sinon.restore();
   });
 
+  describe('getVolunteer', () => {
+  it('should get a volunteer by ID', async () => {
+    const req = mockRequest({ params: { id: 231 } });
+    const res = mockResponse();
+    const next = sinon.spy();
+
+    const mockVolunteer = {
+      volunteerHeader: {
+        volunteerId: 231,
+        affiliation: "Student",
+        firstName: "Michael",
+        middleName: null,
+        lastName: "Jackson",
+        suffix: null
+      },
+      personalInformation: {
+        nickname: "mike",
+        birthday: new Date(1990, 11, 30),
+        sex: "M",
+        housing: "15-26 Street",
+        barangay: "Carmen",
+        city: "Cagayan de Oro City",
+        province: "Misamis Oriental"
+      },
+      contactInformation: {
+        contactNumber: "+639161371327",
+        email: "michael_jackson@gmail.com"
+      },
+      emergency: {
+        contactName: "Janet Jackson",
+        contactNumber: "+639161371327",
+        relationship: "Mother"
+      },
+      availability: {
+        day: "M, F"
+      },
+      specialization: {
+        area: "LS1-E"
+      },
+      student: {
+        program: "BSCS",
+        year: "3rd"
+      },
+      professional: {
+        work: "Programmer"
+      }
+    }; // Mock volunteer data
+
+    sinon.stub(Volunteer, 'findByPk').returns(Promise.resolve(mockVolunteer));
+
+    await volunteerController.getVolunteer(req, res, next);
+    assert.calledWith(res.status, 200);
+    assert.calledWith(res.json, {
+      message: "Volunteer fetched.",
+      volunteer: mockVolunteer,
+    });
+  });
+
+  it('should handle errors', async () => {
+    const req = mockRequest({ params: { id: 231 } });
+    const res = mockResponse();
+    const next = sinon.spy();
+    const error = new Error('Test error');
+
+    sinon.stub(Volunteer, 'findByPk').returns(Promise.reject(error));
+
+    await volunteerController.getVolunteer(req, res, next);
+    assert.calledWith(next, error);
+  });
+});
+
   describe('addVolunteer', () => {
   it('should add a volunteer', async () => {
     const req = mockRequest({
