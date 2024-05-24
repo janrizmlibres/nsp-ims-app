@@ -3,7 +3,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
@@ -12,6 +12,8 @@ const strandStore = useUtilitiesStore()
 
 const code = ref(null);
 const name = ref(null);
+
+const isInvalid = computed(() => !code.value || !name.value)
 
 async function addLearningStrand() {
     try {        
@@ -129,6 +131,7 @@ async function addLearningStrand() {
                 type="button"
                 label="Create"
                 icon="fa-solid fa-plus"
+                :disabled="isInvalid"
                 @click="addLearningStrand"
                 :pt="{
                     root: ({ props, context, parent }) => ({

@@ -3,7 +3,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
@@ -12,8 +12,10 @@ const requirementStore = useUtilitiesStore()
 
 const name = ref(null);
 
+const isInvalid = computed(() => !name.value)
+
 async function addRequirement() {
-    try {  
+        try {  
         if (!name.value.trim()) {
             toast.add({
                 severity: 'error',
@@ -92,6 +94,7 @@ async function addRequirement() {
                 type="button"
                 label="Create"
                 icon="fa-solid fa-plus"
+                :disabled="isInvalid"
                 @click="addRequirement"
                 :pt="{
                     root: ({ props, context, parent }) => ({

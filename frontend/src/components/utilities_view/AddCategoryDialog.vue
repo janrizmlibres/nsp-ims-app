@@ -3,7 +3,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
@@ -11,6 +11,8 @@ const toast = useToast()
 const categoryStore = useUtilitiesStore()
 
 const name = ref(null);
+
+const isInvalid = computed(() => !name.value)
 
 async function addCategory() {
     try {  
@@ -92,6 +94,7 @@ async function addCategory() {
                 type="button"
                 label="Create"
                 icon="fa-solid fa-plus"
+                :disabled="isInvalid"
                 @click="addCategory"
                 :pt="{
                     root: ({ props, context, parent }) => ({

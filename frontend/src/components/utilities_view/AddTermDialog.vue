@@ -3,7 +3,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Calendar from 'primevue/calendar';
 import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
@@ -11,6 +11,8 @@ const toast = useToast()
 const termStore = useUtilitiesStore()
 
 const dates = ref(null);
+
+const isInvalid = computed(() => !dates.value || Object.values(dates.value).some((element) => element === null))
 
 async function addTerm() {
     try {        
@@ -104,6 +106,7 @@ async function addTerm() {
                 type="button"
                 label="Create"
                 icon="fa-solid fa-plus"
+                :disabled="isInvalid"
                 @click="addTerm"
                 :pt="{
                     root: ({ props, context, parent }) => ({
