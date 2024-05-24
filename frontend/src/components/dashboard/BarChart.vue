@@ -39,7 +39,7 @@ export default {
           align: 'center'
         },
         xaxis: {
-          categories: ['Students', 'Grade School', 'Junior High School', 'Active Learners'
+          categories: ['Students', 'Grade School', 'Junior High School', 'Active Students', 'Inactive Students'
           ],
         },
       },

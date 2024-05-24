@@ -10,10 +10,8 @@ export default {
         apexchart: VueApexCharts,
     },
     props: {
-        seriesData: {
-            type: Array,
-            required: true
-        }
+        seriesData: Array,
+        labelsData: Array
     },
     data() {
         return {
@@ -39,7 +37,7 @@ export default {
                 legend: {
                     show: false
                 },
-                labels: ['Female', 'Male'],
+                labels: this.labelsData,
             }
         }
     }

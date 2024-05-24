@@ -22,6 +22,9 @@ let maleStudents = ref(0);
 let femaleStudents = ref(0);
 let gradeSchool = ref(0);
 let juniorHighSchool = ref(0);
+let totalClassLevels = ref(0);
+let activeStudents = ref(6);
+let inactiveStudents = ref(8);
 
 onMounted(async () => {
   const genderCount = await studentsStore.getGenderCount();
@@ -32,6 +35,7 @@ onMounted(async () => {
   maleStudents.value = genderCount.data.maleCount;
   femaleStudents.value = genderCount.data.femaleCount;
   totalStudents.value = maleStudents.value + femaleStudents.value;
+  totalClassLevels.value = gradeSchool.value + juniorHighSchool.value;
 
 });
 </script>
@@ -47,26 +51,40 @@ onMounted(async () => {
           v-if="maleStudents && femaleStudents"
           class="student-widget-" 
           :seriesData="[femaleStudents, maleStudents]" 
+          :labelsData="['Female', 'Male']" 
           widgetTitle="STUDENTS" 
-          :totalText= totalStudents.toString() />
-        <StudentWidget 
+          :totalText= totalStudents.toString()
+          Data1= "Male"
+          Data2= "Female" />
+        <StudentWidget
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
-          :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
+          :style="`--translate-x: 78.75rem; --translate-y: -31.875rem`"
           :seriesData="[1, 1]" 
-          widgetTitle="GRADE SCHOOL" 
-          :totalText= gradeSchool.toString() />
+          :labelsData="['Female', 'Male']" 
+          widgetTitle="ACTIVE STUDENTS" 
+          :totalText= "activeStudents.toString()"
+          Data1= "Male"
+          Data2= "Female" />
         <StudentWidget 
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 52.5rem; --translate-y: -21.25rem`"
           :seriesData="[1, 1]" 
-          widgetTitle="JUNIOR HIGH" 
-          :totalText= juniorHighSchool.toString() />
-        <StudentWidget
-        :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
-        :style="`--translate-x: 78.75rem; --translate-y: -31.875rem`"
-          :seriesData="[1, 1]" 
-          widgetTitle="ACTIVE STUDENTS" 
-          totalText="180" />
+          :labelsData="['Female', 'Male']" 
+          widgetTitle="INACTIVE STUDENTS" 
+          :totalText= "inactiveStudents.toString()"
+          Data1= "Male"
+          Data2= "Female" />
+        <StudentWidget 
+          v-if="gradeSchool && juniorHighSchool"
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
+          :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
+          :seriesData="[gradeSchool, juniorHighSchool]" 
+          :labelsData="['Junior High School', 'Grade School']" 
+          widgetTitle="CLASS LEVELS" 
+          :totalText= totalClassLevels.toString()
+          Data1= "GS"
+          Data2= "JHS" />
+        
     </div>
     <div class="charts">
       <LineChart 
@@ -75,7 +93,7 @@ onMounted(async () => {
       <BarChart 
           v-if="totalStudents"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-bar-chart' : 'bar-chart'"
-          :chartData="[totalStudents, gradeSchool, juniorHighSchool, 0]"
+          :chartData="[totalStudents, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]"
           :style="`--initial-x: 28.125rem; --initial-y: 2.125rem; --translate-x: 0.625rem; --translate-y: -6.9375rem;`" />
     </div>
   </ContentPane>
@@ -107,7 +125,7 @@ onMounted(async () => {
     position: absolute;
     display: block;
     top: 10rem;
-    left: 104.600rem;
+    left: 90.600rem;
     z-index: 3;
   }
 

@@ -8,8 +8,18 @@ export default {
   data() {
     return {
       series: [{
-        name: "Students",
-        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+        name: 'Enrollments',
+        data: [
+          { x: '2016', y: 10 },
+          { x: '2017', y: 41 },
+          { x: '2018', y: 35 },
+          { x: '2019', y: 51 },
+          { x: '2020', y: 49 },
+          { x: '2021', y: 62 },
+          { x: '2022', y: 69 },
+          { x: '2023', y: 91 },
+          { x: '2024', y: 148 }
+        ]
       }],
       chartOptions: {
         chart: {
@@ -31,10 +41,21 @@ export default {
         },
         grid: {
           row: {
-            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            colors: ['#f3f3f3', 'transparent'],
             opacity: 0.5
           },
         },
+        xaxis: {
+          type: 'category', // or 'datetime' if your x values are dates
+          title: {
+            text: 'Year'
+          }
+        },
+        yaxis: {
+          title: {
+            text: 'Number of Enrollments'
+          }
+        }
       },
     };
   },

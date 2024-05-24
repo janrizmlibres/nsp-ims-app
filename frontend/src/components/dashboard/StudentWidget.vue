@@ -12,11 +12,23 @@ export default {
       type: Array,
       required: true
     },
+    labelsData: {
+      type: Array,
+      required: true
+    },
     widgetTitle: {
       type: String,
       required: true
     },
     totalText: {
+      type: String,
+      required: true
+    },
+    Data1: {
+      type: String,
+      required: true
+    },
+    Data2: {
       type: String,
       required: true
     }
@@ -29,15 +41,15 @@ export default {
 <template>
   <div class="widget">
     <div class="widget-wrapper">
-      <DoughnutChart class="my-chart" :seriesData="seriesData" />
+      <DoughnutChart class="my-chart" :seriesData="seriesData" :labelsData="labelsData"/>
       <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
       <div class="widget-container">
         <div class="widget-title">{{ widgetTitle }}</div>
         <div class="gender-container">
           <div class="male-icon"></div>
-          <div class="male-text">Male ({{ seriesData[1] }})</div>
+          <div class="male-text">{{ Data1 }} ({{ seriesData[1] }})</div>
           <div class="female-icon"></div>
-          <div class="female-text">Female ({{ seriesData[0] }})</div>
+          <div class="female-text">{{ Data2 }} ({{ seriesData[0] }})</div>
         </div>
         <div class="total-container">
           <div class="total-text">{{ totalText }}</div>
@@ -99,7 +111,7 @@ export default {
 
 .widget-title {
   font-weight: bold;
-  font-size: 22px;
+  font-size: 21px;
   margin-top: 0px; /* Adjust this value to move the title up/down */
   margin-left: 60px; /* Adjust this value to move the title left/right */
   color: #3c4043;

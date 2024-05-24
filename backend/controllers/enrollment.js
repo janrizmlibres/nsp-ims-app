@@ -369,3 +369,4 @@ export const getEnrolledAttendance = async (req, res, next) => {
     return error;
   }
 }
+
