@@ -12,60 +12,64 @@ import router from '@/router'
 
 import { ref, onMounted, computed } from 'vue'
 import { onBeforeRouteLeave, useRoute } from 'vue-router'
+import { isEqual } from 'lodash'
 
 const route = useRoute()
 const usersStore = useUsersStore()
 
-const formData = ref({
-  password: null,
-  confirmPass: null,
-  firstName: null,
-  middleName: null,
-  lastName: null,
+let initialData = {
+  password: '',
+  confirmPass: '',
+  firstName: '',
+  middleName: '',
+  lastName: '',
   suffixName: null,
-  email: null,
-  contactNum: null,
-  position: null,
+  email: '',
+  contactNum: '',
+  position: '',
   isSubAdmin: false
-})
+}
+const formData = ref(structuredClone(initialData))
 
 const isLoading = ref(false)
-const okToLeave = ref(true)
+const okToLeave = ref(false)
 const updateKey = ref(0)
 
 const headerName = computed(() => (route.params.userId ? 'Edit Record' : 'Add Record'))
 const submitLabel = computed(() => (route.params.userId ? 'Save' : 'Submit'))
 const isEditView = computed(() => !route.params.userId)
+const isFormDirty = computed(() => !isEqual(initialData, formData.value))
 
 const toast = useToast()
 const confirm = useConfirm()
 
 function updateData(data) {
-  okToLeave.value = false
   formData.value = data
 }
 
 async function submitData() {
-  if (formData.value.password !== formData.value.confirmPass) {
-    confirm.require({
-      group: 'user-headless',
-      header: 'Passwords Do Not Match',
-      message: 'Please reconfirm your password',
-      acceptLabel: 'OK',
-      icon: 'fa-solid fa-not-equal'
-    })
-    return
-  }
+  if (isEditView.value) {
+    if (formData.value.password !== formData.value.confirmPass) {
+      confirm.require({
+        group: 'user-headless',
+        header: 'Passwords Do Not Match',
+        message: 'Please reconfirm your password',
+        acceptLabel: 'OK',
+        icon: 'fa-solid fa-not-equal'
+      })
+      return
+    }
 
-  if (formData.value.password.length < 8) {
-    confirm.require({
-      group: 'user-headless',
-      header: 'Password Requirements Not Met',
-      message: 'Password must be at least 8 characters long',
-      acceptLabel: 'OK',
-      icon: 'fa-solid fa-shield-halved'
-    })
-    return
+    if (formData.value.password.length < 8) {
+      confirm.require({
+        group: 'user-headless',
+        header: 'Password Requirements Not Met',
+        message: 'Password must be at least 8 characters long',
+        acceptLabel: 'OK',
+        icon: 'fa-solid fa-shield-halved'
+      })
+      return
+    }
   }
 
   try {
@@ -105,7 +109,7 @@ async function goToUserRecordsView() {
 }
 
 onBeforeRouteLeave((to) => {
-  if (okToLeave.value) {
+  if (!isFormDirty.value || okToLeave.value) {
     return true
   }
 
@@ -132,7 +136,7 @@ onMounted(async () => {
     const result = await usersStore.getUser(route.params.userId)
     const user = result.data.user
 
-    formData.value = {
+    initialData = {
       password: '',
       firstName: user.firstName,
       middleName: user.middleName,
@@ -144,8 +148,10 @@ onMounted(async () => {
       isSubAdmin: user.accessLevel === 2
     }
 
+    formData.value = structuredClone(initialData)
     updateKey.value += 1
   } catch (error) {
+    console.log('Something went strong')
     router.back()
   }
 })
@@ -167,6 +173,7 @@ onMounted(async () => {
               :loading="isLoading"
               type="submit"
               icon="fa-solid fa-circle-check"
+              :disabled="!isFormDirty"
             />
             <Button
               class="h-10 ml-2 u-bg-red"

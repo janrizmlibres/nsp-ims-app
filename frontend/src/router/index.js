@@ -58,7 +58,13 @@ const router = createRouter({
           path: 'students',
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.user.permissions.canMgStuds ? true : { name: 'dashboard' }
+
+            const hasPermission = () => {
+              const { permissions, accessLevel } = authStore.user
+              return permissions.canMgStuds || [1, 2].includes(accessLevel)
+            }
+
+            return hasPermission() ? true : { name: 'dashboard' }
           },
           children: [
             {
@@ -88,6 +94,16 @@ const router = createRouter({
         },
         {
           path: 'enrollment',
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+
+            const hasPermission = () => {
+              const { permissions, accessLevel } = authStore.user
+              return permissions.canMgEnrollment || [1, 2].includes(accessLevel)
+            }
+
+            return hasPermission() ? true : { name: 'dashboard' }
+          },
           children: [
             {
               path: 'current',
@@ -132,47 +148,39 @@ const router = createRouter({
           ]
         },
         {
-          path: 'enrollment',
+          path: 'volunteers',
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+
+            const hasPermission = () => {
+              const { permissions, accessLevel } = authStore.user
+              return permissions.canMgVolunteer || [1, 2].includes(accessLevel)
+            }
+
+            return hasPermission() ? true : { name: 'dashboard' }
+          },
           children: [
             {
-              path: 'current',
-              name: 'current-enrollment',
-              component: CurrentEnrollmentView
+              path: 'records', // Add this route object
+              name: 'volunteer-records',
+              component: VolunteerRecordsView
             },
             {
-              path: 'history',
-              name: 'enrollment-history',
-              component: EnrollmentHistoryView
+              path: 'admit', // New route object
+              name: 'admit-volunteers',
+              component: AdmitVolunteerView
             },
             {
-              path: 'enrolled/view',
-              name: 'view-enrolled',
-              query: {
-                studentId: Number,
-                enrollmentId: Number,
-                schoolLevelId: Number,
-                studentFullName: String
-              },
-              component: EnrolledView
+              path: ':id',
+              name: 'view-volunteer',
+              component: AdmitVolunteerView,
+              meta: { isViewMode: true }
             },
             {
-              path: 'enroll-learners',
-              name: 'enroll-learners',
-              component: EnrollLearnersView,
-              beforeEnter: () => {
-                const authStore = useAuthStore()
-                return authStore.user.permissions.canMgEnrollment ? true : { name: 'dashboard' }
-              }
-            },
-            {
-              path: 'edit-enrolled',
-              name: 'edit-enrolled',
-              query: { studentId: Number, enrollmentId: Number, academicYear: String },
-              component: EditEnrolledView,
-              beforeEnter: () => {
-                const authStore = useAuthStore()
-                return authStore.user.permissions.canMgEnrollment ? true : { name: 'dashboard' }
-              }
+              path: 'edit/:id',
+              name: 'edit-volunteer',
+              component: AdmitVolunteerView,
+              meta: { isViewMode: false }
             }
           ]
         },
@@ -180,7 +188,13 @@ const router = createRouter({
           path: '',
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.user.permissions.canMgClass ? true : { name: 'dashboard' }
+
+            const hasPermission = () => {
+              const { permissions, accessLevel } = authStore.user
+              return permissions.canMgClass || [1, 2].includes(accessLevel)
+            }
+
+            return hasPermission() ? true : { name: 'dashboard' }
           },
           children: [
             {
@@ -209,80 +223,16 @@ const router = createRouter({
           ]
         },
         {
-          path: '/configuration/academic_terms',
-          name: 'academic-term-configuration',
-          component: TermView,
-          beforeEnter: () => {
-            const authStore = useAuthStore()
-            return authStore.user.permissions.canMgTerm ? true : { name: 'dashboard' }
-          }
-        },
-        {
-          path: '/configuration/learning_strand',
-          name: 'learning-strand-configuration',
-          component: LearningStrandView,
-          beforeEnter: () => {
-            const authStore = useAuthStore()
-            return authStore.user.permissions.canMgLs ? true : { name: 'dashboard' }
-          }
-        },
-        {
-          path: '/configuration/student_requirement',
-          name: 'student-requirement-configuration',
-          component: StudentRequirementView,
-          beforeEnter: () => {
-            const authStore = useAuthStore()
-            return authStore.user.permissions.canMgStudReq ? true : { name: 'dashboard' }
-          }
-        },
-        {
-          path: '/configuration/student_category',
-          name: 'student-category-configuration',
-          component: StudentCategoryView,
-          beforeEnter: () => {
-            const authStore = useAuthStore()
-            return authStore.user.permissions.canMgStudCat ? true : { name: 'dashboard' }
-          }
-        },
-        {
-          path: '/volunteer-records', // Add this route object
-          name: 'volunteer-records',
-          component: VolunteerRecordsView
-        },
-        {
-          path: '/admit-volunteers', // New route object
-          name: 'admit-volunteers',
-          component: AdmitVolunteerView
-        },
-        {
-          path: '/volunteer/:id',
-          name: 'view-volunteer',
-          component: AdmitVolunteerView,
-          meta: { isViewMode: true }
-        },
-        {
-          path: 'edit/:id',
-          name: 'edit-volunteer',
-          component: AdmitVolunteerView,
-          meta: { isViewMode: false }
-        },
-        {
-          path: '/volunteer/:id',
-          name: 'view-volunteer',
-          component: AdmitVolunteerView,
-          meta: { isViewMode: true }
-        },
-        {
-          path: 'edit/:id',
-          name: 'edit-volunteer',
-          component: AdmitVolunteerView,
-          meta: { isViewMode: false }
-        },
-        {
           path: 'users',
           beforeEnter: () => {
             const authStore = useAuthStore()
-            return authStore.user.permissions.canMgUser ? true : { name: 'dashboard' }
+
+            const hasPermission = () => {
+              const { permissions, accessLevel } = authStore.user
+              return permissions.canMgUser || [1, 2].includes(accessLevel)
+            }
+
+            return hasPermission() ? true : { name: 'dashboard' }
           },
           children: [
             {
@@ -308,14 +258,38 @@ const router = createRouter({
           ]
         },
         {
-          path: 'utilities',
+          path: 'configuration',
+          beforeEnter: () => {
+            const authStore = useAuthStore()
+            return [1, 2].includes(authStore.user.accessLevel) ? true : { name: 'dashboard' }
+          },
           children: [
             {
-              path: 'audit-trails',
-              name: 'audit-trails',
-              component: AuditView
+              path: '/configuration/academic_terms',
+              name: 'academic-term-configuration',
+              component: TermView
+            },
+            {
+              path: '/configuration/learning_strand',
+              name: 'learning-strand-configuration',
+              component: LearningStrandView
+            },
+            {
+              path: '/configuration/student_requirement',
+              name: 'student-requirement-configuration',
+              component: StudentRequirementView
+            },
+            {
+              path: '/configuration/student_category',
+              name: 'student-category-configuration',
+              component: StudentCategoryView
             }
           ]
+        },
+        {
+          path: 'audit-trails',
+          name: 'audit-trails',
+          component: AuditView
         }
       ]
     },

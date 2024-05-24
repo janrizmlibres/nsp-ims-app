@@ -4,190 +4,190 @@ import { useAuthStore } from './auth'
 import { ref } from 'vue'
 
 export const useUtilitiesStore = defineStore('utilities', () => {
-    const terms = ref([])
-    const visibleAddTermDialog = ref(false)
-    const strands = ref([])
-    const visibleAddStrandDialog = ref(false)
-    const requirements = ref([])
-    const visibleAddRequirementDialog = ref(false)
-    const categories = ref([])
-    const visibleAddCategoryDialog = ref(false)
+  const terms = ref([])
+  const visibleAddTermDialog = ref(false)
+  const strands = ref([])
+  const visibleAddStrandDialog = ref(false)
+  const requirements = ref([])
+  const visibleAddRequirementDialog = ref(false)
+  const categories = ref([])
+  const visibleAddCategoryDialog = ref(false)
 
-    // for Academic Term Creation Operations
-    async function addTerm(dates) {
-        const authStore = useAuthStore()
-        
-        await axios.post('http://localhost:8080/utilities/term/create', dates, {
-            headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+  // for Academic Term Creation Operations
+  async function addTerm(dates) {
+    const authStore = useAuthStore()
 
-    async function getTerms() {
-        const authStore = useAuthStore()
-    
-        const result = await axios.get('http://localhost:8080/utilities/terms', {
-            headers: { Authorization: 'Bearer ' + authStore.token }
-        })
-    
-        terms.value = result.data.data
-    }
-    
-    function showHideAddTermDialog() {
-        visibleAddTermDialog.value = !visibleAddTermDialog.value
-    }
+    await axios.post('http://localhost:8080/utilities/term/create', dates, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
 
-    async function updateTerm(termId, form) {
-        const authStore = useAuthStore()
+  async function getTerms() {
+    const authStore = useAuthStore()
 
-        await axios.patch(`http://localhost:8080/utilities/term/${termId}/update`, form, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+    const result = await axios.get('http://localhost:8080/utilities/terms', {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
 
-    // for Learning Strands Creation Operations
-    async function addLearningStrand(strands) {
-        const authStore = useAuthStore()
+    terms.value = result.data.data
+  }
 
-        await axios.post('http://localhost:8080/utilities/strand/create', strands, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+  function showHideAddTermDialog() {
+    visibleAddTermDialog.value = !visibleAddTermDialog.value
+  }
 
-    async function getLearningStrands() {
-        const authStore = useAuthStore()
+  async function updateTerm(termId, form) {
+    const authStore = useAuthStore()
 
-        const result = await axios.get('http://localhost:8080/utilities/strands', {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-        console.log(result.data.data);
-        strands.value = result.data.data
-    } 
+    await axios.patch(`http://localhost:8080/utilities/term/${termId}/update`, form, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
 
-    function showHideAddStrandDialog() {
-        visibleAddStrandDialog.value = !visibleAddStrandDialog.value
-    }
+  // for Learning Strands Creation Operations
+  async function addLearningStrand(strands) {
+    const authStore = useAuthStore()
 
-    async function updateLearningStrand(strandId, form) {
-        const authStore = useAuthStore()
+    await axios.post('http://localhost:8080/utilities/strand/create', strands, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
 
-        await axios.patch(`http://localhost:8080/utilities/strand/${strandId}/update`, form, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+  async function getLearningStrands() {
+    const authStore = useAuthStore()
 
-    async function deleteLearningStrand(strandId) {
-        const authStore = useAuthStore()
+    const result = await axios.get('http://localhost:8080/utilities/strands', {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+    console.log(result.data.data)
+    strands.value = result.data.data
+  }
 
-        await axios.delete(`http://localhost:8080/utilities/strand/${strandId}/delete`, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+  function showHideAddStrandDialog() {
+    visibleAddStrandDialog.value = !visibleAddStrandDialog.value
+  }
 
-    // for Student Requirements Creation Operations
-    async function addRequirement(requirement) {
-        const authStore = useAuthStore()
+  async function updateLearningStrand(strandId, form) {
+    const authStore = useAuthStore()
 
-        await axios.post('http://localhost:8080/utilities/requirement/create', requirement, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+    await axios.patch(`http://localhost:8080/utilities/strand/${strandId}/update`, form, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
 
-    async function getRequirements() {
-        const authStore = useAuthStore()
+  async function deleteLearningStrand(strandId) {
+    const authStore = useAuthStore()
 
-        const result = await axios.get('http://localhost:8080/utilities/requirements', {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-        console.log(result.data.data);
-        requirements.value = result.data.data
-    } 
+    await axios.delete(`http://localhost:8080/utilities/strand/${strandId}/delete`, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
 
-    function showHideAddRequirementDialog() {
-        visibleAddRequirementDialog.value = !visibleAddRequirementDialog.value
-    }
+  // for Student Requirements Creation Operations
+  async function addRequirement(requirement) {
+    const authStore = useAuthStore()
 
-    async function updateRequirement(requirementId, form) {
-        const authStore = useAuthStore()
+    await axios.post('http://localhost:8080/utilities/requirement/create', requirement, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
 
-        await axios.patch(`http://localhost:8080/utilities/requirement/${requirementId}/update`, form, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+  async function getRequirements() {
+    const authStore = useAuthStore()
 
-    async function deleteRequirement(requirementId) {
-        const authStore = useAuthStore()
+    const result = await axios.get('http://localhost:8080/utilities/requirements', {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+    console.log(result.data.data)
+    requirements.value = result.data.data
+  }
 
-        await axios.delete(`http://localhost:8080/utilities/requirement/${requirementId}/delete`, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+  function showHideAddRequirementDialog() {
+    visibleAddRequirementDialog.value = !visibleAddRequirementDialog.value
+  }
 
-    // for Student Categories Creation Operations
-    async function addCategory(category) {
-        const authStore = useAuthStore()
+  async function updateRequirement(requirementId, form) {
+    const authStore = useAuthStore()
 
-        await axios.post('http://localhost:8080/utilities/category/create', category, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+    await axios.patch(`http://localhost:8080/utilities/requirement/${requirementId}/update`, form, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
 
-    async function getCategories() {
-        const authStore = useAuthStore()
+  async function deleteRequirement(requirementId) {
+    const authStore = useAuthStore()
 
-        const result = await axios.get('http://localhost:8080/utilities/categories', {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-        console.log(result.data.data);
-        categories.value = result.data.data
-    }
+    await axios.delete(`http://localhost:8080/utilities/requirement/${requirementId}/delete`, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
 
-    function showHideAddCategoryDialog() {
-        visibleAddCategoryDialog.value = !visibleAddCategoryDialog.value
-    }
+  // for Student Categories Creation Operations
+  async function addCategory(category) {
+    const authStore = useAuthStore()
 
-    async function updateCategory(categoryId, form) {
-        const authStore = useAuthStore()
+    await axios.post('http://localhost:8080/utilities/category/create', category, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
 
-        await axios.patch(`http://localhost:8080/utilities/category/${categoryId}/update`, form, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+  async function getCategories() {
+    const authStore = useAuthStore()
 
-    async function deleteCategory(categoryId) {
-        const authStore = useAuthStore()
+    const result = await axios.get('http://localhost:8080/utilities/categories', {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
 
-        await axios.delete(`http://localhost:8080/utilities/category/${categoryId}/delete`, {
-        headers: {Authorization: 'Bearer ' + authStore.token}
-        })
-    }
+    categories.value = result.data.data
+  }
 
-    return {
-        terms,
-        visibleAddTermDialog,
-        addTerm,
-        getTerms,
-        showHideAddTermDialog,
-        updateTerm,
-        strands,
-        visibleAddStrandDialog,
-        addLearningStrand,
-        getLearningStrands,
-        showHideAddStrandDialog,
-        updateLearningStrand,
-        deleteLearningStrand,
-        requirements,
-        visibleAddRequirementDialog,
-        addRequirement,
-        getRequirements,
-        showHideAddRequirementDialog,
-        updateRequirement,
-        deleteRequirement,
-        categories,
-        visibleAddCategoryDialog,
-        addCategory,
-        getCategories,
-        showHideAddCategoryDialog,
-        updateCategory,
-        deleteCategory
-    }
+  function showHideAddCategoryDialog() {
+    visibleAddCategoryDialog.value = !visibleAddCategoryDialog.value
+  }
+
+  async function updateCategory(categoryId, form) {
+    const authStore = useAuthStore()
+
+    await axios.patch(`http://localhost:8080/utilities/category/${categoryId}/update`, form, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
+
+  async function deleteCategory(categoryId) {
+    const authStore = useAuthStore()
+
+    await axios.delete(`http://localhost:8080/utilities/category/${categoryId}/delete`, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  }
+
+  return {
+    terms,
+    visibleAddTermDialog,
+    addTerm,
+    getTerms,
+    showHideAddTermDialog,
+    updateTerm,
+    strands,
+    visibleAddStrandDialog,
+    addLearningStrand,
+    getLearningStrands,
+    showHideAddStrandDialog,
+    updateLearningStrand,
+    deleteLearningStrand,
+    requirements,
+    visibleAddRequirementDialog,
+    addRequirement,
+    getRequirements,
+    showHideAddRequirementDialog,
+    updateRequirement,
+    deleteRequirement,
+    categories,
+    visibleAddCategoryDialog,
+    addCategory,
+    getCategories,
+    showHideAddCategoryDialog,
+    updateCategory,
+    deleteCategory
+  }
 })

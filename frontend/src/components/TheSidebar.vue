@@ -36,12 +36,6 @@ const items = computed(() => [
         label: 'Student Requirements',
         icon: 'fa fa-list-check',
         route: { name: 'dashboard' }
-      },
-      {
-        key: '2-3',
-        label: 'Admit Students',
-        icon: 'fa fa-user-plus',
-        route: { name: 'add-student' }
       }
     ]
   },
@@ -97,71 +91,59 @@ const items = computed(() => [
   },
   {
     key: '6',
-    label: 'Academic Term Configuration',
-    icon: 'fa fa-calendar-days',
-    route: { name: 'academic-term-configuration' }
-  },
-  {
-    key: '7',
     label: 'User Management',
     icon: 'fa fa-user',
     items: [
       {
-        key: '7-1',
+        key: '6-1',
         label: 'User Records',
         icon: 'fa fa-address-book',
         route: { name: 'user-records' }
       },
       {
-        key: '7-2',
-        label: 'User Permissions',
+        key: '6-2',
+        label: 'Staff Permissions',
         icon: 'fa fa-shield-halved',
         route: { name: 'user-permissions' }
-      },
-      {
-        key: '7-3',
-        label: 'Add User',
-        icon: 'fa fa-user-plus',
-        route: { name: 'add-user' }
       }
     ]
   },
   {
-    key: '8',
-    label: 'Utilities & Configurations',
+    key: '7',
+    label: 'Configurations',
     icon: 'fa fa-gear',
     items: [
       {
-        key: '8-1',
+        key: '7-1',
+        label: 'Academic Term Configuration',
+        icon: 'fa fa-calendar-days',
+        route: { name: 'academic-term-configuration' }
+      },
+      {
+        key: '7-2',
         label: 'Learning Strand Configuration',
         icon: 'fa fa-book',
         route: { name: 'learning-strand-configuration' }
       },
       {
-        key: '8-2',
+        key: '7-3',
         label: 'Student Requirement Configuration',
         icon: 'fa fa-list',
         route: { name: 'student-requirement-configuration' }
       },
       {
-        key: '8-3',
+        key: '7-4',
         label: 'Student Category Configuration',
         icon: 'fa fa-layer-group',
         route: { name: 'student-category-configuration' }
-      },
-      {
-        key: '8-4',
-        label: 'Generate Reports',
-        icon: 'fa fa-note-sticky',
-        route: { name: 'dashboard' }
-      },
-      {
-        key: '8-5',
-        label: 'Audit Trails',
-        icon: 'fa fa-clock-rotate-left',
-        route: { name: 'audit-trails' }
       }
     ]
+  },
+  {
+    key: '8',
+    label: 'Audit Trails',
+    icon: 'fa fa-clock-rotate-left',
+    route: { name: 'audit-trails' }
   }
 ])
 
@@ -283,6 +265,9 @@ function changeState() {
 }
 
 function setVisibility(keyValue) {
+  if ([1, 2].includes(authStore.user.accessLevel)) return true
+  else if (keyValue === '7') return false
+
   const permissions = authStore.user.permissions
 
   const permissionMap = {
@@ -290,11 +275,7 @@ function setVisibility(keyValue) {
     3: 'canMgEnrollment',
     4: 'canMgVolunteer',
     5: 'canMgClass',
-    6: 'canMgTerm',
-    7: 'canMgLs',
-    8: 'canMgStudReq',
-    9: 'canMgStudCat',
-    10: 'canMgUser'
+    6: 'canMgUser'
   }
 
   const hasNoPermission = (keyValue) => {
