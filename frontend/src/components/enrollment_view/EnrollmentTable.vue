@@ -135,17 +135,6 @@ function editEnrolled(data) {
   })
 }
 
-function viewEnrolled(data) {
-  router.push({
-    name: 'view-enrolled',
-    query: {
-      studentId: data.studentId,
-      enrollmentId: data.enrollmentId,
-      schoolLevelId: data.classLevelId,
-      studentFullName: data.fullName
-    }
-  })
-}
 </script>
 
 <template>
@@ -156,7 +145,7 @@ function viewEnrolled(data) {
     :rows="10"
     dataKey="id"
     filterDisplay="menu"
-    :users="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']"
+    :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']"
     removableSort
   >
     <Column
