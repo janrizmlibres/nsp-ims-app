@@ -127,9 +127,33 @@ async function addAuditTrail(descripton) {
 }
 
 async function handleAddVolunteer(data) {
-  const result = await volunteerStore.addVolunteer(data);
-  await addAuditTrail('Added: Volunteer "' + result.data.volunteer.fullname + '" with ID: ' + result.data.volunteer.volunteerId);
-  return result;
+  try {
+    const result = await volunteerStore.addVolunteer(data);
+    await addAuditTrail('Added: Volunteer "' + result.data.volunteer.fullname + '" with ID: ' + result.data.volunteer.volunteerId);
+    return result;
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
+
+async function handleUpdateVolunteer(id, data) {
+  try {
+    const result = await volunteerStore.updateVolunteer(id, data);
+    await addAuditTrail('Updated: Volunteer');
+    return result;
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
 }
 
 function handleConfirm() {
@@ -150,11 +174,10 @@ async function goToVolunteerRecords() {
 }
 
 async function submitForm() {
-  try {
     const result =
       route.name === 'admit-volunteers'
         ? await handleAddVolunteer(formData.value)
-        : await volunteerStore.updateVolunteer(route.params.id, formData.value)
+        : await handleUpdateVolunteer(route.params.id, formData.value)
     
     toast.add({
       severity: 'success',
@@ -164,14 +187,6 @@ async function submitForm() {
     })
     isOkToLeave = true
     await goToVolunteerRecords()
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
-    })
-  }
 }
 
 onBeforeRouteLeave((to) => {
