@@ -135,17 +135,32 @@ function editEnrolled(data) {
   })
 }
 
-function viewEnrolled(data) {
-  router.push({
-    name: 'view-enrolled',
-    query: {
-      studentId: data.studentId,
-      enrollmentId: data.enrollmentId,
-      schoolLevelId: data.classLevelId,
-      studentFullName: data.fullName
+async function downloadEnrollmentForm(name, filePath) {
+  try {
+    console.log("http://localhost:8080/" + filePath);
+    const response = await fetch(`http://localhost:8080/${filePath}`);
+    if (!response.ok) {
+      throw new Error("HTTP error " + response.status);
     }
-  })
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${name}_enrollment_form.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.message,
+      life: 3000
+    });
+  }
 }
+
+refreshStudentTable()
 </script>
 
 <template>
@@ -156,17 +171,9 @@ function viewEnrolled(data) {
     :rows="10"
     dataKey="id"
     filterDisplay="menu"
-    :users="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']"
+    :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']"
     removableSort
   >
-    <Column
-      headerStyle="width: 5rem; text-align: center"
-      bodyStyle="text-align: center; overflow: visible"
-    >
-      <template #body="{ data }">
-        <Button icon="pi pi-eye" label="View" @click="viewEnrolled(data)" />
-      </template>
-    </Column>
     <column field="lrn" header="LRN" sortable>
       <template #body="{ data }">
         {{ data.lrn }}
@@ -249,6 +256,16 @@ function viewEnrolled(data) {
     <column field="dateEnrolled" header="Date Enrolled" sortable>
       <template #body="{ data }">
         {{ data.dateEnrolled ? new Date(data.dateEnrolled).toISOString().split('T')[0] : '' }}
+      </template>
+    </column>
+    <column
+      header="Enrollment Form"
+    >
+      <template #body="{ data }">
+        <Button
+          icon="pi pi-download"
+          label="View"
+          @click="downloadEnrollmentForm(data.lastName, data.enrollmentFormURL)" />
       </template>
     </column>
     <Column
