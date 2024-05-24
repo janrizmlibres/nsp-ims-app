@@ -6,7 +6,7 @@ import Column from 'primevue/column';
 import Row from 'primevue/row';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
-import { inject, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
+import { inject, provide, ref, watch } from 'vue';
 import { format } from 'date-fns';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -56,6 +56,7 @@ function updateScheduleTable(classId) {
                     id: learningStrand.id,
                     classLevelId: learningStrand.classLevelId,
                     scheduleId: schedule.id,
+                    code: learningStrand.learning_strand.code,
                     name: learningStrand.learning_strand.name,
                     volunteer: schedule.volunteer,
                     school_days: schedule.days.split(','),
@@ -91,9 +92,7 @@ async function deleteSchedules() {
         accept: async () => {
             try {
                 const scheduleIds = selectedSchedules.value.map(schedule => schedule.scheduleId)
-                console.log(selectedSchedules.value);
                 await classLearningStrandStore.deleteSchedules({scheduleIds: scheduleIds}).then((message) => {
-                    deselect()
                     toast.add({
                         severity: 'success',
                         summary: 'Success',
@@ -102,17 +101,17 @@ async function deleteSchedules() {
                     })
 
                     try {
-                        updateScheduleTable(classLevel.value.id)
+                        selectedSchedules.value.forEach(async (schedule) => {
+                            await usersStore.addAudit(
+                                `Deleted: Schedule for ${schedule.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                            ).then(deselect())
+                        })
                     } catch(error) {
                         console.log(error);
                     }
 
                     try {
-                        selectedSchedules.value.forEach(async (schedule) => {
-                            await usersStore.addAudit(
-                                `Deleted: Schedule for ${schedule.name} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
-                            )
-                        })
+                        updateScheduleTable(classLevel.value.id)
                     } catch(error) {
                         console.log(error);
                     }
@@ -133,18 +132,6 @@ function editSchedule(data) {
 function deselect() {
     selectedSchedules.value = []
 }
-
-function onClickOutside(event) {
-    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
-}
-
-onMounted(() => {
-    document.addEventListener('click', onClickOutside);
-})
-
-onBeforeUnmount(() => {
-    document.removeEventListener('click', onClickOutside);
-})
 </script>
 
 <template>

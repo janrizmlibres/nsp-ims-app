@@ -105,20 +105,20 @@ async function addSession() {
             })
 
             try {
-                classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
-                    onSubmit(data)
-                    resetForm()
-                })
+                for (const date of newDates) {
+                    await usersStore.addAudit(
+                        `Added: Session ${date} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    )
+                }
             } catch(error) {
                 console.log(error);
             }
 
             try {
-                for (const date of newDates) {
-                    await usersStore.addAudit(
-                        `Added: ${date} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
-                    )
-                }
+                classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
+                    onSubmit(data)
+                    resetForm()
+                })
             } catch(error) {
                 console.log(error);
             }

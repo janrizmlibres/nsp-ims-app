@@ -79,16 +79,16 @@ async function updateSchedule() {
                 life: 3000
             })
 
-            onSubmit(schedule.value.classLevelId) 
-            editScheduleDialogState.value = false
-
             try {
                 await usersStore.addAudit(
-                    `Updated: Schedule of ${schedule.value.name} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    `Updated: Schedule of ${schedule.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {
                 console.log(error);
             }
+
+            onSubmit(schedule.value.classLevelId) 
+            editScheduleDialogState.value = false
         })
     } catch(error) {
         console.log(error);

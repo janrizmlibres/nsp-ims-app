@@ -6,7 +6,7 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Toolbar from 'primevue/toolbar';
 import Badge from 'primevue/badge';
-import { inject, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
+import { inject, provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import { format } from 'date-fns';
@@ -132,7 +132,6 @@ async function deleteModules() {
             try {
                 const sessionIds = selectedSessions.value.map(session => session.id)
                 await classLearningStrandStore.deleteSessions({sessionIds: sessionIds}).then((message) => {
-                    deselect()
                     toast.add({
                         severity: 'success',
                         summary: 'Success',
@@ -141,18 +140,18 @@ async function deleteModules() {
                     })
 
                     try {
-                        classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((data) => {
-                            updateSessionTable(data)
+                        selectedSessions.value.forEach(async (session) => {
+                            await usersStore.addAudit(
+                                `Deleted: Session ${new Date(session.date).toDateString()} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                            ).then(deselect())
                         })
                     } catch(error) {
                         console.log(error);
                     }
 
                     try {
-                        selectedSessions.value.forEach(async (session) => {
-                            await usersStore.addAudit(
-                                `Deleted: ${session.date} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
-                            )
+                        classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((data) => {
+                            updateSessionTable(data)
                         })
                     } catch(error) {
                         console.log(error);
@@ -204,18 +203,6 @@ function onCollapseRow() {
     deselect()
     selectedRow.value = {}
 }
-
-function onClickOutside(event) {
-    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
-}
-
-onMounted(() => {
-    document.addEventListener('click', onClickOutside);
-})
-
-onBeforeUnmount(() => {
-    document.removeEventListener('click', onClickOutside);
-})
 </script>
 
 <template>

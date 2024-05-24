@@ -39,17 +39,18 @@ async function updateSession() {
             })
 
             try {
-                classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
-                    onSubmit(data)
-                })
+                await usersStore.addAudit(
+                    `Updated: Remarks of session ${new Date(session.value.date).toDateString()} of ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                )
             } catch(error) {
                 console.log(error);
             }
-            
+
             try {
-                await usersStore.addAudit(
-                    `Updated: ${session.date} of ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
-                )
+                classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
+                    onSubmit(data)
+                    editSessionDialogState.value = false
+                })
             } catch(error) {
                 console.log(error);
             }

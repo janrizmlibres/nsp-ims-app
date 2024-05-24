@@ -75,8 +75,6 @@ async function addSchedule() {
                 life: 3000
             })
 
-            onSubmit(classLevel.value.id)
-
             try {
                 await usersStore.addAudit(
                     `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
@@ -84,6 +82,8 @@ async function addSchedule() {
             } catch(error) {
                 console.log(error);
             }
+            
+            onSubmit(classLevel.value.id)
         })
     } catch (error) {
         console.log(error);
