@@ -20,6 +20,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.post('http://localhost:8080/utilities/term/create', dates, {
             headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Added: New Academic Term`)
     }
 
     async function getTerms() {
@@ -42,6 +44,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.patch(`http://localhost:8080/utilities/term/${termId}/update`, form, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Updated: Academic Term with ID: ${termId}`)
     }
 
     // for Learning Strands Creation Operations
@@ -51,6 +55,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.post('http://localhost:8080/utilities/strand/create', strands, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Added: New Learning Strand`)
     }
 
     async function getLearningStrands() {
@@ -73,6 +79,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.patch(`http://localhost:8080/utilities/strand/${strandId}/update`, form, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Updated: Learning Strand with ID: ${strandId}`)
     }
 
     async function deleteLearningStrand(strandId) {
@@ -81,6 +89,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.delete(`http://localhost:8080/utilities/strand/${strandId}/delete`, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Deleted: Learning Strand with ID: ${strandId}`)
     }
 
     // for Student Requirements Creation Operations
@@ -90,6 +100,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.post('http://localhost:8080/utilities/requirement/create', requirement, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Added: New Student Requirement`)
     }
 
     async function getRequirements() {
@@ -112,6 +124,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.patch(`http://localhost:8080/utilities/requirement/${requirementId}/update`, form, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Updated: Student Requirement with ID: ${requirementId}`)
     }
 
     async function deleteRequirement(requirementId) {
@@ -120,6 +134,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.delete(`http://localhost:8080/utilities/requirement/${requirementId}/delete`, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Deleted: Student Requirement with ID: ${requirementId}`)
     }
 
     // for Student Categories Creation Operations
@@ -129,6 +145,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.post('http://localhost:8080/utilities/category/create', category, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Added: New Student Category`)
     }
 
     async function getCategories() {
@@ -151,6 +169,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.patch(`http://localhost:8080/utilities/category/${categoryId}/update`, form, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+
+        await addAudit(`Updated: Student Category with ID: ${categoryId}`)
     }
 
     async function deleteCategory(categoryId) {
@@ -159,6 +179,19 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.delete(`http://localhost:8080/utilities/category/${categoryId}/delete`, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
+        
+        await addAudit(`Deleted: Student Category with ID: ${categoryId}`)
+    }
+
+    async function addAudit(description) {
+        const authStore = useAuthStore()
+        
+        const result = await axios.post(`http://localhost:8080/admin/user/add-audit`, {
+        userId: authStore.user.id, description, date: new Date() },
+        {
+        headers: {Authorization: 'Bearer ' + authStore.token}
+        })
+        return result
     }
 
     return {
@@ -188,6 +221,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         getCategories,
         showHideAddCategoryDialog,
         updateCategory,
-        deleteCategory
+        deleteCategory,
+        addAudit
     }
 })
