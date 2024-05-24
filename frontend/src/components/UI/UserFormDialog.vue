@@ -6,7 +6,11 @@ import Button from 'primevue/button'
 <template>
   <ConfirmDialog group="user-headless">
     <template #container="{ message, acceptCallback, rejectCallback }">
-      <div class="flex flex-col items-center p-5 bg-surface-0 dark:bg-surface-900 rounded-md">
+      <div
+        autofocus
+        class="flex flex-col items-center p-5 bg-surface-0 dark:bg-surface-900 rounded-md"
+        @keypress.enter="acceptCallback"
+      >
         <div
           class="rounded-full bg-primarytext-white dark:text-surface-950 inline-flex justify-center items-center h-[6rem] w-[6rem] -mt-8"
         >

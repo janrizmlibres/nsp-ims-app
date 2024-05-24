@@ -44,7 +44,7 @@ const filters = ref(props.filtersProp)
             icon="fa-solid fa-key"
             outlined
             size="small"
-            @click="$emit('emitClick', slotProps.data.id)"
+            @click="$emit('emitClick', slotProps.data.id, slotProps.data.fullname)"
           />
         </div>
       </template>

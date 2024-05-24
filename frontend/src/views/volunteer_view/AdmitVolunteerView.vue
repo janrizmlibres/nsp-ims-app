@@ -14,7 +14,7 @@ import { useVolunteerStore } from '@/stores/volunteer'
 import FormParts from '../../util/volunteer_form_parts'
 import { isEqual } from 'lodash'
 
-const emit = defineEmits(['routeChange'])
+const emit = defineEmits({ routeChange: [] })
 
 const route = useRoute()
 const router = useRouter()

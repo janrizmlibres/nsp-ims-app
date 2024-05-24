@@ -41,7 +41,22 @@ export async function signup(req, res, next) {
       hashedPw,
       ...req.body,
     });
-    await userInstance.createPermission();
+
+    if (req.body.accessLevel === 2) {
+      await userInstance.createPermission({
+        canMgStuds: true,
+        canMgEnrollment: true,
+        canMgVolunteer: true,
+        canMgClass: true,
+        canMgTerm: true,
+        canMgLs: true,
+        canMgStudReq: true,
+        canMgStudCat: true,
+        canMgUser: true,
+      });
+    } else {
+      await userInstance.createPermission();
+    }
 
     res.status(201).json({ message: "User created!", user: userInstance });
   } catch (error) {

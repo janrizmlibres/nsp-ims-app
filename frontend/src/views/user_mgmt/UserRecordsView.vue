@@ -23,14 +23,17 @@ const filters = ref({
 const isLoading = ref(true)
 const visible = ref(false)
 const tabindex = ref(0)
+
 const pwUpdateUserId = ref(null)
+const pwUpdateFullname = ref(null)
 
 function updateGlobalFilter(newValue) {
   filters.value.global.value = newValue
 }
 
-function openPwDialog(userId) {
+function openPwDialog(userId, userFullname) {
   pwUpdateUserId.value = userId
+  pwUpdateFullname.value = userFullname
   visible.value = true
 }
 
@@ -107,6 +110,7 @@ onMounted(async () => {
   <ChangePwDialog
     v-model:visible="visible"
     :userId="pwUpdateUserId"
+    :fullname="pwUpdateFullname"
     @closeDialog="visible = false"
   ></ChangePwDialog>
 </template>

@@ -1,6 +1,5 @@
 <script setup>
 import Button from 'primevue/button'
-import ProgressSpinner from 'primevue/progressspinner'
 import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 
@@ -69,37 +68,36 @@ async function submitData() {
     return
   }
 
-  if (formData.value.contactNum)
-    try {
-      isLoading.value = true
+  try {
+    isLoading.value = true
 
-      formData.value.accessLevel = formData.value.isSubAdmin ? 2 : 3
-      // eslint-disable-next-line no-unused-vars
-      const { isSubAdmin, confirmPass, ...finalData } = formData.value
+    formData.value.accessLevel = formData.value.isSubAdmin ? 2 : 3
+    // eslint-disable-next-line no-unused-vars
+    const { isSubAdmin, confirmPass, ...finalData } = formData.value
 
-      const result = route.params.userId
-        ? await usersStore.updateUser(route.params.userId, finalData)
-        : await usersStore.addUser(finalData)
+    const result = route.params.userId
+      ? await usersStore.updateUser(route.params.userId, finalData)
+      : await usersStore.addUser(finalData)
 
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: result.data.message,
-        life: 5000
-      })
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: result.data.message,
+      life: 5000
+    })
 
-      isLoading.value = false
-      okToLeave.value = true
-      await router.replace({ name: 'user-records' })
-    } catch (error) {
-      toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.response.data.message,
-        life: 3000
-      })
-      isLoading.value = false
-    }
+    okToLeave.value = true
+    await router.replace({ name: 'user-records' })
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  } finally {
+    isLoading.value = false
+  }
 }
 
 async function goToUserRecordsView() {
@@ -166,6 +164,7 @@ onMounted(async () => {
             <Button
               class="h-10 u-bg-green"
               :label="submitLabel"
+              :loading="isLoading"
               type="submit"
               icon="fa-solid fa-circle-check"
             />
