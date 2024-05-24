@@ -6,12 +6,14 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast';
 import { ref, onMounted, computed } from 'vue';
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
 const categoryStore = useUtilitiesStore()
+const confirm = useConfirm();
 const toast = useToast()
 
 const categories = computed(() => categoryStore.categories)
@@ -29,24 +31,33 @@ onMounted(async () => {
     } 
 })
 
-async function deleteCategory(id) {
-    try {
-        await categoryStore.deleteCategory(id)
-        await categoryStore.getCategories()
-
+const confirmDelete = (id) => {
+    confirm.require({
+        message: '      Are you sure you want to delete this Student Category?',
+        header: 'Delete Confirmation',
+        icon: 'pi pi-info-circle',
+        rejectLabel: 'Cancel',
+        acceptLabel: 'Delete',
+        rejectClass: 'p-button-secondary p-button-outlined',
+        acceptClass: 'p-button-danger',
+        accept: () => {
+            handleDelete(id)
             toast.add({
                 severity: 'success',
                 summary: 'Success',
                 detail: 'Student Category deleted successfully!',
                 life: 3000
             })
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered. Please refresh this page.',
-            life: 3000
-        })
+        }
+    });
+};
+
+async function handleDelete(id) {
+    try {
+        await categoryStore.deleteCategory(id)
+        await categoryStore.getCategories()
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -198,7 +209,7 @@ const onRowEditCancel = () => {
         <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
         <Column style="width: 2rem;">
             <template #body="slotProps">
-                <Button icon="fa fa-trash" text rounded severity="danger" @click="deleteCategory(slotProps.data.id)" />
+                <Button icon="fa fa-trash" text rounded severity="danger" @click="confirmDelete(slotProps.data.id)" />
             </template>
         </Column>
         <template #footer> 
