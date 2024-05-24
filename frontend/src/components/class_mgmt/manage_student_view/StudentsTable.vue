@@ -70,26 +70,26 @@ onMounted(() => {
                 photoUrl: enrollment.student.photoUrl
             }
 
-            learners.value.push(temp)
-        }
-    })
+      learners.value.push(temp)
+    }
+  })
 })
 
 const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Active':
-            return 'success';
+  switch (status) {
+    case 'Active':
+      return 'success'
 
-        case 'Inactive':
-            return 'warning';
+    case 'Inactive':
+      return 'warning'
 
-        case 'Drop':
-            return 'danger';
+    case 'Drop':
+      return 'danger'
 
-        default:
-            return null;
-    }
-};
+    default:
+      return null
+  }
+}
 
 function showStudentDialog() {
     studentDialogState.value = !studentDialogState.value

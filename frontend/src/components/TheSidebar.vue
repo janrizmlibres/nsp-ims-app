@@ -103,26 +103,26 @@ const items = computed(() => [
   },
   {
     key: '7',
-    label: 'Staff Management',
+    label: 'User Management',
     icon: 'fa fa-user',
     items: [
       {
         key: '7-1',
-        label: 'Staff Records',
+        label: 'User Records',
         icon: 'fa fa-address-book',
-        route: { name: 'staff-records' }
+        route: { name: 'user-records' }
       },
       {
         key: '7-2',
-        label: 'Staff Permissions',
+        label: 'User Permissions',
         icon: 'fa fa-shield-halved',
-        route: { name: 'staff-permissions' }
+        route: { name: 'user-permissions' }
       },
       {
         key: '7-3',
-        label: 'Add Staff',
+        label: 'Add User',
         icon: 'fa fa-user-plus',
-        route: { name: 'add-staff' }
+        route: { name: 'add-user' }
       }
     ]
   },
@@ -166,12 +166,12 @@ const items = computed(() => [
 ])
 
 const role = computed(() => {
-  if (authStore.staff.accessLevel === 1) {
+  if (authStore.user.accessLevel === 1) {
     return 'Admin'
-  } else if (authStore.staff.accessLevel === 2) {
+  } else if (authStore.user.accessLevel === 2) {
     return 'Sub-Admin'
   } else {
-    return 'Staff'
+    return 'User'
   }
 })
 
@@ -283,7 +283,7 @@ function changeState() {
 }
 
 function setVisibility(keyValue) {
-  const permissions = authStore.staff.permissions
+  const permissions = authStore.user.permissions
 
   const permissionMap = {
     2: 'canMgStuds',
@@ -294,7 +294,7 @@ function setVisibility(keyValue) {
     7: 'canMgLs',
     8: 'canMgStudReq',
     9: 'canMgStudCat',
-    10: 'canMgStaff'
+    10: 'canMgUser'
   }
 
   const hasNoPermission = (keyValue) => {
@@ -395,7 +395,7 @@ const handleMouseLeave = () => {
         <span class="fa fa-circle-user text-surface-100" />
       </span>
       <div class="flex flex-col u-sidebar-footer-text">
-        <span>{{ authStore.staff.userName }}</span>
+        <span>{{ authStore.user.userName }}</span>
         <span class="text-sm"> {{ role.value }}</span>
       </div>
     </div>

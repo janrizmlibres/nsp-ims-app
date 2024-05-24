@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 
 import Student from "../models/student/student.js";
-import Staff from "../models/staff/staff.js";
+import User from "../models/user/user.js";
 import Term from "../models/term.js";
 import LearningStrand from "../models/learning_strand.js";
 import StudentRequirement from "../models/student_requirement.js";
@@ -12,19 +12,8 @@ import ContactInfo from "../models/student/contact_info.js";
 import EmergencyPerson from "../models/student/emergency_person.js";
 import PreviousSchool from "../models/student/previous_school.js";
 
-// import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
-// import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
-// import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
-// import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
-// import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
-// import StudentVolunteer from "../models/volunteer/student_volunteer.js";
-// import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
-
-import ClassLevel from "../models/class/class_level.js";
-import ClassLearningStrand from "../models/class/class_learning_strand.js";
-
 export async function injectAll() {
-  await injectStaff();
+  await injectUser();
   await injectLearningStrand();
   await injectAcademicYear();
   await injectStudent();
@@ -250,8 +239,8 @@ export async function injectStudent() {
   );
 }
 
-export async function injectStaff() {
-  const staffData = [
+export async function injectUser() {
+  const userData = [
     [
       {
         lastName: "Istrator",
@@ -259,6 +248,8 @@ export async function injectStaff() {
         id: "91267",
         accessLevel: 1,
         password: "rootpass",
+        contactNum: "09052153867",
+        position: "Administrator",
       },
       {
         canMgStuds: true,
@@ -269,10 +260,10 @@ export async function injectStaff() {
         canMgLs: true,
         canMgStudReq: true,
         canMgStudCat: true,
-        canMgStaff: true,
+        canMgUser: true,
       },
       {
-        description: "Added Staff with ID: 53725",
+        description: "Added User with ID: 53725",
         date: new Date(),
       },
     ],
@@ -283,6 +274,8 @@ export async function injectStaff() {
         id: "11267",
         accessLevel: 2,
         password: "rootpass",
+        contactNum: "09123456789",
+        position: "Program Head",
       },
       {
         canMgStuds: true,
@@ -292,10 +285,10 @@ export async function injectStaff() {
         canMgTerm: true,
         canMgLs: true,
         canMgStudReq: true,
-        canMgStaff: true,
+        canMgUser: true,
       },
       {
-        description: "Added Staff with ID: 53697",
+        description: "Added User with ID: 53697",
         date: new Date(),
       },
     ],
@@ -306,6 +299,9 @@ export async function injectStaff() {
         id: "21267",
         accessLevel: 2,
         password: "rootpass",
+        contactNum: "09987654321",
+        position: "Program Coordinator",
+        lastLogin: new Date(2023, 1, 20),
       },
       {
         canMgStuds: true,
@@ -315,10 +311,10 @@ export async function injectStaff() {
         canMgTerm: true,
         canMgLs: true,
         canMgStudReq: true,
-        canMgStaff: true,
+        canMgUser: true,
       },
       {
-        description: "Added Staff with ID: 53698",
+        description: "Added User with ID: 53698",
         date: new Date(),
       },
     ],
@@ -329,6 +325,10 @@ export async function injectStaff() {
         id: "53697",
         accessLevel: 3,
         password: "nazpass",
+        contactNum: "09987654322",
+        position: "Computer Systems Officer",
+        email: "test2@gmail.com",
+        lastLogin: new Date(2023, 3, 30),
       },
       {
         canMgStuds: true,
@@ -336,7 +336,7 @@ export async function injectStaff() {
         canMgClass: true,
       },
       {
-        description: "Added Staff with ID: 53699",
+        description: "Added User with ID: 53699",
         date: new Date(),
       },
     ],
@@ -347,16 +347,19 @@ export async function injectStaff() {
         id: "55166",
         accessLevel: 3,
         password: "xandpass",
+        contactNum: "09987654323",
+        position: "Executive Officer",
+        lastLogin: new Date(2020, 11, 29),
       },
       {
         canMgStuds: true,
         canMgVolunteer: true,
         canMgLs: true,
         canMgStudReq: true,
-        canMgStaff: true,
+        canMgUser: true,
       },
       {
-        description: "Added Staff with ID: 53723",
+        description: "Added User with ID: 53723",
         date: new Date(),
       },
     ],
@@ -367,6 +370,9 @@ export async function injectStaff() {
         id: "57381",
         accessLevel: 3,
         password: "acepass",
+        contactNum: "09987654324",
+        position: "Information Executive",
+        email: "test@gmail.com",
       },
       {
         canMgVolunteer: true,
@@ -374,79 +380,79 @@ export async function injectStaff() {
         canMgStudReq: true,
       },
       {
-        description: "Added Staff with ID: 53724",
+        description: "Added User with ID: 53724",
         date: new Date(),
       },
     ],
   ];
 
-  const createStaff = async (staffData) => {
-    const [staff, perms, audit] = staffData;
+  const createUser = async (userData) => {
+    const [user, perms, audit] = userData;
 
-    staff.hashedPw = await bcrypt.hash(staff.password, 12);
-    delete staff.password;
+    user.hashedPw = await bcrypt.hash(user.password, 12);
+    delete user.password;
 
-    const createdStaff = await Staff.create(staff);
-    await createdStaff.createPermission(perms);
-    await createdStaff.createAudit(audit);
+    const createdUser = await User.create(user);
+    await createdUser.createPermission(perms);
+    await createdUser.createAudit(audit);
   };
 
-  await Promise.all(staffData.map(createStaff));
+  await Promise.all(userData.map(createUser));
 }
 
 export async function injectAcademicYear() {
   const termData = [
     {
-      batch_number: 1,
-      academic_year: "2015-2016",
-      start_date: new Date("2015-06-01"),
-      end_date: new Date("2016-03-31"),
-      status: false,
-    },
-    {
-      batch_number: 2,
+      id: 1,
       academic_year: "2016-2017",
       start_date: new Date("2016-06-01"),
       end_date: new Date("2017-03-31"),
       status: false,
     },
     {
-      batch_number: 3,
+      id: 2,
       academic_year: "2017-2018",
       start_date: new Date("2017-06-01"),
       end_date: new Date("2018-03-31"),
       status: false,
     },
     {
-      batch_number: 4,
+      id: 3,
       academic_year: "2018-2019",
       start_date: new Date("2018-06-01"),
       end_date: new Date("2019-03-31"),
       status: false,
     },
     {
-      batch_number: 5,
+      id: 4,
       academic_year: "2019-2020",
+      start_date: new Date("2019-06-01"),
+      end_date: new Date("2020-03-31"),
+      status: false,
+    },
+    {
+      id: 5,
+      academic_year: "2020-2021",
       start_date: new Date("2020-08-01"),
       end_date: new Date("2021-05-31"),
       status: false,
     },
     {
-      batch_number: 6,
+      id: 6,
       academic_year: "2021-2022",
       start_date: new Date("2021-08-01"),
       end_date: new Date("2022-05-31"),
       status: false,
     },
     {
-      batch_number: 7,
+      id: 7,
       academic_year: "2022-2023",
       start_date: new Date("2022-08-01"),
       end_date: new Date("2023-05-31"),
       status: false,
     },
     {
-      batch_number: 8,
+      id: 8,
       academic_year: "2023-2024",
       start_date: new Date("2023-08-01"),
       end_date: new Date("2024-05-31"),
@@ -618,6 +624,8 @@ export async function injectVolunteer() {
       affiliation: "Student",
       lastName: "Dela Cruz",
       firstName: "Shelly",
+      middleName: "eyy",
+      suffix: "Jr.",
     },
     {
       volunteerId: 2,
@@ -631,60 +639,12 @@ export async function injectVolunteer() {
       lastName: "Firma",
       firstName: "Alejandra",
     },
-    {
-      volunteerId: 4,
-      affiliation: "Student",
-      lastName: "Horticullado",
-      firstName: "Gabriel",
-    },
-    {
-      volunteerId: 5,
-      affiliation: "Student",
-      lastName: "Santos",
-      firstName: "John",
-    },
-    {
-      volunteerId: 6,
-      affiliation: "Student",
-      lastName: "Dapin",
-      firstName: "Job",
-    },
-    {
-      volunteerId: 7,
-      affiliation: "Student",
-      lastName: "Roa",
-      firstName: "Wilson",
-    },
-    {
-      volunteerId: 8,
-      affiliation: "Student",
-      lastName: "Dimagiba",
-      firstName: "Felixson",
-    },
-    {
-      volunteerId: 9,
-      affiliation: "Student",
-      lastName: "Goma",
-      firstName: "Fernan",
-    },
-    {
-      volunteerId: 10,
-      affiliation: "Student",
-      lastName: "Lopez",
-      firstName: "Kenneth",
-    },
-    {
-      volunteerId: 11,
-      affiliation: "Student",
-      lastName: "Sayson",
-      firstName: "Daisy",
-    },
   ];
 
   const volunteerPersonalInformationData = [
     {
       nickname: "Shelly",
-      sex: "Female",
+      sex: "F",
       birthday: new Date(1980, 1, 1),
       housing: "123 Main St",
       barangay: "Barangay 1",
@@ -693,7 +653,7 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Alonzo",
-      sex: "Male",
+      sex: "M",
       birthday: new Date(1985, 1, 1),
       housing: "456 Maple Ave",
       barangay: "Barangay 2",
@@ -702,84 +662,12 @@ export async function injectVolunteer() {
     },
     {
       nickname: "Alejandra",
-      sex: "Female",
+      sex: "F",
       birthday: new Date(1990, 1, 1),
       housing: "789 Oak St",
       barangay: "Barangay 3",
       city: "City C",
       province: "Province C",
-    },
-    {
-      nickname: "Gabriel",
-      sex: "Male",
-      birthday: new Date(1995, 1, 1),
-      housing: "1011 Pine Ave",
-      barangay: "Barangay 4",
-      city: "City D",
-      province: "Province D",
-    },
-    {
-      nickname: "John",
-      sex: "Male",
-      birthday: new Date(1985, 1, 1),
-      housing: "1213 Birch Blvd",
-      barangay: "Barangay 5",
-      city: "City E",
-      province: "Province E",
-    },
-    {
-      nickname: "Job",
-      sex: "Male",
-      birthday: new Date(1990, 1, 1),
-      housing: "1415 Cedar Ct",
-      barangay: "Barangay 6",
-      city: "City F",
-      province: "Province F",
-    },
-    {
-      nickname: "Wilson",
-      sex: "Male",
-      birthday: new Date(1995, 1, 1),
-      housing: "1617 Dogwood Dr",
-      barangay: "Barangay 7",
-      city: "City G",
-      province: "Province G",
-    },
-    {
-      nickname: "Felixson",
-      sex: "Male",
-      birthday: new Date(2000, 1, 1),
-      housing: "1819 Elm St",
-      barangay: "Barangay 8",
-      city: "City H",
-      province: "Province H",
-    },
-    {
-      nickname: "Fernan",
-      sex: "Female",
-      birthday: new Date(1980, 1, 1),
-      housing: "2021 Fir St",
-      barangay: "Barangay 9",
-      city: "City I",
-      province: "Province I",
-    },
-    {
-      nickname: "Kenneth",
-      sex: "Male",
-      birthday: new Date(1985, 1, 1),
-      housing: "2223 Grove St",
-      barangay: "Barangay 10",
-      city: "City J",
-      province: "Province J",
-    },
-    {
-      nickname: "Daisy",
-      sex: "Female",
-      birthday: new Date(1990, 1, 1),
-      housing: "2425 Hickory St",
-      barangay: "Barangay 11",
-      city: "City K",
-      province: "Province K",
     },
     // ... add more entries here ...
   ];
@@ -788,67 +676,19 @@ export async function injectVolunteer() {
     {
       firstName: "John",
       lastName: "Doe",
-      contactNumber: 1234567890,
+      contactNumber: "+639123456789",
       relationship: "Brother",
     },
     {
       firstName: "Jane",
       lastName: "Doe",
-      contactNumber: 2345678901,
+      contactNumber: "+639234567890",
       relationship: "Sister",
     },
     {
       firstName: "Jim",
       lastName: "Doe",
-      contactNumber: 3456789012,
-      relationship: "Brother",
-    },
-    {
-      firstName: "Jill",
-      lastName: "Doe",
-      contactNumber: 4567890123,
-      relationship: "Sister",
-    },
-    {
-      firstName: "Joe",
-      lastName: "Doe",
-      contactNumber: 5678901234,
-      relationship: "Brother",
-    },
-    {
-      firstName: "Jenny",
-      lastName: "Doe",
-      contactNumber: 6789012345,
-      relationship: "Sister",
-    },
-    {
-      firstName: "Jerry",
-      lastName: "Doe",
-      contactNumber: 7890123456,
-      relationship: "Brother",
-    },
-    {
-      firstName: "Jess",
-      lastName: "Doe",
-      contactNumber: 8901234567,
-      relationship: "Sister",
-    },
-    {
-      firstName: "Jack",
-      lastName: "Doe",
-      contactNumber: 9012345678,
-      relationship: "Brother",
-    },
-    {
-      firstName: "Jasmine",
-      lastName: "Doe",
-      contactNumber: 1234567890,
-      relationship: "Sister",
-    },
-    {
-      firstName: "Jacob",
-      lastName: "Doe",
-      contactNumber: 2345678901,
+      contactNumber: "+639345678901",
       relationship: "Brother",
     },
   ];
@@ -866,101 +706,29 @@ export async function injectVolunteer() {
       program: "BS IT",
       year: "3rd",
     },
-    {
-      program: "BS IS",
-      year: "4th",
-    },
-    {
-      program: "BS E",
-      year: "1st",
-    },
-    {
-      program: "BS CE",
-      year: "2nd",
-    },
-    {
-      program: "AB PHILO",
-      year: "3rd",
-    },
-    {
-      program: "BS PSY",
-      year: "4th",
-    },
-    {
-      program: "BS CS",
-      year: "1st",
-    },
-    {
-      program: "BS IT",
-      year: "1st",
-    },
-    {
-      program: "BS E",
-      year: "1st",
-    },
   ];
 
   const volunteerContactInformationData = [
     {
-      contactNumber: "09123456789",
+      contactNumber: "+639123456789",
       facebook: "Shelly-Cruz",
       email: "shelly-cruz@example.com",
     },
     {
-      contactNumber: "09123456788",
+      contactNumber: "+639123456788",
       facebook: "Alonzo-Fuentes",
       email: "alonzo-fuentes@example.com",
     },
     {
-      contactNumber: "09123456787",
+      contactNumber: "+639123456787",
       facebook: "Alejandra-Firma",
       email: "alejandra-firma@example.com",
-    },
-    {
-      contactNumber: "09123456786",
-      facebook: "Gabriel-Horticullado",
-      email: "Gabriel-Horticullado@example.com",
-    },
-    {
-      contactNumber: "09123456785",
-      facebook: "John-Santos",
-      email: "John-Santos@example.com",
-    },
-    {
-      contactNumber: "09123456784",
-      facebook: "Job-Dapin",
-      email: "Job-Dapin@example.com",
-    },
-    {
-      contactNumber: "09123456783",
-      facebook: "Wilson-Roa",
-      email: "Wilson-Roa@example.com",
-    },
-    {
-      contactNumber: "09123456782",
-      facebook: "Felixson-Dimagiba",
-      email: "Felixson-Dimagiba@example.com",
-    },
-    {
-      contactNumber: "09123456781",
-      facebook: "Fernan-Goma",
-      email: "Fernan-Goma@example.com",
-    },
-    {
-      contactNumber: "09123456780",
-      facebook: "Kenneth-Lopez",
-      email: "Kenneth-Lopez@example.com",
-    },
-    {
-      contactNumber: "09123456779",
-      facebook: "Daisy-Sayson",
-      email: "Daisy-Sayson@example.com",
     },
     // ... add more entries here ...
   ];
 
   function getRandomAvailability() {
-    let availability = ["M", "T", "W", "TH", "F", "S"];
+    let availability = ["M", "T", "W", "Th", "F", "S"];
     return availability[Math.floor(Math.random() * 2)];
   }
 
@@ -982,18 +750,22 @@ export async function injectVolunteer() {
     volunteerData.map(async (data, index) => {
       const volunteer = await Volunteer.create(data);
 
-      volunteer.createStudent_volunteer(StudentVolunteer[index]);
-      volunteer.createVolunteer_personal_information(
+      await volunteer.createStudent_volunteer(StudentVolunteer[index]);
+      await volunteer.createVolunteer_personal_information(
         volunteerPersonalInformationData[index]
       );
-      volunteer.createVolunteer_emergency_contact(
+      await volunteer.createVolunteer_emergency_contact(
         volunteerEmergencyContacts[index]
       );
-      volunteer.createVolunteer_contact_information(
+      await volunteer.createVolunteer_contact_information(
         volunteerContactInformationData[index]
       );
-      volunteer.createVolunteer_availability({ day: getRandomAvailability() });
-      volunteer.createVolunteer_specialization({ area: getSpecialization() });
+      await volunteer.createVolunteer_availability({
+        day: getRandomAvailability(),
+      });
+      await volunteer.createVolunteer_specialization({
+        area: getSpecialization(),
+      });
     })
   );
 }

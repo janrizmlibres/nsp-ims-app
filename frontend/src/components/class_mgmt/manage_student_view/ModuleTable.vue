@@ -27,55 +27,58 @@ const statuses = ref([
 watch(() => studentModules.value, (data) => {
     moduleSubmissions.value = []
     for (const module of data) {
-        const temp = {
-            id: module.module_submissions[0].id,
-            title: module.title,
-            distribution_date: new Date(module.distribution_date).toDateString(),
-            retrieval_date: new Date(module.retrieval_date).toDateString(),
-            status: module.module_submissions[0].status,
-            date_submitted: module.module_submissions[0].date_submitted ? new Date(module.module_submissions[0].date_submitted).toDateString() : null ,
-            score: module.module_submissions[0].score,
-            remarks: module.module_submissions[0].remarks,
-        }
+      const temp = {
+        id: module.module_submissions[0].id,
+        title: module.title,
+        distribution_date: new Date(module.distribution_date).toDateString(),
+        retrieval_date: new Date(module.retrieval_date).toDateString(),
+        status: module.module_submissions[0].status,
+        date_submitted: module.module_submissions[0].date_submitted
+          ? new Date(module.module_submissions[0].date_submitted).toDateString()
+          : null,
+        score: module.module_submissions[0].score,
+        remarks: module.module_submissions[0].remarks
+      }
 
-        moduleSubmissions.value.push(temp)
+      moduleSubmissions.value.push(temp)
     }
-})
+  }
+)
 
 const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Graded':
-            return 'success';
+  switch (status) {
+    case 'Graded':
+      return 'success'
 
-        case 'Submitted':
-            return 'warning';
+    case 'Submitted':
+      return 'warning'
 
-        case 'No Submission':
-            return 'danger';
+    case 'No Submission':
+      return 'danger'
 
-        default:
-            return null;
-    }
-};
+    default:
+      return null
+  }
+}
 
 function sumSelectedModulesScore() {
-    return selectedModules.value.reduce((total, item) => total + item.score, 0);
+  return selectedModules.value.reduce((total, item) => total + item.score, 0)
 }
 
 function deselect() {
-    selectedModules.value = []
+  selectedModules.value = []
 }
 
 function onClickOutside(event) {
-    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
+  if (dt.value && !dtDiv.value.contains(event.target)) deselect()
 }
 
 onMounted(() => {
-    document.addEventListener('click', onClickOutside);
+  document.addEventListener('click', onClickOutside)
 })
 
 onBeforeUnmount(() => {
-    document.removeEventListener('click', onClickOutside);
+  document.removeEventListener('click', onClickOutside)
 })
 </script>
 

@@ -1,4 +1,4 @@
-import { INTEGER, STRING, VIRTUAL } from "sequelize";
+import { INTEGER, STRING, VIRTUAL, BOOLEAN } from "sequelize";
 import sequelize from "../../util/database.js";
 
 const Volunteer = sequelize.define("volunteer", {
@@ -26,13 +26,19 @@ const Volunteer = sequelize.define("volunteer", {
   },
   middleName: STRING,
   suffix: STRING,
+  isArchived: {
+    type: BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
   fullname: {
     type: VIRTUAL,
     get() {
       return (
         this.firstName +
         (this.middleName === null ? " " : ` ${this.middleName} `) +
-        this.lastName
+        this.lastName +
+        (this.suffix === null ? "" : `, ${this.suffix} `)
       );
     },
     set(_value) {

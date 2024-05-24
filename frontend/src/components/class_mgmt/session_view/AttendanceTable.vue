@@ -12,7 +12,7 @@ import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
 // stores
-import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand'
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
@@ -63,22 +63,24 @@ watch(() => props.modelValue, (data) => {
             noChanges.value = false
         })
     }
-    
+
     isFetching.value = false
-}, {immediate: true})
+  },
+  { immediate: true }
+)
 
 const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Present':
-            return 'success';
+  switch (status) {
+    case 'Present':
+      return 'success'
 
-        case 'Absent':
-            return 'danger';
+    case 'Absent':
+      return 'danger'
 
-        default:
-            return null;
-    }
-};
+    default:
+      return null
+  }
+}
 
 async function updateAttendances() {
     try {
@@ -87,32 +89,32 @@ async function updateAttendances() {
             onEdit(data)
         })
 
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Updated Grades Successfully',
-            life: 5000
-        })
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Updated Grades Successfully',
+      life: 5000
+    })
 
-        noChanges.value = true
-        changeMode()
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.response.data.message,
-            life: 3000
-        })
-    }
+    noChanges.value = true
+    changeMode()
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
 }
 
 function resetData() {
-    confirm.require({
-        message: 'Do you really want to discard the unsaved changes?',
-        header: 'Redirect Confirmation',
-        accept: async () => {
-            learners.value = structuredClone(startingData)
-            updatedData.clear()
+  confirm.require({
+    message: 'Do you really want to discard the unsaved changes?',
+    header: 'Redirect Confirmation',
+    accept: async () => {
+      learners.value = structuredClone(startingData)
+      updatedData.clear()
 
             for (const datum of learners.value) {
                 watch(datum, (newData) => {
@@ -121,10 +123,10 @@ function resetData() {
                 })
             }
 
-            noChanges.value = true
-            changeMode()
-        }
-    })
+      noChanges.value = true
+      changeMode()
+    }
+  })
 }
 
 function changeMode() {
@@ -145,20 +147,27 @@ onBeforeRouteLeave((to) => {
         }
     })
 
-    return false
+  return false
 })
 </script>
 
 <template>
-    <div class="flex flex-col h-full w-full">
-        <DataTable 
-            :value="learners" dataKey="id" scrollable style=" overflow: auto;"
-            sortField="lastName" :sortOrder="1" removableSort
-            v-model:filters="filters"
-            :globalFilterFields="['lastName', 'firstName', 'status', 'remarks']"
-        >
-            <template #empty> <div class="text-center">No records found.</div> </template>
-            <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+  <div class="flex flex-col h-full w-full">
+    <DataTable
+      :value="learners"
+      dataKey="id"
+      scrollable
+      style="overflow: auto"
+      sortField="lastName"
+      :sortOrder="1"
+      removableSort
+      v-model:filters="filters"
+      :users="['lastName', 'firstName', 'status', 'remarks']"
+    >
+      <template #empty> <div class="text-center">No records found.</div> </template>
+      <template #loading>
+        <div class="text-center">Loading class records. Please wait.</div>
+      </template>
 
             <Column field="lastName" header="Last Name" frozen sortable />
             <Column field="firstName" header="First Name" frozen sortable />
@@ -197,5 +206,4 @@ onBeforeRouteLeave((to) => {
     </div>
 </template>
 
-<style>
-</style>
+<style></style>

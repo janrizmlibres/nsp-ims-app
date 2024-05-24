@@ -8,8 +8,10 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
+import { useUsersStore } from '@/stores/users'
 
 const authStore = useAuthStore()
+const usersStore = useUsersStore()
 const toast = useToast()
 const router = useRouter()
 
@@ -20,14 +22,14 @@ const isUsernameInvalid = ref(false)
 const isPasswordInvalid = ref(false)
 
 function checkInputEmpty(input, isInvalid) {
-  const inputValue = input.value || '';
+  const inputValue = input.value || ''
 
   if (inputValue.trim() === '') {
-    isInvalid.value = true;
-    return true;
+    isInvalid.value = true
+    return true
   } else {
     isInvalid.value = false
-    return false;
+    return false
   }
 }
 
@@ -52,8 +54,12 @@ async function submitEvent() {
 
   try {
     await authStore.login(id, password)
+    await usersStore.updateLastLogin()
+    await usersStore.addAudit('Logged In')
     await router.replace({ name: 'dashboard' })
   } catch (error) {
+    console.log(error)
+
     toast.add({
       severity: 'error',
       summary: 'Error Logging In',

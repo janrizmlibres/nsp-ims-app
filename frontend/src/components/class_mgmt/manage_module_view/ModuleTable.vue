@@ -15,8 +15,8 @@ import { useRouter } from 'vue-router';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 // Custom
-import AddModuleSection from './AddModuleSection.vue';
-import EditModuleDialog from './EditModuleDialog.vue';
+import AddModuleSection from './AddModuleSection.vue'
+import EditModuleDialog from './EditModuleDialog.vue'
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
@@ -49,10 +49,10 @@ const dt = ref()
 const dtDiv = ref()
 
 const cols = ref([
-    {field: 'no_submissions', header: 'No Submissions'},
-    {field: 'lacking', header: 'Lacking'},
-    {field: 'complete', header: 'Complete'},
-    {field: 'total', header: 'Total'},
+  { field: 'no_submissions', header: 'No Submissions' },
+  { field: 'lacking', header: 'Lacking' },
+  { field: 'complete', header: 'Complete' },
+  { field: 'total', header: 'Total' }
 ])
 
 const selectedModulesStatus = computed(() => {
@@ -206,43 +206,49 @@ async function markAs() {
 }
 
 function viewModule() {
-    router.push({ name: 'module-info', query: {id: selectedModules.value[selectedModules.value.length-1].id, status: termStatus.value} })
+  router.push({
+    name: 'module-info',
+    query: {
+      id: selectedModules.value[selectedModules.value.length - 1].id,
+      status: termStatus.value
+    }
+  })
 }
 
 function deselect() {
-    selectedModules.value = []
+  selectedModules.value = []
 }
 
 const getStatusLabel = (status) => {
-    switch (status) {
-        case true:
-            return 'success';
+  switch (status) {
+    case true:
+      return 'success'
 
-        case false:
-            return 'warning';
+    case false:
+      return 'warning'
 
-        default:
-            return null;
-    }
-};
+    default:
+      return null
+  }
+}
 
 const getNumericLabel = (field) => {
-    switch (field) {
-        case 'no_submissions':
-            return 'danger';
+  switch (field) {
+    case 'no_submissions':
+      return 'danger'
 
-        case 'lacking':
-            return 'warning';
+    case 'lacking':
+      return 'warning'
 
-        case 'complete':
-            return 'success';
+    case 'complete':
+      return 'success'
 
-        case 'total':
-            return 'info';
+    case 'total':
+      return 'info'
 
-        default:
-            return null;
-    }
+    default:
+      return null
+  }
 }
 
 function editModule(data) {
@@ -251,15 +257,15 @@ function editModule(data) {
 }
 
 function onClickOutside(event) {
-    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
+  if (dt.value && !dtDiv.value.contains(event.target)) deselect()
 }
 
 onMounted(() => {
-    document.addEventListener('click', onClickOutside);
+  document.addEventListener('click', onClickOutside)
 })
 
 onBeforeUnmount(() => {
-    document.removeEventListener('click', onClickOutside);
+  document.removeEventListener('click', onClickOutside)
 })
 </script>
 
@@ -346,5 +352,4 @@ onBeforeUnmount(() => {
     <EditModuleDialog />
 </template>
 
-<style>
-</style>
+<style></style>

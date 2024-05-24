@@ -11,10 +11,10 @@ import IdentityForm from '@/components/student_mgmt/profile_view/IdentityForm.vu
 import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
 import { useStudentsStore } from '@/stores/students'
 
-import FormParts from '@/util/student_form_parts'
+import { FormParts } from '@/util/student_utils'
 import { isEqual } from 'lodash'
 
-const emit = defineEmits(['routeChange'])
+const emit = defineEmits({ routeChange: [] })
 
 const route = useRoute()
 const router = useRouter()

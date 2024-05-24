@@ -32,7 +32,6 @@ const termStatus = inject('termStatus')
 const grades = ref([])
 const startingData = []
 const updatedData = new Set([])
-
 const edit = ref(false)
 const noChanges = ref(true)
 const disableEdit = ref(props.disableEdit)
@@ -49,22 +48,22 @@ watch(() => props.modelValue, (data) => {
     startingData.length = 0
 
     for (const datum of data) {
-        const temp = {
-            id: datum.id,
-            enrollmentId: datum.enrollment.id,
-            classLearningStrandId: datum.classLearningStrandId,
-            lastName: datum.enrollment.student.lastName,
-            firstName: datum.enrollment.student.firstName,
-            middleName: datum.enrollment.student.middleName,
-            grades: {
-                first_quarter: datum.first_quarter,
-                second_quarter: datum.second_quarter,
-                third_quarter: datum.third_quarter,
-                fourth_quarter: datum.fourth_quarter,
-                remarks: datum.remarks,
-                updatedAt: datum.updatedAt
-            }
+      const temp = {
+        id: datum.id,
+        enrollmentId: datum.enrollment.id,
+        classLearningStrandId: datum.classLearningStrandId,
+        lastName: datum.enrollment.student.lastName,
+        firstName: datum.enrollment.student.firstName,
+        middleName: datum.enrollment.student.middleName,
+        grades: {
+          first_quarter: datum.first_quarter,
+          second_quarter: datum.second_quarter,
+          third_quarter: datum.third_quarter,
+          fourth_quarter: datum.fourth_quarter,
+          remarks: datum.remarks,
+          updatedAt: datum.updatedAt
         }
+      }
 
         const len = grades.value.push(temp)
         startingData.push(structuredClone(temp))
@@ -75,7 +74,8 @@ watch(() => props.modelValue, (data) => {
             noChanges.value = false
         })
     }
-})
+  }
+)
 
 async function updateGrades() {
     try {
@@ -157,9 +157,9 @@ function changeMode() {
     >
         <template #empty> <div class="text-center">No records found.</div> </template>
 
-        <Column field="lastName" header="Last Name" frozen sortable />
-        <Column field="firstName" header="First Name" frozen sortable />
-        <Column field="middleName" header="Middle Name" />
+    <Column field="lastName" header="Last Name" frozen sortable />
+    <Column field="firstName" header="First Name" frozen sortable />
+    <Column field="middleName" header="Middle Name" />
 
         <Column field="first_quarter" header="Q1">
             <template #body="slotProps">
@@ -209,5 +209,4 @@ function changeMode() {
     </DataTable>
 </template>
 
-<style>
-</style>
+<style></style>

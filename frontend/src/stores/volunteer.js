@@ -1,26 +1,71 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import { computed, ref } from 'vue'
 import { useAuthStore } from './auth'
-import { ref } from 'vue'
+import axios from 'axios'
 
 export const useVolunteerStore = defineStore('volunteer', () => {
-  const volunteers = ref()
+  const volunteers = ref([])
+
+  /*const volunteersNormalized = computed(() => {
+  return volunteers.value.map((volunteer) => {
+    const { volunteer_personal_information, volunteer_contact_information, ...identity } = volunteer
+
+    delete Object.assign(volunteer_personal_information, { ['personalInfoId']: volunteer_personal_information['id'] })['id']
+    delete Object.assign(volunteer_contact_information, { ['contactInfoId']: volunteer_personal_information['id'] })['id']
+
+    return { ...identity, ...volunteer_personal_information, ...volunteer_contact_information }
+  })
+})*/
 
   async function getAllVolunteers() {
     const authStore = useAuthStore()
     
-    const response = await axios.get('http://localhost:8080/volunteer/volunteers', {
-      headers: {
-        'Authorization': `Bearer ${authStore.token}` // replace 'authStore.token' with your actual token path
-      }
-    });
+    const result = await axios.get('http://localhost:8080/volunteer/volunteers', {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
 
-    if (Array.isArray(response.data.data)) {
-      volunteers.value = response.data.data.map(volunteer => ({
-        ...volunteer
-      }));
-    }
+    volunteers.value = result.data.volunteers
   }
 
-  return { volunteers, getAllVolunteers }
+  async function addVolunteer(formData) {
+    const authStore = useAuthStore()
+
+    const result = await axios.post('http://localhost:8080/volunteer/add-volunteer', formData, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    return result
+  }
+
+  async function getVolunteer(id) {
+  const authStore = useAuthStore()
+
+  const result = await axios.get(`http://localhost:8080/volunteer/${id}`, {
+    headers: { Authorization: 'Bearer ' + authStore.token }
+  })
+
+    return result
+  }
+
+  async function updateVolunteer(id, formData) {
+  const authStore = useAuthStore()
+
+  const result = await axios.put(`http://localhost:8080/volunteer/update-volunteer/${id}`, formData, {
+    headers: { Authorization: 'Bearer ' + authStore.token }
+  })
+  
+    return result
+  }
+
+  async function deleteVolunteer(id) {
+    const authStore = useAuthStore()
+
+    const result = await axios.delete(`http://localhost:8080/volunteer/delete-volunteer/${id}`, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    return result
+  }
+  
+  return { volunteers, getAllVolunteers, addVolunteer, getVolunteer, updateVolunteer, deleteVolunteer /*volunteersNormalized*/ }
 })

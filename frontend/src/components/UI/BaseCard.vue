@@ -1,7 +1,7 @@
 <script setup>
 import Card from 'primevue/card'
 
-defineProps(['isNotPadded'])
+defineProps({ isNotPadded: Boolean })
 </script>
 
 <template>
