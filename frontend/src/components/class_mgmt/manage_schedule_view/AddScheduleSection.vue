@@ -66,9 +66,14 @@ function addSchedule() {
             return
     }
 
-    emit('onUpdate', learningStrandInput.value, formData.value)
-    resetForm()
-}
+            try {
+                await staffsStore.addAudit(
+                    `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                )
+            } catch(error) {
+                console.log(error);
+            }
+        })
 
 function resetForm() {
     invalid.value = false
