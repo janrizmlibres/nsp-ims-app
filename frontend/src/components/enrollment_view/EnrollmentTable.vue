@@ -135,6 +135,32 @@ function editEnrolled(data) {
   })
 }
 
+async function downloadEnrollmentForm(name, filePath) {
+  try {
+    console.log("http://localhost:8080/" + filePath);
+    const response = await fetch(`http://localhost:8080/${filePath}`);
+    if (!response.ok) {
+      throw new Error("HTTP error " + response.status);
+    }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${name}_enrollment_form.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.message,
+      life: 3000
+    });
+  }
+}
+
+refreshStudentTable()
 </script>
 
 <template>
@@ -230,6 +256,16 @@ function editEnrolled(data) {
     <column field="dateEnrolled" header="Date Enrolled" sortable>
       <template #body="{ data }">
         {{ data.dateEnrolled ? new Date(data.dateEnrolled).toISOString().split('T')[0] : '' }}
+      </template>
+    </column>
+    <column
+      header="Enrollment Form"
+    >
+      <template #body="{ data }">
+        <Button
+          icon="pi pi-download"
+          label="View"
+          @click="downloadEnrollmentForm(data.lastName, data.enrollmentFormURL)" />
       </template>
     </column>
     <Column
