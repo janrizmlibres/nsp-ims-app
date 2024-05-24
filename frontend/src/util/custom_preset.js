@@ -73,6 +73,9 @@ const customPreset = usePassThrough(
       rowexpansion: {
         class: 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-white/80 flex-1'
       },
+      rowexpansioncell: {
+        class: ['!p-0']
+      },
       paginator: {
         root: {
           class: ['flex items-center justify-center flex-wrap object-bottom', 'px-4 pt-4 pb-2', 'border-0 rounded-bl-xl rounded-br-xl', 'bg-transparent dark:bg-surface-800', 'text-surface-500 dark:text-white/60']
