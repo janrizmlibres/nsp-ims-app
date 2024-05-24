@@ -7,9 +7,6 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   const learners = ref([])
   const learner = ref(null)
   const editedTerm = ref(null)
-  const modules = ref([])
-  const grades = ref([])
-  const attendance = ref([])
   
   async function getAllEnrolledFromTerm(termID) {
     const authStore = useAuthStore()
@@ -67,67 +64,14 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     })
   }
   
-  async function getEnrolledModules(enrollmentId, classLearningStrandId) {
-    const authStore = useAuthStore()
-
-    const result = await axios.get(
-      `http://localhost:8080/enrollment/retrieve-modules/${enrollmentId}/${classLearningStrandId}`, 
-      {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
-
-    modules.value = result.data.modules
-    console.log("modules", modules.value)
-  }
-  
-  function setModules(modules) {
-    modules.value = modules
-  }
-  
-  async function getEnrolledGrades(enrollmentId, classLearningStrandId) {
-    const authStore = useAuthStore()
-
-    const result = await axios.get(
-      `http://localhost:8080/enrollment/retrieve-grades/${enrollmentId}/${classLearningStrandId}`, 
-      {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
-
-    grades.value = result.data.grades
-  }
-  
-  function setGrades(grades) {
-    grades.value = grades
-  }
-  
-  async function getEnrolledAttendance(enrollmentId, classLearningStrandId) {
-    const authStore = useAuthStore()
-
-    const result = await axios.get(
-      `http://localhost:8080/enrollment/retrieve-attendance/${enrollmentId}/${classLearningStrandId}`, 
-      {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
-
-    attendance.value = result.data.attendance
-    console.log("attendance", attendance.value)
-  }
-  
-  function setAttendance(attendance) {
-    attendance.value = attendance
-  }
-  
   return {
     learners, 
     learner, 
-    editedTerm, 
-    modules,
-    grades,
-    attendance,
+    editedTerm,
     changeEnrolledStatus, 
     setEditedTerm, 
     getAllEnrolledFromTerm, 
-    enrollLearner, 
+    enrollLearners, 
     getEnrolled, 
     updateLearner,
     setModules,
