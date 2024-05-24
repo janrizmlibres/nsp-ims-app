@@ -1,6 +1,6 @@
 <script setup>
 import Button from 'primevue/button'
-import { useToast } from 'primevue/usetoast'
+// import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 
 import { onMounted, ref, computed, provide, watch, readonly } from 'vue'
@@ -18,72 +18,70 @@ const emit = defineEmits({ routeChange: [] })
 
 const route = useRoute()
 const router = useRouter()
-const toast = useToast()
+// const toast = useToast()
 const confirm = useConfirm()
 
 const studentsStore = useStudentsStore()
 
 const initialData = {
   identity: {
-    firstName: null,
-    middleName: null,
-    lastName: null,
+    firstName: '',
+    middleName: '',
+    lastName: '',
     suffixName: null,
-    lrn: null,
+    lrn: '',
     category: null,
     photoUrl: null
   },
   personalInfo: {
     birthday: null,
     bloodType: null,
-    birthBarangay: null,
-    birthCity: null,
-    birthProvince: null,
-    religion: null,
+    birthCity: '',
+    birthProvince: '',
+    religion: '',
     sex: null,
     civilStatus: null,
-    homeBlkLtSt: null,
-    homeBarangay: null,
-    homeCity: null,
-    homeProvince: null
+    homeBlkLtSt: '',
+    homeBarangay: '',
+    homeCity: '',
+    homeProvince: ''
   },
   contactInfo: {
-    email: null,
-    contactNum: null,
-    facebook: null
+    email: '',
+    contactNum: '',
+    facebook: ''
   },
   emergencyPerson: {
-    firstName: null,
-    middleName: null,
-    lastName: null,
+    firstName: '',
+    middleName: '',
+    lastName: '',
     suffixName: null,
-    contactNum: null,
-    relationship: null
+    contactNum: '',
+    relationship: ''
   },
   parentalInfo: {
-    lastNameF: null,
-    middleNameF: null,
-    firstNameF: null,
+    lastNameF: '',
+    middleNameF: '',
+    firstNameF: '',
     suffixNameF: null,
-    occupationF: null,
-    lastNameM: null,
-    middleNameM: null,
-    firstNameM: null,
+    occupationF: '',
+    lastNameM: '',
+    middleNameM: '',
+    firstNameM: '',
     suffixNameM: null,
-    occupationM: null
+    occupationM: ''
   },
   prevSchool: {
-    name: null,
+    name: '',
     schoolType: null,
     schoolAffiliation: null,
     lastSyAttended: null,
     highestEducation: null,
     gradeStopped: null,
-    reason: null,
-    street: null,
-    barangay: null,
-    city: null,
-    province: null
+    reason: '',
+    street: '',
+    city: '',
+    province: ''
   }
 }
 
@@ -149,20 +147,29 @@ async function submitForm() {
         ? await studentsStore.addStudent(formData.value)
         : await studentsStore.updateStudent(route.params.studentId, formData.value)
 
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: result.data.message,
-      life: 5000
+    // toast.add({
+    //   severity: 'success',
+    //   summary: 'Success',
+    //   detail: result.data.message,
+    //   life: 5000
+    // })
+
+    confirm.require({
+      group: 'user-headless',
+      header: 'Success',
+      message: result.data.message,
+      acceptLabel: 'OK',
+      icon: 'fa-solid fa-thumbs-up'
     })
 
     await goToStudentView()
   } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
+    confirm.require({
+      group: 'user-headless',
+      header: 'Data is Incorrect',
+      message: 'Make sure inputs are correct and all required fields are filled in.',
+      acceptLabel: 'OK',
+      icon: 'fa-solid fa-triangle-exclamation'
     })
   }
 }
@@ -171,8 +178,12 @@ onBeforeRouteLeave((to) => {
   if (!isFormDirty.value || isOkToLeave) return true
 
   confirm.require({
-    message: 'Do you really want to leave? You have unsaved changes!',
+    group: 'user-headless',
     header: 'Redirect Confirmation',
+    message: 'Do you really want to leave? You have unsaved changes!',
+    acceptLabel: 'Yes',
+    rejectLabel: 'No',
+    icon: 'fa-solid fa-diamond-turn-right',
     accept: async () => {
       isOkToLeave = true
       await router.push(to)
@@ -224,34 +235,36 @@ onMounted(async () => {
 
 <template>
   <ContentPane :header="`Students / ${headerText}`" subheader="Academic Year 2022 - 2023">
-    <div class="flex flex-col gap-3 h-full mr-1">
-      <IdentityForm
-        @dataChanged="updateFormData"
-        :identity="formData.identity"
-        :isViewMode="$route.meta.isViewMode"
-        :key="updateKey"
-      />
-      <BulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
+    <form @submit.prevent="handleConfirm">
+      <div class="flex flex-col gap-3 h-full mr-1">
+        <IdentityForm
+          @dataChanged="updateFormData"
+          :identity="formData.identity"
+          :isViewMode="$route.meta.isViewMode"
+          :key="updateKey"
+        />
+        <BulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
 
-      <div class="flex-none text-right">
-        <div class="inline-block">
-          <Button class="h-10 u-bg-green" @click="handleConfirm">
-            <div>
-              <font-awesome-icon
-                icon="fa-solid fa-circle-check"
-                class="absolute top-2/4 -mt-2 left-3"
-              />
-              <h2 class="pl-5 font-bold">{{ confirmBtnText }}</h2>
-            </div>
-          </Button>
-          <Button
-            class="h-10 ml-2 u-bg-red"
-            :label="cancelBtnText"
-            icon="fa-solid fa-circle-xmark"
-            @click="handleCancel"
-          />
+        <div class="flex-none text-right">
+          <div class="inline-block">
+            <Button type="submit" class="h-10 u-bg-green" :disabled="!isFormDirty">
+              <div>
+                <font-awesome-icon
+                  icon="fa-solid fa-circle-check"
+                  class="absolute top-2/4 -mt-2 left-3"
+                />
+                <h2 class="pl-5 font-bold">{{ confirmBtnText }}</h2>
+              </div>
+            </Button>
+            <Button
+              class="h-10 ml-2 u-bg-red"
+              :label="cancelBtnText"
+              icon="fa-solid fa-circle-xmark"
+              @click="handleCancel"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   </ContentPane>
 </template>

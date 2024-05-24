@@ -183,6 +183,7 @@ onMounted(async () => {
             class="h-10 w-full"
             type="text"
             v-model="name.lastName"
+            required
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => {
@@ -201,6 +202,7 @@ onMounted(async () => {
             id="first-name"
             type="text"
             v-model="name.firstName"
+            required
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => {
@@ -256,6 +258,7 @@ onMounted(async () => {
             id="lrn"
             type="text"
             v-model="lrn"
+            required
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => {

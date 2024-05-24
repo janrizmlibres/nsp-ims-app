@@ -28,7 +28,6 @@ const computedBirthday = computed(() => {
 })
 
 const birthPlace = ref({
-  birthBarangay: personalInfo.birthBarangay,
   birthCity: personalInfo.birthCity,
   birthProvince: personalInfo.birthProvince
 })
@@ -201,16 +200,6 @@ onMounted(() => {
           <div>Place of Birth</div>
           <div class="text-red-500 text-xl">*</div>
         </div>
-        <InputText
-          class="h-10 col-span-3"
-          type="text"
-          v-model="birthPlace.birthBarangay"
-          placeholder="Barangay"
-          @update:modelValue="handleUpdate"
-          :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
         <InputText
           class="h-10 col-span-3 col-start-2"
           type="text"

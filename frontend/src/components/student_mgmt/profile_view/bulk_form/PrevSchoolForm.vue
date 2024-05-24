@@ -18,7 +18,6 @@ const discontinuationReason = ref(prevSchoolInfo.reason)
 
 const address = ref({
   street: { label: 'Blk/Lt/St', data: prevSchoolInfo.street },
-  barangay: { label: 'Barangay', data: prevSchoolInfo.barangay },
   city: { label: 'City', data: prevSchoolInfo.city },
   province: { label: 'Province', data: prevSchoolInfo.province }
 })
@@ -114,8 +113,9 @@ onMounted(() => {
   <div class="grid grid-cols-2">
     <div class="px-8">
       <div class="grid grid-cols-5 gap-3">
-        <div class="flex items-center justify-end pr-6 col-span-2">
-          <span>School Name</span>
+        <div class="flex gap-1 items-center justify-end pr-6 col-span-2">
+          <div>School Name</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <InputText
           class="h-10 col-span-3"
@@ -131,8 +131,9 @@ onMounted(() => {
           :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end pr-6 col-span-2">
-          <span>Type</span>
+        <div class="flex gap-1 items-center justify-end pr-6 col-span-2">
+          <div>Type</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
           class="h-10 col-span-3"
@@ -144,8 +145,9 @@ onMounted(() => {
           :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end pr-6 col-span-2">
-          <span>Affiliation</span>
+        <div class="flex gap-1 items-center justify-end pr-6 col-span-2">
+          <div>Affiliation</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
           class="h-10 col-span-3"
@@ -157,8 +159,9 @@ onMounted(() => {
           :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end text-right pr-6 col-span-2">
-          <span>Last School Year Attended</span>
+        <div class="flex gap-1 items-center justify-end text-right pr-6 col-span-2">
+          <div>Last School Year Attended</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
 
         <div class="grid grid-cols-5 gap-3 col-span-3">
@@ -183,8 +186,9 @@ onMounted(() => {
           />
         </div>
 
-        <div class="flex items-center justify-end text-right pr-6 col-span-2">
-          <span>Highest Educational Attainment</span>
+        <div class="flex gap-1 items-center justify-end text-right pr-6 col-span-2">
+          <div>Highest Educational Attainment</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
           class="h-10 col-span-3"
@@ -196,9 +200,11 @@ onMounted(() => {
           :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end text-right pr-6 col-span-2">
-          <span>Grade Year/Level Stopped</span>
+        <div class="flex gap-1 items-center justify-end text-right pr-6 col-span-2">
+          <div>Grade Year/Level Stopped</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
+
         <Dropdown
           class="h-10 col-span-3"
           v-model="selectedLevel"
@@ -213,9 +219,11 @@ onMounted(() => {
 
     <div class="px-8">
       <div class="grid grid-cols-4 gap-3">
-        <div class="flex justify-end text-right pr-6">
-          <span>Reason for Discontinuation</span>
+        <div class="flex gap-1 justify-end text-right pr-6">
+          <div>Reason for Discontinuation</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
+
         <Textarea
           class="col-span-3"
           v-model="discontinuationReason"
@@ -231,9 +239,11 @@ onMounted(() => {
           :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end pr-6">
-          <span>Address</span>
+        <div class="flex gap-1 items-center justify-end pr-6">
+          <div>Address</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
+
         <InputText
           v-for="(value, key) of address"
           :key="key"
