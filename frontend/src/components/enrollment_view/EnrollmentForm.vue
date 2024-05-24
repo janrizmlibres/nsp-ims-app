@@ -5,7 +5,8 @@ import Dropdown from 'primevue/dropdown'
 import AutoComplete from 'primevue/autocomplete'
 import DataView from 'primevue/dataview'
 import Button from 'primevue/button'
-import { ref, computed } from 'vue'
+import FileUpload from 'primevue/fileupload'
+import { computed, ref } from 'vue'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useStudentsStore } from '@/stores/students.js'
 import { useTermStore } from '@/stores/term.js'
@@ -148,6 +149,29 @@ async function submitEvent() {
       life: 3000
     })
   }
+}
+
+function confirmUpload(event) {
+  let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
+
+  URL.revokeObjectURL(chosenFileURL.value)
+  chosenFileURL.value = URL.createObjectURL(event.files[0])
+  selectedLearnersList.value[currentEditStudentIndex.value] = {
+    ...currentLearner,
+    enrollmentForm: event.files[0],
+    enrollmentFormName: event.files[0].name
+  }
+  
+  confirmedFile.value = true;
+}
+
+function cancelFile() {
+  let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
+  selectedLearnersList.value[currentEditStudentIndex.value] = {
+    ...currentLearner,
+    enrollmentForm: null
+  }
+  confirmedFile.value = false;
 }
 </script>
 
