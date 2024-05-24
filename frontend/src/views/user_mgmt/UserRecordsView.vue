@@ -9,11 +9,13 @@ import ChangePwDialog from '@/components/user_mgmt/ChangePwDialog.vue'
 import RecordsTable from '@/components/user_mgmt/RecordsTable.vue'
 
 import { FilterMatchMode } from 'primevue/api'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 import { useUsersStore } from '@/stores/users'
+import { useAuthStore } from '@/stores/auth'
 import { AccessLevels } from '@/util/user_utils'
 
+const authStore = useAuthStore()
 const usersStore = useUsersStore()
 
 const filters = ref({
@@ -23,9 +25,12 @@ const filters = ref({
 const isLoading = ref(true)
 const visible = ref(false)
 const tabindex = ref(0)
+const dt = ref([])
 
 const pwUpdateUserId = ref(null)
 const pwUpdateFullname = ref(null)
+
+const isAdmin = computed(() => authStore.user.accessLevel === 1)
 
 function updateGlobalFilter(newValue) {
   filters.value.global.value = newValue
@@ -35,6 +40,10 @@ function openPwDialog(userId, userFullname) {
   pwUpdateUserId.value = userId
   pwUpdateFullname.value = userFullname
   visible.value = true
+}
+
+function updateDt(dtValue) {
+  dt.value.push(dtValue)
 }
 
 onMounted(async () => {
@@ -69,11 +78,16 @@ onMounted(async () => {
 
 <template>
   <ContentPane header="User Records">
-    <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+    <TheHeader
+      :dt="dt"
+      :tabindex="tabindex"
+      :globalFilter="filters.global.value"
+      @filterChanged="updateGlobalFilter"
+    />
 
     <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="rounded-md inline-block">
       <template #content>
-        <TabView :tabindex="tabindex" :pt="{ tabpanel: { content: '' } }">
+        <TabView v-if="isAdmin" :tabindex="tabindex" :pt="{ tabpanel: { content: '' } }">
           <TabPanel header="Sub-Admins">
             <RecordsTable
               :data="usersStore.subadmins"
@@ -82,6 +96,7 @@ onMounted(async () => {
               loadingText="Loading sub-admin data. Please wait."
               :isLoading="isLoading"
               @emitClick="openPwDialog"
+              @dtReferred="updateDt"
             />
           </TabPanel>
 
@@ -93,13 +108,28 @@ onMounted(async () => {
               loadingText="Loading staff data. Please wait."
               :isLoading="isLoading"
               @emitClick="openPwDialog"
+              @dtReferred="updateDt"
+            />
+          </TabPanel>
+        </TabView>
+
+        <TabView v-else :tabindex="tabindex" :pt="{ tabpanel: { content: '' } }">
+          <TabPanel header="Staff">
+            <RecordsTable
+              :data="usersStore.staffs"
+              :filtersProp="filters"
+              emptyText="No staff found."
+              loadingText="Loading staff data. Please wait."
+              :isLoading="isLoading"
+              @emitClick="openPwDialog"
+              @dtReferred="updateDt"
             />
           </TabPanel>
         </TabView>
       </template>
     </Card>
 
-    <div class="font-medium mt-4 ml-4">
+    <div v-show="isAdmin" class="font-medium mt-4 ml-4">
       Total users:
       <span class="u-txt-red">
         {{ usersStore.users.length }}

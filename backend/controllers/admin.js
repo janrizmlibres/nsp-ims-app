@@ -72,12 +72,24 @@ export async function updateUser(req, res, next) {
       throw error;
     }
 
-    user.set(req.body);
-    const result = await user.save();
+    const permissionSet = await user.getPermission();
+    const accessLevel = req.body.accessLevel;
+
+    if (accessLevel !== user.accessLevel && accessLevel === 2) {
+      await permissionSet.update({
+        canMgStuds: true,
+        canMgEnrollment: true,
+        canMgVolunteer: true,
+        canMgClass: true,
+        canMgUser: true,
+      });
+    }
+
+    const userResult = await user.update(req.body);
 
     res.status(200).json({
       message: "User updated!",
-      user: result,
+      user: userResult,
     });
   } catch (error) {
     if (!error.statusCode) {

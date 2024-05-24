@@ -3,6 +3,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
+import Card from 'primevue/card'
 import { useToast } from 'primevue/usetoast'
 import { FilterMatchMode } from 'primevue/api'
 
@@ -10,8 +11,9 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import TheHeader from '@/components/user_mgmt/TheHeader.vue'
 
 import { useUsersStore } from '@/stores/users'
-import { ref, onMounted, watch } from 'vue'
 import { AccessLevels } from '@/util/user_utils'
+
+import { ref, onMounted, watch } from 'vue'
 
 const usersStore = useUsersStore()
 const toast = useToast()
@@ -28,13 +30,10 @@ const updatedData = new Set([])
 
 const columns = [
   { field: 'canMgStuds', header: 'Manage Students' },
-  { field: 'canMgStudReq', header: 'Manage Student Requirements' },
-  { field: 'canMgStudCat', header: 'Manage Student Categories' },
-  { field: 'canMgTerm', header: 'Manage Terms' },
-  { field: 'canMgLs', header: 'Manage Learning Strands' },
-  { field: 'canMgClass', header: 'Manage Classes' },
   { field: 'canMgEnrollment', header: 'Manage Enrollment' },
-  { field: 'canMgVolunteer', header: 'Manage Volunteers' }
+  { field: 'canMgVolunteer', header: 'Manage Volunteers' },
+  { field: 'canMgClass', header: 'Manage Classes' },
+  { field: 'canMgUser', header: 'Manage Users' }
 ]
 
 async function updatePerms() {
@@ -108,70 +107,68 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane header="User Permissions">
-    <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+  <ContentPane header="Staff Permissions">
+    <TheHeader
+      :includeExport="false"
+      :globalFilter="filters.global.value"
+      @filterChanged="updateGlobalFilter"
+    />
 
-    <DataTable
-      v-model:filters="filters"
-      :value="data"
-      :users="['id', 'fullname']"
-      scrollable
-      removableSort
-      :ptOptions="{ mergeProps: true }"
-    >
-      <template #empty> No users found. </template>
-      <template #loading> Loading users data. Please wait. </template>
+    <Card :pt="{ content: 'h-full', body: 'h-full px-4 pb-4' }" class="rounded-md">
+      <template #content>
+        <DataTable
+          v-model:filters="filters"
+          :value="data"
+          :users="['id', 'fullname']"
+          scrollable
+          removableSort
+          :ptOptions="{ mergeProps: true }"
+        >
+          <template #empty> No staff found. </template>
+          <template #loading> Loading staff data. Please wait. </template>
 
-      <Column field="id" header="User ID" sortable></Column>
-      <Column field="fullname" header="Full Name" sortable> </Column>
+          <Column field="id" header="User ID" sortable></Column>
+          <Column field="fullname" header="Full Name" sortable> </Column>
 
-      <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
-        <template #body="slotProps">
-          <Checkbox
-            v-if="col.field === 'canMgStuds'"
-            v-model="slotProps.data.canMgStuds"
-            :binary="true"
-          />
-          <Checkbox
-            v-else-if="col.field === 'canMgStudReq'"
-            v-model="slotProps.data.canMgStudReq"
-            :binary="true"
-          />
-          <Checkbox
-            v-else-if="col.field === 'canMgStudCat'"
-            v-model="slotProps.data.canMgStudCat"
-            :binary="true"
-          />
-          <Checkbox
-            v-else-if="col.field === 'canMgTerm'"
-            v-model="slotProps.data.canMgTerm"
-            :binary="true"
-          />
-          <Checkbox
-            v-else-if="col.field === 'canMgLs'"
-            v-model="slotProps.data.canMgLs"
-            :binary="true"
-          />
-          <Checkbox
-            v-else-if="col.field === 'canMgClass'"
-            v-model="slotProps.data.canMgClass"
-            :binary="true"
-          />
-          <Checkbox
-            v-else-if="col.field === 'canMgEnrollment'"
-            v-model="slotProps.data.canMgEnrollment"
-            :binary="true"
-          />
-          <Checkbox v-else v-model="slotProps.data.canMgVolunteer" :binary="true" />
-        </template>
-      </Column>
-    </DataTable>
+          <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
+            <template #body="slotProps">
+              <Checkbox
+                v-if="col.field === 'canMgStuds'"
+                v-model="slotProps.data.canMgStuds"
+                :binary="true"
+              />
+              <Checkbox
+                v-else-if="col.field === 'canMgEnrollment'"
+                v-model="slotProps.data.canMgEnrollment"
+                :binary="true"
+              />
+              <Checkbox
+                v-else-if="col.field === 'canMgVolunteer'"
+                v-model="slotProps.data.canMgVolunteer"
+                :binary="true"
+              />
+              <Checkbox
+                v-else-if="col.field === 'canMgClass'"
+                v-model="slotProps.data.canMgClass"
+                :binary="true"
+              />
+              <Checkbox v-else v-model="slotProps.data.canMgUser" :binary="true" />
+            </template>
+          </Column>
 
-    <div class="flex justify-between">
-      <p class="pl-8 pt-2 font-medium">
-        Record(s) count: <span class="u-txt-red"> {{ usersStore.users.length }} </span>
-      </p>
+          <template #footer>
+            <span class="font-medium">
+              Staff count:
+              <span class="u-txt-red">
+                {{ data.length }}
+              </span>
+            </span>
+          </template>
+        </DataTable>
+      </template>
+    </Card>
 
+    <div class="flex justify-end">
       <div class="mt-4">
         <Button class="h-10 u-bg-green" :disabled="noChanges" @click="updatePerms">
           <font-awesome-icon
