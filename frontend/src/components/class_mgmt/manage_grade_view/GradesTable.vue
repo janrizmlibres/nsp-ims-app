@@ -91,20 +91,20 @@ async function updateGrades() {
             })
 
             try {
-                classLearningStrandStore.getAllGrades(classLearningStrandId.value).then((data) => {
-                    onSubmit(data)
-                })
-            } catch (error) {
+                for (const grade of Array.from(updatedData)) {
+                    await usersStore.addAudit(
+                        `Updated: Grade of ${grade.firstName} ${grade.lastName} in ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    )
+                }
+            } catch(error) {
                 console.log(error);
             }
 
             try {
-                for (const grade of Array.from(updatedData)) {
-                    await usersStore.addAudit(
-                        `Updated: Grade of ${grade.firstName} ${grade.lastName} in ${learningStrandInput.value.learning_strand.code} of ${classLevel.school_level}, SY ${term.academic_year}`
-                    )
-                }
-            } catch(error) {
+                classLearningStrandStore.getAllGrades(classLearningStrandId.value).then((data) => {
+                    onSubmit(data)
+                })
+            } catch (error) {
                 console.log(error);
             }
         })

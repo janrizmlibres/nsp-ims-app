@@ -9,7 +9,7 @@ import MeterGroup from 'primevue/metergroup';
 import Tag from 'primevue/tag';
 import Badge from 'primevue/badge';
 import InputText from 'primevue/inputtext';
-import { computed, inject, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
+import { computed, inject, provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
@@ -139,7 +139,6 @@ async function deleteModules() {
             try {
                 const moduleIds = selectedModules.value.map(module => module.id)
                 await classLearningStrandStore.deleteModules({moduleIds: moduleIds}).then((message) => {
-                    deselect()
                     toast.add({
                         severity: 'success',
                         summary: 'Success',
@@ -148,18 +147,18 @@ async function deleteModules() {
                     })
 
                     try {
-                        classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
-                            updateModuleTable(data)
+                        selectedModules.value.forEach(async (module) => {
+                            await usersStore.addAudit(
+                                `Deleted: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                            ).then(deselect())
                         })
                     } catch(error) {
                         console.log(error);
                     }
-                    
+
                     try {
-                        selectedModules.value.forEach(async (module) => {
-                            await usersStore.addAudit(
-                                `Deleted: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
-                            )
+                        classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
+                            updateModuleTable(data)
                         })
                     } catch(error) {
                         console.log(error);
@@ -181,8 +180,9 @@ async function deleteModules() {
 async function markAs() {
     try {
         const moduleIds = selectedModules.value.map(module => module.id)
+        const status = structuredClone(selectedModulesStatus.value)
         await classLearningStrandStore.updateModuleStatus({
-            status: selectedModulesStatus.value,
+            status: status,
             moduleIds: moduleIds
         }).then((message) => {
             toast.add({
@@ -191,14 +191,24 @@ async function markAs() {
                 detail: message,
                 life: 3000
             })
-        })
-    } catch(error) {
-        console.log(error);
-    }
 
-    try {
-        classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
-            updateModuleTable(data)
+            try {
+                selectedModules.value.forEach(async (module) => {
+                    await usersStore.addAudit(
+                        `Updated: Marked ${module.title} as ${status ? 'undone' : 'done'} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    ).then(deselect())
+                })
+            } catch(error) {
+                console.log(error);
+            }
+
+            try {
+                classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
+                    updateModuleTable(data)
+                })
+            } catch(error) {
+                console.log(error);
+            }
         })
     } catch(error) {
         console.log(error);
@@ -255,18 +265,6 @@ function editModule(data) {
     module.value = {... data}
     editModuleDialogState.value = true
 }
-
-function onClickOutside(event) {
-  if (dt.value && !dtDiv.value.contains(event.target)) deselect()
-}
-
-onMounted(() => {
-  document.addEventListener('click', onClickOutside)
-})
-
-onBeforeUnmount(() => {
-  document.removeEventListener('click', onClickOutside)
-})
 </script>
 
 <template>
