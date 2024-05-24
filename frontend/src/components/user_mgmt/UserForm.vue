@@ -6,12 +6,16 @@ import Divider from 'primevue/divider'
 import Checkbox from 'primevue/checkbox'
 
 import { computed, ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps({ formDataProp: Object, isEditView: Boolean })
 const formData = props.formDataProp
 
+const authStore = useAuthStore()
+
 const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 const confirmPassInvalid = computed(() => formData.password !== formData.confirmPass)
+const isAdmin = computed(() => authStore.user.accessLevel === 1)
 </script>
 
 <template>
@@ -68,7 +72,7 @@ const confirmPassInvalid = computed(() => formData.password !== formData.confirm
           />
         </div>
 
-        <div class="flex gap-10 mb-12 items-center">
+        <div class="flex gap-10 items-center" :class="{ 'mb-12': isEditView }">
           <div class="basis-32 text-right">
             <span>Suffix</span>
           </div>
@@ -91,7 +95,7 @@ const confirmPassInvalid = computed(() => formData.password !== formData.confirm
             v-model="formData.password"
             toggleMask
             class="grow h-10"
-            required
+            :required="isEditView"
             @change="$emit('dataChanged', formData)"
           >
             <template #header>
@@ -119,7 +123,7 @@ const confirmPassInvalid = computed(() => formData.password !== formData.confirm
           <Password
             class="grow h-10"
             v-model="formData.confirmPass"
-            required
+            :required="isEditView"
             :feedback="false"
             toggleMask
             :invalid="confirmPassInvalid"
@@ -170,7 +174,7 @@ const confirmPassInvalid = computed(() => formData.password !== formData.confirm
           />
         </div>
 
-        <div class="flex gap-10 items-center">
+        <div class="flex gap-10 items-center" :class="{ hidden: !isAdmin }">
           <div class="basis-32 text-right">Sub-Admin</div>
 
           <Checkbox
