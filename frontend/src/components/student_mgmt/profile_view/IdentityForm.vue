@@ -10,7 +10,7 @@ import Button from 'primevue/button'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { FormParts } from '@/util/student_utils'
+import { FormParts, floatLabelPt } from '@/util/student_utils'
 import { useUtilitiesStore } from '@/stores/utilities'
 
 const emit = defineEmits(['dataChanged'])
@@ -18,19 +18,6 @@ const props = defineProps({ identity: Object, isViewMode: Boolean })
 
 const route = useRoute()
 const utilitiesStore = useUtilitiesStore()
-
-const floatLabelPt = {
-  root: [
-    'block relative',
-    '[&>*:last-child]:text-surface-900/60 dark:[&>*:last-child]:text-white/60',
-    '[&>*:last-child]:absolute',
-    '[&>*:last-child]:-top-4',
-    '[&>*:last-child]:-translate-y-1/2',
-    '[&>*:last-child]:left-3',
-    '[&>*:last-child]:pointer-events-none',
-    '[&>*:last-child]:text-sm'
-  ]
-}
 
 const op = ref()
 const uploader = ref(null)

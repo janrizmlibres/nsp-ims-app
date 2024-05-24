@@ -2,12 +2,13 @@
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
+import FloatLabel from 'primevue/floatlabel'
 
 import { ref, onMounted, watch, computed, inject } from 'vue'
 import { getYear } from 'date-fns'
 
 import { objectMap } from '@/util/helpers'
-import { FormParts } from '@/util/student_utils'
+import { FormParts, floatLabelPt } from '@/util/student_utils'
 
 const { formData, updateFormData } = inject('formData')
 
@@ -244,23 +245,31 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
 
-        <InputText
+        <FloatLabel
           v-for="(value, key) of address"
           :key="key"
-          class="h-10 col-span-3"
-          :class="{ 'col-start-2': value.data !== 'Blk/Lt/St' }"
-          type="text"
-          v-model="value.data"
-          :placeholder="value.label"
-          @update:model-value="handleUpdate"
-          :pt="{
-            root: ({ context }) => {
-              return { class: [{ '!opacity-100': context.disabled }] }
-            }
+          class="col-span-3"
+          :class="{
+            'flex items-center mt-8': value.label === 'Blk/Lt/St',
+            'col-start-2 mt-4': value.label !== 'Blk/Lt/St'
           }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
+          :pt="floatLabelPt"
+        >
+          <InputText
+            class="h-10 w-full"
+            type="text"
+            v-model="value.data"
+            @update:model-value="handleUpdate"
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+          />
+          <label :for="key">{{ value.label }}</label>
+        </FloatLabel>
       </div>
     </div>
   </div>

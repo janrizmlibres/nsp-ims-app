@@ -147,22 +147,17 @@ async function submitForm() {
         ? await studentsStore.addStudent(formData.value)
         : await studentsStore.updateStudent(route.params.studentId, formData.value)
 
-    // toast.add({
-    //   severity: 'success',
-    //   summary: 'Success',
-    //   detail: result.data.message,
-    //   life: 5000
-    // })
-
     confirm.require({
       group: 'user-headless',
       header: 'Success',
       message: result.data.message,
       acceptLabel: 'OK',
-      icon: 'fa-solid fa-thumbs-up'
+      icon: 'fa-solid fa-thumbs-up',
+      accept: async () => {
+        isOkToLeave = true
+        await goToStudentView()
+      }
     })
-
-    await goToStudentView()
   } catch (error) {
     confirm.require({
       group: 'user-headless',
