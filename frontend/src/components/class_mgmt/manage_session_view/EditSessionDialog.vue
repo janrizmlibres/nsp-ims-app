@@ -40,7 +40,13 @@ async function updateSession() {
             life: 3000
         })
 
-        classStore.leave = true
+            try {
+                await staffsStore.addAudit(
+                    `Updated: ${session.date} of ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                )
+            } catch(error) {
+                console.log(error);
+            }
     } catch(error) {
         console.log(error);
         toast.add({
