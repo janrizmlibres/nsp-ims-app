@@ -90,69 +90,64 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
  * @param next - The next middleware function.
  * @returns {Promise<*>}
  */
-export const enrollLearner = async (req, res, next) => {
+export const enrollLearners = async (req, res, next) => {
   try {
-    //search for the Student ID from its lrn field
-    const student = await Student.findByPk(req.body.selectedStudentId)
-    
-    if (!student) {
-      const error = new Error("Student not found.");
-      error.statusCode = 404;
-      throw error;
-    }
-    
-    const classLevel = await ClassLevel.findByPk(
-      req.body.selectedSchoolLevelId
-    );
-    
-    if (!classLevel) {
-      const error = new Error("Class level not found.");
-      error.statusCode = 404;
-      throw error;
-    }
-    
-    // Check if student is already enrolled in the class level
-    const isEnrolled = await classLevel.hasStudent(student);
-    
-    if (isEnrolled) {
-      const error = new Error("Student is already enrolled in this year class level.");
-      error.statusCode = 400;
-      throw error;
-    }
-    
-    const enrollment = await classLevel.addStudent(student, {
-      through: {
-        hasEnrollmentForm: req.body.hasEnrollmentForm,
-        digital_literacy: req.body.digitalLiteracyScore,
-        ftl_pretest: req.body.fltPretestScore,
-        callable: req.body.callable,
-        bridger: req.body.bridger,
-        dateEnrolled: new Date(),
-        status: "Active",
-        regularity: req.body.selectedRegularity,
-        remarks: req.body.selectedRemarks,
+    for (const learner of req.body.learners) {
+      const classLevel = await ClassLevel.findByPk(learner.selectedSchoolLevelId);
+
+      if (!classLevel) {
+        const error = new Error("Class level not found.");
+        error.statusCode = 404;
+        throw error;
       }
-    });
-    
-    const classLearningStrands = await ClassLearningStrand.findAll({
-      where: {classLevelId: req.body.selectedSchoolLevelId},
-      include: [Module, Session]
-    })
-    
-    classLearningStrands.map(classLearningStrand => {
-      classLearningStrand.addEnrollment(enrollment)
 
-      classLearningStrand.modules.map(module => {
-        module.addEnrollment(enrollment)
+      const student = await Student.findByPk(learner.studentId)
+
+      if (!student) {
+        const error = new Error("Student not found.");
+        error.statusCode = 404;
+        throw error;
+      }
+
+      // Check if student is already enrolled in the class level
+      const isEnrolled = await classLevel.hasStudent(student);
+
+      if (isEnrolled) {
+        const error = new Error("Student is already enrolled in this year class level.");
+        error.statusCode = 400;
+        throw error;
+      }
+
+      const enrollment = await classLevel.addStudent(student, {
+        through: {
+          ftl_pretest: learner.fltPretestScore,
+          dateEnrolled: new Date(),
+          status: "Active",
+          regularity: learner.selectedRegularity,
+          remarks: learner.selectedRemarks,
+        }
+      });
+
+      const classLearningStrands = await ClassLearningStrand.findAll({
+        where: {classLevelId: learner.selectedSchoolLevelId},
+        include: [Module, Session]
       })
 
-      classLearningStrand.sessions.map(session => {
-        session.addEnrollment(enrollment)
+      classLearningStrands.map(classLearningStrand => {
+        classLearningStrand.addEnrollment(enrollment)
+
+        classLearningStrand.modules.map(module => {
+          module.addEnrollment(enrollment)
+        })
+
+        classLearningStrand.sessions.map(session => {
+          session.addEnrollment(enrollment)
+        })
       })
-    })
-    
-    res.status(201).json({ 
-      message: 'Enrolled learner successfully!' 
+    }
+
+    res.status(201).json({
+      message: 'Enrolled learners successfully!'
     });
 
   } catch (error) {
