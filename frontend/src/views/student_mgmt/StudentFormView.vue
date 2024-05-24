@@ -167,7 +167,8 @@ async function submitForm() {
     confirm.require({
       group: 'user-headless',
       header: 'Data is Incorrect',
-      message: 'Make sure inputs are correct and all required fields are filled in.',
+      message:
+        'Make sure inputs are correct and all required fields marked with an asterisk (*) are filled in.',
       acceptLabel: 'OK',
       icon: 'fa-solid fa-triangle-exclamation'
     })
