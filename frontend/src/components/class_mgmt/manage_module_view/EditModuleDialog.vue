@@ -133,7 +133,7 @@ onBeforeRouteLeave(() => {
     <Dialog v-model:visible="editModuleDialogState" modal header="Edit Module" :style="{ width: '20%' }" :closable="false" :draggable="false">
         <div class="flex flex-col gap-4 mb-4">
             <label>Distribution Date - Retrieval Date</label>
-            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :invalid="invalidDateRange" :manualInput="false" />
+            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :invalid="invalidDateRange" :manualInput="false" @update:modelValue="invalidDateRange = false" />
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" outlined rounded label="Update" :disabled="dates ? (dates.length === 0 || dates[1] === null) : !dates" @click="updateModule" />
