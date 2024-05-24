@@ -32,7 +32,7 @@ export async function injectStudent() {
   });
 
   await PersonalInfo.create({
-    birthday: new Date(),
+    birthday: new Date(2020, 4, 2),
     bloodType: "O+",
     birthCity: "New York City",
     birthProvince: "Misamis Oriental",

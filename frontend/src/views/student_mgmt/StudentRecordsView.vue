@@ -55,7 +55,7 @@ onMounted(async () => {
           <template #empty> No students found. </template>
           <template #loading> Loading students data. Please wait. </template>
 
-          <Column header="" class="max-w-20">
+          <Column header="" class="max-w-24">
             <template #body="slotProps">
               <RouterLink :to="{ name: 'view-student', params: { studentId: slotProps.data.id } }">
                 <Button

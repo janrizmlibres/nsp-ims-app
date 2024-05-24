@@ -12,13 +12,12 @@ import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
 import { useStudentsStore } from '@/stores/students'
 
 import { FormParts } from '@/util/student_utils'
-import { isEqual } from 'lodash'
+import { mapValues, isNil } from 'lodash'
 
 const emit = defineEmits({ routeChange: [] })
 
 const route = useRoute()
 const router = useRouter()
-// const toast = useToast()
 const confirm = useConfirm()
 
 const studentsStore = useStudentsStore()
@@ -98,7 +97,20 @@ const confirmBtnText = computed(() => (route.meta.isViewMode ? 'Edit' : 'Submit'
 const cancelBtnText = computed(() => (route.meta.isViewMode ? 'Back' : 'Cancel'))
 const isFormDirty = computed(() => {
   for (const key in initialData) {
-    if (!isEqual(initialData[key], formData.value[key])) return true
+    for (const inner in initialData[key]) {
+      let value1 = initialData[key][inner]
+      let value2 = formData.value[key][inner]
+
+      if (Object.prototype.toString.call(value1) === '[object Date]') {
+        value1.setHours(0, 0, 0, 0)
+        value2.setHours(0, 0, 0, 0)
+
+        value1 = value1.getTime()
+        value2 = value2.getTime()
+      }
+
+      if (value1 !== value2) return true
+    }
   }
   return false
 })
@@ -211,12 +223,34 @@ onMounted(async () => {
       ...identity
     } = student
 
-    initialData.identity = filterObject(identity)
-    initialData.personalInfo = filterObject(personal_info)
-    initialData.contactInfo = filterObject(contact_info)
-    initialData.emergencyPerson = filterObject(emergency_person)
-    initialData.parentalInfo = parental_info && filterObject(parental_info)
-    initialData.prevSchool = filterObject(previous_school)
+    delete identity.fullname
+
+    initialData.identity = {
+      ...mapValues(filterObject(identity), (v) => (isNil(v) ? '' : v)),
+      suffixName: identity.suffixName,
+      lrn: identity.lrn.toString(),
+      photoUrl: identity.photoUrl && `http://localhost:8080/${identity.photoUrl}`
+    }
+
+    initialData.personalInfo = {
+      ...mapValues(filterObject(personal_info), (v) => (isNil(v) ? '' : v)),
+      birthday: personal_info.birthday && new Date(personal_info.birthday)
+    }
+
+    initialData.contactInfo = mapValues(filterObject(contact_info), (v) => (isNil(v) ? '' : v))
+
+    initialData.emergencyPerson = {
+      ...mapValues(filterObject(emergency_person), (v) => (isNil(v) ? '' : v)),
+      suffixName: emergency_person.suffixName
+    }
+
+    initialData.parentalInfo = parental_info && {
+      ...mapValues(filterObject(parental_info), (v) => (isNil(v) ? '' : v)),
+      suffixNameF: parental_info.suffixNameF,
+      suffixNameM: parental_info.suffixNameM
+    }
+
+    initialData.prevSchool = mapValues(filterObject(previous_school), (v) => (isNil(v) ? '' : v))
 
     for (const key in initialData) {
       formData.value[key] = initialData[key]
@@ -243,7 +277,11 @@ onMounted(async () => {
 
         <div class="flex-none text-right">
           <div class="inline-block">
-            <Button type="submit" class="h-10 u-bg-green" :disabled="!isFormDirty">
+            <Button
+              type="submit"
+              class="h-10 u-bg-green"
+              :disabled="!isFormDirty && !route.meta.isViewMode"
+            >
               <div>
                 <font-awesome-icon
                   icon="fa-solid fa-circle-check"

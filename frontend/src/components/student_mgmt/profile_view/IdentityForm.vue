@@ -31,7 +31,7 @@ const name = ref({
 const lrn = ref(props.identity.lrn)
 const selectedSuffix = ref(props.identity.suffixName)
 const selectedCat = ref(props.identity.category)
-const photoUrl = ref(props.identity.photoUrl && `http://localhost:8080/${props.identity.photoUrl}`)
+const photoUrl = ref(props.identity.photoUrl)
 
 const isAvatarHovered = ref(false)
 const isImgModalVisible = ref(false)
@@ -59,12 +59,17 @@ function handleAvatar(event) {
 }
 
 function handleUpdate() {
+  const getPhotoUrl = () => {
+    if (uploader.value.files.length !== 0) return uploader.value.files[0]
+    else return photoUrl.value
+  }
+
   const data = {
     ...name.value,
     lrn: lrn.value,
     suffixName: selectedSuffix.value,
     category: selectedCat.value,
-    photoUrl: photoUrl.value && uploader.value.files[0]
+    photoUrl: getPhotoUrl()
   }
 
   emit('dataChanged', FormParts.Identity, data)
@@ -110,7 +115,7 @@ onMounted(async () => {
     <img :src="photoUrl" class="m-auto block w-5/6 max-w-3xl" />
   </div>
 
-  <BaseCard isNotPadded="true" class="px-8">
+  <BaseCard :isNotPadded="true" class="px-8">
     <div class="flex gap-8 items-center">
       <div class="h-20 relative flex items-center">
         <div
@@ -174,7 +179,7 @@ onMounted(async () => {
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => {
-                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+                return { class: [{ '!opacity-100': context.disabled }] }
               }
             }"
             :ptOptions="{ mergeProps: true }"
@@ -193,7 +198,7 @@ onMounted(async () => {
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => {
-                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+                return { class: [{ '!opacity-100': context.disabled }] }
               }
             }"
             :ptOptions="{ mergeProps: true }"
@@ -211,7 +216,7 @@ onMounted(async () => {
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => ({
-                class: [{ '!opacity-100 !pointer-events-auto': context.disabled }]
+                class: [{ '!opacity-100': context.disabled }]
               })
             }"
             :ptOptions="{ mergeProps: true }"
@@ -230,7 +235,7 @@ onMounted(async () => {
             @change="handleUpdate"
             :pt="{
               root: ({ props }) => ({
-                class: { '!opacity-100 !pointer-events-auto': props.disabled }
+                class: { '!opacity-100': props.disabled }
               })
             }"
             :ptOptions="{ mergeProps: true }"
@@ -249,7 +254,7 @@ onMounted(async () => {
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => {
-                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+                return { class: [{ '!opacity-100': context.disabled }] }
               }
             }"
             :ptOptions="{ mergeProps: true }"
@@ -267,7 +272,7 @@ onMounted(async () => {
             @change="handleUpdate"
             :pt="{
               root: ({ props }) => ({
-                class: { '!opacity-100 !pointer-events-auto': props.disabled }
+                class: { '!opacity-100': props.disabled }
               })
             }"
             :ptOptions="{ mergeProps: true }"

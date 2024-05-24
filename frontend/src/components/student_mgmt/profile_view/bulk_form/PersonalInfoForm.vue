@@ -4,7 +4,7 @@ import InputText from 'primevue/inputtext'
 import FloatLabel from 'primevue/floatlabel'
 
 import { ref, computed, watch, onMounted, inject } from 'vue'
-import { getDaysInMonth, format, getYear, getDay, getMonth } from 'date-fns'
+import { getDaysInMonth, format, getYear, getMonth, getDate } from 'date-fns'
 
 import { objectMap } from '@/util/helpers'
 import { FormParts, floatLabelPt } from '@/util/student_utils'
@@ -103,7 +103,7 @@ onMounted(() => {
 
   if (personalInfo.birthday) {
     birthday.value.month = getMonth(personalInfo.birthday)
-    birthday.value.day = getDay(personalInfo.birthday).toString()
+    birthday.value.day = getDate(personalInfo.birthday).toString()
     birthday.value.year = getYear(personalInfo.birthday).toString()
   }
 })
