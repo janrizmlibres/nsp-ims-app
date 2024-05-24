@@ -30,16 +30,6 @@ export async function addModule(req, res, next) {
             titles.push("LAS " + i)
         }
 
-        const modules = await Module.findAll({
-            where: {title: {[Op.in]: titles}, classLearningStrandId: classLearningStrandId}
-        })
-
-        if (modules.length) {
-            const error = new Error("A module exists already!");
-            error.statusCode = 400;
-            throw error;
-        }
-
         const enrollments = await Enrollment.findAll({
             where: {classLevelId: classLearningStrand.classLevelId}
         })
@@ -280,16 +270,6 @@ export async function addSession(req, res, next) {
     const { dates } = req.body
 
     try {
-        const session = await Session.findAll({
-            where: {date: {[Op.in]: dates}, classLearningStrandId: classLearningStrandId}
-        })
-    
-        if (session.length) {
-            const error = new Error("A session exists already!");
-            error.statusCode = 400;
-            throw error;
-        }
-
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
 
         const enrollments = await Enrollment.findAll({
@@ -505,11 +485,10 @@ export async function addSchedule(req, res, next) {
         end_time
     } = req.body
 
+    console.log(req.body);
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
-        const teacher = await Volunteer.findByPk(volunteer.id, {
-            where: {isArchived: false}
-        })
+        const teacher = await Volunteer.findByPk(volunteer.id)
 
         await classLearningStrand.addVolunteer(teacher, {
             through: {
