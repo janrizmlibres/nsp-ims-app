@@ -22,8 +22,8 @@ import LearningStrandView from '@/views/utilities/LearningStrandView.vue'
 import TermView from '@/views/utilities/TermView.vue'
 
 // User Management Views
-import RecordsView from '@/views/user_mgmt/RecordsView.vue'
-import PermissionsView from '@/views/user_mgmt/PermissionsView.vue'
+import UserRecordsView from '@/views/user_mgmt/UserRecordsView.vue'
+import UserPermissionsView from '@/views/user_mgmt/UserPermissionsView.vue'
 import UserFormView from '@/views/user_mgmt/UserFormView.vue'
 import AuditView from '@/views/user_mgmt/AuditView.vue'
 
@@ -32,11 +32,8 @@ import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
 
 import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue'
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
-//import EditVolunteerView from '@/views/volunteer_view/EditVolunteerView.vue';
 
 import { useAuthStore } from '@/stores/auth'
-// import ManageGradeView from '@/views/class_mgmt/ManageGradeView.vue'
-// import ManageSessionView from '@/views/class_mgmt/ManageSessionView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -234,12 +231,12 @@ const router = createRouter({
             {
               path: '',
               name: 'user-records',
-              component: RecordsView
+              component: UserRecordsView
             },
             {
               path: 'permissions',
               name: 'user-permissions',
-              component: PermissionsView
+              component: UserPermissionsView
             },
             {
               path: 'add',
@@ -272,6 +269,7 @@ const router = createRouter({
 router.getRoutes().forEach((route) => {
   route.components ? (route.components.default.name = route.name) : null
 })
+
 router.beforeEach((to) => {
   const authStore = useAuthStore()
 

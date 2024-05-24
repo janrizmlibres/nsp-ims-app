@@ -8,8 +8,10 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { useAuthStore } from '@/stores/auth'
+import { useUsersStore } from '@/stores/users'
 
 const authStore = useAuthStore()
+const usersStore = useUsersStore()
 const toast = useToast()
 const router = useRouter()
 
@@ -52,6 +54,8 @@ async function submitEvent() {
 
   try {
     await authStore.login(id, password)
+    await usersStore.updateLastLogin()
+    await usersStore.addAudit('Logged In')
     await router.replace({ name: 'dashboard' })
   } catch (error) {
     console.log(error)

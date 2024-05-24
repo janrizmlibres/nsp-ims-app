@@ -1,8 +1,6 @@
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
-import multer from "multer";
-import { v4 as uuidv4 } from "uuid";
 
 import sequelize from "./util/database.js";
 import { injectAll } from "./util/db_injector.js";
@@ -22,46 +20,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 setAssociations();
 
-const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "images"),
-  filename: (req, file, cb) => cb(null, uuidv4() + "-" + file.originalname),
-});
-
-const enrollmentFormStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, "enrollmentForms"),
-  filename: (req, file, cb) => cb(null, uuidv4() + "-" + file.originalname),
-});
-
-const fileFilter = (req, file, cb) => {
-  if (["image/png", "image/jpg", "image/jpeg"].includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-
-const enrollmentFormFilter = (req, file, cb) => {
-  if (["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-
 app.use(express.json());
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/enrollmentForms", express.static(path.join(__dirname, "enrollmentForms")));
 
-
-app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
-);
-
-app.use(
-  multer({ storage: enrollmentFormStorage, fileFilter: enrollmentFormFilter }).array("enrollmentForm")
-);
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");

@@ -8,6 +8,7 @@ import { RouterView, useRouter } from 'vue-router'
 import axios from 'axios'
 
 import LogoutDialog from './components/UI/LogoutDialog.vue'
+import UserFormDialog from './components/UI/UserFormDialog.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const confirm = useConfirm()
@@ -23,7 +24,11 @@ axios.interceptors.response.use(
   },
   (error) => {
     // If the request had an error, check if it's the one we're looking for
-    if (error.response && (error.response.data.message === 'jwt expired' || error.response.data.message === 'Not authenticated.')) {
+    if (
+      error.response &&
+      (error.response.data.message === 'jwt expired' ||
+        error.response.data.message === 'Not authenticated.')
+    ) {
       confirm.require({
         group: 'authenticationError',
         message: ' Do you want to extend your session? ',
@@ -62,6 +67,7 @@ import ActionDialog from './components/UI/ActionDialog.vue'
 <template>
   <Toast />
   <ConfirmDialog />
+  <UserFormDialog />
   <LogoutDialog />
   <ActionDialog />
   <RouterView />
