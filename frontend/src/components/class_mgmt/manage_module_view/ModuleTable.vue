@@ -249,7 +249,7 @@ function editModule(data) {
                             </p>
                         </span>
                         <span v-if="termStatus" class="flex gap-1 items-center">
-                            <Button icon="fa fa-download" text aria-label="download-selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                            <!-- <Button icon="fa fa-download" text aria-label="download-selected" style="height: 2rem; width: 2rem;" @click="{}"/> -->
                             <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
                             <Button v-if="selectedModulesStatus === false" label="mark as done" text aria-label="mark-as-done" size="small" @click="markAs"/>
                             <Button v-if="selectedModulesStatus === true" label="mark as undone" text aria-label="mark-as-undone" size="small" @click="markAs"/>

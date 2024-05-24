@@ -208,7 +208,7 @@ function onCollapseRow() {
                             </p>
                         </span>
                         <span class="flex gap-1" v-if="termStatus">
-                            <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                            <!-- <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/> -->
                             <Button icon="fa fa-trash" text aria-label="Delete Selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
                         </span>
                     </span>

@@ -149,7 +149,7 @@ function deselect() {
                                 {{ selectedSchedules.length + ' selected' }}
                             </p>
                         </span>
-                        <span class="flex gap-1 items-center">
+                        <span v-if="termStatus" class="flex gap-1 items-center">
                             <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
                             <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteSchedules"/>
                         </span>
@@ -180,7 +180,7 @@ function deselect() {
 
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">
-                        <Button icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" />
+                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" />
                     </template>
                 </Column>
                 <Column field="name" />
