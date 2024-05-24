@@ -1,7 +1,7 @@
 <script setup>
 // Presets
 import { useRoute } from 'vue-router';
-import { ref, watch } from 'vue';
+import { provide, ref, watch } from 'vue';
 import Divider from 'primevue/divider';
 import { useToast } from 'primevue/usetoast';
 
@@ -13,14 +13,17 @@ import ModuleTab from '@/components/class_mgmt/module_view/ModuleTab.vue';
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 
-
 const route = useRoute()
 const toast = useToast()
 
 const classLearningStrandStore = useClassLearningStrandStore()
+
 const module = ref()
 const name = ref()
 const strand = ref()
+
+provide('module', module)
+provide('updateModuleSubmissionTable', updateModuleSubmissionTable)
 
 function updateModuleSubmissionTable(data) {
     module.value = data
@@ -49,9 +52,9 @@ watch(() => route.query, (query) => {
 
 <template>
     <ContentPane :header="name" :subheader="strand">
-        <ModuleInfoSection v-model="module" />
+        <ModuleInfoSection />
         <Divider class="before:border-t before:border-surface-400 my-10"/>
-        <ModuleTab v-model="module" @onUpdate="updateModuleSubmissionTable" />
+        <ModuleTab />
     </ContentPane>
 </template>
 

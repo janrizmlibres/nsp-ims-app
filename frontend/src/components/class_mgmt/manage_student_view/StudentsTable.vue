@@ -1,5 +1,5 @@
 <script setup>
-import { FilterMatchMode, FilterOperator } from 'primevue/api';
+//Presets
 import Toolbar from 'primevue/toolbar';
 import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
@@ -7,22 +7,46 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import Dropdown from 'primevue/dropdown';
-import { computed, onMounted, ref } from 'vue';
+import { inject, onMounted, provide, ref } from 'vue';
 
+//Custom
 import ViewStudentDialog from './ViewStudentDialog.vue';
+
+//stores
 import { useClassStore } from '@/stores/class';
 
 const classStore = useClassStore()
 
-const props = defineProps(['classLevel'])
-const classLevel = computed(() => props.classLevel)
+const classLevel = inject('classLevel')
+const filters = inject('filters')
 const learners = ref([])
-const selectedStudent = ref([])
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
-});
-const viewStudentDialog = ref(false)
+const selectedStudent = ref()
+
+const studentDialogState = ref(false)
+
+provide('studentData', selectedStudent)
+provide('studentDialogState', studentDialogState)
+
+const nameColumns = ref([
+    {field: 'lrn', header: 'LRN'},
+    {field: 'lastName', header: 'Last Name'},
+    {field: 'firstName', header: 'First Name'},
+    {field: 'middleName', header: 'Middle Name'},
+    {field: 'suffix', header: 'Suffix'},
+])
+
+const otherColumns = ref([
+    {field: 'category', header: 'Category'},
+    {field: 'sex', header: 'Sex'},
+    {field: 'civilStatus', header: 'Civil Status'},
+    {field: 'contactNum', header: 'Contact Number'},
+])
+
+const statuses = ref([
+    {label: 'Active', value: 'Active'},
+    {label: 'Inactive', value: 'Inactive'},
+    {label: 'Drop', value: 'Drop'},
+]);
 
 onMounted(() => {
     classStore.getAllStudents(classLevel.value.id).then((data) => {
@@ -51,27 +75,6 @@ onMounted(() => {
     })
 })
 
-const nameColumns = ref([
-    {field: 'lrn', header: 'LRN'},
-    {field: 'lastName', header: 'Last Name'},
-    {field: 'firstName', header: 'First Name'},
-    {field: 'middleName', header: 'Middle Name'},
-    {field: 'suffix', header: 'Suffix'},
-])
-
-const otherColumns = ref([
-    {field: 'category', header: 'Category'},
-    {field: 'sex', header: 'Sex'},
-    {field: 'civilStatus', header: 'Civil Status'},
-    {field: 'contactNum', header: 'Contact Number'},
-])
-
-const statuses = ref([
-    {label: 'Active', value: 'Active'},
-    {label: 'Inactive', value: 'Inactive'},
-    {label: 'Drop', value: 'Drop'},
-]);
-
 const getStatusLabel = (status) => {
     switch (status) {
         case 'Active':
@@ -88,13 +91,13 @@ const getStatusLabel = (status) => {
     }
 };
 
-function showViewStudentDialog() {
-    viewStudentDialog.value = !viewStudentDialog.value
+function showStudentDialog() {
+    studentDialogState.value = !studentDialogState.value
 }
 
 function viewStudent(student) {
     selectedStudent.value = student
-    showViewStudentDialog()
+    showStudentDialog()
 }
 </script>
 
@@ -109,10 +112,10 @@ function viewStudent(student) {
             </template>
         </Toolbar>
         <DataTable 
-            :value="learners" dataKey="id" v-model:filters="filters"
-            scrollable style=" overflow: auto;" filterDisplay="menu"
-            sortField="lastName" :sortOrder="1" removableSort
+            :value="learners" dataKey="id" scrollable style=" overflow: auto;"
+            v-model:filters="filters" filterDisplay="menu"
             :globalFilterFields="['lastName', 'firstName', 'middleName', 'contactNum']"
+            sortField="lastName" :sortOrder="1" removableSort
         >
             <template #empty> <div class="text-center">No records found.</div> </template>
 
@@ -143,5 +146,5 @@ function viewStudent(student) {
             <Column field="dateEnrolled" header="Date Enrolled" />
         </DataTable>
     </div>
-    <ViewStudentDialog :data="selectedStudent" :state="viewStudentDialog" @onUpdateDisplay="showViewStudentDialog" />
+    <ViewStudentDialog />
 </template>

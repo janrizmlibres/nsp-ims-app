@@ -1,7 +1,7 @@
 <script setup>
 // Presets
 import { useRoute } from 'vue-router';
-import { ref, watch } from 'vue';
+import { provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
 // Custom
@@ -20,6 +20,9 @@ const date = ref()
 const attendances = ref()
 const strand = ref()
 
+provide('attendances', attendances)
+provide('updateAttendanceTable', updateAttendanceTable)
+
 function updateAttendanceTable(data) {
     session.value = data.session
     attendances.value = data.attendances
@@ -31,7 +34,6 @@ watch(() => route.query, (query) => {
         try {
             classLearningStrandStore.getSession(query.id).then((data) => {
                 updateAttendanceTable(data)
-                console.log(data);
                 strand.value = data.classLearningStrand.learning_strand.name
             })
         } catch (error) {
@@ -49,7 +51,7 @@ watch(() => route.query, (query) => {
 
 <template>
     <ContentPane :header="date" :subheader="strand">
-        <AttendanceTab v-model="attendances" @onUpdate="updateAttendanceTable" />
+        <AttendanceTab />
     </ContentPane>
 </template>
 

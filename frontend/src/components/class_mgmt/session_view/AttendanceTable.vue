@@ -6,7 +6,7 @@ import Button from 'primevue/button';
 import InputSwitch from 'primevue/inputswitch';
 import Textarea from 'primevue/textarea';
 import Tag from 'primevue/tag';
-import { computed, ref, watch } from 'vue';
+import { inject, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -21,17 +21,23 @@ const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
 
-const props = defineProps(['modelValue', 'filters', 'disableEdit'])
-const emit = defineEmits(['onUpdate'])
-const filters = computed(() => props.filters)
-const disableEdit = ref(props.disableEdit)
+const props = defineProps(['modelValue', 'disableEdit'])
+
+const filters = inject('filters')
 const isFetching = ref(false)
 const learners = ref([])
 const noChanges = ref(true)
 const startingData = []
 const updatedData = new Set([])
-const leave = ref(true)
 const edit = ref(false)
+const disableEdit = ref(props.disableEdit)
+const disableSave = ref()
+
+const onEdit = inject('updateAttendanceTable')
+
+watch(() => JSON.stringify(learners.value), () => {
+    disableSave.value = JSON.stringify(learners.value) === JSON.stringify(startingData)
+}, {immediate: true})
 
 watch(() => props.modelValue, (data) => {
     isFetching.value = true
@@ -54,7 +60,6 @@ watch(() => props.modelValue, (data) => {
         
         watch(learners.value[len - 1], (newData) => {
             updatedData.add(newData)
-            leave.value = false
             noChanges.value = false
         })
     }
@@ -79,7 +84,7 @@ async function updateAttendances() {
     try {
         await classLearningStrandStore.updateAttendances({ updatedData: Array.from(updatedData) })
         classLearningStrandStore.getSession(route.query.id).then((data) => {
-            emit('onUpdate', data)
+            onEdit(data)
         })
 
         toast.add({
@@ -111,9 +116,8 @@ function resetData() {
 
             for (const datum of learners.value) {
                 watch(datum, (newData) => {
-                updatedData.add(newData)
-                leave.value = false
-                noChanges.value = false
+                    updatedData.add(newData)
+                    noChanges.value = false
                 })
             }
 
@@ -125,11 +129,10 @@ function resetData() {
 
 function changeMode() {
     edit.value = !edit.value
-    leave.value = !leave.value
 }
 
 onBeforeRouteLeave((to) => {
-    if (leave.value) {
+    if (disableSave.value) {
         return true
     }
 
@@ -137,7 +140,7 @@ onBeforeRouteLeave((to) => {
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
         accept: async () => {
-            leave.value = true
+            disableSave.value = true
             await router.push(to)
         }
     })
@@ -184,7 +187,7 @@ onBeforeRouteLeave((to) => {
             <template #footer v-if="route.query.status === 'true'">
                 <div class="flex flex-row justify-end items-center">
                     <div v-if="edit" class="flex flex-row gap-4">
-                        <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined @click="updateAttendances"/>
+                        <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableSave" @click="updateAttendances"/>
                         <Button icon="fa fa-xmark" label="Discard" severity="danger" aria-label="Discard Changes" iconClass="['mr-4']" size="small" rounded outlined @click="resetData"/>
                     </div>
                     <Button v-else icon="fa fa-pencil" label="Edit Attendances" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableEdit" @click="changeMode"/>

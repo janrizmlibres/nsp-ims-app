@@ -6,7 +6,7 @@ import Column from 'primevue/column';
 import Row from 'primevue/row';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { inject, onBeforeUnmount, onMounted, provide, ref, watch } from 'vue';
 import { format } from 'date-fns';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -18,30 +18,35 @@ import EditScheduleDialog from './EditScheduleDialog.vue';
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useClassStore } from '@/stores/class';
+import { useStaffsStore } from '@/stores/staffs';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 const classStore = useClassStore()
+const staffsStore = useStaffsStore()
 
-const props = defineProps(['classLevel', 'termStatus'])
 const toast = useToast()
 const confirm = useConfirm()
 
-const termStatus = computed(() => props.termStatus)
-const learningStrands = computed(() => props.classLevel.class_learning_strands)
-const classLevelId = computed(() => props.classLevel.id)
+const termStatus = inject('termStatus')
+const term = inject('term')
+const classLevel = inject('classLevel')
 const classData = ref([])
 const isFetching = ref(true)
 const selectedSchedules = ref([])
 const metaKey = ref(true)
-const editScheduleDialog = ref(false)
+const editScheduleDialogState = ref(false)
 const schedule = ref()
 const dt = ref()
 const dtDiv = ref()
 
+provide('schedule', schedule)
+provide('editScheduleDialogState', editScheduleDialogState)
+provide('updateScheduleTable', updateScheduleTable)
+
 function updateScheduleTable(classId) {
     classData.value.length = 0
 
-    classStore.getAllLearningStrands(classId).then((data) => {
+    classStore.getClassSchedules(classId).then((data) => {
         for (const learningStrand of data) {
             for (const schedule of learningStrand.class_schedules) {
                 const start_time = format(new Date("01/01/0001 " + schedule.start_time), "hh:mm aaa")
@@ -63,7 +68,7 @@ function updateScheduleTable(classId) {
     })
 }
 
-watch(() => props.classLevel, (data) => {
+watch(() => classLevel.value, (data) => {
     try {
         updateScheduleTable(data.id)
         
@@ -79,34 +84,6 @@ watch(() => props.classLevel, (data) => {
     }
 }, { immediate: true })
 
-async function addSchedule(learningStrand, form) {
-    try {
-        await classLearningStrandStore.addSchedule(learningStrand.id, {
-            volunteer: form.volunteer,
-            days: form.school_days.toString(),
-            start_time: format(new Date(form.start_time), "HH:mm"),
-            end_time: format(new Date(form.end_time), "HH:mm"),
-        })
-
-        updateScheduleTable(learningStrand.classLevelId)
-
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: "Added schedule successfully!",
-            life: 3000
-        })
-    } catch (error) {
-        console.log(error);
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: "Unexpected error encountered.",
-            life: 3000
-        })
-    }
-}
-
 async function deleteSchedules() {
     confirm.require({
         message: 'Do you really want to delete?',
@@ -115,19 +92,22 @@ async function deleteSchedules() {
             try {
                 const scheduleIds = selectedSchedules.value.map(schedule => schedule.scheduleId)
                 console.log(selectedSchedules.value);
-                await classLearningStrandStore.deleteSchedules({scheduleIds: scheduleIds})
-                deselect()
-                toast.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Schedule(s) deleted successfully!',
-                    life: 3000
-                })
-            } catch(error) {
-                console.log(error);
-            }
+                await classLearningStrandStore.deleteSchedules({scheduleIds: scheduleIds}).then((message) => {
+                    deselect()
+                    toast.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: message,
+                        life: 3000
+                    })
 
-            try {
+                    try {
+                        updateScheduleTable(classLevel.value.id)
+                    } catch(error) {
+                        console.log(error);
+                    }
+
+                    try {
                         selectedSchedules.value.forEach(async (schedule) => {
                             await staffsStore.addAudit(
                                 `Deleted: Schedule for ${schedule.name} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
@@ -144,19 +124,11 @@ async function deleteSchedules() {
     })
 }
 
-function updateSchedule(data) {
-    updateScheduleTable(data)
-    showEditScheduleDialog()
-}
-
 function editSchedule(data) {
     schedule.value = {... data}
-    showEditScheduleDialog()
+    editScheduleDialogState.value = true
 }
 
-function showEditScheduleDialog() {
-    editScheduleDialog.value = !editScheduleDialog.value
-}
 
 function deselect() {
     selectedSchedules.value = []
@@ -178,7 +150,7 @@ onBeforeUnmount(() => {
 <template>
     <div class="flex h-full w-full">
         <div v-if="termStatus" class="flex flex-col mr-10 p-2 gap-4" >
-            <AddScheduleSection :id="classLevelId" :learningStrands="learningStrands" :termStatus="termStatus" @onUpdate="addSchedule" />
+            <AddScheduleSection />
         </div>
         <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
             <Toolbar class="!p-2 h-16">
@@ -245,7 +217,7 @@ onBeforeUnmount(() => {
             </DataTable>
         </div>
     </div>
-    <EditScheduleDialog :data="schedule" :state="editScheduleDialog" @onUpdate="updateSchedule" @onUpdateDisplay="showEditScheduleDialog" />
+    <EditScheduleDialog />
 </template>
 
 <style>

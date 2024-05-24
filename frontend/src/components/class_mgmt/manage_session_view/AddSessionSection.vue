@@ -3,28 +3,35 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import { computed, ref, watch } from 'vue';
+import { inject, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
+import { useStaffsStore } from '@/stores/staffs';
 
-const props = defineProps(['id', 'data', 'termStatus'])
 const toast = useToast()
 
-const emit = defineEmits(['onUpdate'])
 const classLearningStrandStore = useClassLearningStrandStore()
-const classLearningStrandId = computed(() => props.id)
-const termStatus = computed(() => props.termStatus)
-const data = computed(() => props.data)
+const staffsStore = useStaffsStore()
+
+const classLearningStrandId = inject('classLearningStrandId')
+const learningStrandInput = inject('learningStrandInput')
+const termStatus = inject('termStatus')
+const term = inject('term')
+const classLevel = inject('classLevel')
+const data = inject('selectedMonth')
 const sessions = ref([])
 const date = ref()
 const minDate = ref()
 const maxDate = ref()
 const currentMonth = ref()
 const selectionType = ref(1)
+
 const selection = ref([
     {label: 'Single', value: 1},
     {label: 'Multiple', value: 2},
 ])
+
+const onSubmit = inject('updateSessionTable')
 
 function addSelectedDate() {
     sessions.value = []
@@ -53,17 +60,22 @@ async function addSession() {
     }
 
     try {
-        await classLearningStrandStore.addSession(classLearningStrandId.value, {dates:newDates})
-        classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
-            emit('onUpdate', data)
-        })
-        
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Session(s) created successfully',
-            life: 3000
-        })
+        await classLearningStrandStore.addSession(classLearningStrandId.value, {dates:newDates}). then(async (message) =>{
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: message,
+                life: 3000
+            })
+
+            try {
+                classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
+                    onSubmit(data)
+                    resetForm()
+                })
+            } catch(error) {
+                console.log(error);
+            }
 
             try {
                 for (const date of newDates) {
@@ -74,8 +86,7 @@ async function addSession() {
             } catch(error) {
                 console.log(error);
             }
-
-        resetForm()
+        })
     } catch (error) {
         toast.add({
             severity: 'error',
@@ -90,7 +101,7 @@ function resetForm() {
     date.value = null
 }
 
-watch(() => props.data, (data) => {
+watch(() => data.value, (data) => {
     resetForm()
     
     if (data) {

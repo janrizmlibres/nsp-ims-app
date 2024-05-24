@@ -4,26 +4,32 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Calendar from 'primevue/calendar';
 import { useToast } from 'primevue/usetoast';
-import { computed, ref, watch } from 'vue';
+import { inject, ref } from 'vue';
 import { useConfirm } from 'primevue/useconfirm';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useClassStore } from '@/stores/class';
+import { useStaffsStore } from '@/stores/staffs';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
-const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
-const props = defineProps(['id', 'data', 'state'])
 const toast = useToast()
 const confirm = useConfirm()
-const classLearningStrandStore = useClassLearningStrandStore()
-const classStore = useClassStore()
+const router = useRouter()
 
-const state = computed(() => props.state)
-const module = ref()
-const classLearningStrandId = computed(() => props.id)
+const classLearningStrandStore = useClassLearningStrandStore()
+const staffsStore = useStaffsStore()
+
+const editModuleDialogState = inject('editModuleDialogState')
+const module = inject('module')
+const classLearningStrandId = inject('classLearningStrandId')
+const term = inject('term')
+const learningStrandInput = inject('learningStrandInput')
+const classLevel = inject('classLevel')
 const dates = ref([])
 
-watch(() => props.data, (data) => module.value = data)
+const invalidDateRange = ref()
+
+const onSubmit = inject('updateModuleTable')
 
 async function updateModule() {
     try {
@@ -34,23 +40,49 @@ async function updateModule() {
             range.value.push(date)
         }
 
-        await classLearningStrandStore.updateModule(props.data.id, {
+        if (range.value[0].toDateString() === range.value[1].toDateString()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Incorrect input range!',
+                life: 3000
+            })
+            invalidDateRange.value = true
+
+            return
+        }
+
+        await classLearningStrandStore.updateModule(module.value.id, {
             distribution_date: range.value[0],
             retrieval_date: range.value[1],
-        }).then(() => {
-            classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
-                emit('onUpdate', data)
+        }).then(async (message) => {
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: message,
+                life: 3000
             })
-        })
+            
+            dates.value = []
+            invalidDateRange.value = false
 
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Module updated successfully!',
-            life: 3000
+            try {
+                classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
+                    onSubmit(data)
+                    editModuleDialogState.value = false
+                })
+            } catch(error) {
+                console.log(error);
+            }
+            
+            try {
+                await staffsStore.addAudit(
+                    `Updated: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                )
+            } catch(error) {
+                console.log(error);
+            }
         })
-
-        dates.value = []
     } catch(error) {
         console.log(error);
         toast.add({
@@ -60,15 +92,6 @@ async function updateModule() {
             life: 3000
         })
     }
-
-    try {
-        await staffsStore.addAudit(
-            `Updated: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.school_level}, ${term.academic_year}`
-        )
-    } catch(error) {
-        console.log(error);
-    }
-
 };
 
 async function cancel() {
@@ -78,30 +101,43 @@ async function cancel() {
             header: 'Redirect Confirmation',
             accept: () => {
                 dates.value = []
-                emit('onUpdateDisplay')
+                editModuleDialogState.value = false
             }
         })
     } else {
         dates.value = []
-        emit('onUpdateDisplay')
+        editModuleDialogState.value = false
     }
 }
 
-watch(() => dates.value, (data) => {
-    if (data ? data.length : data) classStore.leave = false
-    else classStore.leave = true
+onBeforeRouteLeave(() => {
+    if (dates.value ? (dates.value.length === 0) : !dates.value) {
+        editModuleDialogState.value = false
+        return true
+    }
+
+    confirm.require({
+        message: 'Do you really want to leave? you have unsaved changes!',
+        header: 'Redirect Confirmation',
+        accept: () => {
+            dates.value = []
+            router.back()
+        }
+    })
+
+    return false
 })
 </script>
 
 <template>
-    <Dialog v-model:visible="state" modal header="Edit Module" :style="{ width: '20rem' }" :closable="false">
+    <Dialog v-model:visible="editModuleDialogState" modal header="Edit Module" :style="{ width: '20%' }" :closable="false" :draggable="false">
         <div class="flex flex-col gap-4 mb-4">
             <label>Distribution Date - Retrieval Date</label>
-            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
+            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :invalid="invalidDateRange" :manualInput="false" />
         </div>
         <div class="flex justify-end gap-2">
-            <Button type="button" outlined rounded label="Update" :disabled="dates ? (dates.length === 0 || dates[1] === null) : !dates" @click="updateModule"></Button>
-            <Button type="button" outlined rounded label="Cancel" severity="danger" @click="cancel"></Button>
+            <Button type="button" outlined rounded label="Update" :disabled="dates ? (dates.length === 0 || dates[1] === null) : !dates" @click="updateModule" />
+            <Button type="button" outlined rounded label="Cancel" severity="danger" @click="cancel" />
         </div>
     </Dialog>
 </template>

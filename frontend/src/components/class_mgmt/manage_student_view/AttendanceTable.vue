@@ -4,37 +4,20 @@ import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
-import { ref, watch } from 'vue';
+import { inject, ref, watch } from 'vue';
 import { format } from 'date-fns';
-import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
-const props = defineProps(['data'])
-
+const studentAttendaces = inject('studentAttendances')
+const filters = inject('filters')
 const attendances = ref([])
 const selectedRow = ref()
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-});
+
 const statuses = ref([
     { label: 'Present', value: 'Present' },
     { label: 'Absent', value: 'Absent' }
 ]);
 
-const getStatusLabel = (status) => {
-    switch (status) {
-        case 'Present':
-            return 'success';
-
-        case 'Absent':
-            return 'danger';
-
-        default:
-            return null;
-    }
-};
-
-watch(() => props.data, (data) => {
+watch(() => studentAttendaces.value, (data) => {
     attendances.value = []
 
     for (const attendance of data) {
@@ -49,6 +32,19 @@ watch(() => props.data, (data) => {
         attendances.value.push(temp)
     }
 })
+
+const getStatusLabel = (status) => {
+    switch (status) {
+        case 'Present':
+            return 'success';
+
+        case 'Absent':
+            return 'danger';
+
+        default:
+            return null;
+    }
+};
 
 function onExpandRow() {
     if(selectedRow.value.length > 1) 

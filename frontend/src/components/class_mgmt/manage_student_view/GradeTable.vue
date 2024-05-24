@@ -2,29 +2,27 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Checkbox from 'primevue/checkbox';
-import { ref, watch } from 'vue';
+import { computed, inject } from 'vue';
 
-const props = defineProps(['data'])
+const studentGrades = inject('studentGrades')
+const grades = computed(() => studentGrades.value ? 
+    studentGrades.value.reduce((arr, obj) => {
+        const grades = arr.concat({
+            id: obj.grades[0].id,
+            lsCode: obj.learning_strand.code,
+            title: obj.learning_strand.name,
+            first_quarter: obj.grades[0].first_quarter,
+            second_quarter: obj.grades[0].second_quarter,
+            third_quarter: obj.grades[0].third_quarter,
+            fourth_quarter: obj.grades[0].fourth_quarter,
+            remarks: obj.grades[0].remarks,
+        })
 
-const grades = ref([])
+        return grades
+    }, []) 
+    : null
+)
 
-watch(() => props.data, (data) => {
-    grades.value = []
-    for (const learningStrand of data) {
-        const temp = {
-            id: learningStrand.grades[0].id,
-            lsCode: learningStrand.learning_strand.code,
-            title: learningStrand.learning_strand.name,
-            first_quarter: learningStrand.grades[0].first_quarter,
-            second_quarter: learningStrand.grades[0].second_quarter,
-            third_quarter: learningStrand.grades[0].third_quarter,
-            fourth_quarter: learningStrand.grades[0].fourth_quarter,
-            remarks: learningStrand.grades[0].remarks,
-        }
-
-        grades.value.push(temp)
-    }
-})
 </script>
 
 <template>

@@ -4,36 +4,29 @@ import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import MultiSelect from 'primevue/multiselect';
-import { computed, onMounted, ref } from 'vue';
+import { computed, inject, onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
 // stores
 import { useVolunteerStore } from '@/stores/volunteer';
+import { format } from 'date-fns';
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useStaffsStore } from '@/stores/staffs';
 
 const toast = useToast()
-const emit = defineEmits(['onUpdate'])
-const props = defineProps(['id', 'learningStrands', 'termStatus'])
 
-const termStatus = computed(() => props.termStatus)
+const classLearningStrandStore = useClassLearningStrandStore()
+const staffsStore = useStaffsStore()
+
+const termStatus = inject('termStatus')
+const term = inject('term')
+const classLevel = inject('classLevel')
+const learningStrands = inject('learningStrands')
 const volunteerStore = useVolunteerStore()
 const volunteers = computed(() => volunteerStore.volunteers)
-const learningStrands = computed(() => props.learningStrands)
+
 const learningStrandInput = ref()
 const invalid = ref()
-
-onMounted(() => {
-    try {
-        volunteerStore.getAllVolunteers()
-    } catch(error) {
-        console.log(error);
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered.',
-            life: 3000
-        })
-    }
-})
 
 const formData = ref({
     volunteer: null,
@@ -54,7 +47,9 @@ const enableResetButton = computed(() => {
     else return true
 })
 
-function addSchedule() {
+const onSubmit = inject('updateScheduleTable')
+
+async function addSchedule() {
     if ((formData.value.start_time.getHours() >= formData.value.end_time.getHours()) && (formData.value.start_time.getMinutes() >= formData.value.end_time.getMinutes())) {
         toast.add({
                 severity: 'error',
@@ -66,6 +61,22 @@ function addSchedule() {
             return
     }
 
+    try {
+        await classLearningStrandStore.addSchedule(learningStrandInput.value, {
+            volunteer: formData.value.volunteer,
+            days: formData.value.school_days.toString(),
+            start_time: format(new Date(formData.value.start_time), "HH:mm"),
+            end_time: format(new Date(formData.value.end_time), "HH:mm"),
+        }).then(async (message) => {
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: message,
+                life: 3000
+            })
+
+            onSubmit(classLevel.value.id)
+
             try {
                 await staffsStore.addAudit(
                     `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
@@ -74,6 +85,30 @@ function addSchedule() {
                 console.log(error);
             }
         })
+    } catch (error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: "Unexpected error encountered.",
+            life: 3000
+        })
+    }
+}
+
+onMounted(() => {
+    try {
+        volunteerStore.getAllVolunteers()
+    } catch(error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    }
+})
 
 function resetForm() {
     invalid.value = false

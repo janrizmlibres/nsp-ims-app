@@ -8,7 +8,7 @@ import InputNumber from 'primevue/inputnumber';
 import Calendar from 'primevue/calendar';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
-import { computed, ref, watch } from 'vue';
+import { inject, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -23,21 +23,30 @@ const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
 
-const props = defineProps(['modelValue', 'disableEdit', 'filters'])
-const emit = defineEmits(['onUpdate'])
-const isFetching = ref(false)
+const props = defineProps(['modelValue', 'disableEdit'])
+
+const filters = inject('filters')
 const learners = ref([])
 const noChanges = ref(true)
 const startingData = []
 const updatedData = new Set([])
-const leave = ref(true)
 const edit = ref(false)
-const filters = ref(props.filters)
 const disableEdit = ref(props.disableEdit)
-const disableSave = computed(() => JSON.stringify(learners.value) === JSON.stringify(startingData))
+const disableSave = ref()
+
+const statuses = ref([
+    { label: 'Graded', value: 'Graded' },
+    { label: 'Submitted', value: 'Submitted' },
+    { label: 'No Submission', value: 'No Submission' }
+]);
+
+const onEdit = inject('updateModuleSubmissionTable')
+
+watch(() => JSON.stringify(learners.value), (data) => {
+    disableSave.value = data === JSON.stringify(startingData)
+}, {immediate: true})
 
 watch(() => props.modelValue, (data) => {
-    isFetching.value = true
     learners.value.length = 0
     startingData.length = 0
 
@@ -63,12 +72,9 @@ watch(() => props.modelValue, (data) => {
         
         watch(learners.value[len - 1], (newData) => {
             updatedData.add(newData)
-            leave.value = false
             noChanges.value = false
         })
     }
-    
-    isFetching.value = false
 }, {immediate: true})
 
 const getStatusLabel = (status) => {
@@ -87,17 +93,11 @@ const getStatusLabel = (status) => {
     }
 };
 
-const statuses = ref([
-    { label: 'Graded', value: 'Graded' },
-    { label: 'Submitted', value: 'Submitted' },
-    { label: 'No Submission', value: 'No Submission' }
-]);
-
 async function updateSubmissions() {
     try {
         await classLearningStrandStore.updateModuleSubmissions({ updatedData: Array.from(updatedData) })
         classLearningStrandStore.getModule(route.query.id).then((data) => {
-            emit('onUpdate', data)
+            onEdit(data)
         })
 
         toast.add({
@@ -120,34 +120,34 @@ async function updateSubmissions() {
 }
 
 function resetData() {
-    confirm.require({
-        message: 'Do you really want to discard the unsaved changes?',
-        header: 'Redirect Confirmation',
-        accept: async () => {
-            learners.value = structuredClone(startingData)
-            updatedData.clear()
+    if (!disableSave.value) {
+        confirm.require({
+            message: 'Do you really want to discard the unsaved changes?',
+            header: 'Redirect Confirmation',
+            accept: async () => {
+                learners.value = structuredClone(startingData)
+                updatedData.clear()
 
-            for (const datum of learners.value) {
-                watch(datum, (newData) => {
-                updatedData.add(newData)
-                leave.value = false
-                noChanges.value = false
-                })
+                for (const datum of learners.value) {
+                    watch(datum, (newData) => {
+                        updatedData.add(newData)
+                        noChanges.value = false
+                    })
+                }
+
+                noChanges.value = true
+                changeMode()
             }
-
-            noChanges.value = true
-            changeMode()
-        }
-    })
+        })
+    } else changeMode()
 }
 
 function changeMode() {
     edit.value = !edit.value
-    leave.value = !leave.value
 }
 
 onBeforeRouteLeave((to) => {
-    if (leave.value) {
+    if (disableSave.value) {
         return true
     }
 
@@ -155,7 +155,7 @@ onBeforeRouteLeave((to) => {
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
         accept: async () => {
-            leave.value = true
+            disableSave.value = true
             await router.push(to)
         }
     })

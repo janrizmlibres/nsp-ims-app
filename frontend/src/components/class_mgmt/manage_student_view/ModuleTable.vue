@@ -7,27 +7,24 @@ import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { FilterMatchMode, FilterOperator } from 'primevue/api';
+import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
-const props = defineProps(['data'])
-
+const studentModules = inject('studentModules')
+const filters = inject('filters')
 const moduleSubmissions = ref([])
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-});
+const selectedModules = ref([])
+
+const metaKey = ref(true)
+const dt = ref()
+const dtDiv = ref()
+
 const statuses = ref([
     { label: 'Graded', value: 'Graded' },
     { label: 'Submitted', value: 'Submitted' },
     { label: 'No Submission', value: 'No Submission' }
 ]);
-const selectedModules = ref([])
-const metaKey = ref(true)
-const dt = ref()
-const dtDiv = ref()
 
-watch(() => props.data, (data) => {
+watch(() => studentModules.value, (data) => {
     moduleSubmissions.value = []
     for (const module of data) {
         const temp = {
@@ -104,10 +101,11 @@ onBeforeUnmount(() => {
             </template>
         </Toolbar>
         <DataTable 
-            :value="moduleSubmissions" dataKey="id" scrollable style=" overflow: auto;"
-            sortField="lastName" :sortOrder="1" v-model:filters="filters" filterDisplay="menu"
+            :value="moduleSubmissions" dataKey="id" scrollable style=" overflow: auto;" ref="dt"
+            v-model:filters="filters" filterDisplay="menu"
             :globalFilterFields="['title', 'distribution_date', 'retrieval_date', 'status', 'date_submitted', 'remarks']"
-            v-model:selection="selectedModules" selectionMode="multiple" :metaKeySelection="metaKey" ref="dt"
+            sortField="lastName" :sortOrder="1" 
+            v-model:selection="selectedModules" selectionMode="multiple" :metaKeySelection="metaKey"
         >
             <template #empty> <div class="text-center">No records found.</div> </template>
 

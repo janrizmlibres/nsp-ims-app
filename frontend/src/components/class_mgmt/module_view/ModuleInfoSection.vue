@@ -2,17 +2,16 @@
 // Presets
 import ProgressSpinner from 'primevue/progressspinner';
 import Panel from 'primevue/panel';
-import { ref, watch } from 'vue';
+import { inject, ref, watch } from 'vue';
 
 // stores
 
-const props = defineProps(['modelValue'])
-
+const module = inject('module')
 const isFetching = ref(true)
 const distriDate = ref()
 const retriDate = ref()
 
-watch(() => props.modelValue, (data) => {
+watch(() => module.value, (data) => {
     isFetching.value = true
     
     let tempDistriDate = new Date(data.distribution_date)
