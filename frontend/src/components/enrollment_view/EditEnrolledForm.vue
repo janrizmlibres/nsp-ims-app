@@ -10,6 +10,7 @@ import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useTermStore } from '@/stores/term.js'
 import { useToast } from 'primevue/usetoast'
 import { defineProps } from 'vue'
+import Textarea from 'primevue/textarea'
 
 const enrollmentStore = useEnrollmentStore()
 const termStore = useTermStore()
@@ -147,6 +148,16 @@ getStudent()
         <InputText
           v-model="selectedSchoolLevel" disabled class="w-full md:w-14rem h-11" />
       </div>
+    </div>
+
+
+    <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
+      <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-28 text-right ml-4">
+          <span>FLT Pre-Test Score</span>
+        </div>
+        <InputNumber v-model="form.fltPretestScore" class="grow"/>
+      </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="text-right basis-32">
           <span>Regularity</span>
@@ -156,48 +167,14 @@ getStudent()
           :options="regularity"
           optionLabel="regularity"
           placeholder="Select a Regularity"
-          class="w-full md:w-14rem"
+          class="grow md:w-14rem"
         />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Remarks</span>
         </div>
-        <InputText v-model="form.selectedRemarks" class="w-full md:w-14rem"/>
-      </div>
-    </div>
-
-
-    <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Digital Literacy Score</span>
-        </div>
-        <InputNumber id="digitalLiteracy" v-model="form.digitalLiteracyScore" class="grow"/>
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-28 text-right ml-4">
-          <span>FLT Pre-Test Score</span>
-        </div>
-        <InputNumber v-model="form.fltPretestScore" class="grow"/>
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Has Enrollment Form</span>
-        </div>
-        <Checkbox v-model="form.hasEnrollmentForm" :binary="true" />
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Callable</span>
-        </div>
-        <Checkbox v-model="form.callable" :binary="true" />
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Bridger</span>
-        </div>
-        <Checkbox v-model="form.bridger" :binary="true" />
+        <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem"/>
       </div>
       <div class="flex gap-4 mb-2 items-center place-self-end">
         <Button @click="updateEnrolled" label="Update Learner" class="mt-4" />
