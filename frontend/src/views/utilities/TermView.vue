@@ -82,6 +82,15 @@ const onRowEditSave = async (event) => {
     }
 }
 
+const onRowEditCancel = () => {
+    toast.add({
+        severity: 'info',
+        summary: 'Cancelled',
+        detail: 'Date range update cancelled.',
+        life: 3000
+    })
+}
+
 onMounted(async () => {
   try {
     await termStore.getTerms()
@@ -136,6 +145,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
         v-model:editingRows="editingRows"
         editMode="row"
         @row-edit-save="onRowEditSave"
+        @row-edit-cancel="onRowEditCancel"
         :ptOptions="{ mergeProps: true }"
         :pt="{
           root: {

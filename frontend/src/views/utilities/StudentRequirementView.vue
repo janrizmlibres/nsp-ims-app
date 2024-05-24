@@ -34,12 +34,12 @@ async function deleteRequirement(id) {
         await requirementStore.deleteRequirement(id)
         await requirementStore.getRequirements()
 
-        toast.add({
+            toast.add({
                 severity: 'success',
                 summary: 'Success',
                 detail: 'Student Requirement deleted successfully!',
                 life: 3000
-        })
+            })
     } catch(error) {
         toast.add({
             severity: 'error',
@@ -118,6 +118,15 @@ const onRowEditSave = async (event) => {
         }
     }
 };
+
+const onRowEditCancel = () => {
+    toast.add({
+        severity: 'info',
+        summary: 'Cancelled',
+        detail: 'Student Requirement update cancelled.',
+        life: 3000
+    })
+}
 </script>
 
 <template>
@@ -127,7 +136,7 @@ const onRowEditSave = async (event) => {
             v-model:value="requirements" dataKey="id" 
             sortField="requirement_name" :sortOrder="1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines scrollable 
-            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave" @row-edit-cancel="onRowEditCancel"
             :ptOptions="{mergeProps:true}"
             :pt="{
                 root: {

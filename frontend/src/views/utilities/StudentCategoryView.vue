@@ -34,12 +34,12 @@ async function deleteCategory(id) {
         await categoryStore.deleteCategory(id)
         await categoryStore.getCategories()
 
-        toast.add({
+            toast.add({
                 severity: 'success',
                 summary: 'Success',
                 detail: 'Student Category deleted successfully!',
                 life: 3000
-        })
+            })
     } catch(error) {
         toast.add({
             severity: 'error',
@@ -118,6 +118,15 @@ const onRowEditSave = async (event) => {
         }
     }
 };
+
+const onRowEditCancel = () => {
+    toast.add({
+        severity: 'info',
+        summary: 'Cancelled',
+        detail: 'Student Category update cancelled.',
+        life: 3000
+    })
+}
 </script>
 
 <template>
@@ -127,7 +136,7 @@ const onRowEditSave = async (event) => {
             v-model:value="categories" dataKey="id" 
             sortField="category_name" :sortOrder="1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines scrollable 
-            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave" @row-edit-cancel="onRowEditCancel"
             :ptOptions="{mergeProps:true}"
             :pt="{
                 root: {
