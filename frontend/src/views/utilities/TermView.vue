@@ -75,11 +75,20 @@ const onRowEditSave = async (event) => {
             toast.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Unexpected error encountered. Please try again.',
+              detail: 'Unexpected error encountered. Please refresh this page.',
               life: 3000
             })
         }
     }
+}
+
+const onRowEditCancel = () => {
+    toast.add({
+        severity: 'info',
+        summary: 'Cancelled',
+        detail: 'Date range update cancelled.',
+        life: 3000
+    })
 }
 
 onMounted(async () => {
@@ -89,7 +98,7 @@ onMounted(async () => {
     toast.add({
       severity: 'error',
       summary: 'Error',
-      detail: 'Unexpected error encountered. Please try again.',
+      detail: 'Unexpected error encountered. Please refresh this page.',
       life: 3000
     })
   }
@@ -136,6 +145,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
         v-model:editingRows="editingRows"
         editMode="row"
         @row-edit-save="onRowEditSave"
+        @row-edit-cancel="onRowEditCancel"
         :ptOptions="{ mergeProps: true }"
         :pt="{
           root: {
