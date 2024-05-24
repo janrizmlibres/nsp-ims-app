@@ -16,6 +16,10 @@ const name = ref(null);
 const isInvalid = computed(() => !code.value || !name.value)
 
 async function addLearningStrand() {
+    if (isInvalid.value) {
+        return;
+    }
+    
     try {        
         if (!code.value.trim() || !name.value.trim()) {
             toast.add({
@@ -116,7 +120,7 @@ async function addLearningStrand() {
 </script>
 
 <template>
-    <Dialog v-model:visible="strandStore.visibleAddStrandDialog" modal header="Create a Learning Strand" :style="{ width: '25rem' }">
+    <Dialog v-model:visible="strandStore.visibleAddStrandDialog" modal header="Create a Learning Strand" :style="{ width: '25rem' }" @keyup.enter="addLearningStrand">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
             <label>Learning Strand Code</label>

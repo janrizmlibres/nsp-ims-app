@@ -15,7 +15,11 @@ const name = ref(null);
 const isInvalid = computed(() => !name.value)
 
 async function addRequirement() {
-        try {  
+    if (isInvalid.value) {
+        return;
+    }
+    
+    try {  
         if (!name.value.trim()) {
             toast.add({
                 severity: 'error',
@@ -83,7 +87,7 @@ async function addRequirement() {
 </script>
 
 <template>
-    <Dialog v-model:visible="requirementStore.visibleAddRequirementDialog" modal header="Create a Student Requirement" :style="{ width: '25rem' }">
+    <Dialog v-model:visible="requirementStore.visibleAddRequirementDialog" modal header="Create a Student Requirement" :style="{ width: '25rem' }" @keyup.enter="addRequirement">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
             <label>Student Requirement</label>
