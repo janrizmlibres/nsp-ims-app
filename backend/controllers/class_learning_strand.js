@@ -9,7 +9,9 @@ import Session from "../models/class/session.js";
 import Student from "../models/student/student.js";
 import Volunteer from "../models/volunteer/volunteer.js";
 import ModuleSubmission from "../models/class/module_submission.js";
+import Term from "../models/term.js"
 import { Op } from "sequelize";
+import ClassLevel from "../models/class/class_level.js";
 
 export async function addModule(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
@@ -70,19 +72,19 @@ export async function getAllModules(req, res, next) {
                 where: {status: 'No Submission'}
             })
     
-            const lacking = await module.countModule_submissions({
-                where: {status: 'Lacking'}
+            const submitted = await module.countModule_submissions({
+                where: {status: 'Submitted'}
             })
     
-            const complete = await module.countModule_submissions({
-                where: {status: 'Complete'}
+            const graded = await module.countModule_submissions({
+                where: {status: 'Graded'}
             })
     
-            const total = noSubmissions + lacking + complete
+            const total = noSubmissions + submitted + graded
 
             module.dataValues.noSubmissions = noSubmissions
-            module.dataValues.lacking = lacking
-            module.dataValues.complete = complete
+            module.dataValues.submitted = submitted
+            module.dataValues.graded = graded
             module.dataValues.total = total
         }
 
@@ -107,7 +109,10 @@ export async function getModule(req, res, next) {
                 {model: ModuleSubmission, 
                     include: [
                         {model: Enrollment, 
-                            include:[Student]
+                            include:[
+                                Student, 
+                                {model: ClassLevel, 
+                                    include: [Term]}]
                         }
                     ]
                 }, 
