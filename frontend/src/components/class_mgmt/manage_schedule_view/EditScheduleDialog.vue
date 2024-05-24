@@ -52,9 +52,14 @@ async function updateSchedule() {
             life: 3000
         })
 
-        classStore.leave = true
-        startTime.value = null
-        endTime.value = null
+            try {
+                await staffsStore.addAudit(
+                    `Updated: Schedule of ${schedule.value.name} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                )
+            } catch(error) {
+                console.log(error);
+            }
+        })
     } catch(error) {
         console.log(error);
         toast.add({
