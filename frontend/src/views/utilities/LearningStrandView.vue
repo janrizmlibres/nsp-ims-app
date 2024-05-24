@@ -6,12 +6,14 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column'
+import { useConfirm } from "primevue/useconfirm";
 import { useToast } from 'primevue/usetoast';
 import { ref, onMounted, computed } from 'vue';
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
 const strandStore = useUtilitiesStore()
+const confirm = useConfirm();
 const toast = useToast()
 
 const strands = computed(() => strandStore.strands)
@@ -23,30 +25,39 @@ onMounted(async () => {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     } 
 })
 
-async function deleteLearningStrand(id) {
-    try {
-        await strandStore.deleteLearningStrand(id)
-        await strandStore.getLearningStrands()
-
-        toast.add({
+const confirmDelete = (id) => {
+    confirm.require({
+        message: '      Are you sure you want to delete this Learning Strand?',
+        header: 'Delete Confirmation',
+        icon: 'pi pi-info-circle',
+        rejectLabel: 'Cancel',
+        acceptLabel: 'Delete',
+        rejectClass: 'p-button-secondary p-button-outlined',
+        acceptClass: 'p-button-danger',
+        accept: () => {
+            handleDelete(id)
+            toast.add({
                 severity: 'success',
                 summary: 'Success',
                 detail: 'Learning Strand deleted successfully!',
                 life: 3000
-        })
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered.',
-            life: 3000
-        })
+            })
+        }
+    });
+};
+
+async function handleDelete(id) {
+    try {
+        await strandStore.deleteLearningStrand(id);
+        await strandStore.getLearningStrands();
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -153,11 +164,20 @@ const onRowEditSave = async (event) => {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Unexpected error encountered. Please try again.',
+                detail: 'Unexpected error encountered. Please refresh this page.',
                 life: 3000
             })
         }
     }
+}
+
+const onRowEditCancel = () => {
+    toast.add({
+        severity: 'info',
+        summary: 'Cancelled',
+        detail: 'Learning Strand update cancelled.',
+        life: 3000
+    })
 }
 </script>
 
@@ -168,7 +188,7 @@ const onRowEditSave = async (event) => {
             v-model:value="strands" dataKey="id" 
             sortField="id" :sortOrder="1" removableSort 
             resizableColumns columnResizeMode="fit" showGridlines scrollable 
-            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
+            v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave" @row-edit-cancel="onRowEditCancel"
             :ptOptions="{mergeProps:true}"
             :pt="{
                 root: {
@@ -235,7 +255,7 @@ const onRowEditSave = async (event) => {
         <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
         <Column style="width: 2rem;">
             <template #body="slotProps">
-                <Button icon="fa fa-trash" text rounded severity="danger" @click="deleteLearningStrand(slotProps.data.id)" />
+                <Button icon="fa fa-trash" text rounded severity="danger" @click="confirmDelete(slotProps.data.id)" />
             </template>
         </Column>
         <template #footer> 

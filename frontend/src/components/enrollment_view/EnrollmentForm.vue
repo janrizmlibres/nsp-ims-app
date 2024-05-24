@@ -1,11 +1,12 @@
 ﻿<script setup>
-import InputText from 'primevue/inputtext'
+import Textarea from 'primevue/textarea'
 import InputNumber from 'primevue/inputnumber'
 import Dropdown from 'primevue/dropdown'
 import AutoComplete from 'primevue/autocomplete'
-import Checkbox from 'primevue/checkbox'
+import DataView from 'primevue/dataview'
 import Button from 'primevue/button'
-import { ref, computed } from 'vue'
+import FileUpload from 'primevue/fileupload'
+import { computed, ref } from 'vue'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useStudentsStore } from '@/stores/students.js'
 import { useTermStore } from '@/stores/term.js'
@@ -22,11 +23,22 @@ const filteredLearners = ref([])
 
 const schoolLevels = ref([])
 const selectedFullName = ref()
+const selectedLearnersList = ref([])
+const editingStudent = ref(false)
+const currentEditStudentIndex = ref()
+const validSubmit = ref(false)
+const confirmedFile = ref(false)
+const chosenFileURL = ref()
 
 schoolLevels.value = termStore.activeTerm.class_levels
 
 const isValid = computed(() => {
-  return form.value.selectedStudentId && form.value.selectedSchoolLevelId
+  return form.value.selectedRegularity && form.value.selectedSchoolLevelId
+})
+
+const chosenFile = computed(() => {
+  let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
+  return currentLearner && currentLearner.enrollmentFormName ? currentLearner.enrollmentFormName : "Please Upload an Enrollment Form";
 })
 
 const regularity = ref([
@@ -37,7 +49,6 @@ const regularity = ref([
 const form = ref()
 
 form.value = {
-  selectedStudentId: null,
   selectedSchoolLevelId: null,
   hasEnrollmentForm: null,
   digitalLiteracyScore: null,
@@ -47,8 +58,6 @@ form.value = {
   selectedRegularity: null,
   selectedRemarks: null,
 }
-
-const selectedLRN = ref()
 
 const search = debounce((event) => {
   if (!event.query.trim().length && event.query === "Type a Learner") {
@@ -62,17 +71,70 @@ const search = debounce((event) => {
 
 function onSelectedLearner() {
   const selectedStudent = studentsStore.students.find(student => student.fullname === selectedFullName.value.fullname)
-  selectedLRN.value = selectedStudent.lrn
-  form.value.selectedStudentId = selectedStudent.id
+  // add an object that contains the student id, lrn, and fullname
+  if (!selectedLearnersList.value.some(learner => learner.studentId === selectedStudent.id)) {
+    selectedLearnersList.value.push({
+      studentId: selectedStudent.id,
+      lrn: selectedStudent.lrn,
+      fullname: selectedStudent.fullname,
+      selectedSchoolLevelId: null,
+      hasEnrollmentForm: null,
+      digitalLiteracyScore: null,
+      fltPretestScore: null,
+      selectedRegularity: null,
+      selectedRemarks: null,
+    })
+  }
+  
+  // Clear the input field
+  selectedFullName.value = null
 }
 
-function clearSelectedFullName() {
-  selectedLRN.value = "";
+function editEnrolled(index) {
+  currentEditStudentIndex.value = index
+  
+  form.value.selectedSchoolLevelId = selectedLearnersList.value[index].selectedSchoolLevelId
+  form.value.hasEnrollmentForm = selectedLearnersList.value[index].hasEnrollmentForm
+  form.value.digitalLiteracyScore = selectedLearnersList.value[index].digitalLiteracyScore
+  form.value.fltPretestScore = selectedLearnersList.value[index].fltPretestScore
+  form.value.selectedRegularity = selectedLearnersList.value[index].selectedRegularity
+  form.value.selectedRemarks = selectedLearnersList.value[index].selectedRemarks
+  
+  // Check if the learner's enrollment form is not null
+  confirmedFile.value = !!selectedLearnersList.value[index].enrollmentForm;
+  
+  editingStudent.value = true
+}
+
+function removeLearner(index) {
+  selectedLearnersList.value.splice(index, 1)
+}
+
+function saveLearner() {
+  let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
+  selectedLearnersList.value[currentEditStudentIndex.value] = {
+    ...currentLearner,
+    selectedSchoolLevelId: form.value.selectedSchoolLevelId,
+    hasEnrollmentForm: form.value.hasEnrollmentForm,
+    digitalLiteracyScore: form.value.digitalLiteracyScore,
+    fltPretestScore: form.value.fltPretestScore,
+    selectedRegularity: form.value.selectedRegularity,
+    selectedRemarks: form.value.selectedRemarks,
+  }
+  
+  validSubmit.value = true
+
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Learner temporarily saved. Click Submit to enroll all.',
+    life: 3000
+  })
 }
 
 async function submitEvent() {
   try {
-    await enrollmentStore.enrollLearner(form.value)
+    await enrollmentStore.enrollLearners(selectedLearnersList.value)
     toast.add({
       severity: 'success',
       summary: 'Success',
@@ -88,6 +150,29 @@ async function submitEvent() {
     })
   }
 }
+
+function confirmUpload(event) {
+  let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
+
+  URL.revokeObjectURL(chosenFileURL.value)
+  chosenFileURL.value = URL.createObjectURL(event.files[0])
+  selectedLearnersList.value[currentEditStudentIndex.value] = {
+    ...currentLearner,
+    enrollmentForm: event.files[0],
+    enrollmentFormName: event.files[0].name
+  }
+  
+  confirmedFile.value = true;
+}
+
+function cancelFile() {
+  let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
+  selectedLearnersList.value[currentEditStudentIndex.value] = {
+    ...currentLearner,
+    enrollmentForm: null
+  }
+  confirmedFile.value = false;
+}
 </script>
 
 <template>
@@ -96,13 +181,7 @@ async function submitEvent() {
     <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pl-16">
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
-          <span>LRN<span class="text-red-500">*</span></span>
-        </div>
-        <InputText v-model="selectedLRN" disabled class="w-full"/>
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Full Name<span class="text-red-500">*</span></span>
+          <span>Full Name</span>
         </div>
         <AutoComplete
           v-model="selectedFullName"
@@ -114,8 +193,49 @@ async function submitEvent() {
           @complete="search" @item-select="onSelectedLearner"
           inputStyle="width: 80"
           class="basis-full h-11"
-          @clear="clearSelectedFullName"
         />
+      </div>
+      <DataView :value="selectedLearnersList" paginator :rows="5" class="w-fit">
+        <template #list="slotProps">
+          <div class="grid grid-nogutter">
+            <div v-for="(item, index) in slotProps.items" :key="index">
+              <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
+                <div class="flex justify-between gap-2">
+                  <div class="basis-32">
+                    <span><span class="font-bold">Student:<br/></span>{{ item.fullname }}</span>
+                  </div>
+                  <div class="basis-32">
+                    <span><span class="font-bold">LRN:<br/></span>{{ item.lrn }}</span>
+                  </div>
+                  <Button icon="pi pi-pencil" label="Edit" @click="editEnrolled(index)" class="h-11"/>
+                  <Button @click="removeLearner(index)" label="X" class="h-11"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </DataView>
+    </div>
+    
+    <div v-if="editingStudent" class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
+      <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-28 text-right ml-4">
+          <span>Enrollment Form</span>
+        </div>
+        <FileUpload class="grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
+        <Button label="X" @click="cancelFile" class="h-11" v-if="confirmedFile"/>
+      </div>
+      <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-28 text-right ml-4">
+          <span>Current Saved File:</span>
+        </div>
+        <span class="max-w-36 overflow-auto">{{ chosenFile }}</span>
+      </div>
+      <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-28 text-right ml-4">
+          <span>FLT Pre-Test Score</span>
+        </div>
+        <InputNumber v-model="form.fltPretestScore" class="grow" :min="0" :max="100"/>
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
@@ -127,12 +247,12 @@ async function submitEvent() {
           optionValue="id"
           optionLabel="school_level"
           placeholder="Select a Class Level"
-          class="w-full md:w-14rem h-11"
+          class="grow h-11"
         />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="text-right basis-32">
-          <span>Regularity</span>
+          <span>Regularity<span class="text-red-500">*</span></span>
         </div>
         <Dropdown
           v-model="form.selectedRegularity"
@@ -140,50 +260,19 @@ async function submitEvent() {
           optionValue="code"
           optionLabel="name"
           placeholder="Select a Regularity"
-          class="w-full md:w-14rem"
+          class="grow md:w-14rem"
         />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Remarks</span>
         </div>
-        <InputText v-model="form.selectedRemarks" class="w-full md:w-14rem"/>
+        <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem"/>
       </div>
-    </div>
-
-
-    <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Digital Literacy Score</span>
-        </div>
-        <InputNumber id="digitalLiteracy" v-model="form.digitalLiteracyScore" class="grow"/>
+      <div class="flex gap-10 mb-2 items-center place-self-end">
+        <Button @click="saveLearner" label="Save Learner" class="mt-4 mb-10" :disabled="!isValid"/>
+        <Button v-if="validSubmit" @click="submitEvent" label="Enroll Learners" class="mt-4 mb-10" :disabled="!isValid"/>
       </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-28 text-right ml-4">
-          <span>FLT Pre-Test Score</span>
-        </div>
-        <InputNumber v-model="form.fltPretestScore" class="grow"/>
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Has Enrollment Form</span>
-        </div>
-        <Checkbox v-model="form.hasEnrollmentForm" :binary="true" />
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Callable</span>
-        </div>
-        <Checkbox v-model="form.callable" :binary="true" />
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Bridger</span>
-        </div>
-        <Checkbox v-model="form.bridger" :binary="true" />
-      </div>
-      <Button @click="submitEvent" label="Enroll Learner" class="mt-4 place-self-end" :disabled="!isValid"/>
     </div>
     
   </div>
