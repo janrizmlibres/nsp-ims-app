@@ -77,7 +77,7 @@ async function updateModule() {
             
             try {
                 await usersStore.addAudit(
-                    `Updated: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    `Updated: ${module.value.title} date range from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {
                 console.log(error);
