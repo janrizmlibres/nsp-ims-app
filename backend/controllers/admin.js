@@ -143,6 +143,29 @@ export async function updatePassword(req, res, next) {
   }
 }
 
+export async function updateLastLogin(req, res, next) {
+  try {
+    const user = await User.findByPk(req.params.userId);
+
+    if (!user) {
+      const error = Error("User not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const lastLogin = req.body.lastLogin;
+    await user.update({ lastLogin });
+
+    res.status(200).json({ message: "Updated last login data." });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
 export async function addAudit(req, res, next) {
   try {
     const { userId, description, date } = req.body;

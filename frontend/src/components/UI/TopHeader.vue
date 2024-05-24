@@ -1,9 +1,9 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth.js'
 import router from '@/router'
-import { useConfirm } from "primevue/useconfirm";
+import { useConfirm } from 'primevue/useconfirm'
 
-const confirm = useConfirm();
+const confirm = useConfirm()
 
 const confirmLogout = () => {
   confirm.require({
@@ -16,8 +16,8 @@ const confirmLogout = () => {
       logout()
     },
     reject: () => {}
-  });
-};
+  })
+}
 
 defineProps(['header', 'subheader'])
 
@@ -40,11 +40,6 @@ async function logout() {
     </div>
 
     <div class="flex gap-6 mt-2 mr-2">
-      <a href="#">
-        <font-awesome-icon icon="fa-solid fa-gear" />
-        <span class="ml-1.5">Settings</span>
-      </a>
-
       <a href="#" @click="confirmLogout">
         <font-awesome-icon icon="fa-solid fa-arrow-right-from-bracket" />
         <span class="ml-1.5">Logout</span>
@@ -53,5 +48,4 @@ async function logout() {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
