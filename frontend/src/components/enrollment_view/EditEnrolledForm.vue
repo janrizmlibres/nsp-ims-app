@@ -30,21 +30,38 @@ const selectedFullName = ref();
 const selectedSchoolLevel = ref();
 const enrollmentFormName = ref();
 const confirmedFile = ref(false)
+const isLoaded = ref(false)
+
+const form = ref({
+  fltPretestScore: null,
+  selectedRegularity: null,
+  selectedRemarks: null,
+  enrollmentForm: null,
+})
+
+const oldForm = ref({
+  fltPretestScore: null,
+  selectedRegularity: null,
+  selectedRemarks: null,
+  enrollmentForm: null,
+})
 
 const chosenFile = computed(() => {
   return enrollmentFormName.value ? enrollmentFormName.value : "Please Upload an Enrollment Form";
 })
 
-const form = ref({
-  hasEnrollmentForm: null,
-  digitalLiteracyScore: null,
-  fltPretestScore: null,
-  callable: null,
-  bridger: null,
-  selectedRegularity: null,
-  selectedRemarks: null,
-  enrollmentForm: null,
-})
+const isEqual = (newValue, oldValue) =>
+  newValue === oldValue || (newValue === "" && oldValue === null);
+
+const checkChanges = computed(() => {
+  if (!isLoaded.value) return true;
+  return (
+    isEqual(form.value.fltPretestScore, oldForm.value.fltPretestScore) &&
+    isEqual(form.value.selectedRegularity.code, oldForm.value.selectedRegularity.code) &&
+    isEqual(form.value.selectedRemarks, oldForm.value.selectedRemarks) &&
+    isEqual(form.value.enrollmentForm, oldForm.value.enrollmentForm)
+  );
+});
 
 async function getStudent()  {
   try {
@@ -64,12 +81,11 @@ async function getStudent()  {
     }
     
     form.value.selectedRemarks = enrollmentStore.learner.remarks
-    form.value.digitalLiteracyScore = enrollmentStore.learner.digitalLiteracy
     form.value.fltPretestScore = enrollmentStore.learner.ftlPretest
-    form.value.hasEnrollmentForm = enrollmentStore.learner.hasEnrollmentForm
-    form.value.callable = enrollmentStore.learner.callable
-    form.value.bridger = enrollmentStore.learner.Bridger
     
+    console.log("New Form: ", form.value)
+    copyExistingData()
+
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -122,6 +138,13 @@ function cancelFile() {
   enrollmentFormName.value = null
   
   confirmedFile.value = false;
+}
+
+function copyExistingData() {
+  for (let key in form.value) {
+    oldForm.value[key] = form.value[key];
+  }
+  isLoaded.value = true;
 }
 
 const props = defineProps({
@@ -204,10 +227,10 @@ getStudent()
         <div class="basis-32 text-right">
           <span>Remarks</span>
         </div>
-        <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem"/>
+        <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem" />
       </div>
       <div class="flex gap-4 mb-2 items-center place-self-end">
-        <Button @click="updateEnrolled" label="Update Learner" class="mt-4" />
+        <Button @click="updateEnrolled" label="Update Learner" class="mt-4" :disabled="checkChanges"/>
         <Button @click="cancelEdit" label="Cancel" class="mt-4"/>
       </div>
     </div>
