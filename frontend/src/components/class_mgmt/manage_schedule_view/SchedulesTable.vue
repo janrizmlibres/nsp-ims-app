@@ -128,7 +128,15 @@ async function deleteSchedules() {
             }
 
             try {
-                updateScheduleTable(props.classLevel.id)
+                        selectedSchedules.value.forEach(async (schedule) => {
+                            await staffsStore.addAudit(
+                                `Deleted: Schedule for ${schedule.name} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                            )
+                        })
+                    } catch(error) {
+                        console.log(error);
+                    }
+                })
             } catch(error) {
                 console.log(error);
             }
