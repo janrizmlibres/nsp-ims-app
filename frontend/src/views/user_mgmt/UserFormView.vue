@@ -18,15 +18,15 @@ const route = useRoute()
 const usersStore = useUsersStore()
 
 let initialData = {
-  password: null,
-  confirmPass: null,
-  firstName: null,
-  middleName: null,
-  lastName: null,
-  suffixName: null,
-  email: null,
-  contactNum: null,
-  position: null,
+  password: '',
+  confirmPass: '',
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  suffixName: '',
+  email: '',
+  contactNum: '',
+  position: '',
   isSubAdmin: false
 }
 const formData = ref(structuredClone(initialData))
