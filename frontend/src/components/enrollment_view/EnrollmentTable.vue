@@ -148,14 +148,6 @@ function editEnrolled(data) {
     :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']"
     removableSort
   >
-    <Column
-      headerStyle="width: 5rem; text-align: center"
-      bodyStyle="text-align: center; overflow: visible"
-    >
-      <template #body="{ data }">
-        <Button icon="pi pi-eye" label="View" @click="viewEnrolled(data)" />
-      </template>
-    </Column>
     <column field="lrn" header="LRN" sortable>
       <template #body="{ data }">
         {{ data.lrn }}
