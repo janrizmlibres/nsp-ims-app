@@ -33,9 +33,6 @@ router.post(
     body("regularity").isString(),
     body("remarks").isString(),
   ],
-  enrollmentController.enrollLearner);
-router.get("/retrieve-modules/:enrollmentId/:classLearningStrandId", isAuth, enrollmentController.getEnrolledModules);
-router.get("/retrieve-grades/:enrollmentId/:classLearningStrandId", isAuth, enrollmentController.getEnrolledGrades);
-router.get("/retrieve-attendance/:enrollmentId/:classLearningStrandId", isAuth, enrollmentController.getEnrolledAttendance);
+  enrollmentController.enrollLearners);
 
 export default router;
