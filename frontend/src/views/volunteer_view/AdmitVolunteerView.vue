@@ -72,10 +72,8 @@ const initialData = {
   },
 
   professional: {
-    work: null
+    work: null,
   }
-
-  //add work
 }
 
 const formData = ref(structuredClone(initialData))
@@ -104,7 +102,6 @@ watch(
 provide('formData', readonly({ formData, updateFormData }))
 
 function updateFormData(part, data) {
-  // console.log(formData.value)
   const updateMapping = {
     [FormParts.Volunteer]: () => (formData.value.volunteerHeader = data),
     [FormParts.VolunteerPersonalInformation]: () => (formData.value.personalInformation = data),
@@ -142,7 +139,7 @@ async function submitForm() {
       route.name === 'admit-volunteers'
         ? await volunteerStore.addVolunteer(formData.value)
         : await volunteerStore.updateVolunteer(route.params.id, formData.value)
-
+    
     toast.add({
       severity: 'success',
       summary: 'Success',
@@ -176,16 +173,20 @@ onBeforeRouteLeave((to) => {
   return false
 })
 
+let volunteerIdCopy = ref(null);
+
 onMounted(async () => {
   if (!route.params.id) return
 
   try {
     const result = await volunteerStore.getVolunteer(route.params.id)
     const volunteer = result.data.volunteer
+    volunteerIdCopy = volunteer.volunteerId
 
     //try to see why this won't work:
     const filterObject = (obj) => {
       // eslint-disable-next-line no-unused-vars
+      //this filtering of volunteerId causes it to not show when viewing volunteer but can still be edited
       const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
       return filteredObj
     }
@@ -215,8 +216,8 @@ onMounted(async () => {
     initialData.emergency = filterObject(volunteer_emergency_contact)
     initialData.availability = filterObject(volunteer_availability)
     initialData.specialization = filterObject(volunteer_specialization)
-    initialData.student = filterObject(student_volunteer)
-    initialData.professional = professional_volunteer ? filterObject(professional_volunteer) : {}
+    initialData.student = student_volunteer ? filterObject(student_volunteer) : {};
+    initialData.professional = professional_volunteer ? filterObject(professional_volunteer) : {};
 
     for (const key in initialData) {
       formData.value[key] = initialData[key]
@@ -224,7 +225,6 @@ onMounted(async () => {
 
     updateKey.value += 1
   } catch (error) {
-    console.error('Failed to load volunteer:', error)
     router.back()
   }
 })
@@ -236,6 +236,7 @@ onMounted(async () => {
       <AdmitVolunteerHeader
         @dataChanged="updateFormData"
         :Volunteer="formData.volunteerHeader"
+        :volunteerIdCopy="volunteerIdCopy"
         :isViewMode="$route.meta.isViewMode"
         :key="updateKey"
       />
