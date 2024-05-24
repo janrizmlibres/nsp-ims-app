@@ -148,7 +148,7 @@ function findUpdatedAttributes(oldObj, newObj, prefix = '') {
         updates = [...updates, ...nestedUpdates];
       }
     } else if (oldObj[key] !== newObj[key]) {
-      updates.push(key.charAt(0).toUpperCase() + key.slice(1));
+      updates.push(" " + key.charAt(0).toUpperCase() + key.slice(1));
     }
   }
 
@@ -167,7 +167,7 @@ async function addAuditTrail(descripton) {
 async function handleAddVolunteer(data) {
   try {
     const result = await volunteerStore.addVolunteer(data);
-    await addAuditTrail('Added: Volunteer "' + result.data.volunteer.fullname + '" with ID: ' + result.data.volunteer.id);
+    await addAuditTrail('Added: Volunteer"' + result.data.volunteer.fullname + '" with ID: ' + result.data.volunteer.id);
     return result;
   } catch (error) {
     toast.add({
@@ -258,7 +258,7 @@ onMounted(async () => {
     //try to see why this won't work:
     const filterObject = (obj) => {
       // eslint-disable-next-line no-unused-vars
-      const { id, createdAt, updatedAt, ...filteredObj } = obj
+      const { id, createdAt, updatedAt, /*volunteerId,*/ ...filteredObj } = obj
       return filteredObj
     }
 

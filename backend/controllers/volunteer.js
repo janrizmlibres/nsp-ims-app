@@ -48,34 +48,34 @@ export async function addVolunteer(req, res, next) {
 
     await VolunteerPersonalInformation.create({
       ...req.body.personalInformation,
-      id: volunteer.id,
+      volunteerId: volunteer.id,
     });
 
     await VolunteerContactInformation.create({
       ...req.body.contactInformation,
-      id: volunteer.id,
+      volunteerId: volunteer.id,
     });
 
     await VolunteerEmergency.create({
       ...req.body.emergency,
-      id: volunteer.id,
+      volunteerId: volunteer.id,
     });
 
     await VolunteerSpecialization.create({
       ...req.body.specialization,
-      id: volunteer.id,
+      volunteerId: volunteer.id,
     });
 
     await VolunteerAvailability.create({
       ...req.body.availability,
-      id: volunteer.id,
+      volunteerId: volunteer.id,
     });
 
     //only creates an instance of student volunteer if program and year has an entry
     if (req.body.student.program && req.body.student.year) {
       await StudentVolunteer.create({
       ...req.body.student,
-      id: volunteer.id,
+      volunteerId: volunteer.id,
       });
     }
 
@@ -83,7 +83,7 @@ export async function addVolunteer(req, res, next) {
     if (req.body.professional.work) {
       await ProfessionalVolunteer.create({
       ...req.body.professional,
-      id: volunteer.id,
+      volunteerId: volunteer.id,
       });
     }
 
@@ -159,31 +159,31 @@ export async function updateVolunteer(req, res, next) {
     } = req.body;
 
     const personalInformationInstance = await VolunteerPersonalInformation.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const contactInformationInstance = await VolunteerContactInformation.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const emergencyInstance = await VolunteerEmergency.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const specializationInstance = await VolunteerSpecialization.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const availabilityInstance = await VolunteerAvailability.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const studentInstance = await StudentVolunteer.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const professionalInstance = await ProfessionalVolunteer.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
     
     
