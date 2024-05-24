@@ -29,13 +29,10 @@ const updatedData = new Set([])
 
 const columns = [
   { field: 'canMgStuds', header: 'Manage Students' },
-  { field: 'canMgStudReq', header: 'Manage Student Requirements' },
-  { field: 'canMgStudCat', header: 'Manage Student Categories' },
-  { field: 'canMgTerm', header: 'Manage Terms' },
-  { field: 'canMgLs', header: 'Manage Learning Strands' },
-  { field: 'canMgClass', header: 'Manage Classes' },
   { field: 'canMgEnrollment', header: 'Manage Enrollment' },
-  { field: 'canMgVolunteer', header: 'Manage Volunteers' }
+  { field: 'canMgVolunteer', header: 'Manage Volunteers' },
+  { field: 'canMgClass', header: 'Manage Classes' },
+  { field: 'canMgUser', header: 'Manage Users' }
 ]
 
 async function updatePerms() {
@@ -140,23 +137,13 @@ onMounted(async () => {
                 :binary="true"
               />
               <Checkbox
-                v-else-if="col.field === 'canMgStudReq'"
-                v-model="slotProps.data.canMgStudReq"
+                v-else-if="col.field === 'canMgEnrollment'"
+                v-model="slotProps.data.canMgEnrollment"
                 :binary="true"
               />
               <Checkbox
-                v-else-if="col.field === 'canMgStudCat'"
-                v-model="slotProps.data.canMgStudCat"
-                :binary="true"
-              />
-              <Checkbox
-                v-else-if="col.field === 'canMgTerm'"
-                v-model="slotProps.data.canMgTerm"
-                :binary="true"
-              />
-              <Checkbox
-                v-else-if="col.field === 'canMgLs'"
-                v-model="slotProps.data.canMgLs"
+                v-else-if="col.field === 'canMgVolunteer'"
+                v-model="slotProps.data.canMgVolunteer"
                 :binary="true"
               />
               <Checkbox
@@ -164,12 +151,7 @@ onMounted(async () => {
                 v-model="slotProps.data.canMgClass"
                 :binary="true"
               />
-              <Checkbox
-                v-else-if="col.field === 'canMgEnrollment'"
-                v-model="slotProps.data.canMgEnrollment"
-                :binary="true"
-              />
-              <Checkbox v-else v-model="slotProps.data.canMgVolunteer" :binary="true" />
+              <Checkbox v-else v-model="slotProps.data.canMgUser" :binary="true" />
             </template>
           </Column>
 
