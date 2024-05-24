@@ -228,8 +228,7 @@ onMounted(async () => {
     initialData.identity = {
       ...mapValues(filterObject(identity), (v) => (isNil(v) ? '' : v)),
       suffixName: identity.suffixName,
-      lrn: identity.lrn.toString(),
-      photoUrl: identity.photoUrl && `http://localhost:8080/${identity.photoUrl}`
+      lrn: identity.lrn.toString()
     }
 
     initialData.personalInfo = {

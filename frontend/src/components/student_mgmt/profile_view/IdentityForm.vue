@@ -38,8 +38,9 @@ const isImgModalVisible = ref(false)
 
 const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 const categories = computed(() => utilitiesStore.categories.map((cat) => cat.category_name))
+const photoDisplay = ref(photoUrl.value && `http://localhost:8080/${photoUrl.value}`)
 
-watch(photoUrl, () => handleUpdate())
+watch(photoDisplay, () => handleUpdate())
 
 function setAvatarHover(value) {
   if (route.meta.isViewMode && !photoUrl.value) return
@@ -59,17 +60,12 @@ function handleAvatar(event) {
 }
 
 function handleUpdate() {
-  const getPhotoUrl = () => {
-    if (uploader.value.files.length !== 0) return uploader.value.files[0]
-    else return photoUrl.value
-  }
-
   const data = {
     ...name.value,
     lrn: lrn.value,
     suffixName: selectedSuffix.value,
     category: selectedCat.value,
-    photoUrl: getPhotoUrl()
+    photoUrl: photoUrl
   }
 
   emit('dataChanged', FormParts.Identity, data)
@@ -77,8 +73,9 @@ function handleUpdate() {
 
 function handleImage() {
   if (uploader.value.files.length !== 0) {
-    URL.revokeObjectURL(photoUrl.value)
-    photoUrl.value = URL.createObjectURL(uploader.value.files[0])
+    URL.revokeObjectURL(photoDisplay.value)
+    photoDisplay.value = URL.createObjectURL(uploader.value.files[0])
+    photoUrl.value = uploader.value.files[0]
     setAvatarHover(false)
   }
 }
@@ -112,7 +109,7 @@ onMounted(async () => {
       @click="setImageModal(false)"
       >&times;</span
     >
-    <img :src="photoUrl" class="m-auto block w-5/6 max-w-3xl" />
+    <img :src="photoDisplay" class="m-auto block w-5/6 max-w-3xl" />
   </div>
 
   <BaseCard :isNotPadded="true" class="px-8">
@@ -125,7 +122,7 @@ onMounted(async () => {
           @click="handleAvatar"
         >
           <Avatar
-            :image="photoUrl"
+            :image="photoDisplay"
             size="xlarge"
             :pt="{
               root: 'bg-white shadow-md border-2 rounded dark:bg-surface-700'
@@ -136,8 +133,8 @@ onMounted(async () => {
           <div
             class="absolute w-full h-full flex items-center justify-center transition-opacity ease-in duration-300 bg-white shadow-md border-2 rounded"
             :class="{
-              'opacity-0': isAvatarHovered || (photoUrl && !isAvatarHovered),
-              'opacity-50': isAvatarHovered && photoUrl
+              'opacity-0': isAvatarHovered || (photoDisplay && !isAvatarHovered),
+              'opacity-50': isAvatarHovered && photoDisplay
             }"
           >
             <font-awesome-icon icon="fa-solid fa-user" size="lg" />
@@ -145,7 +142,7 @@ onMounted(async () => {
 
           <div
             class="shadow-md border-2 rounded absolute opacity-0 w-full h-full flex items-center justify-center transition-opacity ease-in duration-300"
-            :class="{ 'opacity-100': isAvatarHovered && !photoUrl }"
+            :class="{ 'opacity-100': isAvatarHovered && !photoDisplay }"
           >
             <font-awesome-icon icon="fa-solid fa-upload" size="lg" />
           </div>
