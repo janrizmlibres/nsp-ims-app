@@ -74,11 +74,5 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     enrollLearners, 
     getEnrolled, 
     updateLearner,
-    setModules,
-    getEnrolledModules,
-    getEnrolledGrades,
-    setGrades,
-    getEnrolledAttendance,
-    setAttendance
   }
 })
