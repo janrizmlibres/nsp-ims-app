@@ -650,7 +650,7 @@ export async function injectEnrollment() {
       studentId: "2",
       classLevelId: "1",
       dateEnrolled: getRandomDate(), // Random date between 2016 and now
-      status: "Active",
+      status: "Inactive",
     },
     {
       studentId: "3",

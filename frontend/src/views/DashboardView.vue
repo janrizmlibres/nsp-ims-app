@@ -10,6 +10,7 @@ import { useSidebarStore } from '@/stores/sidebar.js';
 import { useStudentsStore } from '@/stores/students';
 import { useUtilitiesStore } from '@/stores/utilities';
 
+
 const studentsStore = useStudentsStore();
 const sidebarStore = useSidebarStore();
 const utilitiesStore = useUtilitiesStore();
@@ -36,7 +37,6 @@ onMounted(async () => {
   femaleStudents.value = genderCount.data.femaleCount;
   totalStudents.value = maleStudents.value + femaleStudents.value;
   totalClassLevels.value = gradeSchool.value + juniorHighSchool.value;
-
 });
 </script>
 

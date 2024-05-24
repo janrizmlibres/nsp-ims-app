@@ -370,3 +370,11 @@ export const getEnrolledAttendance = async (req, res, next) => {
   }
 }
 
+export const getAllEnrollments = async (req, res, next) => {
+  try {
+    const enrollments = await Enrollment.findAll();
+    res.status(200).json(enrollments);
+  } catch (error) {
+    next(error);
+  }
+};

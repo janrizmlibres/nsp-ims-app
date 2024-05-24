@@ -38,4 +38,6 @@ router.get("/retrieve-modules/:enrollmentId/:classLearningStrandId", isAuth, enr
 router.get("/retrieve-grades/:enrollmentId/:classLearningStrandId", isAuth, enrollmentController.getEnrolledGrades);
 router.get("/retrieve-attendance/:enrollmentId/:classLearningStrandId", isAuth, enrollmentController.getEnrolledAttendance);
 
+router.get("/enrollments", isAuth, enrollmentController.getAllEnrollments);
+
 export default router;

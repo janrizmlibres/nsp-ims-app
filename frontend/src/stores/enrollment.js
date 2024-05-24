@@ -116,6 +116,17 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   function setAttendance(attendance) {
     attendance.value = attendance
   }
+
+  async function getAllEnrollments() {
+    const authStore = useAuthStore()
+  
+    const result = await axios.get('http://localhost:8080/enrollment/enrollments', {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  
+    return result.data
+  }
+  
   
   return {
     learners, 
@@ -135,6 +146,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     getEnrolledGrades,
     setGrades,
     getEnrolledAttendance,
-    setAttendance
+    setAttendance,
+    getAllEnrollments,
   }
 })

@@ -1,5 +1,6 @@
 <script>
 import VueApexCharts from "vue3-apexcharts";
+import { useEnrollmentStore } from '@/stores/enrollment';
 
 export default {
   components: {
@@ -9,17 +10,7 @@ export default {
     return {
       series: [{
         name: 'Enrollments',
-        data: [
-          { x: '2016', y: 10 },
-          { x: '2017', y: 41 },
-          { x: '2018', y: 35 },
-          { x: '2019', y: 51 },
-          { x: '2020', y: 49 },
-          { x: '2021', y: 62 },
-          { x: '2022', y: 69 },
-          { x: '2023', y: 91 },
-          { x: '2024', y: 148 }
-        ]
+        data: []
       }],
       chartOptions: {
         chart: {
@@ -46,7 +37,7 @@ export default {
           },
         },
         xaxis: {
-          type: 'category', // or 'datetime' if your x values are dates
+          type: 'category',
           title: {
             text: 'Year'
           }
@@ -59,6 +50,24 @@ export default {
       },
     };
   },
+  async created() {
+    const enrollmentStore = useEnrollmentStore();
+    const enrollments = await enrollmentStore.getAllEnrollments();
+
+    const yearCounts = {};
+    enrollments.forEach(enrollment => {
+      const year = new Date(enrollment.dateEnrolled).getFullYear();
+      if (yearCounts[year]) {
+        yearCounts[year]++;
+      } else {
+        yearCounts[year] = 1;
+      }
+    });
+
+    const yearCountsArray = Object.entries(yearCounts).map(([year, count]) => ({ x: year, y: count }));
+    //should be refactored where yearCountsArray is placed inside data: []
+    this.series[0].data = yearCountsArray;
+  }
 };
 </script>
 
