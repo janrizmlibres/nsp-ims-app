@@ -5,7 +5,12 @@ import Button from 'primevue/button'
 import router from '@/router'
 import { ref } from 'vue'
 
-const props = defineProps(['globalFilter', 'dt', 'tabindex'])
+const props = defineProps({
+  globalFilter: Object,
+  dt: Object,
+  tabindex: Number,
+  includeExport: { type: Boolean, default: true }
+})
 const filter = ref(props.globalFilter)
 
 async function goToAddUserView() {
@@ -41,6 +46,7 @@ function exportCSV() {
         @click="goToAddUserView"
       />
       <Button
+        v-show="includeExport"
         label="Export Data"
         icon="fa-solid fa-file-export"
         class="ml-2 h-10"

@@ -251,17 +251,7 @@ export async function injectUser() {
         contactNum: "09052153867",
         position: "Administrator",
       },
-      {
-        canMgStuds: true,
-        canMgEnrollment: true,
-        canMgVolunteer: true,
-        canMgClass: true,
-        canMgTerm: true,
-        canMgLs: true,
-        canMgStudReq: true,
-        canMgStudCat: true,
-        canMgUser: true,
-      },
+      {},
       {
         description: "Added User with ID: 53725",
         date: new Date(),
@@ -277,16 +267,7 @@ export async function injectUser() {
         contactNum: "09123456789",
         position: "Program Head",
       },
-      {
-        canMgStuds: true,
-        canMgEnrollment: true,
-        canMgVolunteer: true,
-        canMgClass: true,
-        canMgTerm: true,
-        canMgLs: true,
-        canMgStudReq: true,
-        canMgUser: true,
-      },
+      {},
       {
         description: "Added User with ID: 53697",
         date: new Date(),
@@ -303,16 +284,7 @@ export async function injectUser() {
         position: "Program Coordinator",
         lastLogin: new Date(2023, 1, 20),
       },
-      {
-        canMgStuds: true,
-        canMgEnrollment: true,
-        canMgVolunteer: true,
-        canMgClass: true,
-        canMgTerm: true,
-        canMgLs: true,
-        canMgStudReq: true,
-        canMgUser: true,
-      },
+      {},
       {
         description: "Added User with ID: 53698",
         date: new Date(),
@@ -354,8 +326,6 @@ export async function injectUser() {
       {
         canMgStuds: true,
         canMgVolunteer: true,
-        canMgLs: true,
-        canMgStudReq: true,
         canMgUser: true,
       },
       {
@@ -377,7 +347,6 @@ export async function injectUser() {
       {
         canMgVolunteer: true,
         canMgClass: true,
-        canMgStudReq: true,
       },
       {
         description: "Added User with ID: 53724",
