@@ -25,7 +25,8 @@ const filters = ref({
 });
 
 const columns = ref([
-  { field: 'id', header: 'Database ID' },
+  /*{ field: 'id', header: 'Database ID' },
+  { field: 'student_volunteer.id', header: 'Volunteer ID' },*/
   { field: 'fullname', header: 'Full Name' },
   { field: 'volunteer_personal_information.sex', header: 'Sex'},
   { field: 'affiliation', header: 'Affiliation' },

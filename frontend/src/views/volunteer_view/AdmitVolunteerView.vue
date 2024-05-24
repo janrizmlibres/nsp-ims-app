@@ -148,7 +148,7 @@ function findUpdatedAttributes(oldObj, newObj, prefix = '') {
         updates = [...updates, ...nestedUpdates];
       }
     } else if (oldObj[key] !== newObj[key]) {
-      updates.push(key);
+      updates.push(key.charAt(0).toUpperCase() + key.slice(1));
     }
   }
 
@@ -186,8 +186,10 @@ async function handleUpdateVolunteer(id, data) {
     const newVolunteer = await volunteerStore.getVolunteer(id);
     const updates = findUpdatedAttributes(oldVolunteer.data.volunteer, newVolunteer.data.volunteer);
     console.log(oldVolunteer.data.volunteer);
-    await addAuditTrail('Updated: Attribute/s ' + updates + ' of Volunteer "' + newVolunteer.data.volunteer.fullname + '" with ID: ' + newVolunteer.data.volunteer.id);
-    return result;
+    if (updates.length > 0){
+      await addAuditTrail('Updated: Attribute/s ' + updates + ' of Volunteer "' + newVolunteer.data.volunteer.fullname + '" with ID: ' + newVolunteer.data.volunteer.id);
+    }
+     return result;
   } catch (error) {
     toast.add({
       severity: 'error',
