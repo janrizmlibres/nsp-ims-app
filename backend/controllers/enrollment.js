@@ -5,6 +5,9 @@ import ClassLearningStrand from '../models/class/class_learning_strand.js'
 import Session from '../models/class/session.js'
 import Module from '../models/class/module.js'
 import Student from '../models/student/student.js'
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
 
 /**
  * Retrieves all learners enrolled in a term.
@@ -261,3 +264,11 @@ export const changeEnrollmentStatus = async (req, res, next) => {
     return error;
   }
 }
+
+const clearEnrollmentForm = (filePath) => {
+  if (!filePath) return;
+
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  filePath = path.join(__dirname, "..", filePath);
+  fs.unlink(filePath, (err) => console.log(err));
+};
