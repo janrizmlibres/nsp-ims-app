@@ -10,6 +10,7 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import VolunteerBulkForm from '@/components/volunteer_view/VolunteerBulkForm.vue'
 import AdmitVolunteerHeader from '@/components/volunteer_view/AdmitVolunteerHeader.vue'
 import { useVolunteerStore } from '@/stores/volunteer'
+import { useUsersStore } from '@/stores/users'
 
 import FormParts from '../../util/volunteer_form_parts'
 import { isEqual } from 'lodash'
@@ -22,6 +23,7 @@ const confirm = useConfirm()
 const toast = useToast()
 
 const volunteerStore = useVolunteerStore()
+const userStore = useUsersStore()
 
 const initialData = {
   volunteerHeader: {
@@ -116,6 +118,20 @@ function updateFormData(part, data) {
   updateMapping[part]()
 }
 
+async function addAuditTrail(descripton) {
+  try {
+    await userStore.addAudit(descripton);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function handleAddVolunteer(data) {
+  const result = await volunteerStore.addVolunteer(data);
+  await addAuditTrail('Added: Volunteer "' + result.data.volunteer.fullname + '" with ID: ' + result.data.volunteer.volunteerId);
+  return result;
+}
+
 function handleConfirm() {
   if (route.meta.isViewMode) {
     router.push({ name: 'edit-volunteer', params: { id: route.params.id } })
@@ -137,7 +153,7 @@ async function submitForm() {
   try {
     const result =
       route.name === 'admit-volunteers'
-        ? await volunteerStore.addVolunteer(formData.value)
+        ? await handleAddVolunteer(formData.value)
         : await volunteerStore.updateVolunteer(route.params.id, formData.value)
     
     toast.add({

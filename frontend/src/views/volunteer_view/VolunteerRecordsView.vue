@@ -57,7 +57,7 @@ async function handleDelete(id) {
     const result = await volunteerStore.getVolunteer(id);
     const volunteer = result.data.volunteer
     volunteerStore.deleteVolunteer(id);
-    addAuditTrail(`Deleted Volunteer "${volunteer.fullname}" with ID: ${id}`);
+    addAuditTrail(`Deleted: Volunteer "${volunteer.fullname}" with ID: ${volunteer.volunteerId}`);
     window.location.reload();
   } catch (error) {
     console.log(error);
