@@ -12,11 +12,11 @@ import { useConfirm } from 'primevue/useconfirm';
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useClassStore } from '@/stores/class';
-import { useStaffsStore } from '@/stores/staffs';
+import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 const classStore = useClassStore()
-const staffsStore = useStaffsStore()
+const usersStore = useUsersStore()
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -100,7 +100,7 @@ async function updateGrades() {
 
             try {
                 for (const grade of Array.from(updatedData)) {
-                    await staffsStore.addAudit(
+                    await usersStore.addAudit(
                         `Updated: Grade of ${grade.firstName} ${grade.lastName} in ${learningStrandInput.value.learning_strand.code} of ${classLevel.school_level}, SY ${term.academic_year}`
                     )
                 }

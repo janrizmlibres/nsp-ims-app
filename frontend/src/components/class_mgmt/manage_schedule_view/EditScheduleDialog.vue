@@ -14,13 +14,13 @@ import { format } from 'date-fns';
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useVolunteerStore } from '@/stores/volunteer';
 import { useClassStore } from '@/stores/class';
-import { useStaffsStore } from '@/stores/staffs';
+import { useUsersStore } from '@/stores/users';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
 const volunteerStore = useVolunteerStore()
 const classLearningStrandStore = useClassLearningStrandStore()
 const classStore = useClassStore()
-const staffsStore = useStaffsStore()
+const usersStore = useUsersStore()
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -83,7 +83,7 @@ async function updateSchedule() {
             editScheduleDialogState.value = false
 
             try {
-                await staffsStore.addAudit(
+                await usersStore.addAudit(
                     `Updated: Schedule of ${schedule.value.name} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {

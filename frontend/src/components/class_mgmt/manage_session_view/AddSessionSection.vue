@@ -6,12 +6,12 @@ import Dropdown from 'primevue/dropdown';
 import { inject, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
-import { useStaffsStore } from '@/stores/staffs';
+import { useUsersStore } from '@/stores/users';
 
 const toast = useToast()
 
 const classLearningStrandStore = useClassLearningStrandStore()
-const staffsStore = useStaffsStore()
+const usersStore = useUsersStore()
 
 const classLearningStrandId = inject('classLearningStrandId')
 const learningStrandInput = inject('learningStrandInput')
@@ -115,7 +115,7 @@ async function addSession() {
 
             try {
                 for (const date of newDates) {
-                    await staffsStore.addAudit(
+                    await usersStore.addAudit(
                         `Added: ${date} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                     )
                 }

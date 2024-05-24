@@ -18,11 +18,11 @@ import EditScheduleDialog from './EditScheduleDialog.vue';
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useClassStore } from '@/stores/class';
-import { useStaffsStore } from '@/stores/staffs';
+import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 const classStore = useClassStore()
-const staffsStore = useStaffsStore()
+const usersStore = useUsersStore()
 
 const toast = useToast()
 const confirm = useConfirm()
@@ -109,7 +109,7 @@ async function deleteSchedules() {
 
                     try {
                         selectedSchedules.value.forEach(async (schedule) => {
-                            await staffsStore.addAudit(
+                            await usersStore.addAudit(
                                 `Deleted: Schedule for ${schedule.name} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                             )
                         })

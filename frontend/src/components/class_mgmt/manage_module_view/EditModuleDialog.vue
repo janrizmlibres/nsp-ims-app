@@ -9,7 +9,7 @@ import { useConfirm } from 'primevue/useconfirm';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useStaffsStore } from '@/stores/staffs';
+import { useUsersStore } from '@/stores/users';
 import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
 const toast = useToast()
@@ -17,7 +17,7 @@ const confirm = useConfirm()
 const router = useRouter()
 
 const classLearningStrandStore = useClassLearningStrandStore()
-const staffsStore = useStaffsStore()
+const usersStore = useUsersStore()
 
 const editModuleDialogState = inject('editModuleDialogState')
 const module = inject('module')
@@ -76,7 +76,7 @@ async function updateModule() {
             }
             
             try {
-                await staffsStore.addAudit(
+                await usersStore.addAudit(
                     `Updated: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {

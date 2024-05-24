@@ -8,12 +8,12 @@ import { inject, ref } from 'vue';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useStaffsStore } from '@/stores/staffs';
+import { useUsersStore } from '@/stores/users';
 
 const toast = useToast()
 
 const classLearningStrandStore = useClassLearningStrandStore()
-const staffsStore = useStaffsStore()
+const usersStore = useUsersStore()
 
 const term = inject('term')
 const classLevel = inject('classLevel')
@@ -106,7 +106,7 @@ async function addModule() {
             }
 
             try {
-                await staffsStore.addAudit(
+                await usersStore.addAudit(
                     min.value === max.value ? 
                     `Added: ${module.value.title} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}` :
                     `Added: LAS${min.value} to LAS${max.value} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`

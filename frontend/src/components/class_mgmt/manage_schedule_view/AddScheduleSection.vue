@@ -11,12 +11,12 @@ import { useToast } from 'primevue/usetoast';
 import { useVolunteerStore } from '@/stores/volunteer';
 import { format } from 'date-fns';
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useStaffsStore } from '@/stores/staffs';
+import { useUsersStore } from '@/stores/users';
 
 const toast = useToast()
 
 const classLearningStrandStore = useClassLearningStrandStore()
-const staffsStore = useStaffsStore()
+const usersStore = useUsersStore()
 
 const termStatus = inject('termStatus')
 const term = inject('term')
@@ -78,7 +78,7 @@ async function addSchedule() {
             onSubmit(classLevel.value.id)
 
             try {
-                await staffsStore.addAudit(
+                await usersStore.addAudit(
                     `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {

@@ -22,14 +22,14 @@ import EditModuleDialog from './EditModuleDialog.vue'
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useConfirm } from 'primevue/useconfirm';
 import ProgressSpinner from 'primevue/progressspinner';
-import { useStaffsStore } from '@/stores/staffs';
+import { useUsersStore } from '@/stores/users';
 
 const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
 
 const classLearningStrandStore = useClassLearningStrandStore()
-const staffsStore = useStaffsStore()
+const usersStore = useUsersStore()
 
 const learningStrands = inject('learningStrands')
 const termStatus = inject('termStatus')
@@ -157,7 +157,7 @@ async function deleteModules() {
                     
                     try {
                         selectedModules.value.forEach(async (module) => {
-                            await staffsStore.addAudit(
+                            await usersStore.addAudit(
                                 `Deleted: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                             )
                         })

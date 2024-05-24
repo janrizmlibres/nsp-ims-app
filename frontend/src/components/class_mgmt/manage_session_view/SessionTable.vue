@@ -19,10 +19,10 @@ import EditSessionDialog from './EditSessionDialog.vue';
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useConfirm } from 'primevue/useconfirm';
 import ProgressSpinner from 'primevue/progressspinner';
-import { useStaffsStore } from '@/stores/staffs';
+import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
-const staffsStore = useStaffsStore()
+const usersStore = useUsersStore()
 
 const toast = useToast()
 const router = useRouter()
@@ -150,7 +150,7 @@ async function deleteModules() {
 
                     try {
                         selectedSessions.value.forEach(async (session) => {
-                            await staffsStore.addAudit(
+                            await usersStore.addAudit(
                                 `Deleted: ${session.date} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                             )
                         })
