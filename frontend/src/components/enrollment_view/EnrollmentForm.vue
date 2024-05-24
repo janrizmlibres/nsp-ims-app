@@ -235,7 +235,7 @@ function cancelFile() {
         <div class="basis-28 text-right ml-4">
           <span>FLT Pre-Test Score</span>
         </div>
-        <InputNumber v-model="form.fltPretestScore" class="grow"/>
+        <InputNumber v-model="form.fltPretestScore" class="grow" :min="0" :max="100"/>
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
