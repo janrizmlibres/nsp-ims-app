@@ -90,7 +90,10 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
  */
 export const enrollLearners = async (req, res, next) => {
   try {
-    for (const learner of req.body.learners) {
+    let index = 0
+    for (let learner of req.body.learners) {
+      learner = JSON.parse(learner)
+      
       const classLevel = await ClassLevel.findByPk(learner.selectedSchoolLevelId);
 
       if (!classLevel) {
@@ -123,8 +126,10 @@ export const enrollLearners = async (req, res, next) => {
           status: "Active",
           regularity: learner.selectedRegularity,
           remarks: learner.selectedRemarks,
+          enrollmentFormURL: req.files[index] && req.files[index].path.replace("\\", "/")
         }
       });
+      index += 1
 
       const classLearningStrands = await ClassLearningStrand.findAll({
         where: {classLevelId: learner.selectedSchoolLevelId},
@@ -161,14 +166,24 @@ export const updateEnrollment = async (req, res, next) => {
   try {
     const enrollment = await Enrollment.findByPk(req.params.enrollmentId)
     
+    const enrollmentFormURL = req.files[0]
+      ? req.files[0].path.replace("\\", "/")
+      : req.body.enrollmentForm;
+    
+    console.log("Files ", enrollmentFormURL)
+
+    if (enrollmentFormURL !== enrollment.enrollmentFormURL) {
+      clearEnrollmentForm(enrollment.enrollmentFormURL);
+      req.body.enrollmentForm = enrollmentFormURL;
+    }
+    
+    console.log("Enrollmnet Form: ", req.body.enrollmentForm)
+    
     await enrollment.update({ 
-      hasEnrollmentForm: req.body.hasEnrollmentForm,
-      digital_literacy: req.body.digitalLiteracyScore,
       ftl_pretest: req.body.fltPretestScore,
-      callable: req.body.callable,
-      bridger: req.body.bridger,
       regularity: req.body.selectedRegularity.code,
       remarks: req.body.selectedRemarks, 
+      enrollmentFormURL: req.body.enrollmentForm
     })
     
     res.status(201).json({ 
