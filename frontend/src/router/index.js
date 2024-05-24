@@ -117,11 +117,7 @@ const router = createRouter({
             {
               path: 'enroll-learners',
               name: 'enroll-learners',
-              component: EnrollLearnersView,
-              beforeEnter: () => {
-                const authStore = useAuthStore()
-                return authStore.user.permissions.canMgEnrollment ? true : { name: 'dashboard' }
-              }
+              component: EnrollLearnersView
             },
             {
               path: 'edit-enrolled',
