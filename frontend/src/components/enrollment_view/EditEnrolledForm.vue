@@ -2,7 +2,7 @@
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Dropdown from 'primevue/dropdown'
-import Checkbox from 'primevue/checkbox'
+import FileUpload from 'primevue/fileupload'
 import Button from 'primevue/button'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -28,9 +28,11 @@ const regularity = ref([
 const selectedLRN = ref();
 const selectedFullName = ref();
 const selectedSchoolLevel = ref();
+const enrollmentFormName = ref();
+const confirmedFile = ref(false)
 
-const isValid = computed(() => {
-  
+const chosenFile = computed(() => {
+  return enrollmentFormName.value ? enrollmentFormName.value : "Please Upload an Enrollment Form";
 })
 
 const form = ref({
@@ -41,6 +43,7 @@ const form = ref({
   bridger: null,
   selectedRegularity: null,
   selectedRemarks: null,
+  enrollmentForm: null,
 })
 
 async function getStudent()  {
@@ -107,6 +110,20 @@ function cancelEdit() {
   router.go(-1)
 }
 
+function confirmUpload(event) {
+  form.value.enrollmentForm = event.files[0]
+  enrollmentFormName.value = event.files[0].name
+
+  confirmedFile.value = true;
+}
+
+function cancelFile() {
+  form.value.enrollmentForm = null
+  enrollmentFormName.value = null
+  
+  confirmedFile.value = false;
+}
+
 const props = defineProps({
   studentId: {
     type: String,
@@ -147,6 +164,19 @@ getStudent()
         </div>
         <InputText
           v-model="selectedSchoolLevel" disabled class="w-full md:w-14rem h-11" />
+      </div>
+      <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-32 text-right">
+          <span>Enrollment Form</span>
+        </div>
+        <FileUpload class="grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
+        <Button label="X" @click="cancelFile" class="h-11" v-if="confirmedFile"/>     
+      </div>
+      <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-32 text-right">
+          <span>Current Saved File:</span>
+        </div>
+          <span class="max-w-36 overflow-auto">{{ chosenFile }}</span>
       </div>
     </div>
 
