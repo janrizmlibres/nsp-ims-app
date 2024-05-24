@@ -65,6 +65,16 @@ async function addSession() {
             life: 3000
         })
 
+            try {
+                for (const date of newDates) {
+                    await staffsStore.addAudit(
+                        `Added: ${date} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    )
+                }
+            } catch(error) {
+                console.log(error);
+            }
+
         resetForm()
     } catch (error) {
         toast.add({
