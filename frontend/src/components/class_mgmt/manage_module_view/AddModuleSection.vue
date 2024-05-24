@@ -19,10 +19,11 @@ const term = inject('term')
 const classLevel = inject('classLevel')
 const learningStrandInput = inject('learningStrandInput')
 const termStatus = inject('termStatus')
+const classLearningStrandId = inject('classLearningStrandId')
+const allModules = inject('allModules')
 const min = ref()
 const max = ref()
 const dates = ref(null);
-const classLearningStrandId = inject('classLearningStrandId')
 
 const invalidModuleRange = ref()
 const invalidDateRange = ref()
@@ -60,6 +61,25 @@ async function addModule() {
             })
             invalidDateRange.value = true
 
+            return
+        }
+
+        let existingModules = []
+        for(let i = min.value; i < max.value+1; i++) {
+            if (allModules.value.some(obj => obj.title === ("LAS " + i))) {
+                existingModules.push(`LAS${i}`)
+            }
+        }
+
+        if (existingModules.length) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: `${existingModules.toString()} exists already`,
+                life: 3000
+            })
+
+            invalidModuleRange.value = true
             return
         }
         
@@ -119,15 +139,15 @@ function resetForm() {
         <span class="font-semibold text-lg u-txt-active mb-4">Add Learning Activity Sheets</span>
         <div class="flex flex-col mb-4">
             <label for="title">From</label>
-            <InputNumber v-model="min" inputId="min" :invalid="invalidModuleRange" :disabled="!classLearningStrandId || !termStatus" />
+            <InputNumber v-model="min" inputId="min" :invalid="invalidModuleRange" :disabled="!classLearningStrandId || !termStatus" @update:modelValue="invalidModuleRange = false" />
         </div>
         <div class="flex flex-col mb-4">
             <label for="title">To</label>
-            <InputNumber v-model="max" inputId="max" :invalid="invalidModuleRange" :disabled="!classLearningStrandId || !termStatus" />
+            <InputNumber v-model="max" inputId="max" :invalid="invalidModuleRange" :disabled="!classLearningStrandId || !termStatus" @update:modelValue="invalidModuleRange = false" />
         </div>
         <div class="flex flex-col gap-4 mb-4">
             <label for="calendar">Distribution Date - Retrieval Date</label>
-            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" :invalid="invalidDateRange" :disabled="!classLearningStrandId || !termStatus" />
+            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" :invalid="invalidDateRange" :disabled="!classLearningStrandId || !termStatus" @update:modelValue="invalidDateRange = false" />
         </div>
         <div class="flex flex-row gap-2">
             <Button type="button" outlined rounded label="Add" :disabled="!min || !max || (dates ? (dates.length === 0 || dates[1] === null) : !dates)" @click="addModule" class="w-full" />

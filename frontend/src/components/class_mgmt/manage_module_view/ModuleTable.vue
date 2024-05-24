@@ -78,6 +78,7 @@ const filters = ref({
 });
 
 provide('classLearningStrandId', classLearningStrandId)
+provide('allModules', allModules)
 provide('module', module)
 provide('editModuleDialogState', editModuleDialogState)
 provide('learningStrandInput', learningStrandInput)
