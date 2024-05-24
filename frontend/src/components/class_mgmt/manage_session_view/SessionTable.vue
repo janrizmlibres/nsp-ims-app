@@ -54,6 +54,7 @@ const cols = ref([
 provide('classLearningStrandId', classLearningStrandId)
 provide('learningStrandInput', learningStrandInput)
 provide('session', session)
+provide('sessionByMonths', sessionByMonths)
 provide('selectedMonth', selectedMonth)
 provide('editSessionDialogState', editSessionDialogState)
 provide('updateSessionTable', updateSessionTable)

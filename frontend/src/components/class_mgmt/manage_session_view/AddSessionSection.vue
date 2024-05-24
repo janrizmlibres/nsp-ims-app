@@ -19,12 +19,14 @@ const termStatus = inject('termStatus')
 const term = inject('term')
 const classLevel = inject('classLevel')
 const data = inject('selectedMonth')
+const sessionByMonths = inject('sessionByMonths')
 const sessions = ref([])
 const date = ref()
 const minDate = ref()
 const maxDate = ref()
 const currentMonth = ref()
 const selectionType = ref(1)
+const invalidDateRange = ref()
 
 const selection = ref([
     {label: 'Single', value: 1},
@@ -34,6 +36,7 @@ const selection = ref([
 const onSubmit = inject('updateSessionTable')
 
 function addSelectedDate() {
+    invalidDateRange.value = false
     sessions.value = []
 
     if (!date.value) return
@@ -52,14 +55,47 @@ function addSelectedDate() {
 }
 
 async function addSession() {
-    let newDates = []
-    for (const session of sessions.value) {
-        const offset = session.getTimezoneOffset()
-        let newDate = format(new Date(session.getTime() - (offset*60*1000)), "yyyy-MM-dd");
-        newDates.push(newDate)
-    }
-
     try {
+        if (sessions.value.length > 1 && sessions.value[0].toDateString() === sessions.value[sessions.value.length-1].toDateString()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Incorrect input range!',
+                life: 3000
+            })
+            invalidDateRange.value = true
+
+            return
+        }
+
+        let newDates = []
+        for (const session of sessions.value) {
+            const offset = session.getTimezoneOffset()
+            let newDate = format(new Date(session.getTime() - (offset*60*1000)), "yyyy-MM-dd");
+            newDates.push(newDate)
+        }
+
+        let existingSessions = []
+        let month = sessionByMonths.value[new Date(newDates[0]).getMonth()]
+        console.log(month.sessions);
+        for(const date of newDates) {
+            if (month.sessions.some(obj => new Date(obj.date).toDateString() === new Date(date).toDateString())) {
+                existingSessions.push(new Date(date).toDateString())
+            }
+        }
+
+        if (existingSessions.length) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: `${existingSessions.toString()} exists already`,
+                life: 3000
+            })
+
+            invalidDateRange.value = true
+            return
+        }
+
         await classLearningStrandStore.addSession(classLearningStrandId.value, {dates:newDates}). then(async (message) =>{
             toast.add({
                 severity: 'success',
@@ -88,12 +124,7 @@ async function addSession() {
             }
         })
     } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.response.data.message,
-            life: 3000
-        })
+        console.log(error);
     }
 }
 
@@ -126,7 +157,7 @@ watch(() => data.value, (data) => {
         </div>
         <div v-if="selectionType === 2" class="flex flex-col gap-4 mb-4">
             <label>Session Dates</label>
-            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data || !termStatus" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
+            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :invalid="invalidDateRange" :disabled="!data || !termStatus" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
         </div>
         <div class="flex flex-row gap-2">
             <Button type="button" outlined rounded label="Add" :disabled="(date ? (date.length === 0 || date[1] === null) : !date)" @click="addSession" class="w-full" />
