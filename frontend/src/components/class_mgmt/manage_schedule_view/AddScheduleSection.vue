@@ -139,11 +139,11 @@ function resetForm() {
         </div>
         <div class="flex flex-col mb-4">
             <label>Start Time</label>
-            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.start_time" timeOnly hourFormat="12" :disabled="!termStatus" />
+            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.start_time" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" timeOnly hourFormat="12" :disabled="!termStatus" @update:modelValue="invalid = false" />
         </div>
         <div class="flex flex-col mb-4">
             <label>End Time</label>
-            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.end_time" timeOnly hourFormat="12" :disabled="!termStatus" />
+            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.end_time" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" timeOnly hourFormat="12" :disabled="!termStatus" @update:modelValue="invalid = false" />
         </div>
         <div class="flex flex-row gap-2">
             <Button type="button" outlined rounded label="Add" :disabled="disableSubmitButton" @click="addSchedule" class="w-full" />
