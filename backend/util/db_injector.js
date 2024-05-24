@@ -622,54 +622,6 @@ export async function injectVolunteer() {
       lastName: "Firma",
       firstName: "Alejandra",
     },
-    {
-      volunteerId: 4,
-      affiliation: "Student",
-      lastName: "Horticullado",
-      firstName: "Gabriel",
-    },
-    {
-      volunteerId: 5,
-      affiliation: "Student",
-      lastName: "Santos",
-      firstName: "John",
-    },
-    {
-      volunteerId: 6,
-      affiliation: "Student",
-      lastName: "Dapin",
-      firstName: "Job",
-    },
-    {
-      volunteerId: 7,
-      affiliation: "Student",
-      lastName: "Roa",
-      firstName: "Wilson",
-    },
-    {
-      volunteerId: 8,
-      affiliation: "Student",
-      lastName: "Dimagiba",
-      firstName: "Felixson",
-    },
-    {
-      volunteerId: 9,
-      affiliation: "Student",
-      lastName: "Goma",
-      firstName: "Fernan",
-    },
-    {
-      volunteerId: 10,
-      affiliation: "Student",
-      lastName: "Lopez",
-      firstName: "Kenneth",
-    },
-    {
-      volunteerId: 11,
-      affiliation: "Student",
-      lastName: "Sayson",
-      firstName: "Daisy",
-    },
   ];
 
   const volunteerPersonalInformationData = [
@@ -700,78 +652,6 @@ export async function injectVolunteer() {
       city: "City C",
       province: "Province C",
     },
-    {
-      nickname: "Gabriel",
-      sex: "M",
-      birthday: new Date(1995, 1, 1),
-      housing: "1011 Pine Ave",
-      barangay: "Barangay 4",
-      city: "City D",
-      province: "Province D",
-    },
-    {
-      nickname: "John",
-      sex: "M",
-      birthday: new Date(1985, 1, 1),
-      housing: "1213 Birch Blvd",
-      barangay: "Barangay 5",
-      city: "City E",
-      province: "Province E",
-    },
-    {
-      nickname: "Job",
-      sex: "M",
-      birthday: new Date(1990, 1, 1),
-      housing: "1415 Cedar Ct",
-      barangay: "Barangay 6",
-      city: "City F",
-      province: "Province F",
-    },
-    {
-      nickname: "Wilson",
-      sex: "M",
-      birthday: new Date(1995, 1, 1),
-      housing: "1617 Dogwood Dr",
-      barangay: "Barangay 7",
-      city: "City G",
-      province: "Province G",
-    },
-    {
-      nickname: "Felixson",
-      sex: "M",
-      birthday: new Date(2000, 1, 1),
-      housing: "1819 Elm St",
-      barangay: "Barangay 8",
-      city: "City H",
-      province: "Province H",
-    },
-    {
-      nickname: "Fernan",
-      sex: "F",
-      birthday: new Date(1980, 1, 1),
-      housing: "2021 Fir St",
-      barangay: "Barangay 9",
-      city: "City I",
-      province: "Province I",
-    },
-    {
-      nickname: "Kenneth",
-      sex: "M",
-      birthday: new Date(1985, 1, 1),
-      housing: "2223 Grove St",
-      barangay: "Barangay 10",
-      city: "City J",
-      province: "Province J",
-    },
-    {
-      nickname: "Daisy",
-      sex: "F",
-      birthday: new Date(1990, 1, 1),
-      housing: "2425 Hickory St",
-      barangay: "Barangay 11",
-      city: "City K",
-      province: "Province K",
-    },
     // ... add more entries here ...
   ];
 
@@ -779,67 +659,19 @@ export async function injectVolunteer() {
     {
       firstName: "John",
       lastName: "Doe",
-      contactNumber: 1234567890,
+      contactNumber: "+639123456789",
       relationship: "Brother",
     },
     {
       firstName: "Jane",
       lastName: "Doe",
-      contactNumber: 2345678901,
+      contactNumber: "+639234567890",
       relationship: "Sister",
     },
     {
       firstName: "Jim",
       lastName: "Doe",
-      contactNumber: 3456789012,
-      relationship: "Brother",
-    },
-    {
-      firstName: "Jill",
-      lastName: "Doe",
-      contactNumber: 4567890123,
-      relationship: "Sister",
-    },
-    {
-      firstName: "Joe",
-      lastName: "Doe",
-      contactNumber: 5678901234,
-      relationship: "Brother",
-    },
-    {
-      firstName: "Jenny",
-      lastName: "Doe",
-      contactNumber: 6789012345,
-      relationship: "Sister",
-    },
-    {
-      firstName: "Jerry",
-      lastName: "Doe",
-      contactNumber: 7890123456,
-      relationship: "Brother",
-    },
-    {
-      firstName: "Jess",
-      lastName: "Doe",
-      contactNumber: 8901234567,
-      relationship: "Sister",
-    },
-    {
-      firstName: "Jack",
-      lastName: "Doe",
-      contactNumber: 9012345678,
-      relationship: "Brother",
-    },
-    {
-      firstName: "Jasmine",
-      lastName: "Doe",
-      contactNumber: 1234567890,
-      relationship: "Sister",
-    },
-    {
-      firstName: "Jacob",
-      lastName: "Doe",
-      contactNumber: 2345678901,
+      contactNumber: "+639345678901",
       relationship: "Brother",
     },
   ];
@@ -857,101 +689,29 @@ export async function injectVolunteer() {
       program: "BS IT",
       year: "3rd",
     },
-    {
-      program: "BS IS",
-      year: "4th",
-    },
-    {
-      program: "BS E",
-      year: "1st",
-    },
-    {
-      program: "BS CE",
-      year: "2nd",
-    },
-    {
-      program: "AB PHILO",
-      year: "3rd",
-    },
-    {
-      program: "BS PSY",
-      year: "4th",
-    },
-    {
-      program: "BS CS",
-      year: "1st",
-    },
-    {
-      program: "BS IT",
-      year: "1st",
-    },
-    {
-      program: "BS E",
-      year: "1st",
-    },
   ];
 
   const volunteerContactInformationData = [
     {
-      contactNumber: "09123456789",
+      contactNumber: "+639123456789",
       facebook: "Shelly-Cruz",
       email: "shelly-cruz@example.com",
     },
     {
-      contactNumber: "09123456788",
+      contactNumber: "+639123456788",
       facebook: "Alonzo-Fuentes",
       email: "alonzo-fuentes@example.com",
     },
     {
-      contactNumber: "09123456787",
+      contactNumber: "+639123456787",
       facebook: "Alejandra-Firma",
       email: "alejandra-firma@example.com",
-    },
-    {
-      contactNumber: "09123456786",
-      facebook: "Gabriel-Horticullado",
-      email: "Gabriel-Horticullado@example.com",
-    },
-    {
-      contactNumber: "09123456785",
-      facebook: "John-Santos",
-      email: "John-Santos@example.com",
-    },
-    {
-      contactNumber: "09123456784",
-      facebook: "Job-Dapin",
-      email: "Job-Dapin@example.com",
-    },
-    {
-      contactNumber: "09123456783",
-      facebook: "Wilson-Roa",
-      email: "Wilson-Roa@example.com",
-    },
-    {
-      contactNumber: "09123456782",
-      facebook: "Felixson-Dimagiba",
-      email: "Felixson-Dimagiba@example.com",
-    },
-    {
-      contactNumber: "09123456781",
-      facebook: "Fernan-Goma",
-      email: "Fernan-Goma@example.com",
-    },
-    {
-      contactNumber: "09123456780",
-      facebook: "Kenneth-Lopez",
-      email: "Kenneth-Lopez@example.com",
-    },
-    {
-      contactNumber: "09123456779",
-      facebook: "Daisy-Sayson",
-      email: "Daisy-Sayson@example.com",
     },
     // ... add more entries here ...
   ];
 
   function getRandomAvailability() {
-    let availability = ["M", "T", "W", "TH", "F", "S"];
+    let availability = ["M", "T", "W", "Th", "F", "S"];
     return availability[Math.floor(Math.random() * 2)];
   }
 

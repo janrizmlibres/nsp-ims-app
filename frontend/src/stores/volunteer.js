@@ -56,6 +56,16 @@ export const useVolunteerStore = defineStore('volunteer', () => {
   
     return result
   }
+
+  async function deleteVolunteer(id) {
+    const authStore = useAuthStore()
+
+    const result = await axios.delete(`http://localhost:8080/volunteer/delete-volunteer/${id}`, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    return result
+  }
   
-  return { volunteers, getAllVolunteers, addVolunteer, getVolunteer, updateVolunteer, /*volunteersNormalized*/ }
+  return { volunteers, getAllVolunteers, addVolunteer, getVolunteer, updateVolunteer, deleteVolunteer /*volunteersNormalized*/ }
 })
