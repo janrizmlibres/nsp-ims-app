@@ -35,16 +35,38 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   function setEditedTerm(term) {
     editedTerm.value = term
   }
-  
-  async function enrollLearner(data) {
-    
-    const authStore = useAuthStore()
-    
-    await axios.post('http://localhost:8080/enrollment/enroll-learner', data, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
-  }
 
+  async function enrollLearners(data) {
+    const authStore = useAuthStore()
+
+    const form = new FormData()
+
+    try {
+      data.forEach((learner, index) => {
+        // Append learner data as a JSON string
+        form.append(`learners[${index}]`, JSON.stringify(learner))
+
+        // Append each enrollmentForm file with the same field name
+        if (Array.isArray(learner.enrollmentForm)) {
+          learner.enrollmentForm.forEach((file) => {
+            form.append('enrollmentForm', file)
+          })
+        } else {
+          form.append('enrollmentForm', learner.enrollmentForm)
+        }
+      })
+
+      await axios.post('http://localhost:8080/enrollment/enroll-learner', form, {
+        headers: {
+          'Authorization': 'Bearer ' + authStore.token,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  
   async function updateLearner(enrollmentId, data) {
 
     const authStore = useAuthStore()
