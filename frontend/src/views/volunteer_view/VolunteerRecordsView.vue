@@ -25,7 +25,7 @@ const filters = ref({
 });
 
 const columns = ref([
-  { field: 'volunteerId', header: 'Volunteer ID' },
+  { field: 'id', header: 'Database ID' },
   { field: 'fullname', header: 'Full Name' },
   { field: 'volunteer_personal_information.sex', header: 'Sex'},
   { field: 'affiliation', header: 'Affiliation' },
@@ -57,7 +57,7 @@ async function handleDelete(id) {
     const result = await volunteerStore.getVolunteer(id);
     const volunteer = result.data.volunteer
     volunteerStore.deleteVolunteer(id);
-    addAuditTrail(`Deleted: Volunteer "${volunteer.fullname}" with ID: ${volunteer.volunteerId}`);
+    addAuditTrail(`Deleted: Volunteer "${volunteer.fullname}" with ID: ${volunteer.id}`);
     window.location.reload();
   } catch (error) {
     console.log(error);
@@ -88,9 +88,8 @@ onMounted(async () => {
     <DataTable 
       :value="volunteerStore.volunteers"
       v-model:filters="filters"
-      :globalFilterFields="['volunteerId', 'firstName', 'lastName', 'affiliation']"
+      :globalFilterFields="['id', 'firstName', 'lastName', 'affiliation']"
       scrollable
-      sortField="volunteerId" 
       :sortOrder="1"
       removableSort>
 

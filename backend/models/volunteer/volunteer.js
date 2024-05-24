@@ -8,10 +8,10 @@ const Volunteer = sequelize.define("volunteer", {
     allowNull: false,
     primaryKey: true,
   },
-  volunteerId: {
+  /*volunteerId: {
     type: INTEGER,
     allowNull: false,
-  },
+  },*/
   affiliation: {
     type: STRING,
     allowNull: false,

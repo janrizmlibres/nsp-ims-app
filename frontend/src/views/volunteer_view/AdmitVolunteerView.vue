@@ -27,7 +27,6 @@ const userStore = useUsersStore()
 
 const initialData = {
   volunteerHeader: {
-    volunteerId: null,
     affiliation: null,
     firstName: null,
     middleName: null,
@@ -129,7 +128,7 @@ async function addAuditTrail(descripton) {
 async function handleAddVolunteer(data) {
   try {
     const result = await volunteerStore.addVolunteer(data);
-    await addAuditTrail('Added: Volunteer "' + result.data.volunteer.fullname + '" with ID: ' + result.data.volunteer.volunteerId);
+    await addAuditTrail('Added: Volunteer "' + result.data.volunteer.fullname + '" with ID: ' + result.data.volunteer.id);
     return result;
   } catch (error) {
     toast.add({
@@ -143,7 +142,11 @@ async function handleAddVolunteer(data) {
 
 async function handleUpdateVolunteer(id, data) {
   try {
+    const oldVolunteer = await volunteerStore.getVolunteer(id);
     const result = await volunteerStore.updateVolunteer(id, data);
+    const newVolunteer = await volunteerStore.getVolunteer(id);
+    console.log(oldVolunteer.data.volunteer);
+    console.log(newVolunteer.data.volunteer);
     await addAuditTrail('Updated: Volunteer');
     return result;
   } catch (error) {
@@ -204,7 +207,7 @@ onBeforeRouteLeave((to) => {
   return false
 })
 
-let volunteerIdCopy = ref(null);
+//let volunteerIdCopy = ref(null);
 
 onMounted(async () => {
   if (!route.params.id) return
@@ -212,13 +215,13 @@ onMounted(async () => {
   try {
     const result = await volunteerStore.getVolunteer(route.params.id)
     const volunteer = result.data.volunteer
-    volunteerIdCopy = volunteer.volunteerId
+    //volunteerIdCopy = volunteer.volunteerId
 
     //try to see why this won't work:
     const filterObject = (obj) => {
       // eslint-disable-next-line no-unused-vars
       //this filtering of volunteerId causes it to not show when viewing volunteer but can still be edited
-      const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
+      const { id, createdAt, updatedAt, /*volunteerId,*/ ...filteredObj } = obj
       return filteredObj
     }
 
@@ -267,7 +270,6 @@ onMounted(async () => {
       <AdmitVolunteerHeader
         @dataChanged="updateFormData"
         :Volunteer="formData.volunteerHeader"
-        :volunteerIdCopy="volunteerIdCopy"
         :isViewMode="$route.meta.isViewMode"
         :key="updateKey"
       />
