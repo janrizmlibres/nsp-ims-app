@@ -62,7 +62,7 @@ async function addSchedule() {
     }
 
     try {
-        await classLearningStrandStore.addSchedule(learningStrandInput.value, {
+        await classLearningStrandStore.addSchedule(learningStrandInput.value.id, {
             volunteer: formData.value.volunteer,
             days: formData.value.school_days.toString(),
             start_time: format(new Date(formData.value.start_time), "HH:mm"),
