@@ -36,10 +36,16 @@ router.put(
 );
 
 router.patch(
-  "/user/:userId",
+  "/user/password/:userId",
   isAuth,
   [body("newPw").isStrongPassword({ minLength: 8 })],
   adminController.updatePassword
+);
+
+router.patch(
+  "/user/last-login/:userId",
+  isAuth,
+  adminController.updateLastLogin
 );
 
 router.post("/user/add-audit", isAuth, adminController.addAudit);

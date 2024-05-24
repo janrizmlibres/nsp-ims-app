@@ -1,20 +1,36 @@
 <script setup>
 import Avatar from 'primevue/avatar'
 import InputText from 'primevue/inputtext'
+import FloatLabel from 'primevue/floatlabel'
 import Dropdown from 'primevue/dropdown'
 import BaseCard from '@/components/UI/BaseCard.vue'
 import OverlayPanel from 'primevue/overlaypanel'
 import Button from 'primevue/button'
 
-import { ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { FormParts } from '@/util/student_utils'
+import { useUtilitiesStore } from '@/stores/utilities'
 
 const emit = defineEmits(['dataChanged'])
 const props = defineProps({ identity: Object, isViewMode: Boolean })
 
 const route = useRoute()
+const utilitiesStore = useUtilitiesStore()
+
+const floatLabelPt = {
+  root: [
+    'block relative',
+    '[&>*:last-child]:text-surface-900/60 dark:[&>*:last-child]:text-white/60',
+    '[&>*:last-child]:absolute',
+    '[&>*:last-child]:-top-4',
+    '[&>*:last-child]:-translate-y-1/2',
+    '[&>*:last-child]:left-3',
+    '[&>*:last-child]:pointer-events-none',
+    '[&>*:last-child]:text-sm'
+  ]
+}
 
 const op = ref()
 const uploader = ref(null)
@@ -34,13 +50,7 @@ const isAvatarHovered = ref(false)
 const isImgModalVisible = ref(false)
 
 const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
-const categories = ref([
-  'Out-of-School Youth',
-  'Teenage Pregnancy',
-  'Orphan',
-  'Drug-Related',
-  'Disabled'
-])
+const categories = computed(() => utilitiesStore.categories.map((cat) => cat.category_name))
 
 watch(photoUrl, () => handleUpdate())
 
@@ -89,6 +99,14 @@ function showImageModal(event) {
 function setImageModal(value) {
   isImgModalVisible.value = value
 }
+
+onMounted(async () => {
+  try {
+    await utilitiesStore.getCategories()
+  } catch (error) {
+    console.log(error)
+  }
+})
 </script>
 
 <template>
@@ -105,8 +123,8 @@ function setImageModal(value) {
     <img :src="photoUrl" class="m-auto block w-5/6 max-w-3xl" />
   </div>
 
-  <BaseCard isNotPadded="true" class="p-2 pl-4">
-    <div class="flex gap-4 items-center">
+  <BaseCard isNotPadded="true" class="px-8">
+    <div class="flex gap-8 items-center">
       <div class="h-20 relative flex items-center">
         <div
           class="relative flex items-center hover:cursor-pointer hover:scale-105 transition-transform ease-out duration-300"
@@ -159,98 +177,114 @@ function setImageModal(value) {
       </div>
 
       <div class="grid grid-cols-7 w-full gap-2">
-        <InputText
-          class="h-10 col-span-2"
-          type="text"
-          v-model="name.lastName"
-          v-tooltip.top="name.lastName ? 'Last Name' : ''"
-          placeholder="Last Name"
-          @update:modelValue="handleUpdate"
-          :pt="{
-            root: ({ context }) => {
-              return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
-            }
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
-        />
-        <InputText
-          class="h-10 col-span-2"
-          type="text"
-          v-model="name.firstName"
-          v-tooltip.top="name.firstName ? 'First Name' : ''"
-          placeholder="First Name"
-          @update:modelValue="handleUpdate"
-          :pt="{
-            root: ({ context }) => {
-              return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
-            }
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
-        />
-        <InputText
-          class="h-10 col-span-2"
-          type="text"
-          v-model="name.middleName"
-          v-tooltip.top="name.middleName ? 'Middle Name' : ''"
-          placeholder="Middle Name"
-          @update:modelValue="handleUpdate"
-          :pt="{
-            root: ({ context }) => ({
-              class: [{ '!opacity-100 !pointer-events-auto': context.disabled }]
-            })
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
-        />
-        <Dropdown
-          class="h-10"
-          v-model="selectedSuffix"
-          v-tooltip.top="selectedSuffix ? 'Suffix' : ''"
-          showClear
-          :options="suffixes"
-          placeholder="Suffix"
-          @change="handleUpdate"
-          :pt="{
-            root: ({ props }) => ({
-              class: { '!opacity-100 !pointer-events-auto': props.disabled }
-            })
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
-        />
+        <FloatLabel class="col-span-2 mt-8" :pt="floatLabelPt">
+          <InputText
+            id="last-name"
+            class="h-10 w-full"
+            type="text"
+            v-model="name.lastName"
+            @update:modelValue="handleUpdate"
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
+          />
+          <label for="last-name">Last Name <span class="text-red-500 text-xl">*</span></label>
+        </FloatLabel>
 
-        <InputText
-          class="h-10 col-span-2"
-          type="text"
-          v-model="lrn"
-          v-tooltip.bottom="lrn ? 'LRN' : ''"
-          placeholder="LRN"
-          @update:modelValue="handleUpdate"
-          :pt="{
-            root: ({ context }) => {
-              return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
-            }
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
-        />
-        <Dropdown
-          class="h-10 col-span-2"
-          v-model="selectedCat"
-          v-tooltip.bottom="selectedCat ? 'Category' : ''"
-          :options="categories"
-          placeholder="Category"
-          @change="handleUpdate"
-          :pt="{
-            root: ({ props }) => ({
-              class: { '!opacity-100 !pointer-events-auto': props.disabled }
-            })
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="isViewMode"
-        />
+        <FloatLabel class="col-span-2 mt-8" :pt="floatLabelPt">
+          <InputText
+            class="h-10 w-full"
+            id="first-name"
+            type="text"
+            v-model="name.firstName"
+            @update:modelValue="handleUpdate"
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
+          />
+          <label for="first-name">First Name <span class="text-red-500 text-xl">*</span></label>
+        </FloatLabel>
+
+        <FloatLabel class="col-span-2 mt-8" :pt="floatLabelPt">
+          <InputText
+            class="h-10 w-full"
+            id="middle-name"
+            type="text"
+            v-model="name.middleName"
+            @update:modelValue="handleUpdate"
+            :pt="{
+              root: ({ context }) => ({
+                class: [{ '!opacity-100 !pointer-events-auto': context.disabled }]
+              })
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
+          />
+          <label for="middle-name">Middle Name</label>
+        </FloatLabel>
+
+        <FloatLabel class="mt-8" :pt="floatLabelPt">
+          <Dropdown
+            class="h-10 w-full"
+            id="suffix"
+            v-model="selectedSuffix"
+            showClear
+            :options="suffixes"
+            @change="handleUpdate"
+            :pt="{
+              root: ({ props }) => ({
+                class: { '!opacity-100 !pointer-events-auto': props.disabled }
+              })
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
+          />
+          <label for="suffix">Suffix</label>
+        </FloatLabel>
+
+        <FloatLabel class="col-span-2 mt-5 mb-3" :pt="floatLabelPt">
+          <InputText
+            class="h-10 w-full"
+            id="lrn"
+            type="text"
+            v-model="lrn"
+            @update:modelValue="handleUpdate"
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
+          />
+          <label for="lrn">LRN <span class="text-red-500 text-xl">*</span></label>
+        </FloatLabel>
+
+        <FloatLabel class="col-span-2 mt-5 mb-3" :pt="floatLabelPt">
+          <Dropdown
+            class="h-10 w-full"
+            id="category"
+            v-model="selectedCat"
+            :options="categories"
+            @change="handleUpdate"
+            :pt="{
+              root: ({ props }) => ({
+                class: { '!opacity-100 !pointer-events-auto': props.disabled }
+              })
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
+          />
+          <label for="category">Category <span class="text-red-500 text-xl">*</span></label>
+        </FloatLabel>
       </div>
     </div>
   </BaseCard>

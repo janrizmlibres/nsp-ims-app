@@ -1,8 +1,10 @@
 import express from "express";
+import multer from "multer";
 import { body } from "express-validator";
 
 import isAuth from "../middleware/is_auth.js";
 import * as profileController from "../controllers/profile.js";
+import { fileStorage, imageFilter } from "../util/multer_config.js";
 
 const identityValidator = [
   body("identity").customSanitizer((value) => JSON.parse(value)),
@@ -121,6 +123,7 @@ router.get("/student/:studentId", isAuth, profileController.getStudent);
 router.post(
   "/add-student",
   isAuth,
+  multer({ storage: fileStorage, fileFilter: imageFilter }).single("image"),
   identityValidator,
   personalValidator,
   contactValidator,
@@ -135,6 +138,7 @@ router.get("/student/:studentId", isAuth, profileController.getStudent);
 router.put(
   "/student/:studentId",
   isAuth,
+  multer({ storage: fileStorage, fileFilter: imageFilter }).single("image"),
   identityValidator,
   personalValidator,
   contactValidator,
