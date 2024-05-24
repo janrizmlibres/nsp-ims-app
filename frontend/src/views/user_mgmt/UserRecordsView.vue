@@ -23,6 +23,7 @@ const filters = ref({
 const isLoading = ref(true)
 const visible = ref(false)
 const tabindex = ref(0)
+const dt = ref([])
 
 const pwUpdateUserId = ref(null)
 const pwUpdateFullname = ref(null)
@@ -35,6 +36,10 @@ function openPwDialog(userId, userFullname) {
   pwUpdateUserId.value = userId
   pwUpdateFullname.value = userFullname
   visible.value = true
+}
+
+function updateDt(dtValue) {
+  dt.value.push(dtValue)
 }
 
 onMounted(async () => {
@@ -69,7 +74,12 @@ onMounted(async () => {
 
 <template>
   <ContentPane header="User Records">
-    <TheHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+    <TheHeader
+      :dt="dt"
+      :tabindex="tabindex"
+      :globalFilter="filters.global.value"
+      @filterChanged="updateGlobalFilter"
+    />
 
     <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="rounded-md inline-block">
       <template #content>
@@ -82,6 +92,7 @@ onMounted(async () => {
               loadingText="Loading sub-admin data. Please wait."
               :isLoading="isLoading"
               @emitClick="openPwDialog"
+              @dtReferred="updateDt"
             />
           </TabPanel>
 
@@ -93,6 +104,7 @@ onMounted(async () => {
               loadingText="Loading staff data. Please wait."
               :isLoading="isLoading"
               @emitClick="openPwDialog"
+              @dtReferred="updateDt"
             />
           </TabPanel>
         </TabView>

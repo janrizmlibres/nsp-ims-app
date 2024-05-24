@@ -5,7 +5,7 @@ import Button from 'primevue/button'
 import Tag from 'primevue/tag'
 
 import { RouterLink } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const props = defineProps({
   data: Object,
@@ -15,14 +15,18 @@ const props = defineProps({
   isLoading: Boolean
 })
 
-defineEmits(['emitClick'])
+const emit = defineEmits(['emitClick', 'dtReferred'])
 
 const filters = ref(props.filtersProp)
+const dt = ref(null)
+
+onMounted(() => emit('dtReferred', dt.value))
 </script>
 
 <template>
   <DataTable
     v-model:filters="filters"
+    ref="dt"
     :value="data"
     :loading="isLoading"
     :globalFilterFields="['id', 'fullname']"
