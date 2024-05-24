@@ -11,7 +11,6 @@ const emit = defineEmits(['dataChanged'])
 const props = defineProps({ 
   Volunteer: Object, 
   isViewMode: Boolean,
-  //volunteerIdCopy: Number
 })
 
 const route = useRoute()
@@ -24,8 +23,6 @@ const name = ref({
   middleName: props.Volunteer.middleName
 })
 
-//const volunteerId = ref(props.volunteerIdCopy)
-//console.log("Volunteer: " + props.volunteerId.value)
 const selectedSuffix = ref(props.Volunteer.suffix)
 const selectedAffiliation = ref(props.Volunteer.affiliation)
 
@@ -38,7 +35,6 @@ const affiliations = ref([
 function handleUpdate() {
   const data = {
     ...name.value,
-    //volunteerId: volunteerId.value,
     affiliation: selectedAffiliation.value,
     suffix:selectedSuffix.value,
   }
@@ -102,17 +98,6 @@ function handleUpdate() {
     </div>
 
     <div class="flex gap-10 items-center mt-2">
-      <!-- <div class="basis-32 text-right">
-        <span>ID</span>
-      </div>
-      <InputText
-        class="grow h-10 flex-grow"
-        type="text"
-        v-model="volunteerId"
-        @update:modelValue="handleUpdate"
-        :ptOptions="{ mergeProps: true }"
-        :disabled="isViewMode"
-      /> -->
 
       <div class="basis-32 text-right">
         <span>Affiliation</span>

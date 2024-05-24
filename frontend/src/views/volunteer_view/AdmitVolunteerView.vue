@@ -117,6 +117,45 @@ function updateFormData(part, data) {
   updateMapping[part]()
 }
 
+/*function findUpdatedAttributes(oldObj, newObj, prefix = '') {
+  let updates = {};
+
+  for (let key in oldObj) {
+    if (key === 'updatedAt') continue; // Skip updatedAt fields
+
+    if (oldObj[key] instanceof Object && newObj[key]) {
+      let nestedUpdates = findUpdatedAttributes(oldObj[key], newObj[key], `${prefix}${key}.`);
+      if (Object.keys(nestedUpdates).length > 0) {
+        updates = { ...updates, ...nestedUpdates };
+      }
+    } else if (oldObj[key] !== newObj[key]) {
+      updates[`${prefix}${key}`] = { old: oldObj[key], new: newObj[key] };
+    }
+  }
+
+  return updates;
+}*/
+
+function findUpdatedAttributes(oldObj, newObj, prefix = '') {
+  let updates = [];
+
+  for (let key in oldObj) {
+    if (key === 'updatedAt') continue; // Skip updatedAt fields
+
+    if (oldObj[key] instanceof Object && newObj[key]) {
+      let nestedUpdates = findUpdatedAttributes(oldObj[key], newObj[key], `${prefix}${key}.`);
+      if (nestedUpdates.length > 0) {
+        updates = [...updates, ...nestedUpdates];
+      }
+    } else if (oldObj[key] !== newObj[key]) {
+      updates.push(key);
+    }
+  }
+
+  return updates;
+}
+
+
 async function addAuditTrail(descripton) {
   try {
     await userStore.addAudit(descripton);
@@ -145,9 +184,9 @@ async function handleUpdateVolunteer(id, data) {
     const oldVolunteer = await volunteerStore.getVolunteer(id);
     const result = await volunteerStore.updateVolunteer(id, data);
     const newVolunteer = await volunteerStore.getVolunteer(id);
+    const updates = findUpdatedAttributes(oldVolunteer.data.volunteer, newVolunteer.data.volunteer);
     console.log(oldVolunteer.data.volunteer);
-    console.log(newVolunteer.data.volunteer);
-    await addAuditTrail('Updated: Volunteer');
+    await addAuditTrail('Updated: Attribute/s ' + updates + ' of Volunteer "' + newVolunteer.data.volunteer.fullname + '" with ID: ' + newVolunteer.data.volunteer.id);
     return result;
   } catch (error) {
     toast.add({
@@ -207,28 +246,24 @@ onBeforeRouteLeave((to) => {
   return false
 })
 
-//let volunteerIdCopy = ref(null);
-
 onMounted(async () => {
   if (!route.params.id) return
 
   try {
     const result = await volunteerStore.getVolunteer(route.params.id)
     const volunteer = result.data.volunteer
-    //volunteerIdCopy = volunteer.volunteerId
 
     //try to see why this won't work:
     const filterObject = (obj) => {
       // eslint-disable-next-line no-unused-vars
-      //this filtering of volunteerId causes it to not show when viewing volunteer but can still be edited
-      const { id, createdAt, updatedAt, /*volunteerId,*/ ...filteredObj } = obj
+      const { id, createdAt, updatedAt, ...filteredObj } = obj
       return filteredObj
     }
 
     /*const filterObject = (obj) => {
       if (!obj) return {}
       // eslint-disable-next-line no-unused-vars
-      const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
+      const { id, createdAt, updatedAt, ...filteredObj } = obj
       return filteredObj
     }*/
 

@@ -50,7 +50,6 @@ describe('Volunteer Controller', () => {
       params: { id: 231 },
       body: {
         volunteerHeader: {
-          volunteerId: 231,
           affiliation: "Professional",
           firstName: "Michael",
           middleName: null,
@@ -95,7 +94,6 @@ describe('Volunteer Controller', () => {
 
     const mockVolunteer = {
       volunteerHeader: {
-        volunteerId: 231,
         affiliation: "Professional",
         firstName: "Michael",
         middleName: null,
@@ -166,7 +164,6 @@ describe('Volunteer Controller', () => {
 
     const mockVolunteer = {
       volunteerHeader: {
-        volunteerId: 231,
         affiliation: "Student",
         firstName: "Michael",
         middleName: null,
@@ -234,7 +231,6 @@ describe('Volunteer Controller', () => {
     const req = mockRequest({
       body: {
         volunteerHeader: {
-          volunteerId: 231,
           affiliation: "Student",
           firstName: "Michael",
           middleName: null,
@@ -290,7 +286,6 @@ describe('Volunteer Controller', () => {
 
     const mockVolunteer = {
   volunteerHeader: {
-    volunteerId: 231,
     affiliation: "Student",
     firstName: "Michael",
     middleName: null,
@@ -366,7 +361,6 @@ describe('Volunteer Controller', () => {
       const res = mockResponse();
       const mockVolunteers = [
   {
-    volunteerId: 1,
     affiliation: "Student",
     lastName: "Dela Cruz",
     firstName: "Shelly",

@@ -48,34 +48,34 @@ export async function addVolunteer(req, res, next) {
 
     await VolunteerPersonalInformation.create({
       ...req.body.personalInformation,
-      volunteerId: volunteer.id,
+      id: volunteer.id,
     });
 
     await VolunteerContactInformation.create({
       ...req.body.contactInformation,
-      volunteerId: volunteer.id,
+      id: volunteer.id,
     });
 
     await VolunteerEmergency.create({
       ...req.body.emergency,
-      volunteerId: volunteer.id,
+      id: volunteer.id,
     });
 
     await VolunteerSpecialization.create({
       ...req.body.specialization,
-      volunteerId: volunteer.id,
+      id: volunteer.id,
     });
 
     await VolunteerAvailability.create({
       ...req.body.availability,
-      volunteerId: volunteer.id,
+      id: volunteer.id,
     });
 
     //only creates an instance of student volunteer if program and year has an entry
     if (req.body.student.program && req.body.student.year) {
       await StudentVolunteer.create({
       ...req.body.student,
-      volunteerId: volunteer.id,
+      id: volunteer.id,
       });
     }
 
@@ -83,7 +83,7 @@ export async function addVolunteer(req, res, next) {
     if (req.body.professional.work) {
       await ProfessionalVolunteer.create({
       ...req.body.professional,
-      volunteerId: volunteer.id,
+      id: volunteer.id,
       });
     }
 

@@ -22,8 +22,6 @@ const volunteerHeaderValidator = [
       .optional({ values: "null" })
       .trim()
       .matches("^[A-Za-z]+.?$"),
-    /*body("volunteerHeader.volunteerId")
-        .isAscii(),*/
     body("volunteerHeader.affiliation")
         .exists({ checkNull: true })
 ];
