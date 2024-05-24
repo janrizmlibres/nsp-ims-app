@@ -50,7 +50,8 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
           term: currentTerm.academic_year,
           classLevelId: classLevel.id,
           enrollmentId: student.enrollment.id,
-          studentId: student.id
+          studentId: student.id,
+          enrollmentFormURL: student.enrollment.enrollmentFormURL
         };
       });
     });
