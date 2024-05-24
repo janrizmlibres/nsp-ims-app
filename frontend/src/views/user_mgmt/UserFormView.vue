@@ -23,7 +23,7 @@ let initialData = {
   firstName: '',
   middleName: '',
   lastName: '',
-  suffixName: '',
+  suffixName: null,
   email: '',
   contactNum: '',
   position: '',

@@ -11,8 +11,9 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import TheHeader from '@/components/user_mgmt/TheHeader.vue'
 
 import { useUsersStore } from '@/stores/users'
-import { ref, onMounted, watch } from 'vue'
 import { AccessLevels } from '@/util/user_utils'
+
+import { ref, onMounted, watch } from 'vue'
 
 const usersStore = useUsersStore()
 const toast = useToast()

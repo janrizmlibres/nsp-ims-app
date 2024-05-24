@@ -266,6 +266,7 @@ function changeState() {
 
 function setVisibility(keyValue) {
   if ([1, 2].includes(authStore.user.accessLevel)) return true
+  else if (keyValue === '7') return false
 
   const permissions = authStore.user.permissions
 
