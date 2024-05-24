@@ -24,7 +24,6 @@ const learningStrandInput = inject('learningStrandInput')
 const term = inject('term')
 const classLevel = inject('classLevel')
 const startingData = computed(() => structuredClone(toRaw(session.value)))
-const classLearningStrandId = inject('classLearningStrandId')
 const disableUpdate = computed(() => JSON.stringify(session.value) === JSON.stringify(startingData.value))
 const onSubmit = inject('updateSessionTable')
 
@@ -46,14 +45,8 @@ async function updateSession() {
                 console.log(error);
             }
 
-            try {
-                classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
-                    onSubmit(data)
-                    editSessionDialogState.value = false
-                })
-            } catch(error) {
-                console.log(error);
-            }
+            onSubmit()
+            editSessionDialogState.value = false
         })
     } catch(error) {
         console.log(error);

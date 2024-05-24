@@ -7,21 +7,17 @@ import { inject, ref, watch } from 'vue';
 // stores
 
 const module = inject('module')
-const isFetching = ref(true)
+const isFetching = inject('isFetching')
 const distriDate = ref()
 const retriDate = ref()
 
 watch(() => module.value, (data) => {
-    isFetching.value = true
-    
     let tempDistriDate = new Date(data.distribution_date)
     distriDate.value = tempDistriDate.toDateString()
 
     let tempRetriDate = new Date(data.retrieval_date)
     retriDate.value = tempRetriDate.toDateString()
-
-    isFetching.value = false
-}, {immediate: false})
+})
 </script>
 
 <template>
@@ -32,7 +28,7 @@ watch(() => module.value, (data) => {
                 <span class="u-txt-active font-semibold text-xl content-center">Module Information</span>
             </div>
         </template>
-        <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+        <ProgressSpinner v-if="isFetching" class="flex justify-center self-center" />
         <div v-else class="flex flex-col px-4">
             <span class="text-md u-txt-active flex flex-row">
                 <p class="pr-4 font-semibold">Distribution Date:</p> 

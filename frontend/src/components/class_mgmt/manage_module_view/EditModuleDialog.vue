@@ -4,7 +4,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Calendar from 'primevue/calendar';
 import { useToast } from 'primevue/usetoast';
-import { inject, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { useConfirm } from 'primevue/useconfirm';
 
 //  stores
@@ -21,35 +21,24 @@ const usersStore = useUsersStore()
 
 const editModuleDialogState = inject('editModuleDialogState')
 const module = inject('module')
-const classLearningStrandId = inject('classLearningStrandId')
 const term = inject('term')
 const learningStrandInput = inject('learningStrandInput')
 const classLevel = inject('classLevel')
 const dates = ref([])
-
-const invalidDateRange = ref()
+const disableUpdate = computed(() => dates.value ? (dates.value.length === 0 || dates.value[1] === null) : !dates.value)
+const enableLeave = computed(() => dates.value ? dates.value.length === 0 : !dates.value)
 
 const onSubmit = inject('updateModuleTable')
 
 async function updateModule() {
     try {
+        editModuleDialogState.value = false
+        
         const range = ref([])
         for (let date of dates.value) {
             const offset = date.getTimezoneOffset()
             date = new Date(date.getTime() - (offset*60*1000))
             range.value.push(date)
-        }
-
-        if (range.value[0].toDateString() === range.value[1].toDateString()) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Incorrect input range!',
-                life: 3000
-            })
-            invalidDateRange.value = true
-
-            return
         }
 
         await classLearningStrandStore.updateModule(module.value.id, {
@@ -64,17 +53,7 @@ async function updateModule() {
             })
             
             dates.value = []
-            invalidDateRange.value = false
 
-            try {
-                classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
-                    onSubmit(data)
-                    editModuleDialogState.value = false
-                })
-            } catch(error) {
-                console.log(error);
-            }
-            
             try {
                 await usersStore.addAudit(
                     `Updated: ${module.value.title} date range from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
@@ -82,6 +61,8 @@ async function updateModule() {
             } catch(error) {
                 console.log(error);
             }
+
+            onSubmit()
         })
     } catch(error) {
         console.log(error);
@@ -95,7 +76,7 @@ async function updateModule() {
 };
 
 async function cancel() {
-    if (dates.value ? dates.value.length : dates.value) {
+    if (!enableLeave.value) {
         confirm.require({
             message: 'Do you really want to leave? you have unsaved changes!',
             header: 'Redirect Confirmation',
@@ -111,7 +92,7 @@ async function cancel() {
 }
 
 onBeforeRouteLeave(() => {
-    if (dates.value ? (dates.value.length === 0) : !dates.value) {
+    if (enableLeave.value) {
         editModuleDialogState.value = false
         return true
     }
@@ -133,10 +114,10 @@ onBeforeRouteLeave(() => {
     <Dialog v-model:visible="editModuleDialogState" modal header="Edit Module" :style="{ width: '20%' }" :closable="false" :draggable="false">
         <div class="flex flex-col gap-4 mb-4">
             <label>Distribution Date - Retrieval Date</label>
-            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :invalid="invalidDateRange" :manualInput="false" @update:modelValue="invalidDateRange = false" />
+            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
         </div>
         <div class="flex justify-end gap-2">
-            <Button type="button" outlined rounded label="Update" :disabled="dates ? (dates.length === 0 || dates[1] === null) : !dates" @click="updateModule" />
+            <Button type="button" outlined rounded label="Update" :disabled="disableUpdate" @click="updateModule" />
             <Button type="button" outlined rounded label="Cancel" severity="danger" @click="cancel" />
         </div>
     </Dialog>

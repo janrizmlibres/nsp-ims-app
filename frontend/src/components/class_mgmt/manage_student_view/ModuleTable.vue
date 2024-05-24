@@ -7,13 +7,11 @@ import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
-import { inject, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 const studentModules = inject('studentModules')
 const filters = inject('filters')
-const moduleSubmissions = ref([])
 const selectedModules = ref([])
-
 const metaKey = ref(true)
 const dt = ref()
 const dtDiv = ref()
@@ -24,40 +22,19 @@ const statuses = ref([
     { label: 'No Submission', value: 'No Submission' }
 ]);
 
-watch(() => studentModules.value, (data) => {
-    moduleSubmissions.value = []
-    for (const module of data) {
-      const temp = {
-        id: module.module_submissions[0].id,
-        title: module.title,
-        distribution_date: new Date(module.distribution_date).toDateString(),
-        retrieval_date: new Date(module.retrieval_date).toDateString(),
-        status: module.module_submissions[0].status,
-        date_submitted: module.module_submissions[0].date_submitted
-          ? new Date(module.module_submissions[0].date_submitted).toDateString()
-          : null,
-        score: module.module_submissions[0].score,
-        remarks: module.module_submissions[0].remarks
-      }
-
-      moduleSubmissions.value.push(temp)
-    }
-  }
-)
-
 const getStatusLabel = (status) => {
   switch (status) {
     case 'Graded':
-      return 'success'
+    return 'success'
 
     case 'Submitted':
-      return 'warning'
+    return 'warning'
 
     case 'No Submission':
-      return 'danger'
+    return 'danger'
 
     default:
-      return null
+    return null
   }
 }
 
@@ -104,7 +81,7 @@ onBeforeUnmount(() => {
             </template>
         </Toolbar>
         <DataTable 
-            :value="moduleSubmissions" dataKey="id" scrollable style=" overflow: auto;" ref="dt"
+            :value="studentModules" dataKey="id" scrollable style=" overflow: auto;" ref="dt"
             v-model:filters="filters" filterDisplay="menu"
             :globalFilterFields="['title', 'distribution_date', 'retrieval_date', 'status', 'date_submitted', 'remarks']"
             sortField="lastName" :sortOrder="1" 

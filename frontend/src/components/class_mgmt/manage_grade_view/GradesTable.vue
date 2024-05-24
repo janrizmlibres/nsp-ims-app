@@ -5,6 +5,7 @@ import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
 import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
+import ProgressSpinner from 'primevue/progressspinner';
 import { inject, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -24,11 +25,11 @@ const confirm = useConfirm()
 const props = defineProps(['modelValue', 'disableEdit'])
 
 const filters = inject('filters')
-const classLearningStrandId = inject('classLearningStrandId')
 const learningStrandInput = inject('learningStrandInput')
 const classLevel = inject('classLevel')
 const term = inject('term')
 const termStatus = inject('termStatus')
+const isFetching = inject('isFetching')
 const grades = ref([])
 const startingData = []
 const updatedData = new Set([])
@@ -48,22 +49,22 @@ watch(() => props.modelValue, (data) => {
     startingData.length = 0
 
     for (const datum of data) {
-      const temp = {
-        id: datum.id,
-        enrollmentId: datum.enrollment.id,
-        classLearningStrandId: datum.classLearningStrandId,
-        lastName: datum.enrollment.student.lastName,
-        firstName: datum.enrollment.student.firstName,
-        middleName: datum.enrollment.student.middleName,
-        grades: {
-          first_quarter: datum.first_quarter,
-          second_quarter: datum.second_quarter,
-          third_quarter: datum.third_quarter,
-          fourth_quarter: datum.fourth_quarter,
-          remarks: datum.remarks,
-          updatedAt: datum.updatedAt
+        const temp = {
+            id: datum.id,
+            enrollmentId: datum.enrollment.id,
+            classLearningStrandId: datum.classLearningStrandId,
+            lastName: datum.enrollment.student.lastName,
+            firstName: datum.enrollment.student.firstName,
+            middleName: datum.enrollment.student.middleName,
+            grades: {
+            first_quarter: datum.first_quarter,
+            second_quarter: datum.second_quarter,
+            third_quarter: datum.third_quarter,
+            fourth_quarter: datum.fourth_quarter,
+            remarks: datum.remarks,
+            updatedAt: datum.updatedAt
+            }
         }
-      }
 
         const len = grades.value.push(temp)
         startingData.push(structuredClone(temp))
@@ -74,11 +75,11 @@ watch(() => props.modelValue, (data) => {
             noChanges.value = false
         })
     }
-  }
-)
+}, {immediate: true})
 
 async function updateGrades() {
     try {
+        console.log(Array.from(updatedData));
         await classLearningStrandStore.updateGrades({ updatedData: Array.from(updatedData) }).then(async (message) => {
             noChanges.value = true
             changeMode()
@@ -100,13 +101,7 @@ async function updateGrades() {
                 console.log(error);
             }
 
-            try {
-                classLearningStrandStore.getAllGrades(classLearningStrandId.value).then((data) => {
-                    onSubmit(data)
-                })
-            } catch (error) {
-                console.log(error);
-            }
+            onSubmit()
         })
     } catch (error) {
         toast.add({
@@ -151,11 +146,12 @@ function changeMode() {
 <template>
     <DataTable 
         :value="grades" dataKey="id" scrollable style="overflow: auto;"
-        v-model:filters="filters"
+        v-model:filters="filters" :loading="isFetching"
         :globalFilterFields="['lastName', 'firstName', 'remarks']"
         sortField="lastName" :sortOrder="1" removableSort 
     >
-        <template #empty> <div class="text-center">No records found.</div> </template>
+    <template #loading> <ProgressSpinner class="flex justify-center" /> </template>
+    <template #empty> <div class="text-center">No records found.</div> </template>
 
     <Column field="lastName" header="Last Name" frozen sortable />
     <Column field="firstName" header="First Name" frozen sortable />

@@ -8,15 +8,18 @@ import InputNumber from 'primevue/inputnumber';
 import Calendar from 'primevue/calendar';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
-import { inject, ref, watch } from 'vue';
+import ProgressSpinner from 'primevue/progressspinner';
+import { computed, inject, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand'
+import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
+const usersStore = useUsersStore()
 
 const route = useRoute()
 const toast = useToast()
@@ -26,13 +29,18 @@ const router = useRouter()
 const props = defineProps(['modelValue', 'disableEdit'])
 
 const filters = inject('filters')
+const isFetching = inject('isFetching')
+const term = inject('term')
+const classLevel = inject('classLevel')
+const learningStrand = inject('learningStrand')
+const module = inject('module')
 const learners = ref([])
 const noChanges = ref(true)
 const startingData = []
 const updatedData = new Set([])
 const edit = ref(false)
 const disableEdit = ref(props.disableEdit)
-const disableSave = ref()
+const disableSave = computed(() => JSON.stringify(learners.value) === JSON.stringify(startingData))
 
 const statuses = ref([
     { label: 'Graded', value: 'Graded' },
@@ -42,30 +50,26 @@ const statuses = ref([
 
 const onEdit = inject('updateModuleSubmissionTable')
 
-watch(() => JSON.stringify(learners.value), (data) => {
-    disableSave.value = data === JSON.stringify(startingData)
-}, {immediate: true})
-
 watch(() => props.modelValue, (data) => {
     learners.value.length = 0
     startingData.length = 0
 
     for (const moduleSubmission of data) {
-      if (moduleSubmission.date_submitted !== null) {
-        moduleSubmission.date_submitted = new Date(moduleSubmission.date_submitted)
-      }
+        if (moduleSubmission.date_submitted !== null) {
+            moduleSubmission.date_submitted = new Date(moduleSubmission.date_submitted)
+        }
 
-      const temp = {
-        id: moduleSubmission.id,
-        lastName: moduleSubmission.enrollment.student.lastName,
-        firstName: moduleSubmission.enrollment.student.firstName,
-        middleName: moduleSubmission.enrollment.student.middleName,
-        status: moduleSubmission.status,
-        date_submitted: moduleSubmission.date_submitted,
-        score: moduleSubmission.score,
-        remarks: moduleSubmission.remarks,
-        updatedAt: new Date(moduleSubmission.updatedAt)
-      }
+        const temp = {
+            id: moduleSubmission.id,
+            lastName: moduleSubmission.enrollment.student.lastName,
+            firstName: moduleSubmission.enrollment.student.firstName,
+            middleName: moduleSubmission.enrollment.student.middleName,
+            status: moduleSubmission.status,
+            date_submitted: moduleSubmission.date_submitted,
+            score: moduleSubmission.score,
+            remarks: moduleSubmission.remarks,
+            updatedAt: new Date(moduleSubmission.updatedAt)
+        }
 
         const len = learners.value.push(temp)
         startingData.push(structuredClone(temp))
@@ -75,48 +79,56 @@ watch(() => props.modelValue, (data) => {
             noChanges.value = false
         })
     }
-}, {immediate: true})
+})
 
 const getStatusLabel = (status) => {
-  switch (status) {
-    case 'Graded':
-      return 'success'
+    switch (status) {
+        case 'Graded':
+        return 'success'
 
-    case 'Submitted':
-      return 'warning'
+        case 'Submitted':
+        return 'warning'
 
-    case 'No Submission':
-      return 'danger'
+        case 'No Submission':
+        return 'danger'
 
         default:
-            return null;
+        return null;
     }
 };
 
 async function updateSubmissions() {
     try {
-        await classLearningStrandStore.updateModuleSubmissions({ updatedData: Array.from(updatedData) })
-        classLearningStrandStore.getModule(route.query.id).then((data) => {
-            onEdit(data)
+        await classLearningStrandStore.updateModuleSubmissions({ updatedData: Array.from(updatedData) }).then(async (message) => {
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: message,
+                life: 5000
+            })
+
+            try {
+                for (const moduleSubmission of Array.from(updatedData)) {
+                    await usersStore.addAudit(
+                        `Updated: Submission of ${moduleSubmission.firstName} ${moduleSubmission.lastName} of ${module.value.title} of ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    )
+                }
+            } catch(error) {
+                console.log(error);
+            }
+
+            noChanges.value = true
+            onEdit()
+            changeMode()
         })
-
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Updated Module Submissions Successfully',
-      life: 5000
-    })
-
-    noChanges.value = true
-    changeMode()
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
-    })
-  }
+    } catch (error) {
+        toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.response.data.message,
+        life: 3000
+        })
+    }
 }
 
 function resetData() {
@@ -160,25 +172,26 @@ onBeforeRouteLeave((to) => {
         }
     })
 
-  return false
+    return false
 })
 </script>
 
 <template>
-  <div class="flex flex-col h-full w-full">
-    <DataTable
-      :value="learners"
-      dataKey="id"
-      scrollable
-      style="overflow: auto"
-      sortField="lastName"
-      :sortOrder="1"
-      removableSort
-      v-model:filters="filters"
-      filterDisplay="menu"
-      :users="['lastName', 'firstName', 'status', 'remarks']"
+    <div class="flex flex-col h-full w-full">
+        <DataTable
+        :value="learners" :loading="isFetching"
+        dataKey="id"
+        scrollable
+        style="overflow: auto"
+        sortField="lastName"
+        :sortOrder="1"
+        removableSort
+        v-model:filters="filters"
+        filterDisplay="menu"
+        :globalFilterFields="['lastName', 'firstName', 'status', 'remarks']"
     >
-      <template #empty> <div class="text-center">No records found.</div> </template>
+        <template #loading> <ProgressSpinner class="self-center" /> </template>
+        <template #empty> <div class="text-center">No records found.</div> </template>
 
             <Column field="lastName" header="Last Name" frozen sortable />
             <Column field="firstName" header="First Name" frozen sortable />

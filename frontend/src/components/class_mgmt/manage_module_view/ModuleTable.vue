@@ -5,14 +5,12 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import Toolbar from 'primevue/toolbar';
-import MeterGroup from 'primevue/metergroup';
 import Tag from 'primevue/tag';
 import Badge from 'primevue/badge';
 import InputText from 'primevue/inputtext';
 import { computed, inject, provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
-import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 // Custom
 import AddModuleSection from './AddModuleSection.vue'
@@ -35,13 +33,11 @@ const learningStrands = inject('learningStrands')
 const termStatus = inject('termStatus')
 const term = inject('term')
 const classLevel = inject('classLevel')
-
+const filters = inject('filters')
 const allModules = ref([])
 const module = ref()
-const classLearningStrandId = ref()
 const learningStrandInput = ref()
 const selectedModules = ref([])
-
 const isFetching = ref(false)
 const metaKey = ref(true)
 const editModuleDialogState = ref(false)
@@ -49,10 +45,10 @@ const dt = ref()
 const dtDiv = ref()
 
 const cols = ref([
-  { field: 'no_submissions', header: 'No Submissions' },
-  { field: 'lacking', header: 'Lacking' },
-  { field: 'complete', header: 'Complete' },
-  { field: 'total', header: 'Total' }
+    { field: 'no_submissions', header: 'No Submissions' },
+    { field: 'submitted', header: 'Submitted' },
+    { field: 'graded', header: 'Graded' },
+    { field: 'total', header: 'Total' }
 ])
 
 const selectedModulesStatus = computed(() => {
@@ -66,18 +62,6 @@ const statuses = ref([
     {label: 'Done', value: true}
 ]);
 
-const meterProgress = ref([{
-    label: `${allModules.value.filter((datum) => datum.status === true).length} of ${allModules.value.length} completed`, 
-    color: '#265492',
-    value: allModules.value.filter(datum => datum.status === true).length
-}])
-
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-});
-
-provide('classLearningStrandId', classLearningStrandId)
 provide('allModules', allModules)
 provide('module', module)
 provide('editModuleDialogState', editModuleDialogState)
@@ -89,46 +73,40 @@ watch(() => learningStrands.value, () => {
     allModules.value.length = 0
 })
 
-watch(() => learningStrandInput.value, (input) => {
-    if (input) {
-        try {
-            classLearningStrandId.value = input.id
+function updateModuleTable() {
+    deselect()
 
-            classLearningStrandStore.getAllModules(input.id).then((data) => {
-                updateModuleTable(data)
-            })
-        } catch (error) {
-            console.log(error);
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Unexpected error encountered. Please refresh this page.',
-                life: 3000
-            })
-        }
-    }
-})
-
-function updateModuleTable(modules) {
     isFetching.value = true
     allModules.value.length = 0
+    
+    try {
+        classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((modules) => {
+            for (const module of modules) {
+                allModules.value.push({
+                    id: module.id,
+                    title: module.title,
+                    distribution_date: new Date(module.distribution_date).toLocaleDateString(),
+                    retrieval_date: new Date(module.retrieval_date).toLocaleDateString(),
+                    no_submissions: module.noSubmissions,
+                    submitted: module.submitted,
+                    graded: module.graded,
+                    total: module.total,
+                    status: module.status,
+                    updatedAt: new Date(module.updatedAt).toLocaleString()
+                })
+            }
 
-    for (const module of modules) {
-        allModules.value.push({
-            id: module.id,
-            title: module.title,
-            distribution_date: new Date(module.distribution_date).toLocaleDateString(),
-            retrieval_date: new Date(module.retrieval_date).toLocaleDateString(),
-            no_submissions: module.noSubmissions,
-            lacking: module.lacking,
-            complete: module.complete,
-            total: module.total,
-            status: module.status,
-            updatedAt: new Date(module.updatedAt).toLocaleString()
+            isFetching.value = false
+        })
+    } catch (error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please refresh this page.',
+            life: 3000
         })
     }
-
-    isFetching.value = false
 }
 
 async function deleteModules() {
@@ -156,13 +134,7 @@ async function deleteModules() {
                         console.log(error);
                     }
 
-                    try {
-                        classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
-                            updateModuleTable(data)
-                        })
-                    } catch(error) {
-                        console.log(error);
-                    }
+                    updateModuleTable()
                 })
             } catch(error) {
                 console.log(error);
@@ -202,13 +174,7 @@ async function markAs() {
                 console.log(error);
             }
 
-            try {
-                classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((data) => {
-                    updateModuleTable(data)
-                })
-            } catch(error) {
-                console.log(error);
-            }
+            updateModuleTable()
         })
     } catch(error) {
         console.log(error);
@@ -216,49 +182,49 @@ async function markAs() {
 }
 
 function viewModule() {
-  router.push({
-    name: 'module-info',
-    query: {
-      id: selectedModules.value[selectedModules.value.length - 1].id,
-      status: termStatus.value
-    }
-  })
+    router.push({
+        name: 'module-info',
+        query: {
+            id: selectedModules.value[selectedModules.value.length - 1].id,
+            status: termStatus.value
+        }
+    })
 }
 
 function deselect() {
-  selectedModules.value = []
+    selectedModules.value = []
 }
 
 const getStatusLabel = (status) => {
-  switch (status) {
-    case true:
-      return 'success'
+    switch (status) {
+        case true:
+        return 'success'
 
-    case false:
-      return 'warning'
+        case false:
+        return 'warning'
 
-    default:
-      return null
-  }
+        default:
+        return null
+    }
 }
 
 const getNumericLabel = (field) => {
-  switch (field) {
-    case 'no_submissions':
-      return 'danger'
+    switch (field) {
+        case 'no_submissions':
+        return 'danger'
 
-    case 'lacking':
-      return 'warning'
+        case 'submitted':
+        return 'warning'
 
-    case 'complete':
-      return 'success'
+        case 'graded':
+        return 'success'
 
-    case 'total':
-      return 'info'
+        case 'total':
+        return 'info'
 
-    default:
-      return null
-  }
+        default:
+        return null
+    }
 }
 
 function editModule(data) {
@@ -271,24 +237,19 @@ function editModule(data) {
     <div class="flex h-full w-full">
         <div v-if="termStatus" class="flex flex-col rounded-md mr-10 p-2 gap-8" >
             <AddModuleSection /> 
-            
-            <div class="u-bg-scolor shadow-xl rounded-md mt-2 p-4 text-surface-0">
-                <label>Module Progress</label>
-                <MeterGroup :value="meterProgress" :max="allModules.length" class="font-semibold" />
-            </div>
         </div>
         <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">
                         <span class="flex items-center gap-2">
-                            <Button icon="fa fa-circle-xmark fa-lg" text aria-label="Edit Mode" style="height: 2rem; width: 2rem;" @click="deselect"/>
+                            <Button icon="fa fa-circle-xmark fa-lg" text aria-label="Deselect" style="height: 2rem; width: 2rem;" @click="deselect"/>
                             <p>
                                 {{ selectedModules.length + ' selected' }}
                             </p>
                         </span>
                         <span v-if="termStatus" class="flex gap-1 items-center">
-                            <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                            <Button icon="fa fa-download" text aria-label="download-selected" style="height: 2rem; width: 2rem;" @click="{}"/>
                             <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
                             <Button v-if="selectedModulesStatus === false" label="mark as done" text aria-label="mark-as-done" size="small" @click="markAs"/>
                             <Button v-if="selectedModulesStatus === true" label="mark as undone" text aria-label="mark-as-undone" size="small" @click="markAs"/>
@@ -298,7 +259,7 @@ function editModule(data) {
                 <template #end>
                     <div class="flex flex-row gap-4 items-center mr-4">
                         <label class="font-semibold">Learning Strand:</label>
-                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="deselect" /> 
+                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="updateModuleTable" /> 
                     </div>
                     <span class="relative">
                         <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
@@ -308,14 +269,14 @@ function editModule(data) {
             </Toolbar>
             <DataTable 
                 :value="allModules" dataKey="id" ref="dt" :loading="isFetching"
-                scrollable style=" overflow: auto;" class="unselectable" 
+                scrollable class="unselectable" 
                 v-model:filters="filters" filterDisplay="menu"
                 :globalFilterFields="['title', 'distribution_date', 'retrieval_date', 'status']"
                 sortField="title" :sortOrder="1" removableSort 
                 v-model:selection="selectedModules" selectionMode="multiple" :metaKeySelection="metaKey" 
                 @row-dblclick="viewModule"
             >
-                <template #loading> <ProgressSpinner /> </template>
+                <template #loading> <ProgressSpinner class="self-center" /> </template>
                 <template #empty> <div class="text-center">No records found.</div> </template>
 
                 <Column :exportable="false" style="width:2rem">

@@ -54,15 +54,15 @@ watch(() => attendances.value, (data) => {
         </Toolbar>
         <TabView>
             <TabPanel header="Regular">
-                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+                <ProgressSpinner v-if="isFetching" class="self-center" />
                 <AttendanceTable v-else v-model="regular" :disableEdit="false" />
             </TabPanel>
             <TabPanel header="Hybrid">
-                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+                <ProgressSpinner v-if="isFetching" class="self-center" />
                 <AttendanceTable v-else v-model="hybrid" :disableEdit="false" />
             </TabPanel>
             <TabPanel header="Drop">
-                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+                <ProgressSpinner v-if="isFetching" class="self-center" />
                 <AttendanceTable v-else v-model="drop" :disableEdit="true"  />
             </TabPanel>
         </TabView>

@@ -2,33 +2,15 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Checkbox from 'primevue/checkbox';
-import { computed, inject } from 'vue';
+import { inject } from 'vue';
 
 const studentGrades = inject('studentGrades')
-const grades = computed(() => studentGrades.value ? 
-    studentGrades.value.reduce((arr, obj) => {
-        const grades = arr.concat({
-            id: obj.grades[0].id,
-            lsCode: obj.learning_strand.code,
-            title: obj.learning_strand.name,
-            first_quarter: obj.grades[0].first_quarter,
-            second_quarter: obj.grades[0].second_quarter,
-            third_quarter: obj.grades[0].third_quarter,
-            fourth_quarter: obj.grades[0].fourth_quarter,
-            remarks: obj.grades[0].remarks,
-        })
-
-        return grades
-    }, []) 
-    : null
-)
-
 </script>
 
 <template>
     <div class="flex flex-col h-full w-full">
         <DataTable 
-            :value="grades" dataKey="id" scrollable style=" overflow: auto;"
+            :value="studentGrades" dataKey="id" scrollable style=" overflow: auto;"
             sortField="lsCode" :sortOrder="1" removableSort
         >
             <template #empty> <div class="text-center">No records found.</div> </template>

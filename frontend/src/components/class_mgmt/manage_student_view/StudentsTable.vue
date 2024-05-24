@@ -1,12 +1,12 @@
 <script setup>
 //Presets
-import Toolbar from 'primevue/toolbar';
 import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import Dropdown from 'primevue/dropdown';
+import ProgressSpinner from 'primevue/progressspinner';
 import { inject, onMounted, provide, ref } from 'vue';
 
 //Custom
@@ -21,23 +21,14 @@ const classLevel = inject('classLevel')
 const filters = inject('filters')
 const learners = ref([])
 const selectedStudent = ref()
-
 const studentDialogState = ref(false)
+const isFetching = ref(false)
 
 provide('studentData', selectedStudent)
 provide('studentDialogState', studentDialogState)
 
-const nameColumns = ref([
-    {field: 'lrn', header: 'LRN'},
-    {field: 'lastName', header: 'Last Name'},
-    {field: 'firstName', header: 'First Name'},
-    {field: 'middleName', header: 'Middle Name'},
-    {field: 'suffix', header: 'Suffix'},
-])
-
-const otherColumns = ref([
+const columns = ref([
     {field: 'category', header: 'Category'},
-    {field: 'sex', header: 'Sex'},
     {field: 'civilStatus', header: 'Civil Status'},
     {field: 'contactNum', header: 'Contact Number'},
 ])
@@ -49,8 +40,10 @@ const statuses = ref([
 ]);
 
 onMounted(() => {
-    classStore.getAllStudents(classLevel.value.id).then((data) => {
-        for (const enrollment of data) {
+    isFetching.value = true
+
+    classStore.getAllStudents(classLevel.value.id).then((enrollments) => {
+        for (const enrollment of enrollments) {
             const temp = {
                 id: enrollment.id,
                 classLevelId: enrollment.classLevelId,
@@ -70,61 +63,62 @@ onMounted(() => {
                 photoUrl: enrollment.student.photoUrl
             }
 
-      learners.value.push(temp)
-    }
-  })
+        learners.value.push(temp)
+        }
+    })
+
+    isFetching.value = false
 })
 
 const getStatusLabel = (status) => {
-  switch (status) {
-    case 'Active':
-      return 'success'
+    switch (status) {
+        case 'Active':
+        return 'success'
 
-    case 'Inactive':
-      return 'warning'
+        case 'Inactive':
+        return 'warning'
 
-    case 'Drop':
-      return 'danger'
+        case 'Drop':
+        return 'danger'
 
-    default:
-      return null
-  }
-}
-
-function showStudentDialog() {
-    studentDialogState.value = !studentDialogState.value
+        default:
+        return null
+    }
 }
 
 function viewStudent(student) {
     selectedStudent.value = student
-    showStudentDialog()
+    studentDialogState.value = true
 }
 </script>
 
 <template>
     <div class="relative flex flex-col h-full">
-        <Toolbar class="!p-2">
-            <template #end>
-                <span class="relative">
-                    <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
-                    <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal" />
-                </span>
-            </template>
-        </Toolbar>
         <DataTable 
-            :value="learners" dataKey="id" scrollable style=" overflow: auto;"
+            :value="learners" dataKey="id" scrollable class="shadow-md" :loading="isFetching"
             v-model:filters="filters" filterDisplay="menu"
             :globalFilterFields="['lastName', 'firstName', 'middleName', 'contactNum']"
             sortField="lastName" :sortOrder="1" removableSort
         >
+            <template #loading> <ProgressSpinner class="self-center" /> </template>
             <template #empty> <div class="text-center">No records found.</div> </template>
-
-            <Column :exportable="false" style="width:2rem">
+            
+            <template #header>
+                <span class="relative float-end">
+                    <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                    <InputText v-model="filters['global'].value" placeholder="Keyword Search" class="pl-10 font-normal w-96"/>
+                </span>
+            </template>
+            <Column header="Action" :exportable="false" frozen>
                 <template #body="slotProps">
-                    <Button icon="fa fa-eye" label="view" text @click="viewStudent(slotProps.data)" />
+                    <Button icon="fa fa-eye" label="view" outlined rounded @click="viewStudent(slotProps.data)" />
                 </template>
             </Column>
-            <Column v-for="col of nameColumns" :key="col.field" :field="col.field" :header="col.header" sortable />
+            <Column field="lrn" header="LRN" style="min-width: 12rem;" />
+            <Column field="lastName" header="Last Name" style="min-width: 12rem;" />
+            <Column field="firstName" header="First Name" style="min-width: 12rem;" />
+            <Column field="middleName" header="Middle Name" style="min-width: 12rem;" />
+            <Column field="suffix" header="Suffix" style="min-width: 6rem;" />
             <Column field="status" header="Status">
                 <template #body="slotProps">
                     <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
@@ -137,13 +131,14 @@ function viewStudent(student) {
                     </Dropdown>
                 </template>
             </Column>
-            <Column v-for="col of otherColumns" :key="col.field" :field="col.field" :header="col.header" />
+            <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" style="min-width: 10rem;" />
+            <Column field="sex" header="Sex" style="min-width: 6rem;" />
             <Column field="birthday" header="Birthday">
                 <template #body="slotProps">
                     {{ slotProps.data.birthday ? new Date(slotProps.data.birthday).toDateString() : slotProps.data.birthday}}
                 </template>
             </Column>
-            <Column field="dateEnrolled" header="Date Enrolled" />
+            <Column field="dateEnrolled" header="Date Enrolled" style="min-width: 10rem;" />
         </DataTable>
     </div>
     <ViewStudentDialog />

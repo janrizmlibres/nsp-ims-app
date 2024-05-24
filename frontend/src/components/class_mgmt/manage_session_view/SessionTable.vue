@@ -59,64 +59,57 @@ provide('selectedMonth', selectedMonth)
 provide('editSessionDialogState', editSessionDialogState)
 provide('updateSessionTable', updateSessionTable)
 
-watch(() => learningStrandInput.value, (input) => {
-    if (input) {
-        isFetching.value = true
-        classLearningStrandId.value = input.id
-        try {
-            classLearningStrandStore.getAllSessions(input.id).then((data) => {
-                updateSessionTable(data)
-            })
-
-            isFetching.value = false
-        } catch (error) {
-            console.log(error);
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Unexpected error encountered. Please refresh this page.',
-                life: 3000
-            })
-        }
-    }
-}, {immediate: false})
-
 watch(() => learningStrands.value, () => {
     learningStrandInput.value = null
     sessionByMonths.value = null
 })
 
-function updateSessionTable(sessions) {
-    isFetching.value = true
-    
-    sessionByMonths.value = (function() {
-        let start = new Date(term.value.start_date)
-        let end = new Date(term.value.end_date)
-        let months = []
+function updateSessionTable() {
+    try {
+        deselect()
 
-        while (start <= end) {
-            months[start.getMonth()] = {
-                id: start.getMonth()+1,
-                month: format(start, "MMMM yyyy"),
-                date: start.toLocaleDateString(),
-                sessions: [],
-                count: 0
-            }
-            
-            start.setMonth(start.getMonth() + 1);
-        }
+        isFetching.value = true
+        classLearningStrandId.value = learningStrandInput.value.id
 
-        return months
-    })()
+        classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((sessions) => {
+            sessionByMonths.value = (function() {
+                let start = new Date(term.value.start_date)
+                let end = new Date(term.value.end_date)
+                let months = []
 
-    sessions.reduce((months, obj) => {
-        const month = new Date(obj.date).getMonth()
-        
-        sessionByMonths.value[month].sessions.push(obj);
-        sessionByMonths.value[month].count += 1
-    }, {});
+                while (start <= end) {
+                    months[start.getMonth()] = {
+                        id: start.getMonth()+1,
+                        month: format(start, "MMMM yyyy"),
+                        date: start.toLocaleDateString(),
+                        sessions: [],
+                        count: 0
+                    }
+                    
+                    start.setMonth(start.getMonth() + 1);
+                }
 
-    isFetching.value = false
+                return months
+            })()
+
+            sessions.reduce((months, obj) => {
+                const month = new Date(obj.date).getMonth()
+                
+                sessionByMonths.value[month].sessions.push(obj);
+                sessionByMonths.value[month].count += 1
+            }, {});
+        })
+
+        isFetching.value = false
+    } catch (error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please refresh this page.',
+            life: 3000
+        })
+    }
 }
 
 function editSession(data) {
@@ -149,13 +142,7 @@ async function deleteModules() {
                         console.log(error);
                     }
 
-                    try {
-                        classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((data) => {
-                            updateSessionTable(data)
-                        })
-                    } catch(error) {
-                        console.log(error);
-                    }
+                    updateSessionTable()
                 })
             } catch(error) {
                 console.log(error);
@@ -229,7 +216,7 @@ function onCollapseRow() {
                 <template #end>
                     <div class="flex flex-row gap-4 items-center">
                         <label class="font-semibold">Learning Strand:</label>
-                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="deselect" /> 
+                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="updateSessionTable" /> 
                     </div>
                 </template>
             </Toolbar>
@@ -239,14 +226,14 @@ function onCollapseRow() {
                 @row-expand="onExpandRow(selectedMonth ? selectedMonth.id : null)"
                 scrollable style=" overflow: auto;"
             >
-                <template #loading> <ProgressSpinner /> </template>
+                <template #loading> <ProgressSpinner class="self-center" /> </template>
                 <template #empty> <div class="text-center">No records found.</div> </template>
 
                 <Column expander style="width: 5rem" />
                 <Column field="id" header="Id" />
                 <Column field="month" header="Month">
                     <template #body="slotProps">
-                        <p v-if="slotProps.data" class="font-semibold">{{ slotProps.data.month }}</p>
+                        <p v-if="slotProps.data">{{ slotProps.data.month }}</p>
                     </template>
                 </Column>
                 <Column field="count" header="Sessions">

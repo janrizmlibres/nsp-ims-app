@@ -18,40 +18,77 @@ const toast = useToast()
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
+const active = ref()
+const inactive = ref()
+const drop = ref()
+const term = ref()
+const classLevel = ref()
+const learningStrand = ref()
 const module = ref()
-const name = ref()
-const strand = ref()
+const moduleTitle = ref()
+const strandName = ref()
+const isFetching = ref(false)
 
+provide('active', active)
+provide('inactive', inactive)
+provide('drop', drop)
+provide('isFetching', isFetching)
+provide('term', term)
+provide('classLevel', classLevel)
+provide('learningStrand', learningStrand)
 provide('module', module)
 provide('updateModuleSubmissionTable', updateModuleSubmissionTable)
 
-function updateModuleSubmissionTable(data) {
-    module.value = data
+function updateModuleSubmissionTable() {
+    isFetching.value = true
+
+    try {
+        classLearningStrandStore.getModule(route.query.id).then((data) => {
+            const actTemp = []
+            const inactTemp = []
+            const dropTemp = []
+
+            for (const moduleSubmission of data.module_submissions) {
+                const enrollment = moduleSubmission.enrollment
+
+                if (enrollment.status == 'Active') actTemp.push(moduleSubmission)
+                else if (enrollment.status == 'Inactive') inactTemp.push(moduleSubmission)
+                else dropTemp.push(moduleSubmission)
+            }
+
+            active.value = actTemp
+            inactive.value = inactTemp
+            drop.value = dropTemp
+
+            term.value = data.module_submissions[0].enrollment.class_level.term
+            classLevel.value = data.module_submissions[0].enrollment.class_level
+            learningStrand.value = data.class_learning_strand.learning_strand
+            module.value = data
+            moduleTitle.value = data.title
+            strandName.value = data.class_learning_strand.learning_strand.name
+
+            isFetching.value = false
+        })
+    } catch (error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: "Unexpected error encountered!",
+            life: 3000
+        })
+    }
 }
 
-watch(() => route.query, (query) => {
+watch(() => route.query, () => {
     if (route.name === 'module-info') {
-        try {
-            classLearningStrandStore.getModule(query.id).then((data) => {
-                updateModuleSubmissionTable(data)
-                name.value = data.title
-                strand.value = data.class_learning_strand.learning_strand.name
-            })
-        } catch (error) {
-            console.log(error);
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: "Unexpected error encountered!",
-                life: 3000
-            })
-        }
+        updateModuleSubmissionTable()
     }
 }, {immediate: true})
 </script>
 
 <template>
-    <ContentPane :header="name" :subheader="strand">
+    <ContentPane :header="moduleTitle" :subheader="strandName">
         <ModuleInfoSection />
         <Divider class="before:border-t before:border-surface-400 my-10"/>
         <ModuleTab />
