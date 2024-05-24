@@ -1,4 +1,4 @@
-import { INTEGER, STRING, DATE } from "sequelize";
+import { INTEGER, TEXT, STRING, DATE } from "sequelize";
 import sequelize from "../../util/database.js";
 import Module from "./module.js";
 import Enrollment from "../enrollment.js";
@@ -30,7 +30,7 @@ const ModuleSubmission = sequelize.define("module_submission", {
     defaultValue: 0
   },
   remarks: {
-    type: STRING,
+    type: TEXT,
     defaultValue: ""
   },
   status: {
