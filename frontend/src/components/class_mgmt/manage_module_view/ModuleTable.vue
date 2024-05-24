@@ -273,11 +273,21 @@ function editModule(data) {
                 v-model:filters="filters" filterDisplay="menu"
                 :globalFilterFields="['title', 'distribution_date', 'retrieval_date', 'status']"
                 sortField="title" :sortOrder="1" removableSort 
-                v-model:selection="selectedModules" selectionMode="multiple" :metaKeySelection="metaKey" 
+                v-model:selection="selectedModules" selectionMode="multiple" :metaKeySelection="metaKey"
+                paginator :rows="15" :rowsPerPageOptions="[15, 20, 30, 50]"
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="{first} to {last} of {totalRecords}"
                 @row-dblclick="viewModule"
             >
                 <template #loading> <ProgressSpinner class="self-center" /> </template>
                 <template #empty> <div class="text-center">No records found.</div> </template>
+
+                <template #paginatorstart>
+                    <Button type="button" icon="pi pi-refresh" text @click="updateModuleTable" />
+                </template>
+                <template #paginatorend>
+                    <div></div>
+                </template>
 
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">

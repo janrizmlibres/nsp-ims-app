@@ -50,7 +50,7 @@ watch(() => schedule.value, (data) => {
 
 async function updateSchedule() {
     try {
-        if ((startTime.value.getHours() >= endTime.value.getHours()) && (startTime.value.getMinutes() >= endTime.value.getMinutes())) {
+        if (startTime.value && startTime.value && (startTime.value.getHours() >= endTime.value.getHours()) && (startTime.value.getMinutes() >= endTime.value.getMinutes())) {
             toast.add({
                     severity: 'error',
                     summary: 'Error',
