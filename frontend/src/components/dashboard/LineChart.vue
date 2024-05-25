@@ -1,5 +1,6 @@
 <script>
 import VueApexCharts from "vue3-apexcharts";
+import { useEnrollmentStore } from '@/stores/enrollment';
 
 export default {
   components: {
@@ -8,8 +9,8 @@ export default {
   data() {
     return {
       series: [{
-        name: "Students",
-        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+        name: 'Enrollments',
+        data: []
       }],
       chartOptions: {
         chart: {
@@ -31,13 +32,42 @@ export default {
         },
         grid: {
           row: {
-            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            colors: ['#f3f3f3', 'transparent'],
             opacity: 0.5
           },
         },
+        xaxis: {
+          type: 'category',
+          title: {
+            text: 'Year'
+          }
+        },
+        yaxis: {
+          title: {
+            text: 'Number of Enrollments'
+          }
+        }
       },
     };
   },
+  async created() {
+    const enrollmentStore = useEnrollmentStore();
+    const enrollments = await enrollmentStore.getAllEnrollments();
+
+    const yearCounts = {};
+    enrollments.forEach(enrollment => {
+      const year = new Date(enrollment.dateEnrolled).getFullYear();
+      if (yearCounts[year]) {
+        yearCounts[year]++;
+      } else {
+        yearCounts[year] = 1;
+      }
+    });
+
+    const yearCountsArray = Object.entries(yearCounts).map(([year, count]) => ({ x: year, y: count }));
+    //should be refactored where yearCountsArray is placed inside data: []
+    this.series[0].data = yearCountsArray;
+  }
 };
 </script>
 

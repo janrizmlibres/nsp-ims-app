@@ -179,19 +179,16 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         await axios.delete(`http://localhost:8080/utilities/category/${categoryId}/delete`, {
         headers: {Authorization: 'Bearer ' + authStore.token}
         })
-        
-        await addAudit(`Deleted: Student Category with ID: ${categoryId}`)
     }
 
-    async function addAudit(description) {
+    async function countClassLevels() {
         const authStore = useAuthStore()
-        
-        const result = await axios.post(`http://localhost:8080/admin/user/add-audit`, {
-        userId: authStore.user.id, description, date: new Date() },
-        {
-        headers: {Authorization: 'Bearer ' + authStore.token}
+
+        const response = await axios.get('http://localhost:8080/utilities/count-class-levels', {
+            headers: { Authorization: 'Bearer ' + authStore.token }
         })
-        return result
+
+        return response.data
     }
 
     return {
@@ -222,6 +219,6 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         showHideAddCategoryDialog,
         updateCategory,
         deleteCategory,
-        addAudit
+        countClassLevels
     }
 })

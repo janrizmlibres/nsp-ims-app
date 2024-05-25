@@ -75,5 +75,15 @@ export const useStudentsStore = defineStore('students', () => {
     return result
   }
 
-  return { students, studentsNormalized, getStudents, getStudent, addStudent, updateStudent }
+  async function getGenderCount() {
+    const authStore = useAuthStore();
+    
+    const result = await axios.get('http://localhost:8080/profile/gender-count', {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    });
+    
+    return result;
+  }
+
+  return { students, studentsNormalized, getStudents, getStudent, addStudent, updateStudent, getGenderCount }
 })
