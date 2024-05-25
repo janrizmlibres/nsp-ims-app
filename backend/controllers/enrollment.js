@@ -224,6 +224,7 @@ export const getEnrolled = async (req, res, next) => {
     const student = {
       lrn: enrolledStudent.student.lrn,
       fullName: enrolledStudent.student.fullname,
+      lastName: enrolledStudent.student.lastName,
       schoolLevel: enrolledStudent.class_level,
       regularity: enrolledStudent.regularity,
       remarks: enrolledStudent.remarks,

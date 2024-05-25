@@ -10,12 +10,14 @@ import { computed, ref } from 'vue'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useStudentsStore } from '@/stores/students.js'
 import { useTermStore } from '@/stores/term.js'
+import { useUsersStore} from '@/stores/users.js'
 import { useToast } from 'primevue/usetoast'
 import { debounce } from 'lodash'
 
 const enrollmentStore = useEnrollmentStore()
 const studentsStore = useStudentsStore()
 const termStore = useTermStore()
+const usersStore = useUsersStore()
 
 const toast = useToast()
 
@@ -139,6 +141,11 @@ function saveLearner() {
 async function submitEvent() {
   try {
     await enrollmentStore.enrollLearners(selectedLearnersList.value)
+    
+    for (const learner of selectedLearnersList.value) {
+      console.log(selectedLearnersList.value)
+      await usersStore.addAudit(`Enrolled student ${learner.fullname}`)
+    }
     toast.add({
       severity: 'success',
       summary: 'Success',
