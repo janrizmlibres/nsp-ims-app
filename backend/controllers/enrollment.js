@@ -173,14 +173,10 @@ export const updateEnrollment = async (req, res, next) => {
       ? req.files[0].path.replace("\\", "/")
       : req.body.enrollmentForm;
     
-    console.log("Files ", enrollmentFormURL)
-
     if (enrollmentFormURL !== enrollment.enrollmentFormURL) {
       clearEnrollmentForm(enrollment.enrollmentFormURL);
       req.body.enrollmentForm = enrollmentFormURL;
     }
-    
-    console.log("Enrollmnet Form: ", req.body.enrollmentForm)
     
     await enrollment.update({ 
       ftl_pretest: req.body.fltPretestScore,
