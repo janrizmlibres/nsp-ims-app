@@ -40,6 +40,7 @@ const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 const categories = computed(() => utilitiesStore.categories.map((cat) => cat.category_name))
 const photoDisplay = ref(photoUrl.value && `http://localhost:8080/${photoUrl.value}`)
 
+console.log(photoDisplay.value)
 watch(photoDisplay, () => handleUpdate())
 
 function setAvatarHover(value) {
