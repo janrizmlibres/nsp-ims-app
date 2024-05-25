@@ -118,6 +118,7 @@ function updateProfessionalVolunteer() {
             type="text"
             v-model="nickname"
             @update:modelValue="handleUpdate"
+            :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
             :ptOptions="{ mergeProps: true }"
             :disabled="$route.meta.isViewMode"
           />
@@ -132,6 +133,7 @@ function updateProfessionalVolunteer() {
           v-model="selectedSex" 
           :options="sex" 
           @change="handleUpdate" 
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
           :ptOptions="{ mergeProps: true }"
           :disabled="$route.meta.isViewMode"
           />
@@ -149,6 +151,7 @@ function updateProfessionalVolunteer() {
             optionValue="code"
             placeholder="Month"
             @change="handleUpdate"
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
             :disabled="$route.meta.isViewMode"
           />
@@ -158,6 +161,7 @@ function updateProfessionalVolunteer() {
             :options="days"
             placeholder="Day"
             @change="handleUpdate"
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
             :disabled="$route.meta.isViewMode"
           />
@@ -168,6 +172,7 @@ function updateProfessionalVolunteer() {
             filter
             placeholder="Year"
             @change="handleUpdate"
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
             :ptOptions="{ mergeProps: true }"
             :disabled="$route.meta.isViewMode"
           />
@@ -183,6 +188,7 @@ function updateProfessionalVolunteer() {
               type="text"
               v-model="field.data"
               @update:modelValue="updateStudentVolunteer"
+              :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
               :ptOptions="{ mergeProps: true }"
               :disabled="$route.meta.isViewMode"
             />
@@ -198,6 +204,7 @@ function updateProfessionalVolunteer() {
             type="text"
             v-model="work"
             @update:modelValue="updateProfessionalVolunteer"
+            :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
             :ptOptions="{ mergeProps: true }"
             :disabled="$route.meta.isViewMode"
           />
@@ -221,6 +228,7 @@ function updateProfessionalVolunteer() {
               v-model="value.data"
               :placeholder="value.label"
               @update:modelValue="handleUpdate"
+              :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
               :ptOptions="{ mergeProps: true }"
               :disabled="$route.meta.isViewMode"
             />

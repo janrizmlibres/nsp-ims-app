@@ -685,7 +685,6 @@ export async function injectEnrollment() {
 export async function injectVolunteer() {
   const volunteerData = [
     {
-      volunteerId: 1,
       affiliation: "Student",
       lastName: "Dela Cruz",
       firstName: "Shelly",
@@ -693,13 +692,11 @@ export async function injectVolunteer() {
       suffix: "Jr.",
     },
     {
-      volunteerId: 2,
       affiliation: "Student",
       lastName: "Fuentes",
       firstName: "Alonzo",
     },
     {
-      volunteerId: 3,
       affiliation: "Student",
       lastName: "Firma",
       firstName: "Alejandra",
