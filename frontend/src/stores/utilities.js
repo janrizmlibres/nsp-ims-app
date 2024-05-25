@@ -181,6 +181,17 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         })
     }
 
+    async function addAudit(description) {
+      const authStore = useAuthStore()
+
+      const result = await axios.post(`http://localhost:8080/admin/user/add-audit`, {
+      userId: authStore.user.id, description, date: new Date() },
+      {
+      headers: {Authorization: 'Bearer ' + authStore.token}
+      })
+      return result
+    }
+
     async function countClassLevels() {
         const authStore = useAuthStore()
 
@@ -219,6 +230,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
         showHideAddCategoryDialog,
         updateCategory,
         deleteCategory,
+        addAudit,
         countClassLevels
     }
 })

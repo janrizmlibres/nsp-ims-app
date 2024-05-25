@@ -159,31 +159,31 @@ export async function updateVolunteer(req, res, next) {
     } = req.body;
 
     const personalInformationInstance = await VolunteerPersonalInformation.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const contactInformationInstance = await VolunteerContactInformation.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const emergencyInstance = await VolunteerEmergency.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const specializationInstance = await VolunteerSpecialization.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const availabilityInstance = await VolunteerAvailability.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const studentInstance = await StudentVolunteer.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
 
     const professionalInstance = await ProfessionalVolunteer.findOne({
-      where: { id: volunteer.id },
+      where: { volunteerId: volunteer.id },
     });
     
     

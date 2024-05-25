@@ -10,6 +10,7 @@ import ContentPane from '@/components/UI/ContentPane.vue'
 import VolunteerBulkForm from '@/components/volunteer_view/VolunteerBulkForm.vue'
 import AdmitVolunteerHeader from '@/components/volunteer_view/AdmitVolunteerHeader.vue'
 import { useVolunteerStore } from '@/stores/volunteer'
+import { useUsersStore } from '@/stores/users'
 
 import FormParts from '../../util/volunteer_form_parts'
 import { isEqual } from 'lodash'
@@ -22,10 +23,10 @@ const confirm = useConfirm()
 const toast = useToast()
 
 const volunteerStore = useVolunteerStore()
+const userStore = useUsersStore()
 
 const initialData = {
   volunteerHeader: {
-    volunteerId: null,
     affiliation: null,
     firstName: null,
     middleName: null,
@@ -116,6 +117,90 @@ function updateFormData(part, data) {
   updateMapping[part]()
 }
 
+/*function findUpdatedAttributes(oldObj, newObj, prefix = '') {
+  let updates = {};
+
+  for (let key in oldObj) {
+    if (key === 'updatedAt') continue; // Skip updatedAt fields
+
+    if (oldObj[key] instanceof Object && newObj[key]) {
+      let nestedUpdates = findUpdatedAttributes(oldObj[key], newObj[key], `${prefix}${key}.`);
+      if (Object.keys(nestedUpdates).length > 0) {
+        updates = { ...updates, ...nestedUpdates };
+      }
+    } else if (oldObj[key] !== newObj[key]) {
+      updates[`${prefix}${key}`] = { old: oldObj[key], new: newObj[key] };
+    }
+  }
+
+  return updates;
+}*/
+
+function findUpdatedAttributes(oldObj, newObj, prefix = '') {
+  let updates = [];
+
+  for (let key in oldObj) {
+    if (key === 'updatedAt') continue; // Skip updatedAt fields
+    if (key === 'birthday') continue; // Skip updatedAt fields
+
+    if (oldObj[key] instanceof Object && newObj[key]) {
+      let nestedUpdates = findUpdatedAttributes(oldObj[key], newObj[key], `${prefix}${key}.`);
+      if (nestedUpdates.length > 0) {
+        updates = [...updates, ...nestedUpdates];
+      }
+    } else if (oldObj[key] !== newObj[key]) {
+      updates.push(" " + key.charAt(0).toUpperCase() + key.slice(1));
+    }
+  }
+
+  return updates;
+}
+
+
+async function addAuditTrail(descripton) {
+  try {
+    await userStore.addAudit(descripton);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function handleAddVolunteer(data) {
+  try {
+    const result = await volunteerStore.addVolunteer(data);
+    await addAuditTrail('Added: Volunteer"' + result.data.volunteer.fullname + '" with ID: ' + result.data.volunteer.id);
+    return result;
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
+
+async function handleUpdateVolunteer(id, data) {
+  try {
+    const oldVolunteer = await volunteerStore.getVolunteer(id);
+    const result = await volunteerStore.updateVolunteer(id, data);
+    const newVolunteer = await volunteerStore.getVolunteer(id);
+    const updates = findUpdatedAttributes(oldVolunteer.data.volunteer, newVolunteer.data.volunteer);
+    console.log(oldVolunteer.data.volunteer);
+    if (updates.length > 0){
+      await addAuditTrail('Updated: Attribute/s ' + updates + ' of Volunteer "' + newVolunteer.data.volunteer.fullname + '" with ID: ' + newVolunteer.data.volunteer.id);
+    }
+     return result;
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
+
 function handleConfirm() {
   if (route.meta.isViewMode) {
     router.push({ name: 'edit-volunteer', params: { id: route.params.id } })
@@ -134,11 +219,10 @@ async function goToVolunteerRecords() {
 }
 
 async function submitForm() {
-  try {
     const result =
       route.name === 'admit-volunteers'
-        ? await volunteerStore.addVolunteer(formData.value)
-        : await volunteerStore.updateVolunteer(route.params.id, formData.value)
+        ? await handleAddVolunteer(formData.value)
+        : await handleUpdateVolunteer(route.params.id, formData.value)
     
     toast.add({
       severity: 'success',
@@ -148,14 +232,6 @@ async function submitForm() {
     })
     isOkToLeave = true
     await goToVolunteerRecords()
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
-    })
-  }
 }
 
 onBeforeRouteLeave((to) => {
@@ -173,28 +249,24 @@ onBeforeRouteLeave((to) => {
   return false
 })
 
-let volunteerIdCopy = ref(null);
-
 onMounted(async () => {
   if (!route.params.id) return
 
   try {
     const result = await volunteerStore.getVolunteer(route.params.id)
     const volunteer = result.data.volunteer
-    volunteerIdCopy = volunteer.volunteerId
 
     //try to see why this won't work:
     const filterObject = (obj) => {
       // eslint-disable-next-line no-unused-vars
-      //this filtering of volunteerId causes it to not show when viewing volunteer but can still be edited
-      const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
+      const { id, createdAt, updatedAt, /*volunteerId,*/ ...filteredObj } = obj
       return filteredObj
     }
 
     /*const filterObject = (obj) => {
       if (!obj) return {}
       // eslint-disable-next-line no-unused-vars
-      const { id, createdAt, updatedAt, volunteerId, ...filteredObj } = obj
+      const { id, createdAt, updatedAt, ...filteredObj } = obj
       return filteredObj
     }*/
 
@@ -236,7 +308,6 @@ onMounted(async () => {
       <AdmitVolunteerHeader
         @dataChanged="updateFormData"
         :Volunteer="formData.volunteerHeader"
-        :volunteerIdCopy="volunteerIdCopy"
         :isViewMode="$route.meta.isViewMode"
         :key="updateKey"
       />

@@ -22,8 +22,6 @@ const volunteerHeaderValidator = [
       .optional({ values: "null" })
       .trim()
       .matches("^[A-Za-z]+.?$"),
-    /*body("volunteerHeader.volunteerId")
-        .isAscii(),*/
     body("volunteerHeader.affiliation")
         .exists({ checkNull: true })
 ];
@@ -129,6 +127,8 @@ router.post("/add-volunteer",
     personalInformationValidator,
     contactInformationValidator,
     emergencyValidator,
+    availabilityValidator,
+    specializationValidator,
     studentValidator,
     professionalValidator,
     volunteerController.addVolunteer);
@@ -141,6 +141,8 @@ router.put("/update-volunteer/:id",
     personalInformationValidator,
     contactInformationValidator,
     emergencyValidator,
+    availabilityValidator,
+    specializationValidator,
     studentValidator,
     professionalValidator,
     volunteerController.updateVolunteer);

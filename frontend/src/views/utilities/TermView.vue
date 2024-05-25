@@ -19,6 +19,17 @@ const editingRows = ref([])
 
 const onRowEditSave = async (event) => {
     let { data, newData } = event
+
+    if (data.status === false || newData.status === false) {
+        toast.add({
+            severity: 'info',
+            summary: 'Edit Disabled',
+            detail: 'Editing is disabled for inactive academic terms.',
+            life: 3000
+        })
+        return
+    }
+    
     if (JSON.stringify(data) !== JSON.stringify(newData)) {
 
         let startDateYear = newData.start_date.getFullYear();
