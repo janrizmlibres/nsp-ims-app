@@ -92,6 +92,77 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     })
   }
   
+  async function getEnrolledModules(enrollmentId, classLearningStrandId) {
+    const authStore = useAuthStore()
+
+    const result = await axios.get(
+      `http://localhost:8080/enrollment/retrieve-modules/${enrollmentId}/${classLearningStrandId}`, 
+      {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    modules.value = result.data.modules
+    console.log("modules", modules.value)
+  }
+  
+  function setModules(modules) {
+    modules.value = modules
+  }
+  
+  async function getEnrolledGrades(enrollmentId, classLearningStrandId) {
+    const authStore = useAuthStore()
+
+    const result = await axios.get(
+      `http://localhost:8080/enrollment/retrieve-grades/${enrollmentId}/${classLearningStrandId}`, 
+      {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    grades.value = result.data.grades
+  }
+  
+  function setGrades(grades) {
+    grades.value = grades
+  }
+  
+  async function getEnrolledAttendance(enrollmentId, classLearningStrandId) {
+    const authStore = useAuthStore()
+
+    const result = await axios.get(
+      `http://localhost:8080/enrollment/retrieve-attendance/${enrollmentId}/${classLearningStrandId}`, 
+      {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+
+    attendance.value = result.data.attendance
+    console.log("attendance", attendance.value)
+  }
+  
+  function setAttendance(attendance) {
+    attendance.value = attendance
+  }
+
+  async function getAllEnrollments() {
+    const authStore = useAuthStore()
+  
+    const result = await axios.get('http://localhost:8080/enrollment/enrollments', {
+      headers: { Authorization: 'Bearer ' + authStore.token }
+    })
+  
+    return result.data
+  }
+
+  async function getStatusCount() {
+  const authStore = useAuthStore()
+
+  const result = await axios.get('http://localhost:8080/enrollment/status-count', {
+    headers: { Authorization: 'Bearer ' + authStore.token }
+  })
+
+  return result.data
+}
+  
+  
   return {
     learners, 
     learner, 
@@ -102,5 +173,13 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     enrollLearners, 
     getEnrolled, 
     updateLearner,
+    setModules,
+    getEnrolledModules,
+    getEnrolledGrades,
+    setGrades,
+    getEnrolledAttendance,
+    setAttendance,
+    getAllEnrollments,
+    getStatusCount
   }
 })
