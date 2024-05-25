@@ -40,10 +40,6 @@ const PreviousSchool = sequelize.define("previous_school", {
     type: STRING,
     allowNull: false,
   },
-  barangay: {
-    type: STRING,
-    allowNull: false,
-  },
   city: {
     type: STRING,
     allowNull: false,

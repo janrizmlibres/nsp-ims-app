@@ -3,16 +3,26 @@ import { expect } from "chai";
 
 import { login } from "../controllers/auth.js";
 import { signup } from "../controllers/auth.js";
-import { resCopy, resetDb } from "./helpers.js";
+import { resetDb } from "./helpers.js";
 
-let res = { ...resCopy };
+let res = null;
 
 describe("Auth Controller", () => {
   before(async () => await resetDb());
   after(async () => await resetDb());
 
   beforeEach(() => {
-    res = { ...resCopy };
+    res = {
+      statusCode: null,
+      body: null,
+      status: function (code) {
+        this.statusCode = code;
+        return this;
+      },
+      json: function (data) {
+        this.body = data;
+      },
+    };
   });
 
   it("should return an error if the user is not found", async () => {
@@ -74,6 +84,7 @@ describe("Auth Controller", () => {
         position: "Overlord",
         email: "test@test.com",
         contactNum: "09123456789",
+        accessLevel: 2,
       },
     };
 

@@ -4,36 +4,29 @@ import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import MultiSelect from 'primevue/multiselect';
-import { computed, onMounted, ref } from 'vue';
+import { computed, inject, onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
 // stores
 import { useVolunteerStore } from '@/stores/volunteer';
+import { format } from 'date-fns';
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useUsersStore } from '@/stores/users';
 
 const toast = useToast()
-const emit = defineEmits(['onUpdate'])
-const props = defineProps(['id', 'learningStrands', 'termStatus'])
 
-const termStatus = computed(() => props.termStatus)
+const classLearningStrandStore = useClassLearningStrandStore()
+const usersStore = useUsersStore()
+
+const termStatus = inject('termStatus')
+const term = inject('term')
+const classLevel = inject('classLevel')
+const learningStrands = inject('learningStrands')
 const volunteerStore = useVolunteerStore()
 const volunteers = computed(() => volunteerStore.volunteers)
-const learningStrands = computed(() => props.learningStrands)
+
 const learningStrandInput = ref()
 const invalid = ref()
-
-onMounted(() => {
-    try {
-        volunteerStore.getAllVolunteers()
-    } catch(error) {
-        console.log(error);
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered.',
-            life: 3000
-        })
-    }
-})
 
 const formData = ref({
     volunteer: null,
@@ -54,7 +47,9 @@ const enableResetButton = computed(() => {
     else return true
 })
 
-function addSchedule() {
+const onSubmit = inject('updateScheduleTable')
+
+async function addSchedule() {
     if ((formData.value.start_time.getHours() >= formData.value.end_time.getHours()) && (formData.value.start_time.getMinutes() >= formData.value.end_time.getMinutes())) {
         toast.add({
                 severity: 'error',
@@ -66,9 +61,53 @@ function addSchedule() {
             return
     }
 
-    emit('onUpdate', learningStrandInput.value, formData.value)
-    resetForm()
+    classLearningStrandStore.addSchedule(learningStrandInput.value.id, {
+        volunteer: formData.value.volunteer,
+        days: formData.value.school_days.toString(),
+        start_time: format(new Date(formData.value.start_time), "HH:mm"),
+        end_time: format(new Date(formData.value.end_time), "HH:mm"),
+    }).then(async (message) => {
+        toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: message,
+            life: 3000
+        })
+
+        try {
+            await usersStore.addAudit(
+                `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+            )
+        } catch(error) {
+            console.log(error);
+        }
+        
+        onSubmit()
+        resetForm()
+    }).catch((error) => {
+        console.log(error);
+    toast.add({
+        severity: 'error',
+            summary: 'Error',
+            detail: error,
+            life: 3000
+        })
+    })
 }
+
+onMounted(() => {
+    try {
+        volunteerStore.getAllVolunteers()
+    } catch(error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered.',
+            life: 3000
+        })
+    }
+})
 
 function resetForm() {
     invalid.value = false
@@ -99,11 +138,11 @@ function resetForm() {
         </div>
         <div class="flex flex-col mb-4">
             <label>Start Time</label>
-            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.start_time" timeOnly hourFormat="12" :disabled="!termStatus" />
+            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.start_time" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" timeOnly hourFormat="12" :disabled="!termStatus" @update:modelValue="invalid = false" />
         </div>
         <div class="flex flex-col mb-4">
             <label>End Time</label>
-            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.end_time" timeOnly hourFormat="12" :disabled="!termStatus" />
+            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.end_time" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" timeOnly hourFormat="12" :disabled="!termStatus" @update:modelValue="invalid = false" />
         </div>
         <div class="flex flex-row gap-2">
             <Button type="button" outlined rounded label="Add" :disabled="disableSubmitButton" @click="addSchedule" class="w-full" />

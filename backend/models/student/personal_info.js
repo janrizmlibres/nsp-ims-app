@@ -16,10 +16,6 @@ const PersonalInfo = sequelize.define("personal_info", {
     type: ENUM,
     values: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
   },
-  birthBarangay: {
-    type: STRING,
-    allowNull: false,
-  },
   birthCity: {
     type: STRING,
     allowNull: false,

@@ -6,6 +6,7 @@ import Button from 'primevue/button';
 import TheHeader from '@/components/volunteer_view/VolunteerHeader.vue';
 import ContentPane from "@/components/UI/ContentPane.vue";
 import { useVolunteerStore } from '@/stores/volunteer';
+import { useUsersStore } from '@/stores/users';
 
 import { ref, onMounted } from 'vue';
 import { FilterMatchMode } from 'primevue/api';
@@ -17,13 +18,15 @@ import { useToast } from "primevue/usetoast";
 const confirm = useConfirm();
 const toast = useToast();
 const volunteerStore = useVolunteerStore();
+const userStore = useUsersStore();
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
 const columns = ref([
-  { field: 'volunteerId', header: 'Volunteer ID' },
+  /*{ field: 'id', header: 'Database ID' },
+  { field: 'student_volunteer.id', header: 'Volunteer ID' },*/
   { field: 'fullname', header: 'Full Name' },
   { field: 'volunteer_personal_information.sex', header: 'Sex'},
   { field: 'affiliation', header: 'Affiliation' },
@@ -36,8 +39,8 @@ const updateGlobalFilter = (newValue) => {
 
 const confirmDelete = (id) => {
     confirm.require({
-        message: 'Do you want to delete this record?',
-        header: 'Danger Zone',
+        message: 'Are you sure you want to delete this record?',
+        header: 'Delete Confirmation',
         icon: 'pi pi-info-circle',
         rejectLabel: 'Cancel',
         acceptLabel: 'Delete',
@@ -52,8 +55,19 @@ const confirmDelete = (id) => {
 
 async function handleDelete(id) {
   try {
+    const result = await volunteerStore.getVolunteer(id);
+    const volunteer = result.data.volunteer
     volunteerStore.deleteVolunteer(id);
+    addAuditTrail(`Deleted: Volunteer "${volunteer.fullname}" with ID: ${volunteer.id}`);
     window.location.reload();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function addAuditTrail(descripton) {
+  try {
+    await userStore.addAudit(descripton);
   } catch (error) {
     console.log(error);
   }
@@ -75,9 +89,11 @@ onMounted(async () => {
     <DataTable 
       :value="volunteerStore.volunteers"
       v-model:filters="filters"
-      :globalFilterFields="['volunteerId', 'firstName', 'lastName', 'affiliation']"
+      :globalFilterFields="['id', 'firstName', 'lastName', 'affiliation']"
       scrollable
-      removableSort>
+      :sortOrder="1"
+      removableSort
+      paginator :rows="10">
 
       <Column header="">
         <template #body="slotProps">

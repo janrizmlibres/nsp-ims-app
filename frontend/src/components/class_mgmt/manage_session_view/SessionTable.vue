@@ -6,7 +6,7 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Toolbar from 'primevue/toolbar';
 import Badge from 'primevue/badge';
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { inject, provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
 import { format } from 'date-fns';
@@ -18,13 +18,31 @@ import EditSessionDialog from './EditSessionDialog.vue';
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useConfirm } from 'primevue/useconfirm';
+import ProgressSpinner from 'primevue/progressspinner';
+import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
+const usersStore = useUsersStore()
 
-const props = defineProps(['term', 'learningStrands', 'termStatus'])
 const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
+
+const termStatus = inject('termStatus')
+const term = inject('term')
+const learningStrands = inject('learningStrands')
+const classLevel = inject('classLevel')
+const isFetching = ref(false)
+const metaKey = ref(true)
+const learningStrandInput = ref()
+const selectedSessions = ref([])
+const session = ref()
+const editSessionDialogState = ref(false)
+const sessionByMonths = ref()
+const selectedRow = ref({}) 
+const selectedMonth = ref()
+const dt = ref()
+const dtDiv = ref()
 
 const cols = ref([
     {field: 'absent', header: 'Absent'},
@@ -32,26 +50,26 @@ const cols = ref([
     {field: 'total', header: 'Total'},
 ])
 
-const termStatus = computed(() => props.termStatus)
-const isFetching = ref(false)
-const classLearningStrandId = ref()
-const metaKey = ref(true)
-const learningStrandInput = ref()
-const selectedSessions = ref([])
-const session = ref()
-const editSessionDialog = ref(false)
-const sessionByMonths = ref()
-const selectedRow = ref({}) 
-const selectedMonth = ref()
-const dt = ref()
-const dtDiv = ref()
+provide('learningStrandInput', learningStrandInput)
+provide('session', session)
+provide('sessionByMonths', sessionByMonths)
+provide('selectedMonth', selectedMonth)
+provide('editSessionDialogState', editSessionDialogState)
+provide('updateSessionTable', updateSessionTable)
 
-function updateSessionTable(sessions) {
+watch(() => learningStrands.value, () => {
+    learningStrandInput.value = null
+    sessionByMonths.value = null
+})
+
+function updateSessionTable() {
     isFetching.value = true
-    
+
+    deselect()
+
     sessionByMonths.value = (function() {
-        let start = new Date(props.term.start_date)
-        let end = new Date(props.term.end_date)
+        let start = new Date(term.value.start_date)
+        let end = new Date(term.value.end_date)
         let months = []
 
         while (start <= end) {
@@ -69,55 +87,30 @@ function updateSessionTable(sessions) {
         return months
     })()
 
-    sessions.reduce((months, obj) => {
-        const month = new Date(obj.date).getMonth()
-        
-        sessionByMonths.value[month].sessions.push(obj);
-        sessionByMonths.value[month].count += 1
-    }, {});
+    classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((sessions) => {
+        sessions.reduce((months, obj) => {
+            const month = new Date(obj.date).getMonth()
+            
+            sessionByMonths.value[month].sessions.push(obj);
+            sessionByMonths.value[month].count += 1
+        }, {});
 
-    isFetching.value = false
+        isFetching.value = false
+    }).catch((error) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
+        })
+
+        isFetching.value = false
+    })
 }
-
-watch(() => learningStrandInput.value, (input) => {
-    if (input) {
-        isFetching.value = true
-        classLearningStrandId.value = input.id
-        try {
-            classLearningStrandStore.getAllSessions(input.id).then((data) => {
-                updateSessionTable(data)
-            })
-
-            isFetching.value = false
-        } catch (error) {
-            console.log(error);
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Unexpected error encountered. Please refresh this page.',
-                life: 3000
-            })
-        }
-    }
-}, {immediate: false})
-
-watch(() => props.learningStrands, () => {
-    learningStrandInput.value = null
-    sessionByMonths.value = null
-})
 
 function editSession(data) {
     session.value = {... data}
-    showEditSessionDialog()
-}
-
-function showEditSessionDialog() {
-    editSessionDialog.value = !editSessionDialog.value
-}
-
-function updateSession(data) {
-    updateSessionTable(data)
-    showEditSessionDialog()
+    editSessionDialogState.value = true
 }
 
 async function deleteModules() {
@@ -127,21 +120,25 @@ async function deleteModules() {
         accept: async () => {
             try {
                 const sessionIds = selectedSessions.value.map(session => session.id)
-                await classLearningStrandStore.deleteSessions({sessionIds: sessionIds})
-                deselect()
-                toast.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Session(s) deleted successfully!',
-                    life: 3000
-                })
-            } catch(error) {
-                console.log(error);
-            }
+                await classLearningStrandStore.deleteSessions({sessionIds: sessionIds}).then((message) => {
+                    toast.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: message,
+                        life: 3000
+                    })
 
-            try {
-                classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((data) => {
-                    updateSessionTable(data)
+                    try {
+                        selectedSessions.value.forEach(async (session) => {
+                            await usersStore.addAudit(
+                                `Deleted: Session ${new Date(session.date).toDateString()} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                            ).then(deselect())
+                        })
+                    } catch(error) {
+                        console.log(error);
+                    }
+
+                    updateSessionTable()
                 })
             } catch(error) {
                 console.log(error);
@@ -189,26 +186,14 @@ function onCollapseRow() {
     deselect()
     selectedRow.value = {}
 }
-
-function onClickOutside(event) {
-    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
-}
-
-onMounted(() => {
-    document.addEventListener('click', onClickOutside);
-})
-
-onBeforeUnmount(() => {
-    document.removeEventListener('click', onClickOutside);
-})
 </script>
 
 <template>
     <div class="flex h-full w-full">
-        <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
-            <AddSessionSection :id="classLearningStrandId" :data="selectedMonth" :termStatus="termStatus" @onUpdate="updateSessionTable" />
+        <div v-if="termStatus" class="flex flex-col mr-10 p-2 gap-4" >
+            <AddSessionSection />
         </div>
-        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl" ref="dtDiv">
+        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedSessions.length" class="flex flex-row gap-8 items-center mx-2">
@@ -218,8 +203,8 @@ onBeforeUnmount(() => {
                                 {{ selectedSessions.length + ' selected' }}
                             </p>
                         </span>
-                        <span class="flex gap-1">
-                            <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                        <span class="flex gap-1" v-if="termStatus">
+                            <!-- <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/> -->
                             <Button icon="fa fa-trash" text aria-label="Delete Selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
                         </span>
                     </span>
@@ -227,23 +212,24 @@ onBeforeUnmount(() => {
                 <template #end>
                     <div class="flex flex-row gap-4 items-center">
                         <label class="font-semibold">Learning Strand:</label>
-                        <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="deselect" /> 
+                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="updateSessionTable" /> 
                     </div>
                 </template>
             </Toolbar>
-            <DataTable v-model:expandedRows="selectedRow" :value="sessionByMonths" dataKey="id"
+            <DataTable v-model:expandedRows="selectedRow" :value="sessionByMonths" dataKey="id" :loading="isFetching"
                 v-model:selection="selectedMonth" selectionMode="single" 
                 @rowSelect="onExpandRow(selectedMonth ? selectedMonth.id : null)" @rowUnselect="onCollapseRow()"
                 @row-expand="onExpandRow(selectedMonth ? selectedMonth.id : null)"
                 scrollable style=" overflow: auto;"
             >
+                <template #loading> <ProgressSpinner class="self-center" /> </template>
                 <template #empty> <div class="text-center">No records found.</div> </template>
 
                 <Column expander style="width: 5rem" />
                 <Column field="id" header="Id" />
                 <Column field="month" header="Month">
                     <template #body="slotProps">
-                        <p v-if="slotProps.data" class="font-semibold">{{ slotProps.data.month }}</p>
+                        <p v-if="slotProps.data">{{ slotProps.data.month }}</p>
                     </template>
                 </Column>
                 <Column field="count" header="Sessions">
@@ -258,12 +244,15 @@ onBeforeUnmount(() => {
                         v-model:selection="selectedSessions"
                         selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewSession" @blur="deselect()"
                         sortField="date" :sortOrder="1" removableSort class="unselectable" ref="dt"
+                        paginator :rows="7"
+                        paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                        currentPageReportTemplate="{first} to {last} of {totalRecords}"
                     >
                         <template #empty> <div class="text-center">No records found.</div> </template>
 
                         <Column :exportable="false" style="width:2rem">
                             <template #body="slotProps">
-                                <Button icon="fa fa-pencil" text @click="editSession(slotProps.data)" />
+                                <Button v-if="termStatus" icon="fa fa-pencil" text @click="editSession(slotProps.data)" />
                             </template>
                         </Column>
                         <Column field="date" header="Session Date" sortable>
@@ -291,7 +280,7 @@ onBeforeUnmount(() => {
             </DataTable>
         </div>
     </div>
-    <EditSessionDialog :id="classLearningStrandId" :data="session" :state="editSessionDialog" @onUpdate="updateSession" @onUpdateDisplay="showEditSessionDialog" />
+    <EditSessionDialog />
 </template>
 
 <style>

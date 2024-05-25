@@ -6,7 +6,7 @@ import Column from 'primevue/column';
 import Row from 'primevue/row';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { inject, provide, ref } from 'vue';
 import { format } from 'date-fns';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -18,30 +18,36 @@ import EditScheduleDialog from './EditScheduleDialog.vue';
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useClassStore } from '@/stores/class';
+import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 const classStore = useClassStore()
+const usersStore = useUsersStore()
 
-const props = defineProps(['classLevel', 'termStatus'])
 const toast = useToast()
 const confirm = useConfirm()
 
-const termStatus = computed(() => props.termStatus)
-const learningStrands = computed(() => props.classLevel.class_learning_strands)
-const classLevelId = computed(() => props.classLevel.id)
+const termStatus = inject('termStatus')
+const term = inject('term')
+const classLevel = inject('classLevel')
 const classData = ref([])
-const isFetching = ref(true)
+const isFetching = ref(false)
 const selectedSchedules = ref([])
 const metaKey = ref(true)
-const editScheduleDialog = ref(false)
+const editScheduleDialogState = ref(false)
 const schedule = ref()
 const dt = ref()
 const dtDiv = ref()
 
-function updateScheduleTable(classId) {
+provide('schedule', schedule)
+provide('editScheduleDialogState', editScheduleDialogState)
+provide('updateScheduleTable', updateScheduleTable)
+
+function updateScheduleTable() {
+    isFetching.value = true
     classData.value.length = 0
 
-    classStore.getAllLearningStrands(classId).then((data) => {
+    classStore.getClassSchedules(classLevel.value.id).then((data) => {
         for (const learningStrand of data) {
             for (const schedule of learningStrand.class_schedules) {
                 const start_time = format(new Date("01/01/0001 " + schedule.start_time), "hh:mm aaa")
@@ -51,6 +57,7 @@ function updateScheduleTable(classId) {
                     id: learningStrand.id,
                     classLevelId: learningStrand.classLevelId,
                     scheduleId: schedule.id,
+                    code: learningStrand.learning_strand.code,
                     name: learningStrand.learning_strand.name,
                     volunteer: schedule.volunteer,
                     school_days: schedule.days.split(','),
@@ -60,52 +67,21 @@ function updateScheduleTable(classId) {
                 })
             }
         }
+
+        isFetching.value = false
+    }).catch((error) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
+        })
+
+        isFetching.value = false
     })
 }
 
-watch(() => props.classLevel, (data) => {
-    try {
-        updateScheduleTable(data.id)
-        
-        isFetching.value = false
-    } catch (error) {
-        console.log(error);
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered. Please refresh this page.',
-            life: 3000
-        })
-    }
-}, { immediate: true })
-
-async function addSchedule(learningStrand, form) {
-    try {
-        await classLearningStrandStore.addSchedule(learningStrand.id, {
-            volunteer: form.volunteer,
-            days: form.school_days.toString(),
-            start_time: format(new Date(form.start_time), "HH:mm"),
-            end_time: format(new Date(form.end_time), "HH:mm"),
-        })
-
-        updateScheduleTable(learningStrand.classLevelId)
-
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: "Added schedule successfully!",
-            life: 3000
-        })
-    } catch (error) {
-        console.log(error);
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: "Unexpected error encountered.",
-            life: 3000
-        })
-    }
-}
+updateScheduleTable()
 
 async function deleteSchedules() {
     confirm.require({
@@ -114,21 +90,26 @@ async function deleteSchedules() {
         accept: async () => {
             try {
                 const scheduleIds = selectedSchedules.value.map(schedule => schedule.scheduleId)
-                console.log(selectedSchedules.value);
-                await classLearningStrandStore.deleteSchedules({scheduleIds: scheduleIds})
-                deselect()
-                toast.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Schedule(s) deleted successfully!',
-                    life: 3000
-                })
-            } catch(error) {
-                console.log(error);
-            }
+                await classLearningStrandStore.deleteSchedules({scheduleIds: scheduleIds}).then((message) => {
+                    toast.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: message,
+                        life: 3000
+                    })
 
-            try {
-                updateScheduleTable(props.classLevel.id)
+                    try {
+                        selectedSchedules.value.forEach(async (schedule) => {
+                            await usersStore.addAudit(
+                                `Deleted: Schedule for ${schedule.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                            ).then(deselect())
+                        })
+                    } catch(error) {
+                        console.log(error);
+                    }
+
+                    updateScheduleTable()
+                })
             } catch(error) {
                 console.log(error);
             }
@@ -136,43 +117,23 @@ async function deleteSchedules() {
     })
 }
 
-function updateSchedule(data) {
-    updateScheduleTable(data)
-    showEditScheduleDialog()
-}
-
 function editSchedule(data) {
     schedule.value = {... data}
-    showEditScheduleDialog()
+    editScheduleDialogState.value = true
 }
 
-function showEditScheduleDialog() {
-    editScheduleDialog.value = !editScheduleDialog.value
-}
 
 function deselect() {
     selectedSchedules.value = []
 }
-
-function onClickOutside(event) {
-    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
-}
-
-onMounted(() => {
-    document.addEventListener('click', onClickOutside);
-})
-
-onBeforeUnmount(() => {
-    document.removeEventListener('click', onClickOutside);
-})
 </script>
 
 <template>
     <div class="flex h-full w-full">
-        <div class="flex flex-col w-[17%] mr-10 p-2 gap-4" >
-            <AddScheduleSection :id="classLevelId" :learningStrands="learningStrands" :termStatus="termStatus" @onUpdate="addSchedule" />
+        <div v-if="termStatus" class="flex flex-col mr-10 p-2 gap-4" >
+            <AddScheduleSection />
         </div>
-        <div class="w-[83%] flex flex-col h-full overflow-hidden shadow-xl" ref="dtDiv">
+        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
             <Toolbar class="!p-2 h-16">
                 <template #start>
                     <span v-if="selectedSchedules.length" class="flex flex-row gap-8 items-center mx-2">
@@ -182,7 +143,7 @@ onBeforeUnmount(() => {
                                 {{ selectedSchedules.length + ' selected' }}
                             </p>
                         </span>
-                        <span class="flex gap-1 items-center">
+                        <span v-if="termStatus" class="flex gap-1 items-center">
                             <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
                             <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteSchedules"/>
                         </span>
@@ -213,7 +174,7 @@ onBeforeUnmount(() => {
 
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">
-                        <Button icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" />
+                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" />
                     </template>
                 </Column>
                 <Column field="name" />
@@ -237,7 +198,7 @@ onBeforeUnmount(() => {
             </DataTable>
         </div>
     </div>
-    <EditScheduleDialog :data="schedule" :state="editScheduleDialog" @onUpdate="updateSchedule" @onUpdateDisplay="showEditScheduleDialog" />
+    <EditScheduleDialog />
 </template>
 
 <style>
