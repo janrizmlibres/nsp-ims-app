@@ -48,14 +48,20 @@ function updateEmergencyContact() {
         <h2 class="font-bold text-center">Personal Contact Information</h2>
 
         <div class="grid grid-cols-5 gap-3 mt-4">
-          <template v-for="field of Object.values(leftFields)" :key="field.label">
-            <div class="flex items-center justify-end pr-6 col-span-2">
+          <template v-for="(field, key) in leftFields" :key="field.label">
+            <div v-if="key !== 'contactNum'" class="flex items-center justify-end pr-6 col-span-2">
               <span>{{ field.label }}</span>
             </div>
+            <div v-else class="flex gap-1 items-center justify-end pr-6 col-span-2">
+              <div>{{ field.label }}</div>
+              <div class="text-red-500 text-xl">*</div>
+            </div>
+
             <InputText
               class="h-10 col-span-3"
               type="text"
               v-model="field.data"
+              :="key === 'contactNum'"
               @update:modelValue="updateContactInfo"
               :pt="{
                 root: ({ context }) => {
@@ -76,14 +82,23 @@ function updateEmergencyContact() {
 
         <div class="grid grid-cols-5 gap-3 mt-4">
           <template v-for="(field, key) in rightFields" :key="field.label">
-            <div class="flex items-center justify-end pr-6 col-span-2">
+            <div
+              v-if="['middleName', 'suffixName'].includes(key)"
+              class="flex items-center justify-end pr-6 col-span-2"
+            >
               <span>{{ field.label }}</span>
             </div>
+            <div v-else class="flex gap-1 items-center justify-end pr-6 col-span-2">
+              <div>{{ field.label }}</div>
+              <div class="text-red-500 text-xl">*</div>
+            </div>
+
             <InputText
               v-if="key !== 'suffixName'"
               class="h-10 col-span-3"
               type="text"
               v-model="field.data"
+              :="!['middleName', 'suffixName'].includes(key)"
               @update:modelValue="updateEmergencyContact"
               :pt="{
                 root: ({ context }) => {
@@ -106,8 +121,9 @@ function updateEmergencyContact() {
             />
           </template>
 
-          <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>Relationship</span>
+          <div class="flex gap-1 items-center justify-end pr-6 col-span-2">
+            <div>Relationship</div>
+            <div class="text-red-500 text-xl">*</div>
           </div>
           <InputText
             class="h-10 col-span-3"

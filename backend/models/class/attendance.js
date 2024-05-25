@@ -28,7 +28,10 @@ const Attendance = sequelize.define("attendance", {
     type: STRING,
     defaultValue: 'Absent'
   },
-  remarks: TEXT,
+  remarks: {
+    type: TEXT,
+    defaultValue: ""
+  },
 });
 
 export default Attendance;

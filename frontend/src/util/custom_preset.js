@@ -38,7 +38,7 @@ const customPreset = usePassThrough(
     },
     datatable: {
       root: {
-        class: ['flex flex-col h-full pt-2 overflow-auto']
+        class: ['flex flex-col h-full pt-2 justify-between overflow-auto']
       },
       column: {
         headercell: ({ context, props }) => ({
@@ -72,6 +72,9 @@ const customPreset = usePassThrough(
       }),
       rowexpansion: {
         class: 'bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-white/80 flex-1'
+      },
+      rowexpansioncell: {
+        class: ['!p-0']
       },
       paginator: {
         root: {

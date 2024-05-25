@@ -4,43 +4,50 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Textarea from 'primevue/textarea';
 import { useToast } from 'primevue/usetoast';
-import { computed, ref, watch } from 'vue';
+import { computed, inject, toRaw } from 'vue';
 import { useConfirm } from 'primevue/useconfirm';
 
 //  stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useClassStore } from '@/stores/class';
+import { useUsersStore } from '@/stores/users';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 
-const emit = defineEmits(['onUpdate', 'onUpdateDisplay'])
-const props = defineProps(['id', 'data', 'state'])
 const toast = useToast()
-const classLearningStrandStore = useClassLearningStrandStore()
-const classStore = useClassStore()
 const confirm = useConfirm()
-const state = computed(() => props.state)
-const session = ref()
-const classLearningStrandId = computed(() => props.id)
+const router = useRouter()
+const classLearningStrandStore = useClassLearningStrandStore()
+const usersStore = useUsersStore()
 
-watch(() => props.data, (data) => {
-    session.value = data
-    classStore.leave = false
-})
+const editSessionDialogState = inject('editSessionDialogState')
+const session = inject('session')
+const learningStrandInput = inject('learningStrandInput')
+const term = inject('term')
+const classLevel = inject('classLevel')
+const startingData = computed(() => structuredClone(toRaw(session.value)))
+const disableUpdate = computed(() => JSON.stringify(session.value) === JSON.stringify(startingData.value))
+const onSubmit = inject('updateSessionTable')
 
 async function updateSession() {
     try {
-        await classLearningStrandStore.updateSession(props.data.id, {remarks: session.value.remarks})
-        classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
-            emit('onUpdate', data)
-        })
+        await classLearningStrandStore.updateSession(session.value.id, {remarks: session.value.remarks}).then(async (message) => {
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: message,
+                life: 3000
+            })
 
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Session updated successfully',
-            life: 3000
-        })
+            try {
+                await usersStore.addAudit(
+                    `Updated: Remarks of session ${new Date(session.value.date).toDateString()} of ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                )
+            } catch(error) {
+                console.log(error);
+            }
 
-        classStore.leave = true
+            onSubmit()
+            editSessionDialogState.value = false
+        })
     } catch(error) {
         console.log(error);
         toast.add({
@@ -53,26 +60,45 @@ async function updateSession() {
 };
 
 async function cancel() {
+    if(!disableUpdate.value) {
+        confirm.require({
+            message: 'Do you really want to leave? you have unsaved changes!',
+            header: 'Redirect Confirmation',
+            accept: () => {
+                editSessionDialogState.value = false
+            }
+        })
+    } else editSessionDialogState.value = false
+}
+
+onBeforeRouteLeave(() => {
+    if (JSON.stringify(session.value) === JSON.stringify(startingData.value)) {
+        editSessionDialogState.value = false
+        return true
+    }
+
     confirm.require({
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
         accept: () => {
-            classStore.leave = true
-            emit('onUpdateDisplay')
+            session.value = structuredClone(toRaw(session.value))
+            router.back()
         }
     })
-}
+
+    return false
+})
 </script>
 
 <template>
-    <Dialog v-model:visible="state" modal header="Edit Session" :style="{ width: '20rem' }" :closable="false">
+    <Dialog v-model:visible="editSessionDialogState" modal header="Edit Session" :style="{ width: '20rem' }" :closable="false">
         <div class="flex flex-col gap-4 mb-4">
             <label>Remarks</label>
             <Textarea v-model="session.remarks" rows="5" cols="30" />
         </div>
         <div class="flex justify-end gap-2">
-            <Button type="button" label="Update" @click="updateSession"></Button>
-            <Button type="button" label="Cancel" severity="danger" @click="cancel"></Button>
+            <Button type="button" label="Update" outlined rounded :disabled="disableUpdate" @click="updateSession"></Button>
+            <Button type="button" label="Cancel" outlined rounded severity="danger" @click="cancel"></Button>
         </div>
     </Dialog>
 </template>

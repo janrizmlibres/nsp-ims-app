@@ -6,10 +6,10 @@ import { ref } from 'vue'
 export const useClassStore = defineStore('class', () => {
     const leave = ref(true)
 
-    async function getAllLearningStrands(classId) {
+    async function getClassSchedules(classId) {
         const authStore = useAuthStore()
 
-        const result = await axios.get(`http://localhost:8080/class/${classId}/classLearningStrands`, {
+        const result = await axios.get(`http://localhost:8080/class/${classId}/schedules`, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
         
@@ -36,7 +36,7 @@ export const useClassStore = defineStore('class', () => {
         return result.data.data
     }
 
-    return { leave, getAllLearningStrands, getAllStudents, getStudent }
+    return { leave, getClassSchedules, getAllStudents, getStudent }
 })
 
 

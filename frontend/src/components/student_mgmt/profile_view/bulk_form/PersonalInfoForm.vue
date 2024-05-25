@@ -1,12 +1,13 @@
 <script setup>
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
+import FloatLabel from 'primevue/floatlabel'
 
 import { ref, computed, watch, onMounted, inject } from 'vue'
-import { getDaysInMonth, format, getYear, getDay, getMonth } from 'date-fns'
+import { getDaysInMonth, format, getYear, getMonth, getDate } from 'date-fns'
 
 import { objectMap } from '@/util/helpers'
-import { FormParts } from '@/util/student_utils'
+import { FormParts, floatLabelPt } from '@/util/student_utils'
 
 const { formData, updateFormData } = inject('formData')
 
@@ -28,7 +29,6 @@ const computedBirthday = computed(() => {
 })
 
 const birthPlace = ref({
-  birthBarangay: personalInfo.birthBarangay,
   birthCity: personalInfo.birthCity,
   birthProvince: personalInfo.birthProvince
 })
@@ -103,7 +103,7 @@ onMounted(() => {
 
   if (personalInfo.birthday) {
     birthday.value.month = getMonth(personalInfo.birthday)
-    birthday.value.day = getDay(personalInfo.birthday).toString()
+    birthday.value.day = getDate(personalInfo.birthday).toString()
     birthday.value.year = getYear(personalInfo.birthday).toString()
   }
 })
@@ -161,7 +161,7 @@ onMounted(() => {
           <div>Date of Birth</div>
           <div class="text-red-500 text-xl">*</div>
         </div>
-        <div class="col-span-3 grid grid-cols-12 gap-3">
+        <div class="col-span-3 grid grid-cols-12 gap-3 flex items-center">
           <Dropdown
             class="h-10 col-span-5"
             v-model="birthday.month"
@@ -197,40 +197,38 @@ onMounted(() => {
           />
         </div>
 
-        <div class="flex gap-1 items-center text-right justify-end pr-6">
+        <div class="flex gap-1 items-center text-right justify-end pr-6 mt-5">
           <div>Place of Birth</div>
           <div class="text-red-500 text-xl">*</div>
         </div>
-        <InputText
-          class="h-10 col-span-3"
-          type="text"
-          v-model="birthPlace.birthBarangay"
-          placeholder="Barangay"
-          @update:modelValue="handleUpdate"
-          :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
-        <InputText
-          class="h-10 col-span-3 col-start-2"
-          type="text"
-          v-model="birthPlace.birthCity"
-          placeholder="City"
-          @update:modelValue="handleUpdate"
-          :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
-        <InputText
-          class="h-10 col-span-3 col-start-2"
-          type="text"
-          v-model="birthPlace.birthProvince"
-          placeholder="Province"
-          @update:modelValue="handleUpdate"
-          :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
+
+        <FloatLabel class="col-span-3 col-start-2 flex items-center mt-5" :pt="floatLabelPt">
+          <InputText
+            class="h-10 w-full"
+            id="birth-city"
+            type="text"
+            v-model="birthPlace.birthCity"
+            @update:modelValue="handleUpdate"
+            :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+          />
+          <label for="birth-city">City</label>
+        </FloatLabel>
+
+        <FloatLabel class="col-span-3 col-start-2 flex items-center mt-4" :pt="floatLabelPt">
+          <InputText
+            class="h-10 w-full"
+            id="birth-province"
+            type="text"
+            v-model="birthPlace.birthProvince"
+            @update:modelValue="handleUpdate"
+            :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+          />
+          <label for="birth-province">Province</label>
+        </FloatLabel>
       </div>
     </div>
 
@@ -250,23 +248,33 @@ onMounted(() => {
           :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex gap-1 items-center justify-end pr-6">
+        <div class="flex gap-1 items-center justify-end pr-6 mt-5">
           <div>Address</div>
           <div class="text-red-500 text-xl">*</div>
         </div>
-        <InputText
+
+        <FloatLabel
           v-for="(value, key) of address"
           :key="key"
-          class="h-10 col-span-3"
-          :class="{ 'col-start-2': value.label !== 'Blk/Lt/St' }"
-          type="text"
-          v-model="value.data"
-          :placeholder="value.label"
-          @update:modelValue="handleUpdate"
-          :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
+          class="col-span-3"
+          :class="{
+            'flex items-center mt-6': value.label === 'Blk/Lt/St',
+            'col-start-2 mt-4': value.label !== 'Blk/Lt/St'
+          }"
+          :pt="floatLabelPt"
+        >
+          <InputText
+            class="h-10 w-full"
+            :id="key"
+            type="text"
+            v-model="value.data"
+            @update:modelValue="handleUpdate"
+            :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+          />
+          <label :for="key">{{ value.label }}</label>
+        </FloatLabel>
       </div>
     </div>
   </div>
