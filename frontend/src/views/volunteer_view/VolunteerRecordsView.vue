@@ -92,7 +92,8 @@ onMounted(async () => {
       :globalFilterFields="['id', 'firstName', 'lastName', 'affiliation']"
       scrollable
       :sortOrder="1"
-      removableSort>
+      removableSort
+      paginator :rows="10">
 
       <Column header="">
         <template #body="slotProps">
