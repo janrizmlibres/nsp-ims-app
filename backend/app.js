@@ -15,6 +15,7 @@ import classLearningStrandRoutes from "./routes/class_learning_strand.js";
 import utilitiesRoutes from "./routes/utilities.js";
 import volunteerRoutes from "./routes/volunteer.js";
 import profileRoutes from "./routes/profile.js";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -24,14 +25,16 @@ app.use(express.json());
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/enrollmentForms", cors(), express.static(path.join(__dirname, "enrollmentForms")));
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE, OPTIONS"
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
 

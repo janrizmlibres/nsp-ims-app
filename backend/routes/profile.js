@@ -148,4 +148,6 @@ router.put(
   profileController.updateStudent
 );
 
+router.get('/gender-count', profileController.getGenderCount);
+
 export default router;

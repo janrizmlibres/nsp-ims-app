@@ -13,6 +13,7 @@ import PersonalInfo from "../models/student/personal_info.js";
 import ContactInfo from "../models/student/contact_info.js";
 import EmergencyPerson from "../models/student/emergency_person.js";
 import PreviousSchool from "../models/student/previous_school.js";
+import Enrollment from "../models/enrollment.js";
 
 export async function injectAll() {
   await injectUser();
@@ -22,6 +23,7 @@ export async function injectAll() {
   await injectVolunteer();
   await injectStudentRequirement();
   await injectStudentCategory();
+  await injectEnrollment();
 }
 
 export async function injectStudent() {
@@ -584,6 +586,54 @@ export async function injectStudentCategory() {
   await Promise.all(
     studentCategoryData.map(async (student_category) => {
       await StudentCategory.create(student_category);
+    })
+  );
+}
+
+function getRandomDate() {
+  const start = new Date(2016, 0, 1); // Start date: January 1, 2016
+  const end = new Date(); // End date: today
+  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
+
+export async function injectEnrollment() {
+  const enrollmentData = [
+    {
+      studentId: "1",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    {
+      studentId: "2",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Inactive",
+    },
+    {
+      studentId: "3",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    {
+      studentId: "4",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    {
+      studentId: "5",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    // Add more enrollment data here...
+  ];
+
+  await Promise.all(
+    enrollmentData.map(async (enrollment) => {
+      await Enrollment.create(enrollment);
     })
   );
 }

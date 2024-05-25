@@ -12,6 +12,10 @@ export default {
       type: Array,
       required: true
     },
+    labelsData: {
+      type: Array,
+      required: true
+    },
     widgetTitle: {
       type: String,
       required: true
@@ -19,7 +23,17 @@ export default {
     totalText: {
       type: String,
       required: true
+    },
+    Data1: {
+      type: String,
+      required: true
+    },
+    Data2: {
+      type: String,
+      required: true
     }
+  },
+  mounted() {
   }
 }
 </script>
@@ -27,19 +41,19 @@ export default {
 <template>
   <div class="widget">
     <div class="widget-wrapper">
-      <DoughnutChart class="my-chart" :seriesData="seriesData" />
+      <DoughnutChart class="my-chart" :seriesData="seriesData" :labelsData="labelsData"/>
       <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
       <div class="widget-container">
         <div class="widget-title">{{ widgetTitle }}</div>
         <div class="gender-container">
           <div class="male-icon"></div>
-          <div class="male-text">Male</div>
+          <div class="male-text">{{ Data1 }} ({{ seriesData[1] }})</div>
           <div class="female-icon"></div>
-          <div class="female-text">Female</div>
+          <div class="female-text">{{ Data2 }} ({{ seriesData[0] }})</div>
         </div>
         <div class="total-container">
           <div class="total-text">{{ totalText }}</div>
-          <button class="total-button">View List</button>
+          <!--<button class="total-button">View List</button>-->
         </div>
       </div>
     </div>
@@ -97,7 +111,7 @@ export default {
 
 .widget-title {
   font-weight: bold;
-  font-size: 22px;
+  font-size: 21px;
   margin-top: 0px; /* Adjust this value to move the title up/down */
   margin-left: 60px; /* Adjust this value to move the title left/right */
   color: #3c4043;
@@ -136,6 +150,7 @@ export default {
 .male-icon {
   margin-top: 7px;
   margin-left: 60px;
+  margin-right: 5px;
   width: 10px;
   height: 10px;
   background-color: #265492;
@@ -144,6 +159,7 @@ export default {
 .female-icon {
   margin-top: 7px;
   margin-left: 40px;
+  margin-right: 5px;
   width: 10px;
   height: 10px;
   background-color: #bf9039;
