@@ -117,7 +117,7 @@ export const enrollLearners = async (req, res, next) => {
       const isEnrolled = await classLevel.hasStudent(student);
 
       if (isEnrolled) {
-        const error = new Error("Student is already enrolled in this year class level.");
+        const error = new Error(`${student.lastName} is already enrolled in this year class level.`);
         error.statusCode = 400;
         throw error;
       }
