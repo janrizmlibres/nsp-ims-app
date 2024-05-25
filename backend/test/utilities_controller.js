@@ -7,10 +7,10 @@ import { resCopy, resetDb } from "./helpers.js";
 let res = { ...resCopy };
 
 describe("Utilities Controller", () => {
-//     before(async () => await resetDb());
-//     after(async () => await resetDb());
+    before(async () => await resetDb());
+    after(async () => await resetDb());
 
-//     beforeEach(() => (res = { ...resCopy }));
+    beforeEach(() => (res = { ...resCopy }));
 
     it("should add an academic term.", async () => {
         const req = {
