@@ -131,116 +131,160 @@ export async function injectStudent() {
     studentId: student2.id,
   });
 
-  // const studentData = [
-  //   {
-  //     lrn: 1242312145189,
-  //     lastName: "Dela Cruz",
-  //     firstName: "Juan",
-  //     category: "Out-of-School Youth",
-  //   },
-  //   {
-  //     lrn: 1242312145145,
-  //     lastName: "Bautista",
-  //     firstName: "Felix",
-  //     middleName: "Polso",
-  //     category: "Out-of-School Youth",
-  //   },
-  //   {
-  //     lastName: "Amidrano",
-  //     firstName: "Nicolette",
-  //     middleName: "Bucio",
-  //     category: "Out-of-School Youth",
-  //   },
-  //   {
-  //     lastName: "Fernandez",
-  //     firstName: "Hero",
-  //     middleName: "Baltazar",
-  //     category: "Out-of-School Youth",
-  //   },
-  //   {
-  //     lrn: 1242312145714,
-  //     lastName: "Santos",
-  //     firstName: "Dominic",
-  //     middleName: "Dicolano",
-  //     category: "Out-of-School Youth",
-  //   },
-  //   {
-  //     lrn: 1242562145189,
-  //     lastName: "Fulminar",
-  //     firstName: "Ashley",
-  //     middleName: "De Guzman",
-  //     category: "Out-of-School Youth",
-  //   },
-  //   {
-  //     lastName: "Quintos",
-  //     firstName: "Ariel",
-  //     middleName: "Furtonado",
-  //     category: "Out-of-School Youth",
-  //   },
-  //   {
-  //     lastName: "Hilot",
-  //     firstName: "Van",
-  //     middleName: "Culminares",
-  //     category: "Out-of-School Youth",
-  //   },
-  //   {
-  //     lrn: 1247192145189,
-  //     lastName: "Alonto",
-  //     firstName: "Princess Aliah",
-  //     category: "Out-of-School Youth",
-  //   },
-  //   {
-  //     lastName: "Montecillo",
-  //     firstName: "Dirk",
-  //     middleName: "Santocildis",
-  //     category: "Out-of-School Youth",
-  //   },
-  // ];
+  const student3 = await Student.create({
+    lrn: "987654321098765",
+    category: "Indigenous People",
+    firstName: "Maria",
+    lastName: "Gonzalez"
+  });
 
-  // await Promise.all(
-  //   studentData.map(async (student) => {
-  //     await Student.create(student);
-  //   })
-  // );
+  await PersonalInfo.create({
+    birthday: new Date("2005-10-20"),
+    bloodType: "AB+",
+    birthBarangay: "San Juan",
+    birthCity: "Manila",
+    birthProvince: "Metro Manila",
+    religion: "Roman Catholic",
+    sex: "F",
+    civilStatus: "Single",
+    homeBlkLtSt: "456 Sunshine Avenue",
+    homeBarangay: "Makati",
+    homeCity: "Makati City",
+    homeProvince: "Metro Manila",
+    studentId: student3.id,
+  });
 
-  function getRandomStatus() {
-    let status = ["Inactive", "Active", "Drop"];
-    return status[Math.floor(Math.random() * 2)];
-  }
+  await ContactInfo.create({
+    contactNum: "09187654321",
+    studentId: student3.id,
+  });
 
-  function getRegularity() {
-    let status = ["Regular", "Hybrid"];
-    return status[Math.floor(Math.random() * 2)];
-  }
+  await EmergencyPerson.create({
+    firstName: "Juan",
+    lastName: "Gonzalez",
+    contactNum: "09987654321",
+    relationship: "Father",
+    studentId: student3.id,
+  });
 
-  const students = await Student.findAll();
+  await PreviousSchool.create({
+    name: "San Juan Elementary School",
+    schoolType: "Public",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "2022-2023",
+    highestEducation: "Elementary education",
+    gradeStopped: "Grade 6",
+    reason: "Transferred",
+    street: "Sunset Boulevard",
+    barangay: "San Juan",
+    city: "Manila",
+    province: "Metro Manila",
+    studentId: student3.id,
+  });
 
-  await Promise.all(
-    students.map(async (student) => {
-      const class_levels = await ClassLevel.findAll();
-      await Promise.all(
-        class_levels.map(async (class_level) => {
-          const enrollment = await class_level.addStudent(student, {
-            through: {
-              hasEnrollmentForm: true,
-              status: getRandomStatus(),
-              regularity: getRegularity(),
-            },
-          });
+  const student4 = await Student.create({
+    lrn: "543210987654321",
+    category: "Child Laborer",
+    firstName: "Juan",
+    lastName: "Del Cruz",
+    photoUrl: "images/juan.jpg",
+  });
 
-          const classLearningStrands = await ClassLearningStrand.findAll({
-            where: { classLevelId: class_level.id },
-          });
+  await PersonalInfo.create({
+    birthday: new Date("2007-03-15"),
+    bloodType: "B+",
+    birthBarangay: "Tondo",
+    birthCity: "Manila",
+    birthProvince: "Metro Manila",
+    religion: "Roman Catholic",
+    sex: "M",
+    civilStatus: "Single",
+    homeBlkLtSt: "789 Moonlight Street",
+    homeBarangay: "Tondo",
+    homeCity: "Manila",
+    homeProvince: "Metro Manila",
+    studentId: student4.id,
+  });
 
-          await Promise.all(
-            classLearningStrands.map(async (classLearningStrand) => {
-              classLearningStrand.addEnrollment(enrollment);
-            })
-          );
-        })
-      );
-    })
-  );
+  await ContactInfo.create({
+    contactNum: "09123456789",
+    studentId: student4.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Maria",
+    lastName: "Del Cruz",
+    contactNum: "09987654321",
+    relationship: "Mother",
+    studentId: student4.id,
+  });
+
+  await PreviousSchool.create({
+    name: "Tondo Elementary School",
+    schoolType: "Public",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "2022-2023",
+    highestEducation: "Elementary education",
+    gradeStopped: "Grade 5",
+    reason: "Transferred",
+    street: "Sunrise Avenue",
+    barangay: "Tondo",
+    city: "Manila",
+    province: "Metro Manila",
+    studentId: student4.id,
+  });
+
+  const student5 = await Student.create({
+    lrn: "135792468013579",
+    category: "Street Children",
+    firstName: "Liza",
+    lastName: "Soberano",
+    photoUrl: "images/liza.jpg",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date("1997-01-04"),
+    bloodType: "O-",
+    birthBarangay: "Santa Mesa",
+    birthCity: "Manila",
+    birthProvince: "Metro Manila",
+    religion: "Roman Catholic",
+    sex: "F",
+    civilStatus: "Single",
+    homeBlkLtSt: "101 Starlight Avenue",
+    homeBarangay: "Santa Mesa",
+    homeCity: "Manila",
+    homeProvince: "Metro Manila",
+    studentId: student5.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09051234567",
+    studentId: student5.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "John",
+    lastName: "Doe",
+    contactNum: "09123456789",
+    relationship: "Guardian",
+    studentId: student5.id,
+  });
+
+  await PreviousSchool.create({
+    name: "Santa Mesa Elementary School",
+    schoolType: "Public",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "2022-2023",
+    highestEducation: "Elementary education",
+    gradeStopped: "Grade 4",
+    reason: "Transferred",
+    street: "Moonlight Avenue",
+    barangay: "Santa Mesa",
+    city: "Manila",
+    province: "Metro Manila",
+    studentId: student5.id,
+  });
 }
 
 export async function injectUser() {
