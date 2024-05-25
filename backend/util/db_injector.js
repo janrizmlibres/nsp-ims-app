@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 
-import ClassLevel from "../models/class/class_level.js"
-import ClassLearningStrand from "../models/class/class_learning_strand.js"
+import ClassLevel from "../models/class/class_level.js";
+import ClassLearningStrand from "../models/class/class_learning_strand.js";
 import Student from "../models/student/student.js";
 import User from "../models/user/user.js";
 import Term from "../models/term.js";
@@ -72,7 +72,6 @@ export async function injectStudent() {
     gradeStopped: "Grade 10",
     reason: "Sleeps anywhere",
     street: "Marigold St.",
-    barangay: "Balulang",
     city: "Cagayan de Oro City",
     province: "Misamis Oriental",
     studentId: student1.id,
@@ -123,7 +122,6 @@ export async function injectStudent() {
     gradeStopped: "Kindergarten",
     reason: "Graduated",
     street: "Mabini Street",
-    barangay: "Macabalan",
     city: "Cagayan de Oro City",
     province: "Misamis Oriental",
     studentId: student2.id,
@@ -133,13 +131,12 @@ export async function injectStudent() {
     lrn: "987654321098765",
     category: "Indigenous People",
     firstName: "Maria",
-    lastName: "Gonzalez"
+    lastName: "Gonzalez",
   });
 
   await PersonalInfo.create({
     birthday: new Date("2005-10-20"),
     bloodType: "AB+",
-    birthBarangay: "San Juan",
     birthCity: "Manila",
     birthProvince: "Metro Manila",
     religion: "Roman Catholic",
@@ -174,7 +171,6 @@ export async function injectStudent() {
     gradeStopped: "Grade 6",
     reason: "Transferred",
     street: "Sunset Boulevard",
-    barangay: "San Juan",
     city: "Manila",
     province: "Metro Manila",
     studentId: student3.id,
@@ -191,7 +187,6 @@ export async function injectStudent() {
   await PersonalInfo.create({
     birthday: new Date("2007-03-15"),
     bloodType: "B+",
-    birthBarangay: "Tondo",
     birthCity: "Manila",
     birthProvince: "Metro Manila",
     religion: "Roman Catholic",
@@ -226,7 +221,6 @@ export async function injectStudent() {
     gradeStopped: "Grade 5",
     reason: "Transferred",
     street: "Sunrise Avenue",
-    barangay: "Tondo",
     city: "Manila",
     province: "Metro Manila",
     studentId: student4.id,
@@ -243,7 +237,6 @@ export async function injectStudent() {
   await PersonalInfo.create({
     birthday: new Date("1997-01-04"),
     bloodType: "O-",
-    birthBarangay: "Santa Mesa",
     birthCity: "Manila",
     birthProvince: "Metro Manila",
     religion: "Roman Catholic",
@@ -278,7 +271,6 @@ export async function injectStudent() {
     gradeStopped: "Grade 4",
     reason: "Transferred",
     street: "Moonlight Avenue",
-    barangay: "Santa Mesa",
     city: "Manila",
     province: "Metro Manila",
     studentId: student5.id,
@@ -635,7 +627,9 @@ export async function injectStudentCategory() {
 function getRandomDate() {
   const start = new Date(2016, 0, 1); // Start date: January 1, 2016
   const end = new Date(); // End date: today
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
 }
 
 export async function injectEnrollment() {

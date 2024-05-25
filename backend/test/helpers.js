@@ -10,15 +10,3 @@ export async function resetDb() {
   await sequelize.sync({ force: true });
   await injectAll();
 }
-
-export const resCopy = {
-  statusCode: null,
-  body: null,
-  status: function (code) {
-    this.statusCode = code;
-    return this;
-  },
-  json: function (data) {
-    this.body = data;
-  },
-};

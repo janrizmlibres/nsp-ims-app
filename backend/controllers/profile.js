@@ -54,6 +54,7 @@ export async function getStudent(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
 
@@ -106,6 +107,7 @@ export async function addStudent(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
 
@@ -178,12 +180,13 @@ export async function updateStudent(req, res, next) {
       await parentalInfoInstance.update(parentalInfo);
     }
 
-    res.status(200).json({ message: "Student information updated!" });
+    res.status(200).json({ message: "Student information updated." });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
 
@@ -198,17 +201,21 @@ const clearImage = (filePath) => {
 export async function getGenderCount(_req, res, next) {
   try {
     const maleCount = await Student.count({
-      include: [{
-        model: PersonalInfo,
-        where: { sex: 'M' }
-      }]
+      include: [
+        {
+          model: PersonalInfo,
+          where: { sex: "M" },
+        },
+      ],
     });
 
     const femaleCount = await Student.count({
-      include: [{
-        model: PersonalInfo,
-        where: { sex: 'F' }
-      }]
+      include: [
+        {
+          model: PersonalInfo,
+          where: { sex: "F" },
+        },
+      ],
     });
 
     res.status(200).json({ maleCount, femaleCount });
