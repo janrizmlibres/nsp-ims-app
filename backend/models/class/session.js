@@ -1,4 +1,4 @@
-import { INTEGER, DATE, STRING } from "sequelize";
+import { INTEGER, DATE, TEXT } from "sequelize";
 import sequelize from "../../util/database.js";
 
 const Session = sequelize.define("session", {
@@ -12,7 +12,10 @@ const Session = sequelize.define("session", {
         type: DATE,
         allowNull: false,
     },
-    remarks: STRING
+    remarks: {
+        type: TEXT,
+        defaultValue: "",
+    }
 });
 
 export default Session;

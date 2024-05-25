@@ -2,35 +2,15 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Checkbox from 'primevue/checkbox';
-import { ref, watch } from 'vue';
+import { inject } from 'vue';
 
-const props = defineProps(['data'])
-
-const grades = ref([])
-
-watch(() => props.data, (data) => {
-    grades.value = []
-    for (const learningStrand of data) {
-        const temp = {
-            id: learningStrand.grades[0].id,
-            lsCode: learningStrand.learning_strand.code,
-            title: learningStrand.learning_strand.name,
-            first_quarter: learningStrand.grades[0].first_quarter,
-            second_quarter: learningStrand.grades[0].second_quarter,
-            third_quarter: learningStrand.grades[0].third_quarter,
-            fourth_quarter: learningStrand.grades[0].fourth_quarter,
-            remarks: learningStrand.grades[0].remarks,
-        }
-
-        grades.value.push(temp)
-    }
-})
+const studentGrades = inject('studentGrades')
 </script>
 
 <template>
     <div class="flex flex-col h-full w-full">
         <DataTable 
-            :value="grades" dataKey="id" scrollable style=" overflow: auto;"
+            :value="studentGrades" dataKey="id" scrollable style=" overflow: auto;"
             sortField="lsCode" :sortOrder="1" removableSort
         >
             <template #empty> <div class="text-center">No records found.</div> </template>

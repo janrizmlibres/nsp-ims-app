@@ -12,7 +12,7 @@ import PersonalInfo from "../models/student/personal_info.js";
 import Student from "../models/student/student.js";
 import Volunteer from "../models/volunteer/volunteer.js";
 
-export async function getAllLearningStrands(req, res, next) {
+export async function getClassSchedules(req, res, next) {
     const classId = req.params.classId;
 
     try {

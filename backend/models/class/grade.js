@@ -1,4 +1,4 @@
-import { BOOLEAN, INTEGER, STRING } from "sequelize";
+import { BOOLEAN, INTEGER, TEXT } from "sequelize";
 import sequelize from "../../util/database.js";
 import ClassLearningStrand from "./class_learning_strand.js";
 import Enrollment from "../enrollment.js";
@@ -40,7 +40,10 @@ const Grade = sequelize.define("grade", {
     type: BOOLEAN,
     defaultValue: false
   },
-  remarks: STRING,
+  remarks: {
+    type: TEXT,
+    defaultValue: ""
+  },
 });
 
 export default Grade;
