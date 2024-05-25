@@ -3,7 +3,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
@@ -12,48 +12,54 @@ const categoryStore = useUtilitiesStore()
 
 const name = ref(null);
 
+const isInvalid = computed(() => !name.value)
+
 async function addCategory() {
-    if (!name.value.trim()) {
-        toast.add({
-            severity: 'error',
-            summary: 'Incomplete Form',
-            detail: "The field cannot be empty. Please provide a student category.",
-            life: 3000
-        })
-        return
+    if (isInvalid.value) {
+        return;
     }
 
-    if (categoryStore.categories.some(category => category.category_name === name.value.trim())) {
-        toast.add({
-            severity: 'error',
-            summary: 'Duplicate Category',
-            detail: "Please provide a unique student category.",
-            life: 3000
-        })
-        return
-    }
+    try {  
+        if (!name.value.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "The field cannot be empty. Please provide a student category.",
+                life: 3000
+            })
+            return
+        }
 
-    if (name.value.trim().length > 100) {
-        toast.add({
-            severity: 'error',
-            summary: 'Category Too Long',
-            detail: 'The category should not exceed 100 characters.',
-            life: 3000
-        })
-        return
-    }
+        if (categoryStore.categories.some(category => category.category_name === name.value.trim())) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Category',
+                detail: "Please provide a unique student category.",
+                life: 3000
+            })
+            return
+        }
 
-    if (name.value.trim().length < 3) {
-        toast.add({
-            severity: 'error',
-            summary: 'Category Too Short',
-            detail: 'The category should be at least 3 characters.',
-            life: 3000
-        })
-        return
-    }
-    
-    try {
+        if (name.value.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Category Too Long',
+                detail: 'The category should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (name.value.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Category Too Short',
+                detail: 'The category should be at least 3 characters.',
+                life: 3000
+            })
+            return
+        }
+
         await categoryStore.addCategory({
             category_name: name.value.trim()
         })
@@ -70,7 +76,7 @@ async function addCategory() {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered. Please try again.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }
@@ -81,7 +87,7 @@ async function addCategory() {
 </script>
 
 <template>
-    <Dialog v-model:visible="categoryStore.visibleAddCategoryDialog" modal header="Create a Student Category" :style="{ width: '25rem' }">
+    <Dialog v-model:visible="categoryStore.visibleAddCategoryDialog" modal header="Create a Student Category" :style="{ width: '25rem' }" @keyup.enter="addCategory">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
             <label>Student Category</label>
@@ -92,6 +98,7 @@ async function addCategory() {
                 type="button"
                 label="Create"
                 icon="fa-solid fa-plus"
+                :disabled="isInvalid"
                 @click="addCategory"
                 :pt="{
                     root: ({ props, context, parent }) => ({

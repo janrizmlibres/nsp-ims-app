@@ -2,12 +2,12 @@
 import Enrollment from '../models/enrollment.js'
 import ClassLevel from "../models/class/class_level.js";
 import ClassLearningStrand from '../models/class/class_learning_strand.js'
-import ModuleSubmission from '../models/class/module_submission.js'
 import Session from '../models/class/session.js'
 import Module from '../models/class/module.js'
 import Student from '../models/student/student.js'
-import Grade from '../models/class/grade.js'
-import Attendance from '../models/class/attendance.js'
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
 
 /**
  * Retrieves all learners enrolled in a term.
@@ -53,7 +53,8 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
           term: currentTerm.academic_year,
           classLevelId: classLevel.id,
           enrollmentId: student.enrollment.id,
-          studentId: student.id
+          studentId: student.id,
+          enrollmentFormURL: student.enrollment.enrollmentFormURL
         };
       });
     });
@@ -90,69 +91,69 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
  * @param next - The next middleware function.
  * @returns {Promise<*>}
  */
-export const enrollLearner = async (req, res, next) => {
+export const enrollLearners = async (req, res, next) => {
   try {
-    //search for the Student ID from its lrn field
-    const student = await Student.findByPk(req.body.selectedStudentId)
-    
-    if (!student) {
-      const error = new Error("Student not found.");
-      error.statusCode = 404;
-      throw error;
-    }
-    
-    const classLevel = await ClassLevel.findByPk(
-      req.body.selectedSchoolLevelId
-    );
-    
-    if (!classLevel) {
-      const error = new Error("Class level not found.");
-      error.statusCode = 404;
-      throw error;
-    }
-    
-    // Check if student is already enrolled in the class level
-    const isEnrolled = await classLevel.hasStudent(student);
-    
-    if (isEnrolled) {
-      const error = new Error("Student is already enrolled in this year class level.");
-      error.statusCode = 400;
-      throw error;
-    }
-    
-    const enrollment = await classLevel.addStudent(student, {
-      through: {
-        hasEnrollmentForm: req.body.hasEnrollmentForm,
-        digital_literacy: req.body.digitalLiteracyScore,
-        ftl_pretest: req.body.fltPretestScore,
-        callable: req.body.callable,
-        bridger: req.body.bridger,
-        dateEnrolled: new Date(),
-        status: "Active",
-        regularity: req.body.selectedRegularity,
-        remarks: req.body.selectedRemarks,
+    let index = 0
+    for (let learner of req.body.learners) {
+      learner = JSON.parse(learner)
+      
+      const classLevel = await ClassLevel.findByPk(learner.selectedSchoolLevelId);
+
+      if (!classLevel) {
+        const error = new Error("Class level not found.");
+        error.statusCode = 404;
+        throw error;
       }
-    });
-    
-    const classLearningStrands = await ClassLearningStrand.findAll({
-      where: {classLevelId: req.body.selectedSchoolLevelId},
-      include: [Module, Session]
-    })
-    
-    classLearningStrands.map(classLearningStrand => {
-      classLearningStrand.addEnrollment(enrollment)
 
-      classLearningStrand.modules.map(module => {
-        module.addEnrollment(enrollment)
+      const student = await Student.findByPk(learner.studentId)
+
+      if (!student) {
+        const error = new Error("Student not found.");
+        error.statusCode = 404;
+        throw error;
+      }
+
+      // Check if student is already enrolled in the class level
+      const isEnrolled = await classLevel.hasStudent(student);
+
+      if (isEnrolled) {
+        const error = new Error("Student is already enrolled in this year class level.");
+        error.statusCode = 400;
+        throw error;
+      }
+
+      const enrollment = await classLevel.addStudent(student, {
+        through: {
+          ftl_pretest: learner.fltPretestScore,
+          dateEnrolled: new Date(),
+          status: "Active",
+          regularity: learner.selectedRegularity,
+          remarks: learner.selectedRemarks,
+          enrollmentFormURL: req.files[index] && req.files[index].path.replace("\\", "/")
+        }
+      });
+      index += 1
+
+      const classLearningStrands = await ClassLearningStrand.findAll({
+        where: {classLevelId: learner.selectedSchoolLevelId},
+        include: [Module, Session]
       })
 
-      classLearningStrand.sessions.map(session => {
-        session.addEnrollment(enrollment)
+      classLearningStrands.map(classLearningStrand => {
+        classLearningStrand.addEnrollment(enrollment)
+
+        classLearningStrand.modules.map(module => {
+          module.addEnrollment(enrollment)
+        })
+
+        classLearningStrand.sessions.map(session => {
+          session.addEnrollment(enrollment)
+        })
       })
-    })
-    
-    res.status(201).json({ 
-      message: 'Enrolled learner successfully!' 
+    }
+
+    res.status(201).json({
+      message: 'Enrolled learners successfully!'
     });
 
   } catch (error) {
@@ -168,14 +169,24 @@ export const updateEnrollment = async (req, res, next) => {
   try {
     const enrollment = await Enrollment.findByPk(req.params.enrollmentId)
     
+    const enrollmentFormURL = req.files[0]
+      ? req.files[0].path.replace("\\", "/")
+      : req.body.enrollmentForm;
+    
+    console.log("Files ", enrollmentFormURL)
+
+    if (enrollmentFormURL !== enrollment.enrollmentFormURL) {
+      clearEnrollmentForm(enrollment.enrollmentFormURL);
+      req.body.enrollmentForm = enrollmentFormURL;
+    }
+    
+    console.log("Enrollmnet Form: ", req.body.enrollmentForm)
+    
     await enrollment.update({ 
-      hasEnrollmentForm: req.body.hasEnrollmentForm,
-      digital_literacy: req.body.digitalLiteracyScore,
       ftl_pretest: req.body.fltPretestScore,
-      callable: req.body.callable,
-      bridger: req.body.bridger,
       regularity: req.body.selectedRegularity.code,
       remarks: req.body.selectedRemarks, 
+      enrollmentFormURL: req.body.enrollmentForm
     })
     
     res.status(201).json({ 
@@ -254,118 +265,10 @@ export const changeEnrollmentStatus = async (req, res, next) => {
   }
 }
 
-export const getEnrolledModules = async (req, res, next) => {
-  try {
-    const classLearningStrand = await ClassLearningStrand.findOne({
-      where: { id: req.params.classLearningStrandId },
-      include: [
-        {
-          model: Module,
-          include: [
-            {
-              model: ModuleSubmission,
-              where: { enrollmentId: req.params.enrollmentId }
-            }
-          ]
-        }
-      ]
-    });
-    
-    if (!classLearningStrand) {
-      const error = new Error("No enrolled modules found.");
-      error.statusCode = 404;
-      throw error;
-    }
-    
-    const modules = classLearningStrand.modules.map(module => {
-      return {
-        title: module.title,
-        status: module.module_submissions[0].status,
-        remarks: module.module_submissions[0].remarks,
-        dateSubmitted: module.module_submissions[0].date_submitted,
-        distributionDate: module.distribution_date
-      };
-    });
-    
-    res.status(200).json({
-      message: 'Fetched enrolled modules successfully!',
-      modules: modules
-    });
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-    return error;
-  }
-}
+const clearEnrollmentForm = (filePath) => {
+  if (!filePath) return;
 
-export const getEnrolledGrades = async (req, res, next) => {
-  try {
-    const grade = await Grade.findOne({
-      where: { enrollmentId: req.params.enrollmentId, classLearningStrandId: req.params.classLearningStrandId }
-    });
-    
-    const grades = [
-      {
-        firstQuarter: grade.first_quarter,
-        secondQuarter: grade.second_quarter,
-        thirdQuarter: grade.third_quarter,
-        fourthQuarter: grade.fourth_quarter,
-        remarks: grade.remarks
-      }
-    ]
-    
-    res.status(200).json({
-      message: 'Fetched enrolled grades successfully!',
-      grades: grades
-    });
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-    return error;
-  }
-}
-
-export const getEnrolledAttendance = async (req, res, next) => {
-  try {
-    const classLearningStrand = await ClassLearningStrand.findOne({
-      where: { id: req.params.classLearningStrandId },
-      include: [
-        {
-          model: Session,
-          include: [
-            {
-              model: Attendance,
-              where: { enrollmentId: req.params.enrollmentId }
-            }
-          ]
-        }
-      ]
-    });
-    
-    const attendance = classLearningStrand.sessions.map(session => {
-      return {
-        sessionDate: session.date,
-        status: session.attendances[0].status,
-        remarks: session.attendances[0].remarks
-      };
-    });
-
-    console.log(attendance)
-
-    res.status(200).json({
-      message: 'Fetched enrolled modules successfully!',
-      attendance: attendance
-    });
-    
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-    return error;
-  }
-}
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  filePath = path.join(__dirname, "..", filePath);
+  fs.unlink(filePath, (err) => console.log(err));
+};

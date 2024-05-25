@@ -3,7 +3,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import Calendar from 'primevue/calendar';
 import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
@@ -12,50 +12,52 @@ const termStore = useUtilitiesStore()
 
 const dates = ref(null);
 
+const isInvalid = computed(() => !dates.value || Object.values(dates.value).some((element) => element === null))
+
 async function addTerm() {
-    if (Object.values(dates.value).some((element) => element === null) ) {
-        toast.add({
-            severity: 'error',
-            summary: 'Incomplete Form',
-            detail: "Please fill up the date range field.",
-            life: 3000
-        })
-        return
-    }
-    
-    const term = termStore.terms.find(term => term.academic_year === dates.value[0].getFullYear() + '-' + dates.value[1].getFullYear());
-    if (term) {
-        toast.add({
-            severity: 'error',
-            summary: 'Duplicate Academic Term',
-            detail: 'An Academic Term already exists.',
-            life: 3000
-        })
-        return
-    }
+    try {        
+        if (Object.values(dates.value).some((element) => element === null) ) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "Please fill up the date range field.",
+                life: 3000
+            })
+            return
+        }
+        
+        const term = termStore.terms.find(term => term.academic_year === dates.value[0].getFullYear() + '-' + dates.value[1].getFullYear());
+        if (term) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Academic Term',
+                detail: 'An Academic Term already exists.',
+                life: 3000
+            })
+            return
+        }
 
-    if (dates.value[1].getFullYear() - dates.value[0].getFullYear() !== 1) {
-        toast.add({
-            severity: 'error',
-            summary: 'Invalid Date Range',
-            detail: 'The start and end dates must be exactly one year apart.',
-            life: 3000
-        })
-        return
-    }
-    
-    if (dates.value[0] > dates.value[1]) {
-        toast.add({
-            severity: 'error',
-            summary: 'Invalid Date Range',
-            detail: 'The start date cannot be later than the end date.',
-            life: 3000
-        })
-        return
-    }
+        if (dates.value[1].getFullYear() - dates.value[0].getFullYear() !== 1) {
+            toast.add({
+                severity: 'error',
+                summary: 'Invalid Date Range',
+                detail: 'The start and end dates must be exactly one year apart.',
+                life: 3000
+            })
+            return
+        }
 
-    const range = ref([])
-    try {
+        if (dates.value[0] > dates.value[1]) {
+            toast.add({
+                severity: 'error',
+                summary: 'Invalid Date Range',
+                detail: 'The start date cannot be later than the end date.',
+                life: 3000
+            })
+            return
+        }
+
+        const range = ref([])
         for (let date of dates.value) {
             const offset = date.getTimezoneOffset()
             date = new Date(date.getTime() - (offset*60*1000))
@@ -80,7 +82,7 @@ async function addTerm() {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered. Please try again.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }
@@ -104,6 +106,7 @@ async function addTerm() {
                 type="button"
                 label="Create"
                 icon="fa-solid fa-plus"
+                :disabled="isInvalid"
                 @click="addTerm"
                 :pt="{
                     root: ({ props, context, parent }) => ({

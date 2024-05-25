@@ -28,26 +28,6 @@ const Permission = sequelize.define("permission", {
     allowNull: false,
     defaultValue: false,
   },
-  canMgTerm: {
-    type: BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  },
-  canMgLs: {
-    type: BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  },
-  canMgStudReq: {
-    type: BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  },
-  canMgStudCat: {
-    type: BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  },
   canMgUser: {
     type: BOOLEAN,
     allowNull: false,

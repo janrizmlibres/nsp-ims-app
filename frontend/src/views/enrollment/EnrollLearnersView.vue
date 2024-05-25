@@ -34,10 +34,8 @@ getActiveStudents()
 
 <template>
   <ContentPane header="Enrollment" :subheader="'Academic Year ' + currentTerm.academic_year">
-    <div class="h-full flex justify-center bg-white rounded-md shadow-xl p-2 px-4">
-      <div class="flex flex-col w-full">
-        <EnrollmentForm class="h-fit mt-10"/>
-      </div>
+    <div class="h-full overflow-auto flex justify-center bg-white rounded-md shadow-xl p-2 px-4">
+      <EnrollmentForm class="h-fit mt-10"/>
     </div>
   </ContentPane>
 </template>

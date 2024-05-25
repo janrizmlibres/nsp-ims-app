@@ -113,8 +113,9 @@ onMounted(() => {
   <div class="grid grid-cols-2">
     <div class="px-8">
       <div class="grid grid-cols-4 gap-3">
-        <div class="flex items-center justify-end pr-6">
-          <span>Sex</span>
+        <div class="flex gap-1 items-center justify-end pr-6">
+          <div>Sex</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
 
         <div class="col-span-3 grid grid-cols-3 gap-6">
@@ -142,8 +143,9 @@ onMounted(() => {
           />
         </div>
 
-        <div class="flex items-center justify-end pr-6">
-          <span>Civil Status</span>
+        <div class="flex gap-1 items-center justify-end pr-6">
+          <div>Civil Status</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
           class="h-10 col-span-3"
@@ -155,8 +157,9 @@ onMounted(() => {
           :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end pr-6">
-          <span>Date of Birth</span>
+        <div class="flex gap-1 items-center text-right justify-end pr-6">
+          <div>Date of Birth</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <div class="col-span-3 grid grid-cols-12 gap-3">
           <Dropdown
@@ -194,8 +197,9 @@ onMounted(() => {
           />
         </div>
 
-        <div class="flex items-center justify-end pr-6">
-          <span>Place of Birth</span>
+        <div class="flex gap-1 items-center text-right justify-end pr-6">
+          <div>Place of Birth</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <InputText
           class="h-10 col-span-3"
@@ -246,8 +250,9 @@ onMounted(() => {
           :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end pr-6">
-          <span>Address</span>
+        <div class="flex gap-1 items-center justify-end pr-6">
+          <div>Address</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <InputText
           v-for="(value, key) of address"

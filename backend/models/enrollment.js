@@ -32,7 +32,8 @@ const Enrollment = sequelize.define('enrollment', {
     dateEnrolled: DATE,
     status: STRING,
     regularity: STRING,
-    remarks: TEXT
+    remarks: TEXT,
+    enrollmentFormURL: STRING
 });
 
 export default Enrollment;
