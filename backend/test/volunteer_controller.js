@@ -1,7 +1,6 @@
 import { assert } from "sinon";
 import sinon from "sinon";
 import * as volunteerController from "../controllers/volunteer.js";
-import { mockRequest, mockResponse } from "mock-req-res";
 import Volunteer from "../models/volunteer/volunteer.js";
 import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
 import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";

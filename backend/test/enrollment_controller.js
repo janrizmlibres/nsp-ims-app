@@ -1,7 +1,6 @@
 ﻿import { expect } from "chai";
 import * as enrollmentController from "../controllers/enrollment.js";
-import * as termController from "../controllers/term.js";
-import { resCopy, resetDb } from "./helpers.js";
+import { resetDb } from "./helpers.js";
 
 let res = null
 
@@ -37,7 +36,7 @@ describe("Enrollment Controller", () => {
           }),
         ],
       },
-      files: [/* Include the enrollmentForm file here */],
+      files: [],
     };
     
     await enrollmentController.enrollLearners(req, res, () => {});
