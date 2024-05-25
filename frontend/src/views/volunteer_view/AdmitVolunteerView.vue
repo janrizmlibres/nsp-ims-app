@@ -141,6 +141,7 @@ function findUpdatedAttributes(oldObj, newObj, prefix = '') {
 
   for (let key in oldObj) {
     if (key === 'updatedAt') continue; // Skip updatedAt fields
+    if (key === 'birthday') continue; // Skip updatedAt fields
 
     if (oldObj[key] instanceof Object && newObj[key]) {
       let nestedUpdates = findUpdatedAttributes(oldObj[key], newObj[key], `${prefix}${key}.`);
