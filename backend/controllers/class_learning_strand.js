@@ -358,7 +358,10 @@ export async function getSession(req, res, next) {
                 {model: Session, 
                     where: {'$sessions.id$': sessionId}
                 }, 
-                LearningStrand
+                LearningStrand, 
+                {model: ClassLevel,
+                    include: [Term]
+                }
             ]
         })
         
