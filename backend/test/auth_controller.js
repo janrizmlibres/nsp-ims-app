@@ -7,7 +7,7 @@ import { resetDb } from "./helpers.js";
 
 let res = null;
 
-describe.skip("Auth Controller", () => {
+describe("Auth Controller", () => {
   before(async () => await resetDb());
   after(async () => await resetDb());
 
@@ -84,6 +84,7 @@ describe.skip("Auth Controller", () => {
         position: "Overlord",
         email: "test@test.com",
         contactNum: "09123456789",
+        accessLevel: 2,
       },
     };
 
