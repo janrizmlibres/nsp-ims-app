@@ -169,20 +169,28 @@ export const updateEnrollment = async (req, res, next) => {
   try {
     const enrollment = await Enrollment.findByPk(req.params.enrollmentId)
     
-    const enrollmentFormURL = req.files[0]
-      ? req.files[0].path.replace("\\", "/")
-      : req.body.enrollmentForm;
-    
-    if (enrollmentFormURL !== enrollment.enrollmentFormURL) {
-      clearEnrollmentForm(enrollment.enrollmentFormURL);
-      req.body.enrollmentForm = enrollmentFormURL;
+    if (req.files[0]) {
+      const enrollmentFormURL = req.files[0]
+        ? req.files[0].path.replace("\\", "/")
+        : req.body.enrollmentForm;
+
+      if (enrollmentFormURL !== enrollment.enrollmentFormURL) {
+        clearEnrollmentForm(enrollment.enrollmentFormURL);
+        req.body.enrollmentForm = enrollmentFormURL;
+      }
+
+      console.log("Enrollment Form: " + req.body.enrollmentForm)
+      console.log("Enrollment Form URL: " + req.files[0])
+
+      await enrollment.update({
+        enrollmentFormURL: req.body.enrollmentForm
+      })
     }
     
-    await enrollment.update({ 
+    await enrollment.update({
       ftl_pretest: req.body.fltPretestScore,
       regularity: req.body.selectedRegularity.code,
-      remarks: req.body.selectedRemarks, 
-      enrollmentFormURL: req.body.enrollmentForm
+      remarks: req.body.selectedRemarks,
     })
     
     res.status(201).json({ 
