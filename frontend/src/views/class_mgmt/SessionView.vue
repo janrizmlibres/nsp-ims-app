@@ -17,34 +17,57 @@ const toast = useToast()
 const classLearningStrandStore = useClassLearningStrandStore()
 const session = ref()
 const date = ref()
-const attendances = ref()
+const regular = ref()
+const hybrid = ref()
+const drop = ref()
 const strand = ref()
+const learningStrand = ref()
+const term = ref()
+const classLevel = ref()
+const isFetching = ref(false)
 
-provide('attendances', attendances)
+provide('regular', regular)
+provide('hybrid', hybrid)
+provide('drop', drop)
+provide('term', term)
+provide('classLevel', classLevel)
+provide('learningStrand', learningStrand)
+provide('session', session)
 provide('updateAttendanceTable', updateAttendanceTable)
+provide('isFetching', isFetching)
 
-function updateAttendanceTable(data) {
-    session.value = data.session
-    attendances.value = data.attendances
-    date.value = new Date(session.value.date).toDateString()
+function updateAttendanceTable() {
+    try {
+        isFetching.value = true
+
+        classLearningStrandStore.getSession(route.query.id).then((data) => {
+            console.log(data);
+            learningStrand.value = data.classLearningStrand.learning_strand
+            term.value = data.classLearningStrand.class_level.term
+            classLevel.value = data.classLearningStrand.class_level
+            session.value = data.session
+            regular.value = data.attendances.regular
+            hybrid.value = data.attendances.hybrid
+            drop.value = data.attendances.drop
+            date.value = new Date(session.value.date).toDateString()
+            strand.value = data.classLearningStrand.learning_strand.name
+
+            isFetching.value = false
+        })
+    } catch (error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: "Unexpected error encountered!",
+            life: 3000
+        })
+    }
 }
 
-watch(() => route.query, (query) => {
+watch(() => route.query, () => {
     if (route.name === 'session-info') {
-        try {
-            classLearningStrandStore.getSession(query.id).then((data) => {
-                updateAttendanceTable(data)
-                strand.value = data.classLearningStrand.learning_strand.name
-            })
-        } catch (error) {
-            console.log(error);
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: "Unexpected error encountered!",
-                life: 3000
-            })
-        }
+        updateAttendanceTable()
     }
 }, {immediate: true})
 </script>

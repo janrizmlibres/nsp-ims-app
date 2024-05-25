@@ -6,6 +6,7 @@ import Button from 'primevue/button';
 import InputSwitch from 'primevue/inputswitch';
 import Textarea from 'primevue/textarea';
 import Tag from 'primevue/tag';
+import ProgressSpinner from 'primevue/progressspinner';
 import { inject, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
@@ -13,8 +14,10 @@ import { useConfirm } from 'primevue/useconfirm';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand'
+import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
+const usersStore = useUsersStore()
 
 const route = useRoute()
 const toast = useToast()
@@ -24,7 +27,10 @@ const router = useRouter()
 const props = defineProps(['modelValue', 'disableEdit'])
 
 const filters = inject('filters')
-const isFetching = ref(false)
+const isFetching = inject('isFetching')
+const learningStrand = inject('learningStrand')
+const classLevel = inject('classLevel')
+const term = inject('term')
 const learners = ref([])
 const noChanges = ref(true)
 const startingData = []
@@ -40,7 +46,6 @@ watch(() => JSON.stringify(learners.value), () => {
 }, {immediate: true})
 
 watch(() => props.modelValue, (data) => {
-    isFetching.value = true
     learners.value.length = 0
     startingData.length = 0
 
@@ -63,11 +68,7 @@ watch(() => props.modelValue, (data) => {
             noChanges.value = false
         })
     }
-
-    isFetching.value = false
-  },
-  { immediate: true }
-)
+})
 
 const getStatusLabel = (status) => {
   switch (status) {
@@ -84,49 +85,60 @@ const getStatusLabel = (status) => {
 
 async function updateAttendances() {
     try {
-        await classLearningStrandStore.updateAttendances({ updatedData: Array.from(updatedData) })
-        classLearningStrandStore.getSession(route.query.id).then((data) => {
-            onEdit(data)
+        await classLearningStrandStore.updateAttendances({ updatedData: Array.from(updatedData) }).then(async (message) => {
+          toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: message,
+            life: 5000
+          })
+
+          try {
+              for (const attendance of Array.from(updatedData)) {
+                  await usersStore.addAudit(
+                      `Updated: Attendance of ${attendance.firstName} ${attendance.lastName} to ${attendance.status ? 'present' : 'absent'} in ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                  )
+              }
+          } catch(error) {
+              console.log(error);
+          }
+
+          onEdit()
+          
+          noChanges.value = true
+          changeMode()
         })
-
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Updated Grades Successfully',
-      life: 5000
-    })
-
-    noChanges.value = true
-    changeMode()
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
-    })
-  }
+      } catch (error) {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.response.data.message,
+          life: 3000
+        })
+      }
 }
 
 function resetData() {
-  confirm.require({
-    message: 'Do you really want to discard the unsaved changes?',
-    header: 'Redirect Confirmation',
-    accept: async () => {
-      learners.value = structuredClone(startingData)
-      updatedData.clear()
+  if (!disableSave.value) {
+    confirm.require({
+      message: 'Do you really want to discard the unsaved changes?',
+      header: 'Redirect Confirmation',
+      accept: async () => {
+        learners.value = structuredClone(startingData)
+        updatedData.clear()
 
-            for (const datum of learners.value) {
-                watch(datum, (newData) => {
-                    updatedData.add(newData)
-                    noChanges.value = false
-                })
-            }
+              for (const datum of learners.value) {
+                  watch(datum, (newData) => {
+                      updatedData.add(newData)
+                      noChanges.value = false
+                  })
+              }
 
-      noChanges.value = true
-      changeMode()
-    }
-  })
+        noChanges.value = true
+        changeMode()
+      }
+    })
+  } 
 }
 
 function changeMode() {
@@ -160,14 +172,12 @@ onBeforeRouteLeave((to) => {
       style="overflow: auto"
       sortField="lastName"
       :sortOrder="1"
-      removableSort
+      removableSort :loading="isFetching"
       v-model:filters="filters"
       :users="['lastName', 'firstName', 'status', 'remarks']"
     >
       <template #empty> <div class="text-center">No records found.</div> </template>
-      <template #loading>
-        <div class="text-center">Loading class records. Please wait.</div>
-      </template>
+      <template #loading> <ProgressSpinner class="flex justify-center" /> </template>
 
             <Column field="lastName" header="Last Name" frozen sortable />
             <Column field="firstName" header="First Name" frozen sortable />

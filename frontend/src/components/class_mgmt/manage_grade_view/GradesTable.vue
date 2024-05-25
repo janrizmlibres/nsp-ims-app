@@ -12,11 +12,9 @@ import { useConfirm } from 'primevue/useconfirm';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useClassStore } from '@/stores/class';
 import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
-const classStore = useClassStore()
 const usersStore = useUsersStore()
 
 const toast = useToast()
@@ -71,7 +69,6 @@ watch(() => props.modelValue, (data) => {
         
         watch(grades.value[len - 1], (newData) => {
             updatedData.add(newData)
-            classStore.leave = disableSave.value
             noChanges.value = false
         })
     }
@@ -125,7 +122,6 @@ function resetData() {
                 for (const grade of grades.value) {
                     watch(grade, (newData) => {
                         updatedData.add(newData)
-                        classStore.leave = disableSave.value
                         noChanges.value = false
                     })
                 }
@@ -138,7 +134,6 @@ function resetData() {
 }
 
 function changeMode() {
-    classStore.leave = disableSave.value
     edit.value = !edit.value
 }
 </script>
