@@ -3,7 +3,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import { useToast } from 'primevue/usetoast';
-import { ref } from 'vue';
+import { computed, ref } from 'vue'
 
 import { useUtilitiesStore } from '@/stores/utilities';
 
@@ -12,48 +12,54 @@ const requirementStore = useUtilitiesStore()
 
 const name = ref(null);
 
+const isInvalid = computed(() => !name.value)
+
 async function addRequirement() {
-    if (!name.value.trim()) {
-        toast.add({
-            severity: 'error',
-            summary: 'Incomplete Form',
-            detail: "The field cannot be empty. Please provide a student requirement.",
-            life: 3000
-        })
-        return
-    }
-
-    if (requirementStore.requirements.some(requirement => requirement.requirement_name === name.value.trim())) {
-        toast.add({
-            severity: 'error',
-            summary: 'Duplicate Requirement',
-            detail: "Please provide a unique student requirement.",
-            life: 3000
-        })
-        return
-    }
-
-    if (name.value.trim().length > 100) {
-        toast.add({
-            severity: 'error',
-            summary: 'Requirement Too Long',
-            detail: 'The requirement should not exceed 100 characters.',
-            life: 3000
-        })
-        return
-    }
-
-    if (name.value.trim().length < 3) {
-        toast.add({
-            severity: 'error',
-            summary: 'Requirement Too Short',
-            detail: 'The requirement should be at least 3 characters.',
-            life: 3000
-        })
-        return
+    if (isInvalid.value) {
+        return;
     }
     
-    try {
+    try {  
+        if (!name.value.trim()) {
+            toast.add({
+                severity: 'error',
+                summary: 'Incomplete Form',
+                detail: "The field cannot be empty. Please provide a student requirement.",
+                life: 3000
+            })
+            return
+        }
+
+        if (requirementStore.requirements.some(requirement => requirement.requirement_name === name.value.trim())) {
+            toast.add({
+                severity: 'error',
+                summary: 'Duplicate Requirement',
+                detail: "Please provide a unique student requirement.",
+                life: 3000
+            })
+            return
+        }
+
+        if (name.value.trim().length > 100) {
+            toast.add({
+                severity: 'error',
+                summary: 'Requirement Too Long',
+                detail: 'The requirement should not exceed 100 characters.',
+                life: 3000
+            })
+            return
+        }
+
+        if (name.value.trim().length < 3) {
+            toast.add({
+                severity: 'error',
+                summary: 'Requirement Too Short',
+                detail: 'The requirement should be at least 3 characters.',
+                life: 3000
+            })
+            return
+        }
+
         await requirementStore.addRequirement({
             requirement_name: name.value.trim()
         })
@@ -70,7 +76,7 @@ async function addRequirement() {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered. Please try again.',
+            detail: 'Unexpected error encountered. Please refresh this page.',
             life: 3000
         })
     }
@@ -81,7 +87,7 @@ async function addRequirement() {
 </script>
 
 <template>
-    <Dialog v-model:visible="requirementStore.visibleAddRequirementDialog" modal header="Create a Student Requirement" :style="{ width: '25rem' }">
+    <Dialog v-model:visible="requirementStore.visibleAddRequirementDialog" modal header="Create a Student Requirement" :style="{ width: '25rem' }" @keyup.enter="addRequirement">
         <span class="p-text-secondary block mb-5">Fill up necessary information.</span>
         <div class="flex flex-col mb-4">
             <label>Student Requirement</label>
@@ -92,6 +98,7 @@ async function addRequirement() {
                 type="button"
                 label="Create"
                 icon="fa-solid fa-plus"
+                :disabled="isInvalid"
                 @click="addRequirement"
                 :pt="{
                     root: ({ props, context, parent }) => ({

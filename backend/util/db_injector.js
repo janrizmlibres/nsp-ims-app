@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs";
 
+import ClassLevel from "../models/class/class_level.js";
+import ClassLearningStrand from "../models/class/class_learning_strand.js";
 import Student from "../models/student/student.js";
 import User from "../models/user/user.js";
 import Term from "../models/term.js";
@@ -11,6 +13,7 @@ import PersonalInfo from "../models/student/personal_info.js";
 import ContactInfo from "../models/student/contact_info.js";
 import EmergencyPerson from "../models/student/emergency_person.js";
 import PreviousSchool from "../models/student/previous_school.js";
+import Enrollment from "../models/enrollment.js";
 
 export async function injectAll() {
   await injectUser();
@@ -20,6 +23,7 @@ export async function injectAll() {
   await injectVolunteer();
   await injectStudentRequirement();
   await injectStudentCategory();
+  await injectEnrollment();
 }
 
 export async function injectStudent() {
@@ -32,9 +36,8 @@ export async function injectStudent() {
   });
 
   await PersonalInfo.create({
-    birthday: new Date(),
+    birthday: new Date(2020, 4, 2),
     bloodType: "O+",
-    birthBarangay: "Iponan",
     birthCity: "New York City",
     birthProvince: "Misamis Oriental",
     religion: "Roman Catholic",
@@ -69,7 +72,6 @@ export async function injectStudent() {
     gradeStopped: "Grade 10",
     reason: "Sleeps anywhere",
     street: "Marigold St.",
-    barangay: "Balulang",
     city: "Cagayan de Oro City",
     province: "Misamis Oriental",
     studentId: student1.id,
@@ -86,7 +88,6 @@ export async function injectStudent() {
   await PersonalInfo.create({
     birthday: new Date("1998-05-14"),
     bloodType: "A-",
-    birthBarangay: "Carmen",
     birthCity: "Cagayan de Oro City",
     birthProvince: "Misamis Oriental",
     religion: "Islam",
@@ -121,10 +122,158 @@ export async function injectStudent() {
     gradeStopped: "Kindergarten",
     reason: "Graduated",
     street: "Mabini Street",
-    barangay: "Macabalan",
     city: "Cagayan de Oro City",
     province: "Misamis Oriental",
     studentId: student2.id,
+  });
+
+  const student3 = await Student.create({
+    lrn: "987654321098765",
+    category: "Indigenous People",
+    firstName: "Maria",
+    lastName: "Gonzalez",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date("2005-10-20"),
+    bloodType: "AB+",
+    birthCity: "Manila",
+    birthProvince: "Metro Manila",
+    religion: "Roman Catholic",
+    sex: "F",
+    civilStatus: "Single",
+    homeBlkLtSt: "456 Sunshine Avenue",
+    homeBarangay: "Makati",
+    homeCity: "Makati City",
+    homeProvince: "Metro Manila",
+    studentId: student3.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09187654321",
+    studentId: student3.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Juan",
+    lastName: "Gonzalez",
+    contactNum: "09987654321",
+    relationship: "Father",
+    studentId: student3.id,
+  });
+
+  await PreviousSchool.create({
+    name: "San Juan Elementary School",
+    schoolType: "Public",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "2022-2023",
+    highestEducation: "Elementary education",
+    gradeStopped: "Grade 6",
+    reason: "Transferred",
+    street: "Sunset Boulevard",
+    city: "Manila",
+    province: "Metro Manila",
+    studentId: student3.id,
+  });
+
+  const student4 = await Student.create({
+    lrn: "543210987654321",
+    category: "Child Laborer",
+    firstName: "Juan",
+    lastName: "Del Cruz",
+    photoUrl: "images/juan.jpg",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date("2007-03-15"),
+    bloodType: "B+",
+    birthCity: "Manila",
+    birthProvince: "Metro Manila",
+    religion: "Roman Catholic",
+    sex: "M",
+    civilStatus: "Single",
+    homeBlkLtSt: "789 Moonlight Street",
+    homeBarangay: "Tondo",
+    homeCity: "Manila",
+    homeProvince: "Metro Manila",
+    studentId: student4.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09123456789",
+    studentId: student4.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "Maria",
+    lastName: "Del Cruz",
+    contactNum: "09987654321",
+    relationship: "Mother",
+    studentId: student4.id,
+  });
+
+  await PreviousSchool.create({
+    name: "Tondo Elementary School",
+    schoolType: "Public",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "2022-2023",
+    highestEducation: "Elementary education",
+    gradeStopped: "Grade 5",
+    reason: "Transferred",
+    street: "Sunrise Avenue",
+    city: "Manila",
+    province: "Metro Manila",
+    studentId: student4.id,
+  });
+
+  const student5 = await Student.create({
+    lrn: "135792468013579",
+    category: "Street Children",
+    firstName: "Liza",
+    lastName: "Soberano",
+    photoUrl: "images/liza.jpg",
+  });
+
+  await PersonalInfo.create({
+    birthday: new Date("1997-01-04"),
+    bloodType: "O-",
+    birthCity: "Manila",
+    birthProvince: "Metro Manila",
+    religion: "Roman Catholic",
+    sex: "F",
+    civilStatus: "Single",
+    homeBlkLtSt: "101 Starlight Avenue",
+    homeBarangay: "Santa Mesa",
+    homeCity: "Manila",
+    homeProvince: "Metro Manila",
+    studentId: student5.id,
+  });
+
+  await ContactInfo.create({
+    contactNum: "09051234567",
+    studentId: student5.id,
+  });
+
+  await EmergencyPerson.create({
+    firstName: "John",
+    lastName: "Doe",
+    contactNum: "09123456789",
+    relationship: "Guardian",
+    studentId: student5.id,
+  });
+
+  await PreviousSchool.create({
+    name: "Santa Mesa Elementary School",
+    schoolType: "Public",
+    schoolAffiliation: "Non-Sectarian",
+    lastSyAttended: "2022-2023",
+    highestEducation: "Elementary education",
+    gradeStopped: "Grade 4",
+    reason: "Transferred",
+    street: "Moonlight Avenue",
+    city: "Manila",
+    province: "Metro Manila",
+    studentId: student5.id,
   });
 }
 
@@ -475,10 +624,59 @@ export async function injectStudentCategory() {
   );
 }
 
+function getRandomDate() {
+  const start = new Date(2016, 0, 1); // Start date: January 1, 2016
+  const end = new Date(); // End date: today
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  );
+}
+
+export async function injectEnrollment() {
+  const enrollmentData = [
+    {
+      studentId: "1",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    {
+      studentId: "2",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Inactive",
+    },
+    {
+      studentId: "3",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    {
+      studentId: "4",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    {
+      studentId: "5",
+      classLevelId: "1",
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    // Add more enrollment data here...
+  ];
+
+  await Promise.all(
+    enrollmentData.map(async (enrollment) => {
+      await Enrollment.create(enrollment);
+    })
+  );
+}
+
 export async function injectVolunteer() {
   const volunteerData = [
     {
-      volunteerId: 1,
       affiliation: "Student",
       lastName: "Dela Cruz",
       firstName: "Shelly",
@@ -486,13 +684,11 @@ export async function injectVolunteer() {
       suffix: "Jr.",
     },
     {
-      volunteerId: 2,
       affiliation: "Student",
       lastName: "Fuentes",
       firstName: "Alonzo",
     },
     {
-      volunteerId: 3,
       affiliation: "Student",
       lastName: "Firma",
       firstName: "Alejandra",

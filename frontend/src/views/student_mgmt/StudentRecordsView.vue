@@ -3,19 +3,24 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
+import Dropdown from 'primevue/dropdown'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import StudentHeader from '@/components/student_mgmt/StudentHeader.vue'
-import { useStudentsStore } from '@/stores/students'
 
-import { onMounted, ref } from 'vue'
-import { FilterMatchMode } from 'primevue/api'
+import { useStudentsStore } from '@/stores/students'
+import { useUtilitiesStore } from '@/stores/utilities'
+
+import { onMounted, ref, computed } from 'vue'
+import { FilterMatchMode, FilterOperator } from 'primevue/api'
 
 const studentsStore = useStudentsStore()
+const utilitiesStore = useUtilitiesStore()
 
-const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS }
-})
+const dt = ref(null)
+const filters = ref({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } })
+const sexValues = ref(['M', 'F'])
+const categories = computed(() => utilitiesStore.categories.map((cat) => cat.category_name))
 
 const columns = [
   { field: 'lrn', header: 'LRN' },
@@ -30,9 +35,21 @@ function updateGlobalFilter(newValue) {
   filters.value.global.value = newValue
 }
 
+function initFilters() {
+  filters.value.sex = { value: null, matchMode: FilterMatchMode.EQUALS }
+  filters.value.category = {
+    operator: FilterOperator.OR,
+    constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }]
+  }
+}
+
+const clearFilter = () => initFilters()
+initFilters()
+
 onMounted(async () => {
   try {
     await studentsStore.getStudents()
+    await utilitiesStore.getCategories()
   } catch (error) {
     console.log(error)
   }
@@ -41,21 +58,42 @@ onMounted(async () => {
 
 <template>
   <ContentPane header="Student Records">
-    <StudentHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+    <StudentHeader
+      :dt="dt"
+      :globalFilter="filters.global.value"
+      @filterChanged="updateGlobalFilter"
+    />
 
     <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="rounded-md inline-block">
       <template #content>
         <DataTable
+          ref="dt"
           :value="studentsStore.studentsNormalized"
           v-model:filters="filters"
-          :users="['lrn', 'firstName', 'lastName', 'facebook']"
+          dataKey="id"
+          filterDisplay="menu"
+          paginator
+          :rows="5"
+          :rowsPerPageOptions="[5, 10, 20, 50]"
+          :globalFilterFields="['lrn', 'firstName', 'lastName']"
           scrollable
           removableSort
         >
+          <template #header>
+            <Button
+              type="button"
+              icon="pi pi-filter-slash"
+              label="Clear"
+              outlined
+              size="small"
+              @click="clearFilter"
+            />
+          </template>
+
           <template #empty> No students found. </template>
           <template #loading> Loading students data. Please wait. </template>
 
-          <Column header="" class="max-w-20">
+          <Column header="" class="max-w-24">
             <template #body="slotProps">
               <RouterLink :to="{ name: 'view-student', params: { studentId: slotProps.data.id } }">
                 <Button
@@ -71,13 +109,26 @@ onMounted(async () => {
             </template>
           </Column>
 
-          <Column
-            v-for="col of columns"
-            :key="col.field"
-            :field="col.field"
-            :header="col.header"
-            sortable
-          ></Column>
+          <template v-for="col of columns" :key="col.field">
+            <Column
+              v-if="!['sex', 'category'].includes(col.field)"
+              :field="col.field"
+              :header="col.header"
+              sortable
+            ></Column>
+            <Column v-else :field="col.field" :header="col.header" sortable>
+              <template #filter="{ filterModel }">
+                <Dropdown
+                  v-model="filterModel.value"
+                  :options="col.field === 'category' ? categories : sexValues"
+                  placeholder="Select One"
+                  class="p-column-filter"
+                  style="min-width: 12rem"
+                  :showClear="true"
+                />
+              </template>
+            </Column>
+          </template>
 
           <template #footer>
             <span class="font-medium">

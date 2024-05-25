@@ -57,6 +57,7 @@ function updateEmergencyContact() {
               type="text"
               v-model="field.data"
               @update:modelValue="updateContactInfo"
+              :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
               :ptOptions="{ mergeProps: true }"
               :disabled="$route.meta.isViewMode"
             />
@@ -80,6 +81,7 @@ function updateEmergencyContact() {
               type="text"
               v-model="field.data"
               @update:modelValue="updateEmergencyContact"
+              :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
               :ptOptions="{ mergeProps: true }"
               :disabled="$route.meta.isViewMode"
             />

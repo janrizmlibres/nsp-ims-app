@@ -3,34 +3,46 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
+import { useUsersStore } from '@/stores/users';
 
-const props = defineProps(['id', 'data', 'termStatus'])
 const toast = useToast()
 
-const emit = defineEmits(['onUpdate'])
 const classLearningStrandStore = useClassLearningStrandStore()
-const classLearningStrandId = computed(() => props.id)
-const termStatus = computed(() => props.termStatus)
-const data = computed(() => props.data)
+const usersStore = useUsersStore()
+
+const classLearningStrandId = inject('classLearningStrandId')
+const learningStrandInput = inject('learningStrandInput')
+const termStatus = inject('termStatus')
+const term = inject('term')
+const classLevel = inject('classLevel')
+const data = inject('selectedMonth')
+const sessionByMonths = inject('sessionByMonths')
 const sessions = ref([])
 const date = ref()
 const minDate = ref()
 const maxDate = ref()
 const currentMonth = ref()
 const selectionType = ref(1)
+const disableAdd = computed(() => (date.value ? (date.value.length === 0 || date.value[1] === null) : !date.value) || invalidDateRange.value)
+
+const disableInputComponent = computed(() => !data.value || !termStatus.value)
+const invalidDateRange = ref(false)
+
 const selection = ref([
     {label: 'Single', value: 1},
     {label: 'Multiple', value: 2},
 ])
 
+const onSubmit = inject('updateSessionTable')
+
 function addSelectedDate() {
     sessions.value = []
 
     if (!date.value) return
-    if (date.value.constructor === Array) {
+    if (date.value.constructor === Array && date.value[1] !== null) {
         let startDate = date.value[0]
         let endDate = date.value[1]
 
@@ -41,10 +53,62 @@ function addSelectedDate() {
             currentDate.setDate(currentDate.getDate() + 1);
         }
     }
-    else sessions.value.push(date.value)
+    else sessions.value.push(new Date(date.value))
 }
 
 async function addSession() {
+    try {
+        resetForm()
+
+        let newDates = []
+        for (const session of sessions.value) {
+            const offset = session.getTimezoneOffset()
+            let newDate = format(new Date(session.getTime() - (offset*60*1000)), "yyyy-MM-dd");
+            newDates.push(newDate)
+        }
+
+        await classLearningStrandStore.addSession(classLearningStrandId.value, {dates:newDates}). then(async (message) =>{
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: message,
+                life: 3000
+            })
+
+            try {
+                for (const date of newDates) {
+                    await usersStore.addAudit(
+                        `Added: Session ${date} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    )
+                }
+            } catch(error) {
+                console.log(error);
+            }
+
+            onSubmit()
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+function validateModuleRangeInput() {
+    addSelectedDate()
+
+    invalidDateRange.value = false
+    
+    if (selectionType.value === 2 && sessions.value.length === 1 && date.value[1] !== null) {
+        invalidDateRange.value = true
+
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Incorrect date range',
+            life: 3000
+        })
+    }
+    
+
     let newDates = []
     for (const session of sessions.value) {
         const offset = session.getTimezoneOffset()
@@ -52,35 +116,32 @@ async function addSession() {
         newDates.push(newDate)
     }
 
-    try {
-        await classLearningStrandStore.addSession(classLearningStrandId.value, {dates:newDates})
-        classLearningStrandStore.getAllSessions(classLearningStrandId.value).then((data) => {
-            emit('onUpdate', data)
-        })
-        
-        toast.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Session(s) created successfully',
-            life: 3000
-        })
+    let existingSessions = []
+    let month = sessionByMonths.value[new Date(newDates[0]).getMonth()]
+    for(const date of newDates) {
+        if (month.sessions.some(obj => new Date(obj.date).toDateString() === new Date(date).toDateString())) {
+            existingSessions.push(new Date(date).toDateString())
+        }
+    }
 
-        resetForm()
-    } catch (error) {
+    if (existingSessions.length) {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: error.response.data.message,
+            detail: `${existingSessions.toString()} exists already`,
             life: 3000
         })
+
+        invalidDateRange.value = true
     }
 }
 
 function resetForm() {
+    invalidDateRange.value = false
     date.value = null
 }
 
-watch(() => props.data, (data) => {
+watch(() => data.value, (data) => {
     resetForm()
     
     if (data) {
@@ -97,18 +158,18 @@ watch(() => props.data, (data) => {
         <span class="font-semibold text-lg u-txt-active mb-4">Add Session</span>
         <div class="flex flex-col mb-4">
             <label>Selection Type</label>
-            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="!data || !termStatus" @update:modelValue="resetForm" />
+            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="disableInputComponent" @update:modelValue="resetForm" />
         </div>
         <div v-if="selectionType === 1" class="flex flex-col gap-4 mb-4">
             <label>Session Date</label>
-            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data || !termStatus" @update:modelValue="addSelectedDate" />
+            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :invalid="invalidDateRange" :disabled="disableInputComponent" @update:modelValue="validateModuleRangeInput" />
         </div>
         <div v-if="selectionType === 2" class="flex flex-col gap-4 mb-4">
             <label>Session Dates</label>
-            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :disabled="!data || !termStatus" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="addSelectedDate" />
+            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :invalid="invalidDateRange" :disabled="disableInputComponent" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="validateModuleRangeInput" />
         </div>
         <div class="flex flex-row gap-2">
-            <Button type="button" outlined rounded label="Add" :disabled="(date ? (date.length === 0 || date[1] === null) : !date)" @click="addSession" class="w-full" />
+            <Button type="button" outlined rounded label="Add" :disabled="disableAdd" @click="addSession" class="w-full" />
             <Button type="button" outlined rounded label="Reset" :disabled="!date" @click="resetForm" severity="danger" class="w-full" />
         </div>
     </div>

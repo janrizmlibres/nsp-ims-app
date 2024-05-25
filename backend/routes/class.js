@@ -4,7 +4,7 @@ import isAuth from "../middleware/is_auth.js";
 
 const router = express.Router();
 
-router.get("/:classId/classLearningStrands", isAuth, classController.getAllLearningStrands);
+router.get("/:classId/schedules", isAuth, classController.getClassSchedules);
 router.get("/:classId/students", isAuth, classController.getAllStudents);
 router.get("/:classId/:enrollmentId/student", isAuth, classController.getStudent);
 

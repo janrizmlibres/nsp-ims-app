@@ -1,6 +1,7 @@
 services:
   backend:
     build: backend
+    restart: always
     develop:
       watch:
         - action: sync
@@ -40,6 +41,7 @@ services:
       - "3307:3306"
   frontend:
     build: frontend
+    restart: always
     develop:
       watch:
         - action: sync

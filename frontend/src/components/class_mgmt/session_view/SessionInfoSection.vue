@@ -29,7 +29,7 @@ watch(() => props.modelValue, (data) => {
                 <span class="u-txt-active font-semibold text-xl content-center">Session Information</span>
             </div>
         </template>
-        <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+        <ProgressSpinner v-if="isFetching" class="self-center" />
         <div v-else class="flex flex-col px-4">
             <span class="text-md u-txt-active flex flex-row">
                 <p class="pr-4 font-semibold">Date:</p> 

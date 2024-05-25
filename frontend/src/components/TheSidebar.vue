@@ -377,7 +377,7 @@ const handleMouseLeave = () => {
       </span>
       <div class="flex flex-col u-sidebar-footer-text">
         <span>{{ authStore.user.userName }}</span>
-        <span class="text-sm"> {{ role.value }}</span>
+        <span class="text-sm"> {{ role }}</span>
       </div>
     </div>
   </div>
