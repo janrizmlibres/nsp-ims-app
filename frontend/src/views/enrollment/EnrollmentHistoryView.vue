@@ -22,7 +22,7 @@ async function getAllTerms()  {
       selectedTerm.value = termStore.terms.find(term => term.academic_year === enrollmentStore.editedTerm)
       enrollmentStore.setEditedTerm(null)
     } else  {
-      selectedTerm.value = termStore.terms[termStore.terms.length - 1]
+      selectedTerm.value = termStore.terms[0]
     }
   } catch (error) {
     toast.add({

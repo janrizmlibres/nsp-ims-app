@@ -10,7 +10,7 @@ const updateKey = ref(0)
   <TheSidebar />
   <RouterView @routeChange="updateKey += 1" :key="updateKey" v-slot="{ Component }">
     <keep-alive
-      :exclude="['dashboard', 'edit-user', 'user-records', 'user-permissions', 'audit-trails']"
+      :exclude="['dashboard', 'edit-user', 'user-records', 'user-permissions', 'current-enrollment', 'enrollment-history', 'enroll-learners', 'edit-enrolled', 'audit-trails']"
     >
       <component :is="Component" />
     </keep-alive>
