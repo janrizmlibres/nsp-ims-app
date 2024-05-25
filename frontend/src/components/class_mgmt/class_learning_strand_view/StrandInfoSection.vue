@@ -48,7 +48,7 @@ const customPt = {
             </div>
         </template>
         
-        <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+        <ProgressSpinner v-if="isFetching" class="self-center" />
         <div v-else class="flex flex-col">
             <Panel toggleable v-for="volunteer of volunteers" :key="volunteer.id" :pt-options="{mergeProps:true}" :pt="customPt">
                 <template #header>

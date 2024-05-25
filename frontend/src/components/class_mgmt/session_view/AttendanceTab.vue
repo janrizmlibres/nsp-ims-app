@@ -2,45 +2,24 @@
 // Presets
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import ProgressSpinner from 'primevue/progressspinner';
 import InputText from 'primevue/inputtext';
 import Toolbar from 'primevue/toolbar';
-import { computed, ref, watch } from 'vue';
+import { inject, provide, ref } from 'vue';
 
 // // Custom
 import AttendanceTable from '../session_view/AttendanceTable.vue';
 import { FilterMatchMode, FilterOperator } from 'primevue/api';
-import { useRoute } from 'vue-router';
 
+const regular = inject('regular')
+const hybrid = inject('hybrid')
+const drop = inject('drop')
 
-const props = defineProps(['modelValue'])
-const emit = defineEmits(['onUpdate'])
-const route = useRoute()
-
-const termStatus = computed(() => route.query.status)
-const regular = ref([])
-const hybrid = ref([])
-const drop = ref([])
-const isFetching = ref(true)
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
 });
 
-function updateAttendanceData(data) {
-    emit('onUpdate', data)
-}
-
-watch(() => props.modelValue, (data) => {
-    isFetching.value = true
-    
-    regular.value = data.regular
-    hybrid.value = data.hybrid
-    drop.value = data.drop
-    
-    isFetching.value = false
-}, {immediate: false})
-
+provide('filters', filters)
 </script>
 
 <template>
@@ -61,16 +40,13 @@ watch(() => props.modelValue, (data) => {
         </Toolbar>
         <TabView>
             <TabPanel header="Regular">
-                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <AttendanceTable v-else v-model="regular" :isNotActive="!termStatus" :filters="filters" @onUpdate="updateAttendanceData" />
+                <AttendanceTable v-model="regular" :disableEdit="false" />
             </TabPanel>
             <TabPanel header="Hybrid">
-                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <AttendanceTable v-else v-model="hybrid" :isNotActive="!termStatus" :filters="filters" @onUpdate="updateAttendanceData" />
+                <AttendanceTable v-model="hybrid" :disableEdit="false" />
             </TabPanel>
             <TabPanel header="Drop">
-                <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-                <AttendanceTable v-else v-model="drop" :isNotActive="true" :filters="filters" @onUpdate="updateAttendanceData" />
+                <AttendanceTable v-model="drop" :disableEdit="true"  />
             </TabPanel>
         </TabView>
     </div>

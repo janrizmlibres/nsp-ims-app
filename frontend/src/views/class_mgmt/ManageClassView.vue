@@ -1,53 +1,45 @@
 <script setup>
 // Presets
-import { onMounted, ref } from 'vue';
+import { onMounted, provide, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import TabView from 'primevue/tabview';
-import TabPanel from 'primevue/tabpanel';
 import ProgressSpinner from 'primevue/progressspinner';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
-import { useConfirm } from 'primevue/useconfirm';
+import Panel from 'primevue/panel';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 // Custom
 import ContentPane from '@/components/UI/ContentPane.vue'
-import ManageModuleView from './ManageModuleView.vue';
-import ManageGradeView from './ManageGradeView.vue';
-import ManageSessionView from './ManageSessionView.vue';
-import ManageScheduleView from './ManageScheduleView.vue';
 import TheHeader from '@/components/class_mgmt/TheHeader.vue';
+import StudentsTable from '@/components/class_mgmt/manage_student_view/StudentsTable.vue';
+import ModuleTable from '@/components/class_mgmt/manage_module_view/ModuleTable.vue';
+import GradesTab from '@/components/class_mgmt/manage_grade_view/GradesTab.vue';
+import SessionTable from '@/components/class_mgmt/manage_session_view/SessionTable.vue';
+import SchedulesTable from '@/components/class_mgmt/manage_schedule_view/SchedulesTable.vue';
 
 // stores
 import { useUtilitiesStore } from '@/stores/utilities';
-import { useClassStore } from '@/stores/class';
-import ManageStudentView from './ManageStudentView.vue';
 
 const utilitiesStore = useUtilitiesStore()
-const classStore = useClassStore()
 
 const toast = useToast()
-const router = useRouter()
-const confirm = useConfirm()
 
-const isLoading = ref(true)
-const learningStrands = ref()
 const term = ref()
 const classLevel = ref()
-const state = ref(false)
+const learningStrands = ref()
+const isLoading = ref(true)
 const termStatus = ref()
+const viewState = ref(null)
 
-function updateState(termInput, classLevelInput) {
-    if (termInput) {
-        term.value = termInput
-        termStatus.value = termInput.status
-    }
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
+});
 
-    if (classLevelInput) { 
-        classLevel.value = classLevelInput
-        learningStrands.value = classLevelInput.class_learning_strands
-        state.value = true
-    }
-    else state.value = false
-}
+provide('termStatus', termStatus)
+provide('term', term)
+provide('classLevel', classLevel)
+provide('learningStrands', learningStrands)
+provide('filters', filters)
+provide('updateViewState', updateViewState)
 
 onMounted(async () => {
     try {
@@ -64,75 +56,55 @@ onMounted(async () => {
     }
 })
 
-
-onBeforeRouteLeave((to) => {
-    if (classStore.leave) {
-        return true
+function updateViewState(termInput, classLevelInput, goToInput) {
+    if (termInput) {
+        term.value = termInput
+        termStatus.value = termInput.status
     }
 
-    confirm.require({
-        message: 'Do you really want to leave? you have unsaved changes!',
-        header: 'Redirect Confirmation',
-        accept: async () => {
-            classStore.leave = true
-            await router.push(to)
-        }
-    })
+    if (classLevelInput) { 
+        classLevel.value = classLevelInput
+        learningStrands.value = classLevelInput.class_learning_strands
+    }
 
-    return false
-})
+    if (goToInput != null) {
+        viewState.value = goToInput
+    }
+    else viewState.value = null
+}
 </script>
 
 <template>
     <ProgressSpinner v-if="isLoading" class="self-center" />
     <ContentPane v-else header="Class" subheader="Management">
-        <TheHeader @updateState="updateState" :state="state" />
-        <TabView v-if="state" class="bg-white shadow-xl rounded-md">
-            <TabPanel>
+        <TheHeader />
+        <div v-if="viewState === null" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
+            <Panel  class="shadow-md">
                 <template #header>
                     <div class="flex items-center gap-2">
-                        <i class="fa fa-user" />
-                        <span class="u-txt-active">Students</span>
+                        <i class="fa fa-circle-info fa-xl"></i>
+                        <span class="u-txt-active font-semibold text-xl content-center">Action Required</span>
                     </div>
                 </template>
-                <ManageStudentView :classLevel="classLevel" />
-            </TabPanel>
-            <TabPanel>
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <i class="fa fa-note-sticky" />
-                        <span class="u-txt-active">Modules</span>
-                    </div>
-                </template>
-                <ManageModuleView :learningStrands="learningStrands" :termStatus="termStatus" />
-            </TabPanel>
-            <TabPanel>
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <i class="fa fa-star" />
-                        <span class="u-txt-active">Grades</span>
-                    </div>
-                </template>
-                <ManageGradeView :learningStrands="learningStrands" :termStatus="termStatus" />
-            </TabPanel>
-            <TabPanel>
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <i class="fa fa-calendar-days" />
-                        <span class="u-txt-active">Sessions</span>
-                    </div>
-                </template>
-                <ManageSessionView :term="term" :learningStrands="learningStrands" :termStatus="termStatus" />
-            </TabPanel>
-            <TabPanel>
-                <template #header>
-                    <div class="flex items-center gap-2">
-                        <i class="fa fa-clock" />
-                        <span class="u-txt-active">Schedules</span>
-                    </div>
-                </template>
-                <ManageScheduleView :classLevel="classLevel" :termStatus="termStatus" />
-            </TabPanel>
-        </TabView>
+                <p class="m-0">
+                    Please fill necessary information in order to continue. Thank you!
+                </p>
+            </Panel>
+        </div>
+        <div v-else-if="viewState === 0" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
+            <StudentsTable  />
+        </div>
+        <div v-else-if="viewState === 1" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
+            <ModuleTable/>
+        </div>
+        <div v-else-if="viewState === 2" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
+            <GradesTab/>
+        </div>
+        <div v-else-if="viewState === 3" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
+            <SessionTable />
+        </div>
+        <div v-else-if="viewState === 4" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
+            <SchedulesTable />
+        </div>
     </ContentPane>
 </template>

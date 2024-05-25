@@ -194,3 +194,29 @@ const clearImage = (filePath) => {
   filePath = path.join(__dirname, "..", filePath);
   fs.unlink(filePath, (err) => console.log(err));
 };
+
+export async function getGenderCount(_req, res, next) {
+  try {
+    const maleCount = await Student.count({
+      include: [{
+        model: PersonalInfo,
+        where: { sex: 'M' }
+      }]
+    });
+
+    const femaleCount = await Student.count({
+      include: [{
+        model: PersonalInfo,
+        where: { sex: 'F' }
+      }]
+    });
+
+    res.status(200).json({ maleCount, femaleCount });
+    console.log("count: ", maleCount, femaleCount);
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}

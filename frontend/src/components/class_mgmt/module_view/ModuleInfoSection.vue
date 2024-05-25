@@ -2,27 +2,22 @@
 // Presets
 import ProgressSpinner from 'primevue/progressspinner';
 import Panel from 'primevue/panel';
-import { ref, watch } from 'vue';
+import { inject, ref, watch } from 'vue';
 
 // stores
 
-const props = defineProps(['modelValue'])
-
-const isFetching = ref(true)
+const module = inject('module')
+const isFetching = inject('isFetching')
 const distriDate = ref()
 const retriDate = ref()
 
-watch(() => props.modelValue, (data) => {
-    isFetching.value = true
-    
+watch(() => module.value, (data) => {
     let tempDistriDate = new Date(data.distribution_date)
     distriDate.value = tempDistriDate.toDateString()
 
     let tempRetriDate = new Date(data.retrieval_date)
     retriDate.value = tempRetriDate.toDateString()
-
-    isFetching.value = false
-}, {immediate: false})
+})
 </script>
 
 <template>
@@ -33,7 +28,7 @@ watch(() => props.modelValue, (data) => {
                 <span class="u-txt-active font-semibold text-xl content-center">Module Information</span>
             </div>
         </template>
-        <ProgressSpinner v-if="isFetching" class="flex justify-center" />
+        <ProgressSpinner v-if="isFetching" class="flex justify-center self-center" />
         <div v-else class="flex flex-col px-4">
             <span class="text-md u-txt-active flex flex-row">
                 <p class="pr-4 font-semibold">Distribution Date:</p> 

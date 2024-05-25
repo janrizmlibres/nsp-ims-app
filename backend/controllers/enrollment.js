@@ -265,10 +265,141 @@ export const changeEnrollmentStatus = async (req, res, next) => {
   }
 }
 
-const clearEnrollmentForm = (filePath) => {
-  if (!filePath) return;
+export const getEnrolledModules = async (req, res, next) => {
+  try {
+    const classLearningStrand = await ClassLearningStrand.findOne({
+      where: { id: req.params.classLearningStrandId },
+      include: [
+        {
+          model: Module,
+          include: [
+            {
+              model: ModuleSubmission,
+              where: { enrollmentId: req.params.enrollmentId }
+            }
+          ]
+        }
+      ]
+    });
+    
+    if (!classLearningStrand) {
+      const error = new Error("No enrolled modules found.");
+      error.statusCode = 404;
+      throw error;
+    }
+    
+    const modules = classLearningStrand.modules.map(module => {
+      return {
+        title: module.title,
+        status: module.module_submissions[0].status,
+        remarks: module.module_submissions[0].remarks,
+        dateSubmitted: module.module_submissions[0].date_submitted,
+        distributionDate: module.distribution_date
+      };
+    });
+    
+    res.status(200).json({
+      message: 'Fetched enrolled modules successfully!',
+      modules: modules
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
 
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  filePath = path.join(__dirname, "..", filePath);
-  fs.unlink(filePath, (err) => console.log(err));
+export const getEnrolledGrades = async (req, res, next) => {
+  try {
+    const grade = await Grade.findOne({
+      where: { enrollmentId: req.params.enrollmentId, classLearningStrandId: req.params.classLearningStrandId }
+    });
+    
+    const grades = [
+      {
+        firstQuarter: grade.first_quarter,
+        secondQuarter: grade.second_quarter,
+        thirdQuarter: grade.third_quarter,
+        fourthQuarter: grade.fourth_quarter,
+        remarks: grade.remarks
+      }
+    ]
+    
+    res.status(200).json({
+      message: 'Fetched enrolled grades successfully!',
+      grades: grades
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
+export const getEnrolledAttendance = async (req, res, next) => {
+  try {
+    const classLearningStrand = await ClassLearningStrand.findOne({
+      where: { id: req.params.classLearningStrandId },
+      include: [
+        {
+          model: Session,
+          include: [
+            {
+              model: Attendance,
+              where: { enrollmentId: req.params.enrollmentId }
+            }
+          ]
+        }
+      ]
+    });
+    
+    const attendance = classLearningStrand.sessions.map(session => {
+      return {
+        sessionDate: session.date,
+        status: session.attendances[0].status,
+        remarks: session.attendances[0].remarks
+      };
+    });
+
+    console.log(attendance)
+
+    res.status(200).json({
+      message: 'Fetched enrolled modules successfully!',
+      attendance: attendance
+    });
+    
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
+export const getAllEnrollments = async (req, res, next) => {
+  try {
+    const enrollments = await Enrollment.findAll();
+    res.status(200).json(enrollments);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getStatusCount = async (req, res, next) => {
+  try {
+    const activeCount = await Enrollment.count({ where: { status: 'Active' } });
+    const inactiveCount = await Enrollment.count({ where: { status: 'Inactive' } });
+
+    res.status(200).json({
+      active: activeCount,
+      inactive: inactiveCount
+    });
+  } catch (error) {
+    next(error);
+  }
 };
