@@ -56,6 +56,11 @@ function handleUpdate() {
         type="text"
         v-model="name.lastName"
         @update:modelValue="handleUpdate"
+        :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+              }
+            }"
         :ptOptions="{ mergeProps: true }"
         :disabled="isViewMode"
       />
@@ -68,6 +73,11 @@ function handleUpdate() {
         type="text"
         v-model="name.firstName"
         @update:modelValue="handleUpdate"
+        :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+              }
+            }"
         :ptOptions="{ mergeProps: true }"
         :disabled="isViewMode"
       />
@@ -80,6 +90,11 @@ function handleUpdate() {
         type="text"
         v-model="name.middleName"
         @update:modelValue="handleUpdate"
+        :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+              }
+            }"
         :ptOptions="{ mergeProps: true }"
         :disabled="isViewMode"
       />
@@ -92,6 +107,11 @@ function handleUpdate() {
           v-model="selectedSuffix"
           :options="suffixes"
           @change="handleUpdate"
+          :pt="{
+              root: ({ props }) => ({
+                class: { '!opacity-100 !pointer-events-auto': props.disabled }
+              })
+            }"
           :ptOptions="{ mergeProps: true }"
           :disabled="isViewMode"
         />
@@ -107,6 +127,11 @@ function handleUpdate() {
         :options="affiliations"
         class="grow h-10 flex-grow" 
         @change="handleUpdate"
+        :pt="{
+              root: ({ props }) => ({
+                class: { '!opacity-100 !pointer-events-auto': props.disabled }
+              })
+            }"
         :ptOptions="{ mergeProps: true }" 
         :disabled="isViewMode"
       />
