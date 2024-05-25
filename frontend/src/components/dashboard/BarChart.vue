@@ -1,64 +1,55 @@
-
-<script>
+<script setup>
 import VueApexCharts from "vue3-apexcharts";
 
-export default {
-  components: {
-    apexchart: VueApexCharts,
-  },
+const props = defineProps({
+  chartData: {
+    type: Array,
+    required: true
+  }
+});
 
-  props: {
-    chartData: {
-      type: Array,
-      required: true
+const series = [
+  {
+    name: 'Student',
+    data: props.chartData
+  }
+];
+
+const chartOptions = {
+  chart: {
+    type: 'bar',
+    height: 350
+  },
+  plotOptions: {
+    bar: {
+      borderRadius: 4,
+      borderRadiusApplication: 'end',
+      horizontal: true,
     }
   },
-
-  data() {
-    return {
-      series: [{
-        name: 'Student',
-        data: this.chartData
-      }],
-      chartOptions: {
-        chart: {
-          type: 'bar',
-          height: 350
-        },
-        plotOptions: {
-          bar: {
-            borderRadius: 4,
-            borderRadiusApplication: 'end',
-            horizontal: true,
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        title: {
-          text: 'STUDENT DISTRIBUTION',
-          align: 'center'
-        },
-        xaxis: {
-          categories: ['Students', 'Grade School', 'Junior High School', 'Active Students', 'Inactive Students'
-          ],
-        },
-      },
-    };
+  dataLabels: {
+    enabled: false
+  },
+  title: {
+    text: 'STUDENT DISTRIBUTION',
+    align: 'center'
+  },
+  xaxis: {
+    categories: ['Students', 'Grade School', 'Junior High School', 'Active Students', 'Inactive Students'],
   },
 };
 </script>
 
 <template>
     <div class="BarChart-widget">
-      <apexchart type="bar" height="310" :options="chartOptions" :series="series"></apexchart>
+      <vue-apex-charts type="bar" height="310" :options="chartOptions" :series="series"></vue-apex-charts>
     </div>
 </template>
 
 <style>
 .BarChart-widget {
     padding: 0.3125rem;
-    width: 65rem;
+    width: 50.625rem;
     height: 20.0625rem;
     background-color: white;
     border-radius: 0.625rem;

@@ -81,7 +81,7 @@ export default {
 <style>
 .LineChart-widget {
     padding: 0.3125rem;
-    width: 65rem;
+    width: 50.625rem;
     height: 20.0625rem;
     background-color: white;
     border-radius: 0.625rem;

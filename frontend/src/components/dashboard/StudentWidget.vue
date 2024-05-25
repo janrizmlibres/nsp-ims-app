@@ -1,43 +1,34 @@
-<script>
+<script setup>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DoughnutChart from './DoughnutChart.vue'
 
-export default {
-  components: {
-    'font-awesome-icon': FontAwesomeIcon,
-    DoughnutChart
+const props = defineProps({
+  seriesData: {
+    type: Array,
+    required: true
   },
-  props: {
-    seriesData: {
-      type: Array,
-      required: true
-    },
-    labelsData: {
-      type: Array,
-      required: true
-    },
-    widgetTitle: {
-      type: String,
-      required: true
-    },
-    totalText: {
-      type: String,
-      required: true
-    },
-    Data1: {
-      type: String,
-      required: true
-    },
-    Data2: {
-      type: String,
-      required: true
-    }
+  labelsData: {
+    type: Array,
+    required: true
   },
-  mounted() {
+  widgetTitle: {
+    type: String,
+    required: true
+  },
+  totalText: {
+    type: String,
+    required: true
+  },
+  Data1: {
+    type: String,
+    required: true
+  },
+  Data2: {
+    type: String,
+    required: true
   }
-}
+})
 </script>
-
 <template>
   <div class="widget">
     <div class="widget-wrapper">
@@ -122,7 +113,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start; /* Aligns children to the start on the main axis */
   align-items: flex-start; /* Aligns children to the start on the cross axis */
-  width: 390px;
+  width: 430px;
   height: 150px;
   background-color: white;
   border-radius: 10px;
@@ -158,7 +149,7 @@ export default {
 
 .female-icon {
   margin-top: 7px;
-  margin-left: 40px;
+  margin-left: 10px;
   margin-right: 5px;
   width: 10px;
   height: 10px;
