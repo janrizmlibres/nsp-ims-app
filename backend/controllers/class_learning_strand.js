@@ -67,6 +67,12 @@ export async function getAllModules(req, res, next) {
             where: {classLearningStrandId: classLearningStrandId}
         })
 
+        if (!modules.length) {
+            const error = new Error("No modules found.");
+            error.statusCode = 404;
+            throw error;
+        }
+
         for (const module of modules) {
             const noSubmissions = await module.countModule_submissions({
                 where: {status: 'No Submission'}
@@ -88,7 +94,9 @@ export async function getAllModules(req, res, next) {
             module.dataValues.total = total
         }
 
-        res.status(201).json({ 
+
+
+        res.status(200).json({ 
             message: "Fetched modules successfully!",
             data: modules
         });
@@ -119,6 +127,12 @@ export async function getModule(req, res, next) {
                 }, LearningStrand]}
             ]
         })
+
+        if (!module) {
+            const error = new Error("No module found.");
+            error.statusCode = 404;
+            throw error;
+        }
         
         res.status(200).json({
             message: "Fetched module successfully.",
@@ -140,7 +154,7 @@ export async function updateModule(req, res, next) {
             where: { id: moduleId }
         });
 
-        res.status(200).json({ 
+        res.status(204).json({ 
             message: "Updated module successfully!" 
         });
     } catch (error) {
@@ -160,7 +174,7 @@ export async function updateModuleStatus(req, res, next) {
             { where: { id: moduleIds }
         });
 
-        res.status(200).json({ 
+        res.status(204).json({ 
             message: "Updated module statuses successfully!" 
         });
     } catch (error) {
@@ -179,7 +193,7 @@ export async function deleteModules(req, res, next) {
             where: { id: moduleIds }
         })
 
-        res.status(200).json({ 
+        res.status(204).json({ 
             message: "Deleted modules successfully!" 
         });
     } catch (error) {
@@ -203,7 +217,7 @@ export async function updateModuleSubmissions(req, res, next) {
             });
         }
 
-        res.status(200).json({ 
+        res.status(204).json({ 
             message: "Updated module submissions successfully!" 
         });
     } catch (error) {
@@ -232,7 +246,13 @@ export async function getAllGrades(req, res, next) {
             ]
         })
 
-        res.status(201).json({ 
+        if (!grades.length) {
+            const error = new Error("No grades found.");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        res.status(200).json({ 
             message: "Fetched grades successfully!",
             data: grades
         });
@@ -258,8 +278,8 @@ export async function updateGrades(req, res, next) {
             await enrollmentInstance.grades[0].update(enrollment.grades);
         }
         
-        res.status(200).json({ 
-            message: "Updated grade successfully!" 
+        res.status(204).json({ 
+            message: "Updated grades successfully!" 
         });
         } catch (error) {
             if (!error.statusCode) {
@@ -311,6 +331,12 @@ export async function getAllSessions(req, res, next) {
             where: {classLearningStrandId: classLearningStrandId}
         })
 
+        if (!sessions.length) {
+            const error = new Error("No sessions found.");
+            error.statusCode = 404;
+            throw error;
+        }
+
         for (const session of sessions) {
             const absent = await session.countAttendances({
                 where: {status: 'Absent'},
@@ -337,8 +363,8 @@ export async function getAllSessions(req, res, next) {
             session.dataValues.total = total
         }
 
-        res.status(201).json({ 
-            message: "Fetch sessions successfully!",
+        res.status(200).json({ 
+            message: "Fetched sessions successfully!",
             data: sessions
         });
     } catch (error) {
@@ -364,6 +390,12 @@ export async function getSession(req, res, next) {
                 }
             ]
         })
+
+        if (!classLearningStrand.sessions.length) {
+            const error = new Error("No session found.");
+            error.statusCode = 404;
+            throw error;
+        }
         
         const regularAttendances = await Attendance.findAll({
             where: {
@@ -432,7 +464,7 @@ export async function updateSession(req, res, next) {
             {where: {id: sessionId}}
         )
         
-        res.status(200).json({ 
+        res.status(204).json({ 
             message: "Updated session successfully!" 
         });
     } catch (error) {
@@ -451,7 +483,7 @@ export async function deleteSessions(req, res, next) {
             where: { id: sessionIds }
         })
 
-        res.status(200).json({ message: "Deleted sessions successfully!" });
+        res.status(204).json({ message: "Deleted sessions successfully!" });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -471,7 +503,7 @@ export async function updateAttendances(req, res, next) {
             });
         }
         
-            res.status(200).json({ 
+            res.status(204).json({ 
                 message: "Updated attendances successfully!" 
             });
         } catch (error) {
@@ -524,7 +556,7 @@ export async function updateSchedule(req, res, next) {
             where: { id: scheduleId }
         });
 
-        res.status(200).json({ 
+        res.status(204).json({ 
             message: "Updated class schedule successfully!" 
         });
         } catch (error) {
@@ -544,7 +576,7 @@ export async function deleteSchedules(req, res, next) {
             where: { id: scheduleIds }
         })
 
-        res.status(200).json({ 
+        res.status(204).json({ 
             message: "Deleted class schedules successfully!" });
     } catch (error) {
         if (!error.statusCode) {

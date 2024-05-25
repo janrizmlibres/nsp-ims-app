@@ -61,39 +61,38 @@ async function addSchedule() {
             return
     }
 
-    try {
-        await classLearningStrandStore.addSchedule(learningStrandInput.value.id, {
-            volunteer: formData.value.volunteer,
-            days: formData.value.school_days.toString(),
-            start_time: format(new Date(formData.value.start_time), "HH:mm"),
-            end_time: format(new Date(formData.value.end_time), "HH:mm"),
-        }).then(async (message) => {
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: message,
-                life: 3000
-            })
-
-            try {
-                await usersStore.addAudit(
-                    `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
-                )
-            } catch(error) {
-                console.log(error);
-            }
-            
-            onSubmit(classLevel.value.id)
-        })
-    } catch (error) {
-        console.log(error);
+    classLearningStrandStore.addSchedule(learningStrandInput.value.id, {
+        volunteer: formData.value.volunteer,
+        days: formData.value.school_days.toString(),
+        start_time: format(new Date(formData.value.start_time), "HH:mm"),
+        end_time: format(new Date(formData.value.end_time), "HH:mm"),
+    }).then(async (message) => {
         toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: "Unexpected error encountered.",
+            severity: 'success',
+            summary: 'Success',
+            detail: message,
             life: 3000
         })
-    }
+
+        try {
+            await usersStore.addAudit(
+                `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+            )
+        } catch(error) {
+            console.log(error);
+        }
+        
+        onSubmit()
+        resetForm()
+    }).catch((error) => {
+        console.log(error);
+    toast.add({
+        severity: 'error',
+            summary: 'Error',
+            detail: error,
+            life: 3000
+        })
+    })
 }
 
 onMounted(() => {
