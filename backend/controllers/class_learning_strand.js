@@ -109,14 +109,14 @@ export async function getModule(req, res, next) {
                 {model: ModuleSubmission, 
                     include: [
                         {model: Enrollment, 
-                            include:[
-                                Student, 
-                                {model: ClassLevel, 
-                                    include: [Term]}]
+                            include:[Student]
                         }
                     ]
                 }, 
-                {model: ClassLearningStrand, include: [LearningStrand]}
+                {model: ClassLearningStrand, include: [
+                    {model: ClassLevel, 
+                        include: [Term]
+                }, LearningStrand]}
             ]
         })
         
