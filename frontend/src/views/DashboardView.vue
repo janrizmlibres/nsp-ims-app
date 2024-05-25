@@ -10,11 +10,13 @@ import { useSidebarStore } from '@/stores/sidebar.js';
 import { useStudentsStore } from '@/stores/students';
 import { useUtilitiesStore } from '@/stores/utilities';
 import { useEnrollmentStore } from '@/stores/enrollment';
+import { useVolunteerStore } from '@/stores/volunteer';
 
 const enrollmentStore = useEnrollmentStore();
 const studentsStore = useStudentsStore();
 const sidebarStore = useSidebarStore();
 const utilitiesStore = useUtilitiesStore();
+const volunteerStore = useVolunteerStore();
 
 const isSidebarHovering = computed(() => sidebarStore.isHovering);
 const isSidebarPinned = computed(() => sidebarStore.isPinned);
@@ -27,11 +29,16 @@ let juniorHighSchool = ref(0);
 let totalClassLevels = ref(0);
 let activeStudents = ref(0);
 let inactiveStudents = ref(0);
+let totalVolunteers = ref(0);
+let studentVolunteerCount = ref(0);
+let professionalVolunteerCount = ref(0);
+
 
 onMounted(async () => {
   const genderCount = await studentsStore.getGenderCount();
   const classLevelsCount = await utilitiesStore.countClassLevels();
   const statusCount = await enrollmentStore.getStatusCount();
+  await volunteerStore.getAllVolunteers()
 
   gradeSchool.value = classLevelsCount.gradeSchoolCount;
   juniorHighSchool.value = classLevelsCount.juniorHighSchoolCount;
@@ -41,6 +48,18 @@ onMounted(async () => {
   totalClassLevels.value = gradeSchool.value + juniorHighSchool.value;
   activeStudents.value = statusCount.active
   inactiveStudents.value = statusCount.inactive
+  totalVolunteers.value = volunteerStore.volunteers.length
+
+  for (let volunteer of volunteerStore.volunteers) {
+    if (volunteer.affiliation === 'Student') {
+      studentVolunteerCount.value++;
+    } else if (volunteer.affiliation === 'Professional') {
+      professionalVolunteerCount.value++;
+    }
+  }
+
+  console.log('Number of students:', studentVolunteerCount.value);
+  console.log('Number of professionals:', professionalVolunteerCount.value);
   
 });
 </script>
@@ -60,17 +79,19 @@ onMounted(async () => {
           widgetTitle="CUMULATIVE STUDENTS" 
           :totalText= cumulativeStudets.toString()
           Data1= "Male"
-          Data2= "Female" />
+          Data2= "Female"
+          :icon="['fas', 'user-graduate']" />
         <StudentWidget 
           v-if="gradeSchool && juniorHighSchool"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
           :seriesData="[gradeSchool, juniorHighSchool]" 
           :labelsData="['Junior High School', 'Grade School']" 
-          widgetTitle="CLASS LEVELS" 
+          widgetTitle="CLASS LEVEL" 
           :totalText= totalClassLevels.toString()
           Data1= "Grade School"
-          Data2= "Junior High" />
+          Data2= "Junior High"
+          :icon="['fas', 'user-graduate']" />
         <StudentWidget 
           v-if="activeStudents && inactiveStudents"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
@@ -80,16 +101,19 @@ onMounted(async () => {
           widgetTitle="STUDENTS" 
           :totalText= "(inactiveStudents+activeStudents).toString()"
           Data1= "Active"
-          Data2= "Inactive" />
+          Data2= "Inactive"
+          :icon="['fas', 'user-graduate']" />
         <StudentWidget
+          v-if="studentVolunteerCount && professionalVolunteerCount"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 78.75rem; --translate-y: -31.875rem`"
-          :seriesData="[0, 0]" 
-          :labelsData="['Female', 'Male']" 
-          widgetTitle="ACTIVE STUDENTS" 
-          :totalText= "activeStudents.toString()"
-          Data1= "Male"
-          Data2= "Female" />
+          :seriesData="[studentVolunteerCount, professionalVolunteerCount]" 
+          :labelsData="['Professional', 'Student']" 
+          widgetTitle="VOLUNTEERS" 
+          :totalText= "totalVolunteers.toString()"
+          Data1= "Student"
+          Data2= "Professional"
+          :icon="['fas', 'user']"  />
         
     </div>
     <div class="charts">

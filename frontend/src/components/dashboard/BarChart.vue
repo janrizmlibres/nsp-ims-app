@@ -49,7 +49,7 @@ const chartOptions = {
 <style>
 .BarChart-widget {
     padding: 0.3125rem;
-    width: 50.625rem;
+    width: 51.35rem;
     height: 20.0625rem;
     background-color: white;
     border-radius: 0.625rem;

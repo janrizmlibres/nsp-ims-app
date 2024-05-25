@@ -26,14 +26,18 @@ const props = defineProps({
   Data2: {
     type: String,
     required: true
-  }
+  },
+  icon: {
+      type: Array,
+      required: true
+    }
 })
 </script>
 <template>
   <div class="widget">
     <div class="widget-wrapper">
       <DoughnutChart class="my-chart" :seriesData="seriesData" :labelsData="labelsData"/>
-      <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
+      <font-awesome-icon class="graduate-icon" :icon="icon" />
       <div class="widget-container">
         <div class="widget-title">{{ widgetTitle }}</div>
         <div class="gender-container">
@@ -55,14 +59,14 @@ const props = defineProps({
 .my-chart {
   position: absolute;
   top: 2px;
-  left: -11px;
+  left: -22px;
   width: 169px;
   height: 169px;
   z-index: 1; /* place the chart behind other elements */
 }
 .graduate-icon {
   font-size: 55px; /* adjust as needed */
-  margin-left: 50px;
+  margin-left: 40px;
   color: #11285e;
   position: relative;
 }
@@ -74,7 +78,7 @@ const props = defineProps({
 }
 
 .widget-container {
-  margin-left: 0px; /* adjust as needed */
+  margin-left: -15px; /* adjust as needed */
 }
 
 .gender-container {
@@ -113,7 +117,7 @@ const props = defineProps({
   flex-direction: column;
   justify-content: flex-start; /* Aligns children to the start on the main axis */
   align-items: flex-start; /* Aligns children to the start on the cross axis */
-  width: 430px;
+  width: 400px;
   height: 150px;
   background-color: white;
   border-radius: 10px;
