@@ -60,8 +60,8 @@ function updateModuleSubmissionTable() {
             inactive.value = inactTemp
             drop.value = dropTemp
 
-            term.value = data.module_submissions[0].enrollment.class_level.term
-            classLevel.value = data.module_submissions[0].enrollment.class_level
+            term.value = data.module_submissions.length ? data.module_submissions[0].enrollment.class_level.term : null
+            classLevel.value = data.module_submissions.length ? data.module_submissions[0].enrollment.class_level : null
             learningStrand.value = data.class_learning_strand.learning_strand
             module.value = data
             moduleTitle.value = data.title
