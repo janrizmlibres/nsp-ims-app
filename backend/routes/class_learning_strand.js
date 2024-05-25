@@ -15,11 +15,14 @@ router.post("/:classLearningStrandId/module/add", isAuth, classLearningStrandCon
 router.post("/:classLearningStrandId/session/add", isAuth, classLearningStrandController.addSession);
 router.patch("/schedule/:scheduleId/update", isAuth, classLearningStrandController.updateSchedule);
 router.patch("/module/:moduleId/update", isAuth, classLearningStrandController.updateModule)
+router.patch("/modules/update", isAuth, classLearningStrandController.updateModuleStatus)
 router.patch("/session/:sessionId/update", isAuth, classLearningStrandController.updateSession)
 router.put("/module/moduleSubmissions/update", isAuth, classLearningStrandController.updateModuleSubmissions);
 router.put("/session/attendances/update", isAuth, classLearningStrandController.updateAttendances);
 router.put("/grades/update", isAuth, classLearningStrandController.updateGrades);
-
+router.delete("/modules/delete", isAuth, classLearningStrandController.deleteModules);
+router.delete("/sessions/delete", isAuth, classLearningStrandController.deleteSessions);
+router.delete("/schedules/delete", isAuth, classLearningStrandController.deleteSchedules);
 
 export default router;
 

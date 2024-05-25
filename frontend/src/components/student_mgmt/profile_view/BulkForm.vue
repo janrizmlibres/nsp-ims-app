@@ -17,7 +17,7 @@ function handleUpdate(part, data) {
 </script>
 
 <template>
-  <BaseCard isNotPadded="true" class="grow p-2">
+  <BaseCard :isNotPadded="true" class="grow px-2">
     <TabView>
       <TabPanel header="Personal Information">
         <PersonalInfoForm @dataChanged="handleUpdate" />

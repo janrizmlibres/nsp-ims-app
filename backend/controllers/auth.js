@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 import prand from "pure-rand";
 import { validationResult } from "express-validator";
 
-import Staff from "../models/staff/staff.js";
-import Permission from "../models/staff/permission.js";
+import User from "../models/user/user.js";
+import Permission from "../models/user/permission.js";
 
 // This could be a database or in-memory data structure
 // This is a simple in-memory implementation
@@ -13,6 +13,7 @@ let invalidatedTokens = [];
 export async function signup(req, res, next) {
   try {
     const errors = validationResult(req);
+    console.log(errors);
 
     if (!errors.isEmpty()) {
       const error = new Error("Validation failed, entered data is incorrect.");
@@ -27,18 +28,37 @@ export async function signup(req, res, next) {
 
     const hashedPw = await bcrypt.hash(req.body.password, 12);
     let userId = prand.unsafeUniformIntDistribution(min, max, rng);
-    let staff = await Staff.findByPk(userId);
+    let user = await User.findByPk(userId);
 
-    while (staff !== null) {
+    while (user !== null) {
       userId = prand.unsafeUniformIntDistribution(min, max, rng);
-      staff = await Staff.findByPk(userId);
+      user = await User.findByPk(userId);
     }
 
     delete req.body.password;
-    const user = await Staff.create({ id: userId, hashedPw, ...req.body });
-    await user.createPermission();
+    const userInstance = await User.create({
+      id: userId,
+      hashedPw,
+      ...req.body,
+    });
 
-    res.status(201).json({ message: "User created!", user });
+    if (req.body.accessLevel === 2) {
+      await userInstance.createPermission({
+        canMgStuds: true,
+        canMgEnrollment: true,
+        canMgVolunteer: true,
+        canMgClass: true,
+        canMgTerm: true,
+        canMgLs: true,
+        canMgStudReq: true,
+        canMgStudCat: true,
+        canMgUser: true,
+      });
+    } else {
+      await userInstance.createPermission();
+    }
+
+    res.status(201).json({ message: "User created!", user: userInstance });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -66,15 +86,15 @@ export async function login(req, res, next) {
   const { userId, password } = req.body;
 
   try {
-    const staff = await Staff.findByPk(userId, { include: Permission });
+    const user = await User.findByPk(userId, { include: Permission });
 
-    if (!staff) {
+    if (!user) {
       const error = new Error("Authentication failed. User not found.");
       error.statusCode = 401;
       throw error;
     }
 
-    const result = await bcrypt.compare(password, staff.hashedPw);
+    const result = await bcrypt.compare(password, user.hashedPw);
 
     if (!result) {
       const error = new Error("Authentication failed. Wrong password.");
@@ -82,11 +102,11 @@ export async function login(req, res, next) {
       throw error;
     }
 
-    const authToken = jwt.sign({ userId: staff.id }, "HEHESECRET", {
+    const authToken = jwt.sign({ userId: user.id }, "HEHESECRET", {
       expiresIn: "1h",
     });
 
-    const refreshToken = jwt.sign({ userId: staff.id }, "HEHESECRET", {
+    const refreshToken = jwt.sign({ userId: user.id }, "HEHESECRET", {
       expiresIn: "10h", // Refresh token valid for 7 days
     });
 
@@ -94,11 +114,11 @@ export async function login(req, res, next) {
       message: "Authentication successful",
       token: authToken,
       refreshToken: refreshToken,
-      staff: {
-        id: staff.id,
-        accessLevel: staff.accessLevel,
-        permissions: staff.permission,
-        userName: staff.fullname,
+      user: {
+        id: user.id,
+        accessLevel: user.accessLevel,
+        permissions: user.permission,
+        userName: user.fullname,
       },
     });
   } catch (error) {
@@ -180,9 +200,9 @@ export async function logout(req, res, next) {
     error.statusCode = 401;
     throw error;
   }
-  
+
   try {
-    jwt.verify(token, "HEHESECRET")
+    jwt.verify(token, "HEHESECRET");
   } catch (error) {
     invalidatedTokens.push(token);
   }

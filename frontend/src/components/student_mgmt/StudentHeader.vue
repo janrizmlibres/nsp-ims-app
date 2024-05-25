@@ -5,13 +5,18 @@ import Button from 'primevue/button'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+const props = defineProps({ globalFilter: Object, dt: Object })
+
 const router = useRouter()
 
-const props = defineProps(['globalFilter'])
 const filter = ref(props.globalFilter)
 
 async function goToAddStudents() {
   await router.push({ name: 'add-student' })
+}
+
+function exportCSV() {
+  props.dt.exportCSV()
 }
 </script>
 
@@ -37,7 +42,12 @@ async function goToAddStudents() {
         class="ml-2 h-10"
         @click="goToAddStudents"
       />
-      <Button label="Export Data" icon="fa-solid fa-file-export" class="ml-2 h-10" />
+      <Button
+        label="Export Data"
+        icon="fa-solid fa-file-export"
+        class="ml-2 h-10"
+        @click="exportCSV"
+      />
     </div>
   </div>
 </template>

@@ -2,36 +2,43 @@
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
+import FloatLabel from 'primevue/floatlabel'
 
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed, inject } from 'vue'
 import { getYear } from 'date-fns'
 
 import { objectMap } from '@/util/helpers'
-import FormParts from '@/util/student_form_parts'
+import { FormParts, floatLabelPt } from '@/util/student_utils'
 
-const emit = defineEmits(['dataChanged'])
+const { formData, updateFormData } = inject('formData')
 
-const schoolName = ref(null)
-const discontinuationReason = ref(null)
+const prevSchoolInfo = formData.prevSchool
+
+const schoolName = ref(prevSchoolInfo.name)
+const discontinuationReason = ref(prevSchoolInfo.reason)
 
 const address = ref({
-  street: { label: 'Blk/Lt/St', data: null },
-  barangay: { label: 'Barangay', data: null },
-  city: { label: 'City', data: null },
-  province: { label: 'Province', data: null }
+  street: { label: 'Blk/Lt/St', data: prevSchoolInfo.street },
+  city: { label: 'City', data: prevSchoolInfo.city },
+  province: { label: 'Province', data: prevSchoolInfo.province }
 })
 
-const selectedType = ref(null)
-const selectedAffiliation = ref(null)
+const selectedType = ref(prevSchoolInfo.schoolType)
+const selectedAffiliation = ref(prevSchoolInfo.schoolAffiliation)
 
-const selectedEduc = ref(null)
+const selectedEduc = ref(prevSchoolInfo.highestEducation)
 const selectedLevel = ref(null)
 
 const selectedYearL = ref(null)
 const selectedYearR = ref(null)
-const lastYrAttended = ref(null)
+const lastYrAttended = ref(prevSchoolInfo.lastSyAttended)
 
-const years = ref([])
+const yearsR = ref([])
+const yearsL = computed(() => {
+  const yearList = [...yearsR.value]
+  yearList.pop()
+  return yearList
+})
 
 const types = ['Public', 'Private']
 const affiliations = ['Sectarian', 'Non-Sectarian']
@@ -60,7 +67,7 @@ watch([selectedYearL, selectedYearR], ([newYearL, newYearR], [oldYearL, oldYearR
     selectedYearL.value = (Number(newYearR) - 1).toString()
   }
 
-  lastYrAttended.value = `${selectedYearL.value} - ${selectedYearR.value}`
+  lastYrAttended.value = `${selectedYearL.value}-${selectedYearR.value}`
   isYearSet = true
   handleUpdate()
 })
@@ -77,19 +84,29 @@ function handleUpdate() {
     ...objectMap(address.value, (field) => field.data)
   }
 
-  emit('dataChanged', FormParts.PrevSchool, data)
+  updateFormData(FormParts.PrevSchool, data)
 }
 
 onMounted(() => {
   const currentYear = getYear(new Date())
 
   for (let i = currentYear - 120; i <= currentYear + 1; i++) {
-    years.value.push(i.toString())
+    yearsR.value.push(i.toString())
   }
 
   for (let i = 1; i <= 10; i++) {
     levels.value.push(`Grade ${i}`)
   }
+
+  const lastSyAttended = prevSchoolInfo.lastSyAttended
+
+  if (lastSyAttended) {
+    const [splitYrL, splitYrR] = lastSyAttended.split('-')
+    selectedYearL.value = splitYrL.trim()
+    selectedYearR.value = splitYrR.trim()
+  }
+
+  selectedLevel.value = prevSchoolInfo.gradeStopped
 })
 </script>
 
@@ -97,94 +114,162 @@ onMounted(() => {
   <div class="grid grid-cols-2">
     <div class="px-8">
       <div class="grid grid-cols-5 gap-3">
-        <div class="flex items-center justify-end pr-6 col-span-2">
-          <span>School Name</span>
+        <div class="flex gap-1 items-center justify-end pr-6 col-span-2">
+          <div>School Name</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <InputText
           class="h-10 col-span-3"
           type="text"
           v-model="schoolName"
           @update:model-value="handleUpdate"
+          :pt="{
+            root: ({ context }) => {
+              return { class: [{ '!opacity-100': context.disabled }] }
+            }
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end pr-6 col-span-2">
-          <span>Type</span>
+        <div class="flex gap-1 items-center justify-end pr-6 col-span-2">
+          <div>Type</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
           class="h-10 col-span-3"
           v-model="selectedType"
           :options="types"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end pr-6 col-span-2">
-          <span>Affiliation</span>
+        <div class="flex gap-1 items-center justify-end pr-6 col-span-2">
+          <div>Affiliation</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
           class="h-10 col-span-3"
           v-model="selectedAffiliation"
           :options="affiliations"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end text-right pr-6 col-span-2">
-          <span>Last School Year Attended</span>
+        <div class="flex gap-1 items-center justify-end text-right pr-6 col-span-2">
+          <div>Last School Year Attended</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
 
         <div class="grid grid-cols-5 gap-3 col-span-3">
-          <Dropdown class="h-10 col-span-2" v-model="selectedYearL" :options="years" filter />
+          <Dropdown
+            class="h-10 col-span-2"
+            v-model="selectedYearL"
+            :options="yearsL"
+            filter
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+          />
           <span class="flex items-center justify-center">-</span>
-          <Dropdown class="h-10 col-span-2" v-model="selectedYearR" :options="years" filter />
+          <Dropdown
+            class="h-10 col-span-2"
+            v-model="selectedYearR"
+            :options="yearsR"
+            filter
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+          />
         </div>
 
-        <div class="flex items-center justify-end text-right pr-6 col-span-2">
-          <span>Highest Educational Attainment</span>
+        <div class="flex gap-1 items-center justify-end text-right pr-6 col-span-2">
+          <div>Highest Educational Attainment</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
           class="h-10 col-span-3"
           v-model="selectedEduc"
           :options="educAttainment"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end text-right pr-6 col-span-2">
-          <span>Grade Year/Level Stopped</span>
+        <div class="flex gap-1 items-center justify-end text-right pr-6 col-span-2">
+          <div>Grade Year/Level Stopped</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
+
         <Dropdown
           class="h-10 col-span-3"
           v-model="selectedLevel"
           :options="levels"
           @change="handleUpdate"
+          :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
       </div>
     </div>
 
     <div class="px-8">
       <div class="grid grid-cols-4 gap-3">
-        <div class="flex justify-end pr-6">
-          <span>Reason for Discontinuation</span>
+        <div class="flex gap-1 justify-end text-right pr-6">
+          <div>Reason for Discontinuation</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
+
         <Textarea
           class="col-span-3"
           v-model="discontinuationReason"
           rows="5"
           cols="30"
           @update:model-value="handleUpdate"
+          :pt="{
+            root: ({ context }) => {
+              return { class: [{ '!opacity-100': context.disabled }] }
+            }
+          }"
+          :ptOptions="{ mergeProps: true }"
+          :disabled="$route.meta.isViewMode"
         />
 
-        <div class="flex items-center justify-end pr-6">
-          <span>Address</span>
+        <div class="flex gap-1 items-center justify-end pr-6">
+          <div>Address</div>
+          <div class="text-red-500 text-xl">*</div>
         </div>
-        <InputText
+
+        <FloatLabel
           v-for="(value, key) of address"
           :key="key"
-          class="h-10 col-span-3"
-          :class="{ 'col-start-2': value.data !== 'Blk/Lt/St' }"
-          type="text"
-          v-model="value.data"
-          :placeholder="value.label"
-          @update:model-value="handleUpdate"
-        />
+          class="col-span-3"
+          :class="{
+            'flex items-center mt-8': value.label === 'Blk/Lt/St',
+            'col-start-2 mt-4': value.label !== 'Blk/Lt/St'
+          }"
+          :pt="floatLabelPt"
+        >
+          <InputText
+            class="h-10 w-full"
+            type="text"
+            v-model="value.data"
+            @update:model-value="handleUpdate"
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+          />
+          <label :for="key">{{ value.label }}</label>
+        </FloatLabel>
       </div>
     </div>
   </div>

@@ -2,49 +2,54 @@
 // Presets
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
-import ProgressSpinner from 'primevue/progressspinner';
-import { ref, watch } from 'vue';
+import InputText from 'primevue/inputtext';
+import Toolbar from 'primevue/toolbar';
+import { inject, provide, ref } from 'vue';
 
 // // Custom
 import AttendanceTable from '../session_view/AttendanceTable.vue';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
+const regular = inject('regular')
+const hybrid = inject('hybrid')
+const drop = inject('drop')
 
-const props = defineProps(['modelValue'])
-const emit = defineEmits(['onUpdate'])
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+});
 
-const regular = ref([])
-const hybrid = ref([])
-const isFetching = ref(true)
-
-function updateAttendanceData(data) {
-    emit('onUpdate', data)
-}
-
-watch(() => props.modelValue, (data) => {
-    isFetching.value = true
-    
-    regular.value.length = 0
-    hybrid.value.length = 0
-    
-    regular.value = data.regular
-    hybrid.value = data.hybrid
-    
-    isFetching.value = false
-}, {immediate: false})
-
+provide('filters', filters)
 </script>
 
 <template>
-    <TabView class="p-2 bg-white shadow-xl rounded-md max-h-[51rem]">
-        <TabPanel header="Regular">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-            <AttendanceTable v-else v-model="regular" @onUpdate="updateAttendanceData" />
-        </TabPanel>
-        <TabPanel header="Hybrid">
-            <ProgressSpinner v-if="isFetching" class="flex justify-center" />
-            <AttendanceTable v-else v-model="hybrid" @onUpdate="updateAttendanceData" />
-        </TabPanel>
-    </TabView>
+    <div class="flex flex-col h-full overflow-hidden shadow-xl">
+        <Toolbar class="!p-2">
+            <template #start>
+                <div class="flex flex-row gap-4 items-center px-4">
+                    <i class="fa fa-calendar-days fa-lg u-txt-active"></i>
+                    <span class="font-semibold text-xl u-txt-active">Attendances</span>
+                </div>
+            </template>
+            <template #end>
+                <span class="relative">
+                    <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                    <InputText v-model="filters['global'].value" placeholder="Keyword Search"  class="pl-10 font-normal"/>
+                </span>
+            </template>
+        </Toolbar>
+        <TabView>
+            <TabPanel header="Regular">
+                <AttendanceTable v-model="regular" :disableEdit="false" />
+            </TabPanel>
+            <TabPanel header="Hybrid">
+                <AttendanceTable v-model="hybrid" :disableEdit="false" />
+            </TabPanel>
+            <TabPanel header="Drop">
+                <AttendanceTable v-model="drop" :disableEdit="true"  />
+            </TabPanel>
+        </TabView>
+    </div>
 </template>
 
 <style>

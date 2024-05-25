@@ -1,4 +1,4 @@
-import { INTEGER, STRING, DATE } from "sequelize";
+import { INTEGER, STRING, DATE, BOOLEAN } from "sequelize";
 import sequelize from "../../util/database.js";
 
 const Module = sequelize.define('module', {
@@ -19,6 +19,10 @@ const Module = sequelize.define('module', {
     retrieval_date: {
         type: DATE,
         allowNull: false
+    },
+    status: {
+        type: BOOLEAN,
+        defaultValue: false
     }
 });
 

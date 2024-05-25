@@ -3,245 +3,322 @@
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
-import Calendar from 'primevue/calendar';
-import { computed, ref, watch } from 'vue';
+import Toolbar from 'primevue/toolbar';
+import Tag from 'primevue/tag';
+import Badge from 'primevue/badge';
+import InputText from 'primevue/inputtext';
+import { computed, inject, provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { onBeforeRouteLeave, useRouter } from 'vue-router';
-import { useConfirm } from 'primevue/useconfirm';
+import { useRouter } from 'vue-router';
 
 // Custom
-import AddModuleDialog from './AddModuleDialog.vue';
+import AddModuleSection from './AddModuleSection.vue'
+import EditModuleDialog from './EditModuleDialog.vue'
 
 // stores
-import { useClassesStore } from '@/stores/classes';
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useConfirm } from 'primevue/useconfirm';
+import ProgressSpinner from 'primevue/progressspinner';
+import { useUsersStore } from '@/stores/users';
 
-const classesStore = useClassesStore()
-const classLearningStrandStore = useClassLearningStrandStore()
-
-const props = defineProps(['learningStrands', 'termStatus'])
 const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
 
+const classLearningStrandStore = useClassLearningStrandStore()
+const usersStore = useUsersStore()
+
+const learningStrands = inject('learningStrands')
+const termStatus = inject('termStatus')
+const term = inject('term')
+const classLevel = inject('classLevel')
+const filters = inject('filters')
+const allModules = ref([])
+const module = ref()
+const learningStrandInput = ref()
+const selectedModules = ref([])
+const isFetching = ref(false)
+const metaKey = ref(true)
+const editModuleDialogState = ref(false)
+const dt = ref()
+const dtDiv = ref()
+
 const cols = ref([
-    {field: 'no_submissions', header: 'No Submissions'},
-    {field: 'lacking', header: 'Lacking'},
-    {field: 'complete', header: 'Complete'},
-    {field: 'total', header: 'Total'},
+    { field: 'no_submissions', header: 'No Submissions' },
+    { field: 'submitted', header: 'Submitted' },
+    { field: 'graded', header: 'Graded' },
+    { field: 'total', header: 'Total' }
 ])
 
-const customPt = {
-    root: {
-        class: ['flex flex-col pt-2 justify-between']
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'font-medium',
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active'
-            ]
-        }),
-            sorticon: ({ context }) => ({
-                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-        }),
-    },
-    paginator: {
-        root: {
-            class: ['flex items-center justify-center flex-wrap object-bottom', 'px-4 pt-4 pb-2', 'border-0 rounded-bl-xl rounded-br-xl', 'bg-transparent dark:bg-surface-800', 'text-surface-500 dark:text-white/60']
-        },
-        pagebutton: ({ context }) => ({
-            class: [
-            'relative',
-            // Flex & Alignment
-            'inline-flex items-center justify-center',
-            // Shape
-            'border-0 rounded-full dark:rounded-md',
-            // Size
-            'min-w-[3rem] h-12 m-[0.143rem]',
-            'leading-none',
-            // Color
-            'text-surface-500 dark:text-white/80',
-            {
-                'u-bg-scolor-2 border-primary-50 text-white font-semibold': context.active
-            },
-            // State
-            {
-                'hover:bg-surface-50': !context.disabled && !context.active,
-                'focus:u-ring-scolor': !context.disabled
-            },
-            ]
-        }),
-    }
-}
+const selectedModulesStatus = computed(() => {
+    let data = [... new Set(selectedModules.value.map(module => module.status))]
+    if (data.length === 1) return data[0] ? true : false
+    else return null
+})
 
-const termStatus = computed(() => props.termStatus)
-const isFetching = ref(false)
-const allModules = ref([])
-const classLearningStrandId = ref()
-const learningStrandInput = ref()
+const statuses = ref([
+    {label: 'Not Done', value: false},
+    {label: 'Done', value: true}
+]);
 
-function updateModuleTable(modules) {
-    allModules.value.length = 0
+provide('allModules', allModules)
+provide('module', module)
+provide('editModuleDialogState', editModuleDialogState)
+provide('learningStrandInput', learningStrandInput)
+provide('updateModuleTable', updateModuleTable)
 
-    for (const module of modules) {
-        let distribution_date = new Date(module.distribution_date)
-        let retrieval_date = new Date(module.retrieval_date)
-
-        allModules.value.push({
-            id: module.id,
-            title: module.title,
-            distribution_date: distribution_date,
-            retrieval_date: retrieval_date,
-            no_submissions: module.noSubmissions,
-            lacking: module.lacking,
-            complete: module.complete,
-            total: module.total
-        })
-    }
-}
-
-watch(() => props.learningStrands, () => {
+watch(() => learningStrands.value, () => {
     learningStrandInput.value = null
     allModules.value.length = 0
 })
 
-watch(() => learningStrandInput.value, (input) => {
-    if (input) {
-        isFetching.value = true
-        classLearningStrandId.value = input.id
-        try {
-            classLearningStrandStore.getAllModules(input.id).then((data) => {
-                updateModuleTable(data)
-            })
-            
+function updateModuleTable() {
+    deselect()
+
+    isFetching.value = true
+    allModules.value.length = 0
+    
+    try {
+        classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((modules) => {
+            for (const module of modules) {
+                allModules.value.push({
+                    id: module.id,
+                    title: module.title,
+                    distribution_date: new Date(module.distribution_date).toLocaleDateString(),
+                    retrieval_date: new Date(module.retrieval_date).toLocaleDateString(),
+                    no_submissions: module.noSubmissions,
+                    submitted: module.submitted,
+                    graded: module.graded,
+                    total: module.total,
+                    status: module.status,
+                    updatedAt: new Date(module.updatedAt).toLocaleString()
+                })
+            }
+
             isFetching.value = false
-        } catch (error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Unexpected error encountered. Please refresh this page.',
-                life: 3000
-            })
-        }
+        })
+    } catch (error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please refresh this page.',
+            life: 3000
+        })
     }
-})
+}
 
+async function deleteModules() {
+    confirm.require({
+        message: 'Do you really want to delete?',
+        header: 'Delete Confirmation',
+        accept: async () => {
+            try {
+                const moduleIds = selectedModules.value.map(module => module.id)
+                await classLearningStrandStore.deleteModules({moduleIds: moduleIds}).then((message) => {
+                    toast.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: message,
+                        life: 3000
+                    })
 
-const editingRows = ref([]);
-const leave = ref(true)
+                    try {
+                        selectedModules.value.forEach(async (module) => {
+                            await usersStore.addAudit(
+                                `Deleted: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                            ).then(deselect())
+                        })
+                    } catch(error) {
+                        console.log(error);
+                    }
 
-watch(() =>  editingRows.value, (data) => {
-    if (data.length === 0) leave.value = true
-    else leave.value = false
-})
+                    updateModuleTable()
+                })
+            } catch(error) {
+                console.log(error);
+                toast.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: 'Unexpected error encountered. Please refresh this page.',
+                    life: 3000
+                })
+            }
+        }
+    })
+}
 
-const onRowEditSave = async (event) => {
-    let { data, newData } = event;
-    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
-        isFetching.value = true
-        try {
-            await classLearningStrandStore.updateModule(newData.id, {
-                title: newData.title,
-                distribution_date: newData.distribution_date,
-                retrieval_date: newData.retrieval_date
-            })
-
-            classLearningStrandStore.getAllModules(classLearningStrandId.value).then((data) => {
-                updateModuleTable(data)
-            })
-
-            isFetching.value = false
-
+async function markAs() {
+    try {
+        const moduleIds = selectedModules.value.map(module => module.id)
+        const status = structuredClone(selectedModulesStatus.value)
+        await classLearningStrandStore.updateModuleStatus({
+            status: status,
+            moduleIds: moduleIds
+        }).then((message) => {
             toast.add({
                 severity: 'success',
                 summary: 'Success',
-                detail: 'Module updated successfully!',
+                detail: message,
                 life: 3000
             })
-        } catch(error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Unexpected error encountered.',
-                life: 3000
-            })
-        }
-    }
-};
 
-onBeforeRouteLeave((to) => {
-    if (leave.value) {
-        return true
-    }
+            try {
+                selectedModules.value.forEach(async (module) => {
+                    await usersStore.addAudit(
+                        `Updated: Marked ${module.title} as ${status ? 'undone' : 'done'} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    ).then(deselect())
+                })
+            } catch(error) {
+                console.log(error);
+            }
 
-    confirm.require({
-        message: 'Do you really want to leave? you have unsaved changes!',
-        header: 'Redirect Confirmation',
-        accept: async () => {
-            leave.value = true
-            await router.push(to)
+            updateModuleTable()
+        })
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+function viewModule() {
+    router.push({
+        name: 'module-info',
+        query: {
+            id: selectedModules.value[selectedModules.value.length - 1].id,
+            status: termStatus.value
         }
     })
+}
 
-    return false
-})
+function deselect() {
+    selectedModules.value = []
+}
+
+const getStatusLabel = (status) => {
+    switch (status) {
+        case true:
+        return 'success'
+
+        case false:
+        return 'warning'
+
+        default:
+        return null
+    }
+}
+
+const getNumericLabel = (field) => {
+    switch (field) {
+        case 'no_submissions':
+        return 'danger'
+
+        case 'submitted':
+        return 'warning'
+
+        case 'graded':
+        return 'success'
+
+        case 'total':
+        return 'info'
+
+        default:
+        return null
+    }
+}
+
+function editModule(data) {
+    module.value = {... data}
+    editModuleDialogState.value = true
+}
 </script>
 
 <template>
-    <Dropdown v-model="learningStrandInput" :options="props.learningStrands" optionLabel="learning_strand.name" placeholder="Select a Strand" class="w-full mb-4" />
-    <DataTable 
-        :value="allModules" dataKey="id" 
-        :sortField="Object.keys(classesStore.data[0])[0]" :sortOrder="-1" removableSort 
-        resizableColumns columnResizeMode="fit" showGridlines
-        v-model:filters="classesStore.filters" :globalFilterFields="classesStore.globalFilters"
-        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-        :paginator="allModules.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        :ptOptions="{mergeProps:true}"
-        :pt="customPt"
-    >
-        <template #empty> <div class="text-center">No records found.</div> </template>
-        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+    <div class="flex h-full w-full">
+        <div v-if="termStatus" class="flex flex-col rounded-md mr-10 p-2 gap-8" >
+            <AddModuleSection /> 
+        </div>
+        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
+            <Toolbar class="!p-2">
+                <template #start>
+                    <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">
+                        <span class="flex items-center gap-2">
+                            <Button icon="fa fa-circle-xmark fa-lg" text aria-label="Deselect" style="height: 2rem; width: 2rem;" @click="deselect"/>
+                            <p>
+                                {{ selectedModules.length + ' selected' }}
+                            </p>
+                        </span>
+                        <span v-if="termStatus" class="flex gap-1 items-center">
+                            <!-- <Button icon="fa fa-download" text aria-label="download-selected" style="height: 2rem; width: 2rem;" @click="{}"/> -->
+                            <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
+                            <Button v-if="selectedModulesStatus === false" label="mark as done" text aria-label="mark-as-done" size="small" @click="markAs"/>
+                            <Button v-if="selectedModulesStatus === true" label="mark as undone" text aria-label="mark-as-undone" size="small" @click="markAs"/>
+                        </span>
+                    </span>
+                </template>
+                <template #end>
+                    <div class="flex flex-row gap-4 items-center mr-4">
+                        <label class="font-semibold">Learning Strand:</label>
+                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="updateModuleTable" /> 
+                    </div>
+                    <span class="relative">
+                        <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                        <InputText v-model="filters['global'].value" placeholder="Keyword Search" class="pl-10 font-normal"/>
+                    </span>
+                </template>
+            </Toolbar>
+            <DataTable 
+                :value="allModules" dataKey="id" ref="dt" :loading="isFetching"
+                scrollable class="unselectable" 
+                v-model:filters="filters" filterDisplay="menu"
+                :globalFilterFields="['title', 'distribution_date', 'retrieval_date', 'status']"
+                sortField="title" :sortOrder="1" removableSort 
+                v-model:selection="selectedModules" selectionMode="multiple" :metaKeySelection="metaKey"
+                paginator :rows="15" :rowsPerPageOptions="[15, 20, 30, 50]"
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                currentPageReportTemplate="{first} to {last} of {totalRecords}"
+                @row-dblclick="viewModule"
+            >
+                <template #loading> <ProgressSpinner class="self-center" /> </template>
+                <template #empty> <div class="text-center">No records found.</div> </template>
 
-        <Column header="" class="u-txt-active text-center">
-            <template #body="slotProps">
-                <RouterLink :to="{ name: 'module-info', query: {id: slotProps.data.id, status: termStatus} }">
-                    <i class="fa fa-eye" />
-                </RouterLink>
-            </template>
-        </Column>
-        <Column field="title" header="Title" sortable>
-            <template #editor="{ data, field }">
-                <InputText v-model="data[field]" autofocus />
-            </template>
-        </Column>
-        <Column field="distribution_date" header="Distribution Date" sortable>
-            <template #body="slotProps">
-                {{ slotProps.data.distribution_date.toDateString() }}
-            </template>
-            <template #editor="{ data, field }">
-                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-            </template>
-        </Column>
-        <Column field="retrieval_date" header="Retrieval Date" sortable>
-            <template #body="slotProps">
-                {{ slotProps.data.retrieval_date.toDateString() }}
-            </template>
-            <template #editor="{ data, field }">
-                <Calendar v-model="data[field]" id="calendar" showIcon iconDisplay="input" autofocus />
-            </template>
-        </Column>
-        <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header" />
-        <Column :rowEditor="termStatus" bodyStyle="text-align:center" frozen class="right-0" />
-        <template #footer v-if="termStatus && learningStrandInput"> 
-            <Button icon="fa fa-plus" label="Add Module" text raised rounded aria-label="Submit" @click="classLearningStrandStore.showHideAddModuleDialog"/>
-            <AddModuleDialog @onUpdate="updateModuleTable" :id="classLearningStrandId" /> 
-        </template>
-    </DataTable>
+                <template #paginatorstart>
+                    <Button type="button" icon="pi pi-refresh" text @click="updateModuleTable" />
+                </template>
+                <template #paginatorend>
+                    <div></div>
+                </template>
+
+                <Column :exportable="false" style="width:2rem">
+                    <template #body="slotProps">
+                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editModule(slotProps.data)" />
+                    </template>
+                </Column>
+                <Column field="title" header="Title" sortable />
+                <Column field="distribution_date" header="Distribution Date" sortable />
+                <Column field="retrieval_date" header="Retrieval Date" sortable />
+                <Column v-for="col of cols" :key="col.field" :field="col.field" :header="col.header">
+                    <template #body="{ data, field }">
+                        <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
+                    </template>
+                </Column>
+                <Column field="status" header="Status" :filterMenuStyle="{ width: '14rem' }">
+                    <template #body="slotProps">
+                        <Tag :value="slotProps.data.status ? 'Done' : 'Not Done'" :severity="getStatusLabel(slotProps.data.status)" />
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <Dropdown v-model="filterModel.value" :options="statuses" optionLabel="label" optionValue="value"  placeholder="Select One" class="p-column-filter" showClear>
+                            <template #option="slotProps">
+                                <Tag :value="slotProps.option.label" :severity="getStatusLabel(slotProps.option.value)" />
+                            </template>
+                        </Dropdown>
+                    </template>
+                </Column>
+                <Column field="updatedAt" header="Updated At" sortable style="width: 10rem;" />
+            </DataTable>
+        </div>
+    </div>
+    <EditModuleDialog />
 </template>
 
-<style>
-</style>
+<style></style>

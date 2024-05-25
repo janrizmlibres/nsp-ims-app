@@ -1,12 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { ref } from 'vue'
 import { useAuthStore } from './auth'
 
 export const useClassLearningStrandStore = defineStore('classLearningStrand', () => {
-    const visibleAddModuleDialog = ref(false)
-    const visibleAddSessionDialog = ref(false)
-
     async function getStrand(classLearningStrandId) {
         const authStore = useAuthStore()
 
@@ -20,9 +16,11 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
     async function addModule(classLearningStrandId, form) {
         const authStore = useAuthStore()
 
-        await axios.post(`http://localhost:8080/classLearningStrand/${classLearningStrandId}/module/add`, form, {
+        const result = await axios.post(`http://localhost:8080/classLearningStrand/${classLearningStrandId}/module/add`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
+
+        return result.data.message
     }
 
     async function getAllModules(classLearningStrandId) {
@@ -48,33 +46,52 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
     async function updateModule(moduleId, form) {
         const authStore = useAuthStore()
     
-        await axios.patch(
-            `http://localhost:8080/classLearningStrand/module/${moduleId}/update`,
-            form,
-            {
+        const result = await axios.patch(`http://localhost:8080/classLearningStrand/module/${moduleId}/update`, form, {
             headers: { Authorization: 'Bearer ' + authStore.token }
-            }
-        )
+        })
+
+        return result.data.message
+    }
+
+    async function updateModuleStatus(form) {
+        const authStore = useAuthStore()
+    
+        const result = await axios.patch(`http://localhost:8080/classLearningStrand/modules/update`, form, {
+            headers: { Authorization: 'Bearer ' + authStore.token }
+        })
+
+        return result.data.message
+    }
+
+    async function deleteModules(form) {
+        const authStore = useAuthStore()
+    
+        const result = await axios.delete(`http://localhost:8080/classLearningStrand/modules/delete`, {
+            data: form,
+            headers: { Authorization: 'Bearer ' + authStore.token }
+        })
+
+        return result.data.message
     }
 
     async function updateModuleSubmissions(updatedData) {
         const authStore = useAuthStore()
     
-        await axios.put(
-            `http://localhost:8080/classLearningStrand/module/moduleSubmissions/update`,
-            updatedData,
-            {
+        const result = await axios.put(`http://localhost:8080/classLearningStrand/module/moduleSubmissions/update`, updatedData, {
             headers: { Authorization: 'Bearer ' + authStore.token }
-            }
-        )
+        })
+
+        return result.data.message
     }
 
     async function addSession(classLearningStrandId, form) {
         const authStore = useAuthStore()
 
-        await axios.post(`http://localhost:8080/classLearningStrand/${classLearningStrandId}/session/add`, form, {
+        const result = await axios.post(`http://localhost:8080/classLearningStrand/${classLearningStrandId}/session/add`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
+
+        return result.data.message
     }
 
     async function getAllSessions(classLearningStrandId) {
@@ -100,41 +117,63 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
     async function updateSession(sessionId, form) {
         const authStore = useAuthStore()
     
-        await axios.patch(
-            `http://localhost:8080/classLearningStrand/session/${sessionId}/update`,
-            form,
-            {
+        const result = await axios.patch(`http://localhost:8080/classLearningStrand/session/${sessionId}/update`, form, {
             headers: { Authorization: 'Bearer ' + authStore.token }
-            }
-        )
+        })
+
+        return result.data.message
+    }
+
+    async function deleteSessions(form) {
+        const authStore = useAuthStore()
+    
+        const result = await axios.delete(`http://localhost:8080/classLearningStrand/sessions/delete`, {
+            data: form,
+            headers: { Authorization: 'Bearer ' + authStore.token }
+        })
+
+        return result.data.message
     }
 
     async function updateAttendances(updatedData) {
         const authStore = useAuthStore()
     
-        await axios.put(
-            `http://localhost:8080/classLearningStrand/session/attendances/update`,
-            updatedData,
-            {
+        const result = await axios.put(`http://localhost:8080/classLearningStrand/session/attendances/update`, updatedData, {
             headers: { Authorization: 'Bearer ' + authStore.token }
-            }
-        )
+        })
+        
+        return result.data.message
     }
 
     async function addSchedule(classLearningStrandId, form) {
         const authStore = useAuthStore()
 
-        await axios.post(`http://localhost:8080/classLearningStrand/${classLearningStrandId}/schedule/add`, form, {
+        const result = await axios.post(`http://localhost:8080/classLearningStrand/${classLearningStrandId}/schedule/add`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
+
+        return result.data.message
     }
 
     async function updateSchedule(scheduleId, form) {
         const authStore = useAuthStore()
 
-        await axios.patch(`http://localhost:8080/classLearningStrand/schedule/${scheduleId}/update`, form, {
+        const result = await axios.patch(`http://localhost:8080/classLearningStrand/schedule/${scheduleId}/update`, form, {
             headers: {Authorization: 'Bearer ' + authStore.token},
         })
+
+        return result.data.message
+    }
+
+    async function deleteSchedules(form) {
+        const authStore = useAuthStore()
+    
+        const result = await axios.delete(`http://localhost:8080/classLearningStrand/schedules/delete`, {
+            data: form,
+            headers: { Authorization: 'Bearer ' + authStore.token }
+        })
+
+        return result.data.message
     }
 
     async function getAllGrades(classLearningStrandId) {
@@ -150,33 +189,19 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
     async function updateGrades(updatedData) {
         const authStore = useAuthStore()
 
-        await axios.put('http://localhost:8080/classLearningStrand/grades/update', updatedData, {
+        const result = await axios.put('http://localhost:8080/classLearningStrand/grades/update', updatedData, {
             headers: { Authorization: 'Bearer ' + authStore.token }
         })
 
-        const idList = []
-
-        updatedData.updatedData.forEach((learner) => {
-            idList.push(learner.id)
-        })
+        return result.data.message
     }
 
-    function showHideAddModuleDialog() {
-        this.visibleAddModuleDialog = !this.visibleAddModuleDialog
-    }
-
-    function showHideAddSessionDialog() {
-        this.visibleAddSessionDialog = !this.visibleAddSessionDialog
-    }
-
-    return { 
-        visibleAddModuleDialog, visibleAddSessionDialog, 
+    return {
         getStrand, 
-        addModule, getAllModules, getModule, updateModule, updateModuleSubmissions, 
-        addSession, getAllSessions, getSession, updateSession, updateAttendances,
-        addSchedule, updateSchedule, 
-        getAllGrades, updateGrades, 
-        showHideAddModuleDialog, showHideAddSessionDialog
+        addModule, getAllModules, getModule, updateModule, updateModuleStatus, deleteModules, updateModuleSubmissions, 
+        addSession, getAllSessions, getSession, updateSession, deleteSessions, updateAttendances,
+        addSchedule, updateSchedule, deleteSchedules,
+        getAllGrades, updateGrades
     }
 })
 

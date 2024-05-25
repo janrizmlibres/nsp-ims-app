@@ -7,10 +7,18 @@ export default {
     apexchart: VueApexCharts,
   },
 
+  props: {
+    chartData: {
+      type: Array,
+      required: true
+    }
+  },
+
   data() {
     return {
       series: [{
-        data: [100, 130, 148, 170]
+        name: 'Student',
+        data: this.chartData
       }],
       chartOptions: {
         chart: {
@@ -27,8 +35,12 @@ export default {
         dataLabels: {
           enabled: false
         },
+        title: {
+          text: 'STUDENT DISTRIBUTION',
+          align: 'center'
+        },
         xaxis: {
-          categories: ['Learners', 'Elementary', 'Junior High', 'Active Learners'
+          categories: ['Students', 'Grade School', 'Junior High School', 'Active Students', 'Inactive Students'
           ],
         },
       },

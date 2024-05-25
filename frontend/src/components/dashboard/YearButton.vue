@@ -1,16 +1,21 @@
 <template>
   <div>
-    <Button label="Year" severity="secondary" icon="pi pi-filter" class="button" @click="showDropdown = !showDropdown" />
-    <div class="card flex justify-content-center" v-if="showDropdown">
-      <Listbox v-model="selectedYear" :options="years" multiple optionLabel="name" class="w-full md:w-14rem custom-listbox" />
+    <div class="h-fit flex place-items-center bg-white rounded-md shadow-xl p-2 px-4 mb-2 gap-5">
+      <p>A.Y.</p>
+      <Dropdown v-model="selectedTerm" :options="termsOptions" optionLabel="academic_year" placeholder="Academic Year" class="w-auto"/>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import Listbox from 'primevue/listbox';
 import Button from 'primevue/button';
+import { useTermStore } from '@/stores/term.js'
+import Dropdown from 'primevue/dropdown';
+
+const termStore = useTermStore()
+const selectedTerm = ref(null)
+const termsOptions = ref([])
 
 const showDropdown = ref(false);
 const selectedYear = ref();
@@ -30,6 +35,29 @@ const years = ref([
   { name: '2022-2023', code: '2022-2023' },
   { name: '2023-2024', code: '2023-2024' }
 ]);
+
+async function getAllTerms()  {
+  try {
+    await termStore.getTerms()
+    termsOptions.value = termStore.terms
+    
+    if (enrollmentStore.editedTerm) {
+      selectedTerm.value = termStore.terms.find(term => term.academic_year === enrollmentStore.editedTerm)
+      enrollmentStore.setEditedTerm(null)
+    } else  {
+      selectedTerm.value = termStore.terms[termStore.terms.length - 1]
+    }
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
+
+getAllTerms()
 </script>
 
 <style scoped>

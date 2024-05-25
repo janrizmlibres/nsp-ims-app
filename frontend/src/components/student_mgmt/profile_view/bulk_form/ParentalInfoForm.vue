@@ -1,37 +1,44 @@
 <script setup>
 import InputText from 'primevue/inputtext'
-import { ref } from 'vue'
+import Dropdown from 'primevue/dropdown'
+import { inject, ref } from 'vue'
 
-import FormParts from '@/util/student_form_parts'
+import { FormParts } from '@/util/student_utils'
 
-const emit = defineEmits(['dataChanged'])
+const { formData, updateFormData } = inject('formData')
 
-const formData = ref({
+const parentalInfo = formData.parentalInfo
+
+const parentalData = ref({
   fatherData: {
-    LastNameF: null,
-    FirstNameF: null,
-    MiddleNameF: null,
-    SuffixNameF: null,
-    OccupationF: null
+    lastNameF: parentalInfo && parentalInfo.lastNameF,
+    firstNameF: parentalInfo && parentalInfo.firstNameF,
+    middleNameF: parentalInfo && parentalInfo.middleNameF,
+    suffixNameF: parentalInfo && parentalInfo.suffixNameF,
+    occupationF: parentalInfo && parentalInfo.occupationF
   },
   motherData: {
-    LastNameM: null,
-    FirstNameM: null,
-    MiddleNameM: null,
-    SuffixNameM: null,
-    OccupationM: null
+    lastNameM: parentalInfo && parentalInfo.lastNameM,
+    firstNameM: parentalInfo && parentalInfo.lastNameM,
+    middleNameM: parentalInfo && parentalInfo.middleNameM,
+    suffixNameM: parentalInfo && parentalInfo.suffixNameM,
+    occupationM: parentalInfo && parentalInfo.occupationM
   }
 })
 
 const headers = ["Father's Information", "Mother's Information"]
 const fields = ['Last name', 'First Name', 'Middle Name', 'Suffix', 'Occupation']
+const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 
-const parentKeys = Object.keys(formData.value)
-const dataKeys = [Object.keys(formData.value.fatherData), Object.keys(formData.value.motherData)]
+const parentKeys = Object.keys(parentalData.value)
+const dataKeys = [
+  Object.keys(parentalData.value.fatherData),
+  Object.keys(parentalData.value.motherData)
+]
 
 function handleUpdate() {
-  const data = { ...formData.value.fatherData, ...formData.value.motherData }
-  emit('dataChanged', FormParts.Parental, data)
+  const data = { ...parentalData.value.fatherData, ...parentalData.value.motherData }
+  updateFormData(FormParts.Parental, data)
 }
 </script>
 
@@ -47,10 +54,29 @@ function handleUpdate() {
               <span>{{ fields[n] }}</span>
             </div>
             <InputText
+              v-if="!['suffixNameF', 'suffixNameM'].includes(dataKeys[idx][n])"
               class="h-10 col-span-3"
               type="text"
-              v-model="formData[parentKeys[idx]][dataKeys[idx][n]]"
+              v-model="parentalData[parentKeys[idx]][dataKeys[idx][n]]"
               @update:model-value="handleUpdate"
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
+            />
+            <Dropdown
+              v-else
+              class="h-10 col-span-3"
+              v-model="parentalData[parentKeys[idx]][dataKeys[idx][n]]"
+              showClear
+              :options="suffixes"
+              @update:modelValue="handleUpdate"
+              :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
             />
           </template>
         </div>

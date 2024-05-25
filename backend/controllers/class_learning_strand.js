@@ -9,12 +9,16 @@ import Session from "../models/class/session.js";
 import Student from "../models/student/student.js";
 import Volunteer from "../models/volunteer/volunteer.js";
 import ModuleSubmission from "../models/class/module_submission.js";
+import Term from "../models/term.js"
+import { Op } from "sequelize";
+import ClassLevel from "../models/class/class_level.js";
 
 export async function addModule(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
 
     const {
-        title,
+        min,
+        max,
         distriDate,
         retriDate
     } = req.body
@@ -22,32 +26,30 @@ export async function addModule(req, res, next) {
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
 
-        const mod = await Module.findOne({
-            where: {title: title, classLearningStrandId: classLearningStrandId}
-        })
+        const titles = []
 
-        if (mod) {
-            const error = new Error("Module exists already!");
-            error.statusCode = 404;
-            throw error;
+        for(let i = min; i < max+1; i++) {
+            titles.push("LAS " + i)
         }
-
-        const module = await classLearningStrand.createModule({
-            title: title,
-            distribution_date: distriDate,
-            retrieval_date: retriDate
-        })
 
         const enrollments = await Enrollment.findAll({
             where: {classLevelId: classLearningStrand.classLevelId}
         })
 
-        for (const enrollment of enrollments) {
-            await module.addEnrollment(enrollment)
+        for (const title of titles) {
+            await classLearningStrand.createModule({
+                title: title,
+                distribution_date: distriDate,
+                retrieval_date: retriDate
+            }).then(async (module) => {
+                for (const enrollment of enrollments) {
+                    await module.addEnrollment(enrollment)
+                }
+            })
         }
 
         res.status(201).json({ 
-            message: "Module added!"
+            message: "Added learning activity sheets successfully!"
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -70,24 +72,24 @@ export async function getAllModules(req, res, next) {
                 where: {status: 'No Submission'}
             })
     
-            const lacking = await module.countModule_submissions({
-                where: {status: 'Lacking'}
+            const submitted = await module.countModule_submissions({
+                where: {status: 'Submitted'}
             })
     
-            const complete = await module.countModule_submissions({
-                where: {status: 'Complete'}
+            const graded = await module.countModule_submissions({
+                where: {status: 'Graded'}
             })
     
-            const total = noSubmissions + lacking + complete
+            const total = noSubmissions + submitted + graded
 
             module.dataValues.noSubmissions = noSubmissions
-            module.dataValues.lacking = lacking
-            module.dataValues.complete = complete
+            module.dataValues.submitted = submitted
+            module.dataValues.graded = graded
             module.dataValues.total = total
         }
 
         res.status(201).json({ 
-            message: "Modules fetched successfully!",
+            message: "Fetched modules successfully!",
             data: modules
         });
     } catch (error) {
@@ -103,16 +105,24 @@ export async function getModule(req, res, next) {
 
     try {
         const module = await Module.findByPk(moduleId, {
-            include: [{
-                model: ModuleSubmission, include: [{model: Enrollment, include:[Student]}]
-            }, {
-                model: ClassLearningStrand, include: [LearningStrand]
-            }]
+            include: [
+                {model: ModuleSubmission, 
+                    include: [
+                        {model: Enrollment, 
+                            include:[Student]
+                        }
+                    ]
+                }, 
+                {model: ClassLearningStrand, include: [
+                    {model: ClassLevel, 
+                        include: [Term]
+                }, LearningStrand]}
+            ]
         })
         
         res.status(200).json({
-        message: "Fetched module successfully.",
-        data: module,
+            message: "Fetched module successfully.",
+            data: module,
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -126,18 +136,57 @@ export async function updateModule(req, res, next) {
     const moduleId = req.params.moduleId
 
     try {
-        await Module.update(
-            req.body,
-            { where: { id: moduleId }
+        await Module.update(req.body, {
+            where: { id: moduleId }
         });
 
-        res.status(200).json({ message: "Module updated!" });
+        res.status(200).json({ 
+            message: "Updated module successfully!" 
+        });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
         }
         next(error);
-        return error;
+    } 
+}
+
+export async function updateModuleStatus(req, res, next) {
+    const { status, moduleIds } = req.body
+
+    try {
+        await Module.update(
+            { status: !status },
+            { where: { id: moduleIds }
+        });
+
+        res.status(200).json({ 
+            message: "Updated module statuses successfully!" 
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    } 
+}
+
+export async function deleteModules(req, res, next) {
+    const { moduleIds } = req.body
+
+    try {
+        await Module.destroy({
+            where: { id: moduleIds }
+        })
+
+        res.status(200).json({ 
+            message: "Deleted modules successfully!" 
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
     } 
 }
 
@@ -149,11 +198,14 @@ export async function updateModuleSubmissions(req, res, next) {
             await moduleSubmissionInstance.update({
                 status: moduleSubmission.status,
                 date_submitted: moduleSubmission.date_submitted,
+                score: moduleSubmission.score,
                 remarks: moduleSubmission.remarks
             });
         }
 
-        res.status(200).json({ message: "Module submission updated!" });
+        res.status(200).json({ 
+            message: "Updated module submissions successfully!" 
+        });
     } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -171,15 +223,17 @@ export async function getAllGrades(req, res, next) {
 
         const grades = await Grade.findAll({
             where: {classLearningStrandId: classLearningStrandId}, 
-            include: [{
-                model: Enrollment, where: {classLevelId: classLearningStrand.classLevelId}, include: [Student]
-            }, {
-                model: ClassLearningStrand, include: [LearningStrand]
-            }]
+            include: [
+                {model: Enrollment, 
+                    where: {classLevelId: classLearningStrand.classLevelId}, 
+                    include: [Student]
+                }, 
+                {model: ClassLearningStrand, include: [LearningStrand]}
+            ]
         })
 
         res.status(201).json({ 
-            message: "Grades fetched successfully!",
+            message: "Fetched grades successfully!",
             data: grades
         });
     } catch (error) {
@@ -194,59 +248,52 @@ export async function updateGrades(req, res, next) {
     try {
         for (const enrollment of req.body.updatedData) {
             const enrollmentInstance = await Enrollment.findByPk(enrollment.enrollmentId, {
-                include: {model: Grade, where: {
-                    classLearningStrandId: enrollment.classLearningStrandId
-                }},
+                include: [
+                    {model: Grade, 
+                        where: {classLearningStrandId: enrollment.classLearningStrandId}
+                    }
+                ],
             });
 
             await enrollmentInstance.grades[0].update(enrollment.grades);
         }
         
-            res.status(200).json({ message: "Grade Updated!" });
+        res.status(200).json({ 
+            message: "Updated grade successfully!" 
+        });
         } catch (error) {
             if (!error.statusCode) {
             error.statusCode = 500;
         }
         next(error);
-        return error;
     }
 }
 
 export async function addSession(req, res, next) {
     const classLearningStrandId = req.params.classLearningStrandId;
 
-    const {
-        date,
-    } = req.body
+    const { dates } = req.body
 
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
-
-        const sesh = await Session.findOne({
-            where: {date: date, classLearningStrandId: classLearningStrandId}
-        })
-
-        if (sesh) {
-            const error = new Error("Session exists already!");
-            error.statusCode = 404;
-            throw error;
-        }
-
-        const session = await classLearningStrand.createSession({
-            date: date,
-        })
 
         const enrollments = await Enrollment.findAll({
             where: {classLevelId: classLearningStrand.classLevelId}, 
             include: [Student]
         })
 
-        for (const enrollment of enrollments) {
-            await session.addEnrollment(enrollment)
+        for (const date of dates) {
+            const session = await classLearningStrand.createSession({
+                date: date,
+            })
+
+            for (const enrollment of enrollments) {
+                await session.addEnrollment(enrollment)
+            }
         }
 
         res.status(201).json({ 
-            message: "Session added!"
+            message: "Added sessions successfully!"
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -261,18 +308,26 @@ export async function getAllSessions(req, res, next) {
 
     try {
         const sessions = await Session.findAll({
-            where: {
-                classLearningStrandId: classLearningStrandId
-            }
+            where: {classLearningStrandId: classLearningStrandId}
         })
 
         for (const session of sessions) {
             const absent = await session.countAttendances({
-                where: {status: 'Absent'}
+                where: {status: 'Absent'},
+                include: [
+                    {model: Enrollment, 
+                        where: {status: {[Op.not]: 'Drop'}}
+                    }
+                ]
             })
 
             const present = await session.countAttendances({
-                where: {status: 'Present'}
+                where: {status: 'Present'},
+                include: [
+                    {model: Enrollment, 
+                        where:{status: {[Op.not]: 'Drop'}}
+                    }
+                ]
             })
     
             const total = absent + present
@@ -283,7 +338,7 @@ export async function getAllSessions(req, res, next) {
         }
 
         res.status(201).json({ 
-            message: "Sessions fetched successfully!",
+            message: "Fetch sessions successfully!",
             data: sessions
         });
     } catch (error) {
@@ -299,33 +354,66 @@ export async function getSession(req, res, next) {
 
     try {
         const classLearningStrand = await ClassLearningStrand.findOne({
-            include: [{model: Session, where: {
-                '$sessions.id$': sessionId
-            }}, LearningStrand]
+            include: [
+                {model: Session, 
+                    where: {'$sessions.id$': sessionId}
+                }, 
+                LearningStrand, 
+                {model: ClassLevel,
+                    include: [Term]
+                }
+            ]
         })
         
         const regularAttendances = await Attendance.findAll({
             where: {
+                sessionId: sessionId,
                 '$enrollment.regularity$': 'Regular',
-            }, include: [{model: Enrollment, include: [Student]}]
+                '$enrollment.status$': {[Op.not]: 'Drop'}
+            }, 
+            include: [
+                {model: Enrollment, 
+                    include: [Student]
+                }
+            ]
         })
 
         const hybridAttendances = await Attendance.findAll({
             where: {
+                sessionId: sessionId,
                 '$enrollment.regularity$': 'Hybrid',
-            }, include: [{model: Enrollment, include: [Student]}]
+                '$enrollment.status$': {[Op.not]: 'Drop'}
+            }, 
+            include: [
+                {model: Enrollment, 
+                    include: [Student]
+                }
+            ]
+        })
+
+        const dropAttendances = await Attendance.findAll({
+            where: {
+                sessionId: sessionId,
+                '$enrollment.status$': 'Drop'
+            }, 
+            include: [
+                {model: Enrollment, 
+                    include: [Student]
+                }
+            ]
         })
         
         res.status(200).json({
-        message: "Fetched module successfully.",
-        data: {
-            classLearningStrand: classLearningStrand,
-            session: classLearningStrand.sessions[0],
-            attendances: {
-                regular: regularAttendances,
-                hybrid: hybridAttendances
-            }
-        },
+            message: "Fetched session successfully.",
+            data: {
+                classLearningStrand: classLearningStrand,
+                session: classLearningStrand.sessions[0],
+                attendances: {
+                    regular: regularAttendances,
+                    hybrid: hybridAttendances,
+                    drop: dropAttendances
+                }
+            },
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -339,20 +427,37 @@ export async function updateSession(req, res, next) {
     const sessionId = req.params.sessionId
 
     try {
-        await Session.update({
-            remarks: req.body.remarks
-        }, {
-            where: {id: sessionId},
-        })
+        await Session.update(
+            {remarks: req.body.remarks}, 
+            {where: {id: sessionId}}
+        )
         
-            res.status(200).json({ message: "Session Updated!" });
-        } catch (error) {
-            if (!error.statusCode) {
+        res.status(200).json({ 
+            message: "Updated session successfully!" 
+        });
+    } catch (error) {
+        if (!error.statusCode) {
             error.statusCode = 500;
         }
         next(error);
-        return error;
     }
+}
+
+export async function deleteSessions(req, res, next) {
+    const { sessionIds } = req.body
+
+    try {
+        await Session.destroy({
+            where: { id: sessionIds }
+        })
+
+        res.status(200).json({ message: "Deleted sessions successfully!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    } 
 }
 
 export async function updateAttendances(req, res, next) {
@@ -366,7 +471,9 @@ export async function updateAttendances(req, res, next) {
             });
         }
         
-            res.status(200).json({ message: "Grade Updated!" });
+            res.status(200).json({ 
+                message: "Updated attendances successfully!" 
+            });
         } catch (error) {
             if (!error.statusCode) {
             error.statusCode = 500;
@@ -386,9 +493,11 @@ export async function addSchedule(req, res, next) {
         end_time
     } = req.body
 
+    console.log(req.body);
     try {
         const classLearningStrand = await ClassLearningStrand.findByPk(classLearningStrandId)
         const teacher = await Volunteer.findByPk(volunteer.id)
+
         await classLearningStrand.addVolunteer(teacher, {
             through: {
                 days: days,
@@ -398,7 +507,7 @@ export async function addSchedule(req, res, next) {
         });
 
         res.status(201).json({ 
-            message: "Class schedule added!",
+            message: "Added class schedule successfully!",
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -411,12 +520,13 @@ export async function addSchedule(req, res, next) {
 export async function updateSchedule(req, res, next) {
     try {
         const scheduleId = req.params.scheduleId
-        await ClassSchedule.update(
-            req.body, 
-            { where: { id: scheduleId }
+        await ClassSchedule.update(req.body, { 
+            where: { id: scheduleId }
         });
 
-        res.status(200).json({ message: "Status updated!" });
+        res.status(200).json({ 
+            message: "Updated class schedule successfully!" 
+        });
         } catch (error) {
         if (!error.statusCode) {
             error.statusCode = 500;
@@ -424,4 +534,22 @@ export async function updateSchedule(req, res, next) {
         next(error);
         return error;
     }
+}
+
+export async function deleteSchedules(req, res, next) {
+    const { scheduleIds } = req.body
+
+    try {
+        await ClassSchedule.destroy({
+            where: { id: scheduleIds }
+        })
+
+        res.status(200).json({ 
+            message: "Deleted class schedules successfully!" });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    } 
 }

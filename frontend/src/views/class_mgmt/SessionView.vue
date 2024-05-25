@@ -1,13 +1,11 @@
 <script setup>
 // Presets
 import { useRoute } from 'vue-router';
-import { ref, watch } from 'vue';
-import Divider from 'primevue/divider';
+import { provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
 // Custom
 import ContentPane from '@/components/UI/ContentPane.vue';
-import SessionInfoSection from '@/components/class_mgmt/session_view/SessionInfoSection.vue';
 import AttendanceTab from '@/components/class_mgmt/session_view/AttendanceTab.vue';
 
 // stores
@@ -18,21 +16,46 @@ const toast = useToast()
 
 const classLearningStrandStore = useClassLearningStrandStore()
 const session = ref()
-const attendances = ref()
+const date = ref()
+const regular = ref()
+const hybrid = ref()
+const drop = ref()
 const strand = ref()
+const learningStrand = ref()
+const term = ref()
+const classLevel = ref()
+const isFetching = ref(false)
 
-function updateAttendanceTable(data) {
-    session.value = data.session
-    attendances.value = data.attendances
-}
+provide('regular', regular)
+provide('hybrid', hybrid)
+provide('drop', drop)
+provide('term', term)
+provide('classLevel', classLevel)
+provide('learningStrand', learningStrand)
+provide('session', session)
+provide('updateAttendanceTable', updateAttendanceTable)
+provide('isFetching', isFetching)
 
-watch(() => route.query, (query) => {
+function updateAttendanceTable() {
     try {
-        classLearningStrandStore.getSession(query.id).then((data) => {
-            updateAttendanceTable(data)
+        isFetching.value = true
+
+        classLearningStrandStore.getSession(route.query.id).then((data) => {
+            console.log(data);
+            learningStrand.value = data.classLearningStrand.learning_strand
+            term.value = data.classLearningStrand.class_level.term
+            classLevel.value = data.classLearningStrand.class_level
+            session.value = data.session
+            regular.value = data.attendances.regular
+            hybrid.value = data.attendances.hybrid
+            drop.value = data.attendances.drop
+            date.value = new Date(session.value.date).toDateString()
             strand.value = data.classLearningStrand.learning_strand.name
+
+            isFetching.value = false
         })
     } catch (error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -40,14 +63,18 @@ watch(() => route.query, (query) => {
             life: 3000
         })
     }
+}
+
+watch(() => route.query, () => {
+    if (route.name === 'session-info') {
+        updateAttendanceTable()
+    }
 }, {immediate: true})
 </script>
 
 <template>
-    <ContentPane header="Attendance" :subheader="strand">
-        <SessionInfoSection v-model="session" />
-        <Divider class="before:border-t before:border-surface-400 my-10"/>
-        <AttendanceTab v-model="attendances" @onUpdate="updateAttendanceTable" />
+    <ContentPane :header="date" :subheader="strand">
+        <AttendanceTab />
     </ContentPane>
 </template>
 

@@ -4,187 +4,207 @@ import DataTable from 'primevue/datatable';
 import ColumnGroup from 'primevue/columngroup';
 import Column from 'primevue/column';
 import Row from 'primevue/row';
-import Calendar from 'primevue/calendar';
-import Dropdown from 'primevue/dropdown';
-import MultiSelect from 'primevue/multiselect';
-import { computed, onMounted, ref, watch } from 'vue';
+import Toolbar from 'primevue/toolbar';
+import Button from 'primevue/button';
+import { inject, provide, ref, watch } from 'vue';
 import { format } from 'date-fns';
+import { useToast } from 'primevue/usetoast';
+import { useConfirm } from 'primevue/useconfirm';
 
 // Custom
-import { useVolunteerStore } from '@/stores/volunteer';
-import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useToast } from 'primevue/usetoast';
+import AddScheduleSection from './AddScheduleSection.vue';
+import EditScheduleDialog from './EditScheduleDialog.vue';
 
 // stores
-const volunteerStore = useVolunteerStore()
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useClassStore } from '@/stores/class';
+import { useUsersStore } from '@/stores/users';
+
 const classLearningStrandStore = useClassLearningStrandStore()
+const classStore = useClassStore()
+const usersStore = useUsersStore()
 
-const props = defineProps(['modelValue', 'state', 'termStatus'])
-const emit = defineEmits(['updateSchedule'])
 const toast = useToast()
+const confirm = useConfirm()
 
+const termStatus = inject('termStatus')
+const term = inject('term')
+const classLevel = inject('classLevel')
 const classData = ref([])
-const volunteers = computed(() => volunteerStore.volunteers)
+const isFetching = ref(true)
+const selectedSchedules = ref([])
+const metaKey = ref(true)
+const editScheduleDialogState = ref(false)
+const schedule = ref()
+const dt = ref()
+const dtDiv = ref()
 
-onMounted(async () => {
-    try {
-        volunteerStore.getAllVolunteers()
-    } catch(error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Unexpected error encountered.',
-            life: 3000
-        })
-    }
-})
+provide('schedule', schedule)
+provide('editScheduleDialogState', editScheduleDialogState)
+provide('updateScheduleTable', updateScheduleTable)
 
-watch(() => props.modelValue, (data) => classData.value = data, {immediate: true})
+function updateScheduleTable(classId) {
+    classData.value.length = 0
 
-const days = ref(["M", "T", "W", "TH", "F", "S"]);
+    classStore.getClassSchedules(classId).then((data) => {
+        for (const learningStrand of data) {
+            for (const schedule of learningStrand.class_schedules) {
+                const start_time = format(new Date("01/01/0001 " + schedule.start_time), "hh:mm aaa")
+                const end_time = format(new Date("01/01/0001 " + schedule.end_time), "hh:mm aaa")
 
-const customPt = {
-    root: {
-        class: ['flex flex-col h-full pt-2 justify-between overflow-auto mb-8']
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'font-medium',
-                {
-                'space-nowrap border-y bg-clip-padding': context.resizable
-                // Resizable
-                },
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
-                {'hover:bg-surface-50': context.sorted}
-            ]
-        }),
-            sorticon: ({ context }) => ({
-                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-        }),
-            bodycell: {class: 'py-3 '}
-    },
-    bodyrow: ({ context, props }) => ({
-        class: [
-            { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
-            { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
-            { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
-            // State
-            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
-            { 'hover:u-bg-pcolor hover:text-white': props.selectionMode && !context.selected },
-            // Misc
-            { 'cursor-pointer': props.selectionMode }
-        ]
+                classData.value.push({
+                    id: learningStrand.id,
+                    classLevelId: learningStrand.classLevelId,
+                    scheduleId: schedule.id,
+                    code: learningStrand.learning_strand.code,
+                    name: learningStrand.learning_strand.name,
+                    volunteer: schedule.volunteer,
+                    school_days: schedule.days.split(','),
+                    start_time: start_time,
+                    end_time: end_time,
+                    updatedAt: schedule.updatedAt
+                })
+            }
+        }
     })
 }
 
-const editingRows = ref([]);
-
-const onRowEditSave = async (event) => {
-    let { data, newData } = event;
-
-    if ( JSON.stringify(data) !== JSON.stringify(newData) ) {
-        if (newData.start_time instanceof Date) newData.start_time = format(newData.start_time, "HH:mm")
-        else newData.start_time = to24hr(newData.start_time)
-
-        if (newData.end_time instanceof Date) newData.end_time = format(newData.end_time, "HH:mm")
-        else newData.end_time = to24hr(newData.end_time)
+watch(() => classLevel.value, (data) => {
+    try {
+        updateScheduleTable(data.id)
         
-        try {
-            await classLearningStrandStore.updateSchedule(data.scheduleId, {
-                volunteerId: newData.volunteer.id,
-                days: newData.school_days.length === 0 ? data.school_days.toString() : newData.school_days.toString(),
-                start_time: newData.start_time,
-                end_time: newData.end_time
-            })
-            
-            emit('updateSchedule', newData.classLevelId)
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: "Updated learning strand schedule successfully!",
-                life: 3000
-            })
-        } catch(error) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: error,
-                life: 3000
-            })
+        isFetching.value = false
+    } catch (error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please refresh this page.',
+            life: 3000
+        })
+    }
+}, { immediate: true })
+
+async function deleteSchedules() {
+    confirm.require({
+        message: 'Do you really want to delete?',
+        header: 'Delete Confirmation',
+        accept: async () => {
+            try {
+                const scheduleIds = selectedSchedules.value.map(schedule => schedule.scheduleId)
+                await classLearningStrandStore.deleteSchedules({scheduleIds: scheduleIds}).then((message) => {
+                    toast.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: message,
+                        life: 3000
+                    })
+
+                    try {
+                        selectedSchedules.value.forEach(async (schedule) => {
+                            await usersStore.addAudit(
+                                `Deleted: Schedule for ${schedule.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                            ).then(deselect())
+                        })
+                    } catch(error) {
+                        console.log(error);
+                    }
+
+                    try {
+                        updateScheduleTable(classLevel.value.id)
+                    } catch(error) {
+                        console.log(error);
+                    }
+                })
+            } catch(error) {
+                console.log(error);
+            }
         }
-    }
-};
+    })
+}
 
-function to24hr(time12h) {
-    const [time, modifier] = time12h.split(' ');
+function editSchedule(data) {
+    schedule.value = {... data}
+    editScheduleDialogState.value = true
+}
 
-    let [hours, minutes] = time.split(':');
 
-    if (hours === '12') {
-        hours = '00';
-    }
-
-    if (modifier === 'PM') {
-        hours = parseInt(hours, 10) + 12;
-    }
-
-    return `${hours}:${minutes}`;
+function deselect() {
+    selectedSchedules.value = []
 }
 </script>
 
 <template>
-    <DataTable 
-        :value="classData" dataKey="scheduleId"
-        v-model:editingRows="editingRows" editMode="row" @row-edit-save="onRowEditSave"
-        :ptOptions="{mergeProps:true}"
-        :pt="customPt"
-    >
-        <template #empty> <div class="text-center">Nothing added.</div> </template>
+    <div class="flex h-full w-full">
+        <div v-if="termStatus" class="flex flex-col mr-10 p-2 gap-4" >
+            <AddScheduleSection />
+        </div>
+        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
+            <Toolbar class="!p-2 h-16">
+                <template #start>
+                    <span v-if="selectedSchedules.length" class="flex flex-row gap-8 items-center mx-2">
+                        <span class="flex items-center gap-2">
+                            <Button icon="fa fa-circle-xmark fa-lg" text aria-label="Edit Mode" style="height: 2rem; width: 2rem;" @click="deselect"/>
+                            <p>
+                                {{ selectedSchedules.length + ' selected' }}
+                            </p>
+                        </span>
+                        <span v-if="termStatus" class="flex gap-1 items-center">
+                            <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                            <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteSchedules"/>
+                        </span>
+                    </span>
+                </template>
+            </Toolbar>
+            <DataTable :value="classData" dataKey="scheduleId"
+                v-model:selection="selectedSchedules" scrollable style=" overflow: auto;"
+                selectionMode="multiple" :metaKeySelection="metaKey"
+                class="unselectable" ref="dt"
+            >
+                <template #empty> <div class="text-center">Nothing added.</div> </template>
 
-        <ColumnGroup type="header">
-            <Row>
-                <Column header="Learning Strand" :rowspan="2" />
-                <Column header="Teacher" :rowspan="2" />
-                <Column header="Schedule" :colspan="4" />
-            </Row>
-            <Row>
-                <Column header="Days" field="school_days"/>
-                <Column header="Start Time" field="start_time"/>
-                <Column header="End Time" field="end_time"/>
-                <Column header="" />
-            </Row>
-        </ColumnGroup>
-        <Column field="name" />
-        <Column field="volunteer">
-            <template #body="slotProps">
-                {{ slotProps.data.volunteer.fullname }}
-            </template>
-            <template #editor="{ data, field }">
-                <Dropdown v-model="data[field]" :options="volunteers" optionLabel="fullname" placeholder="data[field].fullname" class="w-full md:w-[14rem]" />
-            </template>
-        </Column>
-        <Column field="school_days">
-            <template #body="slotProps">
-                {{ slotProps.data.school_days.toString() }}
-            </template>
-            <template #editor="{ data, field }">
-                <MultiSelect v-model="data[field]" :options="days" placeholder="Select Days" :maxSelectedLabels="2" class="w-full xl:w-[14rem]" />
-            </template>
-        </Column>
-        <Column field="start_time">
-            <template #editor="{ data, field }">
-                <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-            </template>
-        </Column>
-        <Column field="end_time">
-            <template #editor="{ data, field }">
-                <Calendar id="calendar-timeonly" v-model="data[field]" timeOnly hourFormat="12" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" />
-            </template>
-        </Column>
-        <Column :rowEditor="props.termStatus" bodyStyle="text-align:center"></Column>
-    </DataTable>
+                <ColumnGroup type="header">
+                    <Row>
+                        <Column header="" :rowspan="2" />
+                        <Column header="Learning Strand" :rowspan="2" />
+                        <Column header="Teacher" :rowspan="2" />
+                        <Column header="Schedule" :colspan="4" />
+                    </Row>
+                    <Row>
+                        <Column header="Days" />
+                        <Column header="Start Time" />
+                        <Column header="End Time" />
+                        <Column header="Updated At" />
+                    </Row>
+                </ColumnGroup>
+
+                <Column :exportable="false" style="width:2rem">
+                    <template #body="slotProps">
+                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" />
+                    </template>
+                </Column>
+                <Column field="name" />
+                <Column field="volunteer">
+                    <template #body="slotProps">
+                        {{ slotProps.data.volunteer.fullname }}
+                    </template>
+                </Column>
+                <Column field="school_days">
+                    <template #body="slotProps">
+                        {{ slotProps.data.school_days.toString() }}
+                    </template>
+                </Column>
+                <Column field="start_time" />
+                <Column field="end_time" />
+                <Column field="updatedAt" header="Updated At" sortable style="width: 10rem;">
+                    <template #body="slotProps">
+                        {{ new Date(slotProps.data.updatedAt).toLocaleString() }}
+                    </template>
+                </Column>
+            </DataTable>
+        </div>
+    </div>
+    <EditScheduleDialog />
 </template>
 
 <style>

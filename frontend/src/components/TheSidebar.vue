@@ -42,6 +42,7 @@ const items = computed(() => [
         label: 'Admit Students',
         icon: 'fa fa-user-plus',
         route: { name: 'add-student' }
+        route: { name: 'dashboard' }
       }
     ]
   },
@@ -97,75 +98,69 @@ const items = computed(() => [
   },
   {
     key: '6',
-    label: 'Term Management',
-    icon: 'fa fa-calendar-days',
-    route: { name: 'term-management' }
-  },
-  {
-    key: '7',
-    label: 'Staff Management',
+    label: 'User Management',
     icon: 'fa fa-user',
     items: [
       {
-        key: '7-1',
-        label: 'Staff Records',
+        key: '6-1',
+        label: 'User Records',
         icon: 'fa fa-address-book',
-        route: { name: 'staff-records' }
+        route: { name: 'user-records' }
+      },
+      {
+        key: '6-2',
+        label: 'Staff Permissions',
+        icon: 'fa fa-shield-halved',
+        route: { name: 'user-permissions' }
+      }
+    ]
+  },
+  {
+    key: '7',
+    label: 'Configurations',
+    icon: 'fa fa-gear',
+    items: [
+      {
+        key: '7-1',
+        label: 'Academic Term Configuration',
+        icon: 'fa fa-calendar-days',
+        route: { name: 'academic-term-configuration' }
       },
       {
         key: '7-2',
-        label: 'Staff Permissions',
-        icon: 'fa fa-shield-halved',
-        route: { name: 'staff-permissions' }
+        label: 'Learning Strand Configuration',
+        icon: 'fa fa-book',
+        route: { name: 'learning-strand-configuration' }
       },
       {
         key: '7-3',
-        label: 'Add Staff',
-        icon: 'fa fa-user-plus',
-        route: { name: 'add-staff' }
+        label: 'Student Requirement Configuration',
+        icon: 'fa fa-list',
+        route: { name: 'student-requirement-configuration' }
+      },
+      {
+        key: '7-4',
+        label: 'Student Category Configuration',
+        icon: 'fa fa-layer-group',
+        route: { name: 'student-category-configuration' }
       }
     ]
   },
   {
     key: '8',
-    label: 'Utilities & Configurations',
-    icon: 'fa fa-gear',
-    items: [
-      {
-        key: '8-1',
-        label: 'Learning Strand Config',
-        icon: 'fa fa-book',
-        route: { name: 'learning-strand-management' }
-      },
-      {
-        key: '8-2',
-        label: 'Student Requirements Config',
-        icon: 'fa fa-list',
-        route: { name: 'student-requirements-management' }
-      },
-      {
-        key: '8-3',
-        label: 'Generate Reports',
-        icon: 'fa fa-note-sticky',
-        route: { name: 'dashboard' }
-      },
-      {
-        key: '8-4',
-        label: 'Audit Trails',
-        icon: 'fa fa-clock-rotate-left',
-        route: { name: 'audit-trails' }
-      }
-    ]
+    label: 'Audit Trails',
+    icon: 'fa fa-clock-rotate-left',
+    route: { name: 'audit-trails' }
   }
 ])
 
 const role = computed(() => {
-  if (authStore.staff.accessLevel === 1) {
+  if (authStore.user.accessLevel === 1) {
     return 'Admin'
-  } else if (authStore.staff.accessLevel === 2) {
+  } else if (authStore.user.accessLevel === 2) {
     return 'Sub-Admin'
   } else {
-    return 'Staff'
+    return 'User'
   }
 })
 
@@ -277,17 +272,17 @@ function changeState() {
 }
 
 function setVisibility(keyValue) {
-  const permissions = authStore.staff.permissions
+  if ([1, 2].includes(authStore.user.accessLevel)) return true
+  else if (keyValue === '7') return false
+
+  const permissions = authStore.user.permissions
 
   const permissionMap = {
     2: 'canMgStuds',
     3: 'canMgEnrollment',
     4: 'canMgVolunteer',
     5: 'canMgClass',
-    6: 'canMgTerm',
-    7: 'canMgLs',
-    8: 'canMgStudReq',
-    9: 'canMgStaff'
+    6: 'canMgUser'
   }
 
   const hasNoPermission = (keyValue) => {
@@ -388,8 +383,8 @@ const handleMouseLeave = () => {
         <span class="fa fa-circle-user text-surface-100" />
       </span>
       <div class="flex flex-col u-sidebar-footer-text">
-        <span>{{ authStore.staff.userName }}</span>
-        <span class="text-sm"> {{ role.value }}</span>
+        <span>{{ authStore.user.userName }}</span>
+        <span class="text-sm"> {{ role }}</span>
       </div>
     </div>
   </div>

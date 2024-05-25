@@ -1,39 +1,77 @@
 <script setup>
 // Presets
 import { useRoute } from 'vue-router';
-import { ref, watch } from 'vue';
+import { provide, ref, watch } from 'vue';
 import Divider from 'primevue/divider';
 import { useToast } from 'primevue/usetoast';
 
 // Custom
 import ContentPane from '@/components/UI/ContentPane.vue';
 import ModuleInfoSection from '@/components/class_mgmt/module_view/ModuleInfoSection.vue';
-import ModuleSubmissionTable from '@/components/class_mgmt/module_view/ModuleSubmissionTable.vue';
+import ModuleTab from '@/components/class_mgmt/module_view/ModuleTab.vue';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-
 
 const route = useRoute()
 const toast = useToast()
 
 const classLearningStrandStore = useClassLearningStrandStore()
+
+const active = ref()
+const inactive = ref()
+const drop = ref()
+const term = ref()
+const classLevel = ref()
+const learningStrand = ref()
 const module = ref()
-const name = ref()
-const strand = ref()
+const moduleTitle = ref()
+const strandName = ref()
+const isFetching = ref(false)
 
-function updateModuleSubmissionTable(data) {
-    module.value = data
-}
+provide('active', active)
+provide('inactive', inactive)
+provide('drop', drop)
+provide('isFetching', isFetching)
+provide('term', term)
+provide('classLevel', classLevel)
+provide('learningStrand', learningStrand)
+provide('module', module)
+provide('updateModuleSubmissionTable', updateModuleSubmissionTable)
 
-watch(() => route.query, (query) => {
+function updateModuleSubmissionTable() {
+    isFetching.value = true
+
     try {
-        classLearningStrandStore.getModule(query.id).then((data) => {
-            updateModuleSubmissionTable(data)
-            name.value = data.title
-            strand.value = data.class_learning_strand.learning_strand.name
+        classLearningStrandStore.getModule(route.query.id).then((data) => {
+            const actTemp = []
+            const inactTemp = []
+            const dropTemp = []
+
+            for (const moduleSubmission of data.module_submissions) {
+                const enrollment = moduleSubmission.enrollment
+
+                if (enrollment.status == 'Active') actTemp.push(moduleSubmission)
+                else if (enrollment.status == 'Inactive') inactTemp.push(moduleSubmission)
+                else dropTemp.push(moduleSubmission)
+            }
+
+            active.value = actTemp
+            inactive.value = inactTemp
+            drop.value = dropTemp
+
+            console.log(data);
+            term.value = data.class_learning_strand.class_level.term
+            classLevel.value = data.class_learning_strand.class_level
+            learningStrand.value = data.class_learning_strand.learning_strand
+            module.value = data
+            moduleTitle.value = data.title
+            strandName.value = data.class_learning_strand.learning_strand.name
+
+            isFetching.value = false
         })
     } catch (error) {
+        console.log(error);
         toast.add({
             severity: 'error',
             summary: 'Error',
@@ -41,14 +79,20 @@ watch(() => route.query, (query) => {
             life: 3000
         })
     }
+}
+
+watch(() => route.query, () => {
+    if (route.name === 'module-info') {
+        updateModuleSubmissionTable()
+    }
 }, {immediate: true})
 </script>
 
 <template>
-    <ContentPane :header="name" :subheader="strand">
-        <ModuleInfoSection v-model="module" />
+    <ContentPane :header="moduleTitle" :subheader="strandName">
+        <ModuleInfoSection />
         <Divider class="before:border-t before:border-surface-400 my-10"/>
-        <ModuleSubmissionTable v-model="module" @onUpdate="updateModuleSubmissionTable" />
+        <ModuleTab />
     </ContentPane>
 </template>
 

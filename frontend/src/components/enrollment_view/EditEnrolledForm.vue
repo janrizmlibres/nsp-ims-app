@@ -2,7 +2,7 @@
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Dropdown from 'primevue/dropdown'
-import Checkbox from 'primevue/checkbox'
+import FileUpload from 'primevue/fileupload'
 import Button from 'primevue/button'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -10,6 +10,7 @@ import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useTermStore } from '@/stores/term.js'
 import { useToast } from 'primevue/usetoast'
 import { defineProps } from 'vue'
+import Textarea from 'primevue/textarea'
 
 const enrollmentStore = useEnrollmentStore()
 const termStore = useTermStore()
@@ -27,20 +28,40 @@ const regularity = ref([
 const selectedLRN = ref();
 const selectedFullName = ref();
 const selectedSchoolLevel = ref();
-
-const isValid = computed(() => {
-  
-})
+const enrollmentFormName = ref();
+const confirmedFile = ref(false)
+const isLoaded = ref(false)
 
 const form = ref({
-  hasEnrollmentForm: null,
-  digitalLiteracyScore: null,
   fltPretestScore: null,
-  callable: null,
-  bridger: null,
   selectedRegularity: null,
   selectedRemarks: null,
+  enrollmentForm: null,
 })
+
+const oldForm = ref({
+  fltPretestScore: null,
+  selectedRegularity: null,
+  selectedRemarks: null,
+  enrollmentForm: null,
+})
+
+const chosenFile = computed(() => {
+  return enrollmentFormName.value ? enrollmentFormName.value : "Please Upload an Enrollment Form";
+})
+
+const isEqual = (newValue, oldValue) =>
+  newValue === oldValue || (newValue === "" && oldValue === null);
+
+const checkChanges = computed(() => {
+  if (!isLoaded.value) return true;
+  return (
+    isEqual(form.value.fltPretestScore, oldForm.value.fltPretestScore) &&
+    isEqual(form.value.selectedRegularity.code, oldForm.value.selectedRegularity.code) &&
+    isEqual(form.value.selectedRemarks, oldForm.value.selectedRemarks) &&
+    isEqual(form.value.enrollmentForm, oldForm.value.enrollmentForm)
+  );
+});
 
 async function getStudent()  {
   try {
@@ -60,12 +81,11 @@ async function getStudent()  {
     }
     
     form.value.selectedRemarks = enrollmentStore.learner.remarks
-    form.value.digitalLiteracyScore = enrollmentStore.learner.digitalLiteracy
     form.value.fltPretestScore = enrollmentStore.learner.ftlPretest
-    form.value.hasEnrollmentForm = enrollmentStore.learner.hasEnrollmentForm
-    form.value.callable = enrollmentStore.learner.callable
-    form.value.bridger = enrollmentStore.learner.Bridger
     
+    console.log("New Form: ", form.value)
+    copyExistingData()
+
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -104,6 +124,27 @@ async function updateEnrolled() {
 function cancelEdit() {
   enrollmentStore.setEditedTerm(props.academicYear)
   router.go(-1)
+}
+
+function confirmUpload(event) {
+  form.value.enrollmentForm = event.files[0]
+  enrollmentFormName.value = event.files[0].name
+
+  confirmedFile.value = true;
+}
+
+function cancelFile() {
+  form.value.enrollmentForm = null
+  enrollmentFormName.value = null
+  
+  confirmedFile.value = false;
+}
+
+function copyExistingData() {
+  for (let key in form.value) {
+    oldForm.value[key] = form.value[key];
+  }
+  isLoaded.value = true;
 }
 
 const props = defineProps({
@@ -148,6 +189,29 @@ getStudent()
           v-model="selectedSchoolLevel" disabled class="w-full md:w-14rem h-11" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-32 text-right">
+          <span>Enrollment Form</span>
+        </div>
+        <FileUpload class="grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
+        <Button label="X" @click="cancelFile" class="h-11" v-if="confirmedFile"/>     
+      </div>
+      <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-32 text-right">
+          <span>Current Saved File:</span>
+        </div>
+          <span class="max-w-36 overflow-auto">{{ chosenFile }}</span>
+      </div>
+    </div>
+
+
+    <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
+      <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-28 text-right ml-4">
+          <span>FLT Pre-Test Score</span>
+        </div>
+        <InputNumber v-model="form.fltPretestScore" class="grow"/>
+      </div>
+      <div class="flex gap-10 mb-2 items-center">
         <div class="text-right basis-32">
           <span>Regularity</span>
         </div>
@@ -156,51 +220,17 @@ getStudent()
           :options="regularity"
           optionLabel="regularity"
           placeholder="Select a Regularity"
-          class="w-full md:w-14rem"
+          class="grow md:w-14rem"
         />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Remarks</span>
         </div>
-        <InputText v-model="form.selectedRemarks" class="w-full md:w-14rem"/>
-      </div>
-    </div>
-
-
-    <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Digital Literacy Score</span>
-        </div>
-        <InputNumber id="digitalLiteracy" v-model="form.digitalLiteracyScore" class="grow"/>
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-28 text-right ml-4">
-          <span>FLT Pre-Test Score</span>
-        </div>
-        <InputNumber v-model="form.fltPretestScore" class="grow"/>
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Has Enrollment Form</span>
-        </div>
-        <Checkbox v-model="form.hasEnrollmentForm" :binary="true" />
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Callable</span>
-        </div>
-        <Checkbox v-model="form.callable" :binary="true" />
-      </div>
-      <div class="flex gap-10 mb-2 items-center">
-        <div class="basis-32 text-right">
-          <span>Bridger</span>
-        </div>
-        <Checkbox v-model="form.bridger" :binary="true" />
+        <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem" />
       </div>
       <div class="flex gap-4 mb-2 items-center place-self-end">
-        <Button @click="updateEnrolled" label="Update Learner" class="mt-4" />
+        <Button @click="updateEnrolled" label="Update Learner" class="mt-4" :disabled="checkChanges"/>
         <Button @click="cancelEdit" label="Cancel" class="mt-4"/>
       </div>
     </div>

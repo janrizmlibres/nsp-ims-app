@@ -2,116 +2,54 @@
 // Presets
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
-import RadioButton from 'primevue/radiobutton';
-import { computed, ref, watch } from 'vue';
+import InputSwitch from 'primevue/inputswitch';
+import Textarea from 'primevue/textarea';
+import Tag from 'primevue/tag';
+import ProgressSpinner from 'primevue/progressspinner';
+import { inject, ref, watch } from 'vue';
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
 // stores
-import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+import { useClassLearningStrandStore } from '@/stores/class_learning_strand'
+import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
+const usersStore = useUsersStore()
 
 const route = useRoute()
 const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
 
-const customPt = {
-    root: {
-        class: ['flex flex-col pt-2 justify-between']
-    },
-    table: {
-        class: 'bg-white border-spacing-0 border-separate',
-    },
-    thead: {
-        class: 'bg-surface-0 top-0 z-40 sticky'
-    },
-    tbody: {
-        class: 'sticky z-20'
-    },
-    column: {
-        headercell: ({ context, props }) => ({
-            class: [
-                'font-medium',
-                {
-                'space-nowrap border-y bg-clip-padding': context.resizable
-                // Resizable
-                },
-                // Color
-                (props.sortable === '' || props.sortable) && context.sorted ? 'bg-white u-txt-active' : 'bg-white u-txt-active',
-                {'hover:bg-surface-50': context.sorted}
-            ]
-        }),
-            sorticon: ({ context }) => ({
-                class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
-        }),
-            bodycell: ({ state }) => ({
-                style:  state['d_editing']&&'padding-top: 0.6rem; padding-bottom: 0.6rem',
-                class: 'py-3 '
-        })
-    },
-    bodyrow: ({ context, props }) => ({
-        class: [
-            { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
-            { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
-            { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
-            // State
-            { 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent': context.selectable },
-            { 'hover:u-bg-pcolor hover:text-white': props.selectionMode && !context.selected },
-            // Misc
-            { 'cursor-pointer': props.selectionMode }
-        ]
-    }),
-    paginator: {
-        root: {
-            class: ['flex items-center justify-center flex-wrap object-bottom', 'px-4 pt-4 pb-2', 'border-0 rounded-bl-xl rounded-br-xl', 'bg-transparent dark:bg-surface-800', 'text-surface-500 dark:text-white/60']
-        },
-        pagebutton: ({ context }) => ({
-            class: [
-            'relative',
-            // Flex & Alignment
-            'inline-flex items-center justify-center',
-            // Shape
-            'border-0 rounded-full dark:rounded-md',
-            // Size
-            'min-w-[3rem] h-12 m-[0.143rem]',
-            'leading-none',
-            // Color
-            'text-surface-500 dark:text-white/80',
-            {
-                'u-bg-scolor-2 border-primary-50 text-white font-semibold': context.active
-            },
-            // State
-            {
-                'hover:bg-surface-50': !context.disabled && !context.active,
-                'focus:u-ring-scolor': !context.disabled
-            },
-            ]
-        }),
-    }
-}
+const props = defineProps(['modelValue', 'disableEdit'])
 
-const props = defineProps(['modelValue'])
-const emit = defineEmits(['onUpdate'])
-const isFetching = ref(false)
+const filters = inject('filters')
+const isFetching = inject('isFetching')
+const learningStrand = inject('learningStrand')
+const classLevel = inject('classLevel')
+const term = inject('term')
 const learners = ref([])
 const noChanges = ref(true)
 const startingData = []
 const updatedData = new Set([])
-const termStatus = computed(() => route.query.status)
-const leave = ref(true)
+const edit = ref(false)
+const disableEdit = ref(props.disableEdit)
+const disableSave = ref()
+
+const onEdit = inject('updateAttendanceTable')
+
+watch(() => JSON.stringify(learners.value), () => {
+    disableSave.value = JSON.stringify(learners.value) === JSON.stringify(startingData)
+}, {immediate: true})
 
 watch(() => props.modelValue, (data) => {
-    isFetching.value = true
     learners.value.length = 0
     startingData.length = 0
 
     for (const attendance of data) {
-
         const temp = {
             id: attendance.id,
             lastName: attendance.enrollment.student.lastName,
@@ -127,68 +65,88 @@ watch(() => props.modelValue, (data) => {
         
         watch(learners.value[len - 1], (newData) => {
             updatedData.add(newData)
-            leave.value = false
             noChanges.value = false
         })
     }
-    
-    isFetching.value = false
-}, {immediate: true})
+})
 
-const statuses = ref([
-    { label: 'Absent', value: 'Absent' },
-    { label: 'Present', value: 'Present' }
-]);
+const getStatusLabel = (status) => {
+  switch (status) {
+    case 'Present':
+      return 'success'
+
+    case 'Absent':
+      return 'danger'
+
+    default:
+      return null
+  }
+}
 
 async function updateAttendances() {
     try {
-        await classLearningStrandStore.updateAttendances({ updatedData: Array.from(updatedData) })
-        classLearningStrandStore.getSession(route.query.id).then((data) => {
-            emit('onUpdate', data)
-        })
-
-        toast.add({
+        await classLearningStrandStore.updateAttendances({ updatedData: Array.from(updatedData) }).then(async (message) => {
+          toast.add({
             severity: 'success',
             summary: 'Success',
-            detail: 'Updated Grades Successfully',
+            detail: message,
             life: 5000
-        })
+          })
 
-        leave.value = true
-        noChanges.value = true
-    } catch (error) {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.response.data.message,
-            life: 3000
+          try {
+              for (const attendance of Array.from(updatedData)) {
+                  await usersStore.addAudit(
+                      `Updated: Attendance of ${attendance.firstName} ${attendance.lastName} to ${attendance.status ? 'present' : 'absent'} in ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                  )
+              }
+          } catch(error) {
+              console.log(error);
+          }
+
+          onEdit()
+          
+          noChanges.value = true
+          changeMode()
         })
-    }
+      } catch (error) {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.response.data.message,
+          life: 3000
+        })
+      }
 }
 
 function resetData() {
-    learners.value = structuredClone(startingData)
-    updatedData.clear()
-    leave.value = true
+  if (!disableSave.value) {
+    confirm.require({
+      message: 'Do you really want to discard the unsaved changes?',
+      header: 'Redirect Confirmation',
+      accept: async () => {
+        learners.value = structuredClone(startingData)
+        updatedData.clear()
 
-    for (const datum of learners.value) {
-        watch(datum, (newData) => {
-        updatedData.add(newData)
-        leave.value = false
-        noChanges.value = false
-        })
-    }
+              for (const datum of learners.value) {
+                  watch(datum, (newData) => {
+                      updatedData.add(newData)
+                      noChanges.value = false
+                  })
+              }
 
-    noChanges.value = true
+        noChanges.value = true
+        changeMode()
+      }
+    })
+  } 
 }
 
-const exportRef = ref()
-function exportCSV() {
-    exportRef.value.exportCSV()
+function changeMode() {
+    edit.value = !edit.value
 }
 
 onBeforeRouteLeave((to) => {
-    if (leave.value) {
+    if (disableSave.value) {
         return true
     }
 
@@ -196,62 +154,66 @@ onBeforeRouteLeave((to) => {
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
         accept: async () => {
-            leave.value = true
+            disableSave.value = true
             await router.push(to)
         }
     })
 
-    return false
+  return false
 })
 </script>
 
 <template>
-    <DataTable 
-        :value="learners" dataKey="id" 
-        sortField="lastName" :sortOrder="1" removableSort 
-        resizableColumns columnResizeMode="fit" showGridlines ref="exportRef"
-        :paginator="learners.length > 10" :rows="10" :rowsPerPageOptions="[10, 20, 50, 100]"
-        :ptOptions="{mergeProps:true}"
-        :pt="customPt"
+  <div class="flex flex-col h-full w-full">
+    <DataTable
+      :value="learners"
+      dataKey="id"
+      scrollable
+      style="overflow: auto"
+      sortField="lastName"
+      :sortOrder="1"
+      removableSort :loading="isFetching"
+      v-model:filters="filters"
+      :users="['lastName', 'firstName', 'status', 'remarks']"
     >
-        <template #empty> <div class="text-center">No records found.</div> </template>
-        <template #loading> <div class="text-center">Loading class records. Please wait.</div> </template>
+      <template #empty> <div class="text-center">No records found.</div> </template>
+      <template #loading> <ProgressSpinner class="flex justify-center" /> </template>
 
-        <Column field="lastName" header="Last Name" frozen sortable />
-        <Column field="firstName" header="First Name" frozen sortable />
-        <Column field="middleName" header="Middle Name" />
-        <Column field="status" header="Status" style="max-width: 10rem;" sortable>
-            <template #body="slotProps">
-                <div class="flex gap-4">
-                    <div v-for="status in statuses" :key="status.value" class="flex align-items-center">
-                        <RadioButton v-model="slotProps.data.status" :inputId="status.value" name="dynamic" :value="status.value" :disabled="termStatus === 'false'" />
-                        <label :for="status.label" class="ml-2">{{ status.label }}</label>
+            <Column field="lastName" header="Last Name" frozen sortable />
+            <Column field="firstName" header="First Name" frozen sortable />
+            <Column field="middleName" header="Middle Name" />
+            <Column field="status" header="Status" sortable>
+                <template #body="slotProps" v-if="!edit">
+                    <Tag :value="slotProps.data.status" :severity="getStatusLabel(slotProps.data.status)" />
+                </template>
+                <template #body="slotProps" v-else>
+                    <InputSwitch v-model="slotProps.data.status" trueValue="Present" falseValue="Absent" />
+                </template>
+            </Column>
+            <Column field="remarks" header="Remarks" style="width: 20rem;">
+                <template #body="slotProps" v-if="!edit">
+                    {{ slotProps.data.remarks }}
+                </template>
+                <template #body="slotProps" v-else>
+                    <Textarea v-model="slotProps.data.remarks" rows="5" cols="30" />
+                </template>
+            </Column>
+            <Column field="updatedAt" header="Updated At" style="width: 10rem;" sortable>
+                <template #body="slotProps">
+                    {{ slotProps.data.updatedAt.toLocaleString() }}
+                </template>
+            </Column>
+            <template #footer v-if="route.query.status === 'true'">
+                <div class="flex flex-row justify-end items-center">
+                    <div v-if="edit" class="flex flex-row gap-4">
+                        <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableSave" @click="updateAttendances"/>
+                        <Button icon="fa fa-xmark" label="Discard" severity="danger" aria-label="Discard Changes" iconClass="['mr-4']" size="small" rounded outlined @click="resetData"/>
                     </div>
+                    <Button v-else icon="fa fa-pencil" label="Edit Attendances" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableEdit" @click="changeMode"/>
                 </div>
             </template>
-        </Column>
-        <Column field="remarks" header="Remarks" style="max-width: 10rem;">
-            <template #body="slotProps">
-                <InputText v-model="slotProps.data.remarks" autofocus :disabled="termStatus === 'false'" />
-            </template>
-        </Column>
-        <Column field="updatedAt" header="Updated At" sortable>
-            <template #body="slotProps">
-                {{ slotProps.data.updatedAt.toLocaleString() }}
-            </template>
-        </Column>
-        <template #paginatorstart>
-        
-        </template>
-        <template #paginatorend>
-            <Button type="button" icon="pi pi-download" @click="exportCSV" text />
-        </template>
-    </DataTable>
-    <div v-if="termStatus === 'true'" class="flex justify-end gap-2 mt-4">
-        <Button icon="fa fa-check" type="button" label="Update" :disabled="noChanges" @click="updateAttendances"></Button>
-        <Button icon="fa fa-rotate-left" type="button" label="Reset" severity="danger" :disabled="noChanges" @click="resetData"></Button>
+        </DataTable>
     </div>
 </template>
 
-<style>
-</style>
+<style></style>
