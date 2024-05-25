@@ -1,6 +1,8 @@
 <script setup>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DoughnutChart from './DoughnutChart.vue'
+import ViewListVolunteer from './ViewListVolunteer.vue'
+import ViewListStudents from './ViewListStudents.vue'
 
 const props = defineProps({
   seriesData: {
@@ -48,7 +50,8 @@ const props = defineProps({
         </div>
         <div class="total-container">
           <div class="total-text">{{ totalText }}</div>
-          <!--<button class="total-button">View List</button>-->
+          <ViewListVolunteer v-if="widgetTitle=='VOLUNTEERS'" />
+          <ViewListStudents v-if="widgetTitle=='STUDENTS'" />
         </div>
       </div>
     </div>
@@ -134,12 +137,7 @@ const props = defineProps({
 
 .total-button {
   margin-top: 30px;
-  margin-left: 90px;
-  background-color: #265492;
-  padding: 8px;
-  color: white;
-  border-radius: 10px;
-  font-size: 12px;
+  margin-left: 120px;
 }
 
 .male-icon {

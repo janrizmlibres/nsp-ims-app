@@ -39,6 +39,7 @@ onMounted(async () => {
   const classLevelsCount = await utilitiesStore.countClassLevels();
   const statusCount = await enrollmentStore.getStatusCount();
   await volunteerStore.getAllVolunteers()
+  await studentsStore.getStudents()
 
   gradeSchool.value = classLevelsCount.gradeSchoolCount;
   juniorHighSchool.value = classLevelsCount.juniorHighSchoolCount;
@@ -72,19 +73,31 @@ onMounted(async () => {
     </div>
     <div class="student-dashboard-panels">
         <StudentWidget 
-          v-if="maleStudents && femaleStudents"
+          v-if="maleStudents || femaleStudents"
           class="student-widget" 
           :seriesData="[femaleStudents, maleStudents]" 
           :labelsData="['Female', 'Male']" 
-          widgetTitle="CUMULATIVE STUDENTS" 
+          widgetTitle="STUDENTS" 
           :totalText= cumulativeStudets.toString()
           Data1= "Male"
           Data2= "Female"
           :icon="['fas', 'user-graduate']" />
         <StudentWidget 
-          v-if="gradeSchool && juniorHighSchool"
+          v-if="activeStudents || inactiveStudents"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
+          :seriesData="[inactiveStudents, activeStudents]" 
+          :labelsData="['Inactive', 'Active']" 
+          widgetTitle="ENROLLED STUDENTS" 
+          :totalText= "(inactiveStudents+activeStudents).toString()"
+          Data1= "Active"
+          Data2= "Inactive"
+          :icon="['fas', 'user-graduate']"
+           />
+        <StudentWidget 
+          v-if="gradeSchool || juniorHighSchool"
+          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
+          :style="`--translate-x: 52.5rem; --translate-y: -21.25rem`"
           :seriesData="[gradeSchool, juniorHighSchool]" 
           :labelsData="['Junior High School', 'Grade School']" 
           widgetTitle="CLASS LEVEL" 
@@ -92,22 +105,11 @@ onMounted(async () => {
           Data1= "Grade School"
           Data2= "Junior High"
           :icon="['fas', 'user-graduate']" />
-        <StudentWidget 
-          v-if="activeStudents && inactiveStudents"
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
-          :style="`--translate-x: 52.5rem; --translate-y: -21.25rem`"
-          :seriesData="[inactiveStudents, activeStudents]" 
-          :labelsData="['Inactive', 'Active']" 
-          widgetTitle="STUDENTS" 
-          :totalText= "(inactiveStudents+activeStudents).toString()"
-          Data1= "Active"
-          Data2= "Inactive"
-          :icon="['fas', 'user-graduate']" />
         <StudentWidget
-          v-if="studentVolunteerCount && professionalVolunteerCount"
+          v-if="studentVolunteerCount || professionalVolunteerCount"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 78.75rem; --translate-y: -31.875rem`"
-          :seriesData="[studentVolunteerCount, professionalVolunteerCount]" 
+          :seriesData="[professionalVolunteerCount, studentVolunteerCount]" 
           :labelsData="['Professional', 'Student']" 
           widgetTitle="VOLUNTEERS" 
           :totalText= "totalVolunteers.toString()"
