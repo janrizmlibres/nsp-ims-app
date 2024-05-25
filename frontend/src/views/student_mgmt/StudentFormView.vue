@@ -1,6 +1,6 @@
 <script setup>
 import Button from 'primevue/button'
-import { useToast } from 'primevue/usetoast'
+// import { useToast } from 'primevue/usetoast'
 import { useConfirm } from 'primevue/useconfirm'
 
 import { onMounted, ref, computed, provide, watch, readonly } from 'vue'
@@ -12,78 +12,75 @@ import BulkForm from '@/components/student_mgmt/profile_view/BulkForm.vue'
 import { useStudentsStore } from '@/stores/students'
 
 import { FormParts } from '@/util/student_utils'
-import { isEqual } from 'lodash'
+import { mapValues, isNil } from 'lodash'
 
 const emit = defineEmits({ routeChange: [] })
 
 const route = useRoute()
 const router = useRouter()
-const toast = useToast()
 const confirm = useConfirm()
 
 const studentsStore = useStudentsStore()
 
 const initialData = {
   identity: {
-    firstName: null,
-    middleName: null,
-    lastName: null,
+    firstName: '',
+    middleName: '',
+    lastName: '',
     suffixName: null,
-    lrn: null,
+    lrn: '',
     category: null,
     photoUrl: null
   },
   personalInfo: {
     birthday: null,
     bloodType: null,
-    birthBarangay: null,
-    birthCity: null,
-    birthProvince: null,
-    religion: null,
+    birthCity: '',
+    birthProvince: '',
+    religion: '',
     sex: null,
     civilStatus: null,
-    homeBlkLtSt: null,
-    homeBarangay: null,
-    homeCity: null,
-    homeProvince: null
+    homeBlkLtSt: '',
+    homeBarangay: '',
+    homeCity: '',
+    homeProvince: ''
   },
   contactInfo: {
-    email: null,
-    contactNum: null,
-    facebook: null
+    email: '',
+    contactNum: '',
+    facebook: ''
   },
   emergencyPerson: {
-    firstName: null,
-    middleName: null,
-    lastName: null,
+    firstName: '',
+    middleName: '',
+    lastName: '',
     suffixName: null,
-    contactNum: null,
-    relationship: null
+    contactNum: '',
+    relationship: ''
   },
   parentalInfo: {
-    lastNameF: null,
-    middleNameF: null,
-    firstNameF: null,
+    lastNameF: '',
+    middleNameF: '',
+    firstNameF: '',
     suffixNameF: null,
-    occupationF: null,
-    lastNameM: null,
-    middleNameM: null,
-    firstNameM: null,
+    occupationF: '',
+    lastNameM: '',
+    middleNameM: '',
+    firstNameM: '',
     suffixNameM: null,
-    occupationM: null
+    occupationM: ''
   },
   prevSchool: {
-    name: null,
+    name: '',
     schoolType: null,
     schoolAffiliation: null,
     lastSyAttended: null,
     highestEducation: null,
     gradeStopped: null,
-    reason: null,
-    street: null,
-    barangay: null,
-    city: null,
-    province: null
+    reason: '',
+    street: '',
+    city: '',
+    province: ''
   }
 }
 
@@ -100,7 +97,20 @@ const confirmBtnText = computed(() => (route.meta.isViewMode ? 'Edit' : 'Submit'
 const cancelBtnText = computed(() => (route.meta.isViewMode ? 'Back' : 'Cancel'))
 const isFormDirty = computed(() => {
   for (const key in initialData) {
-    if (!isEqual(initialData[key], formData.value[key])) return true
+    for (const inner in initialData[key]) {
+      let value1 = initialData[key][inner]
+      let value2 = formData.value[key][inner]
+
+      if (Object.prototype.toString.call(value1) === '[object Date]') {
+        value1.setHours(0, 0, 0, 0)
+        value2.setHours(0, 0, 0, 0)
+
+        value1 = value1.getTime()
+        value2 = value2.getTime()
+      }
+
+      if (value1 !== value2) return true
+    }
   }
   return false
 })
@@ -149,20 +159,25 @@ async function submitForm() {
         ? await studentsStore.addStudent(formData.value)
         : await studentsStore.updateStudent(route.params.studentId, formData.value)
 
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: result.data.message,
-      life: 5000
+    confirm.require({
+      group: 'user-headless',
+      header: 'Success',
+      message: result.data.message,
+      acceptLabel: 'OK',
+      icon: 'fa-solid fa-thumbs-up',
+      accept: async () => {
+        isOkToLeave = true
+        await goToStudentView()
+      }
     })
-
-    await goToStudentView()
   } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
+    confirm.require({
+      group: 'user-headless',
+      header: 'Data is Incorrect',
+      message:
+        'Make sure inputs are correct and all required fields marked with an asterisk (*) are filled in.',
+      acceptLabel: 'OK',
+      icon: 'fa-solid fa-triangle-exclamation'
     })
   }
 }
@@ -171,8 +186,12 @@ onBeforeRouteLeave((to) => {
   if (!isFormDirty.value || isOkToLeave) return true
 
   confirm.require({
-    message: 'Do you really want to leave? You have unsaved changes!',
+    group: 'user-headless',
     header: 'Redirect Confirmation',
+    message: 'Do you really want to leave? You have unsaved changes!',
+    acceptLabel: 'Yes',
+    rejectLabel: 'No',
+    icon: 'fa-solid fa-diamond-turn-right',
     accept: async () => {
       isOkToLeave = true
       await router.push(to)
@@ -204,12 +223,33 @@ onMounted(async () => {
       ...identity
     } = student
 
-    initialData.identity = filterObject(identity)
-    initialData.personalInfo = filterObject(personal_info)
-    initialData.contactInfo = filterObject(contact_info)
-    initialData.emergencyPerson = filterObject(emergency_person)
-    initialData.parentalInfo = parental_info && filterObject(parental_info)
-    initialData.prevSchool = filterObject(previous_school)
+    delete identity.fullname
+
+    initialData.identity = {
+      ...mapValues(filterObject(identity), (v) => (isNil(v) ? '' : v)),
+      suffixName: identity.suffixName,
+      lrn: identity.lrn.toString()
+    }
+
+    initialData.personalInfo = {
+      ...mapValues(filterObject(personal_info), (v) => (isNil(v) ? '' : v)),
+      birthday: personal_info.birthday && new Date(personal_info.birthday)
+    }
+
+    initialData.contactInfo = mapValues(filterObject(contact_info), (v) => (isNil(v) ? '' : v))
+
+    initialData.emergencyPerson = {
+      ...mapValues(filterObject(emergency_person), (v) => (isNil(v) ? '' : v)),
+      suffixName: emergency_person.suffixName
+    }
+
+    initialData.parentalInfo = parental_info && {
+      ...mapValues(filterObject(parental_info), (v) => (isNil(v) ? '' : v)),
+      suffixNameF: parental_info.suffixNameF,
+      suffixNameM: parental_info.suffixNameM
+    }
+
+    initialData.prevSchool = mapValues(filterObject(previous_school), (v) => (isNil(v) ? '' : v))
 
     for (const key in initialData) {
       formData.value[key] = initialData[key]
@@ -224,34 +264,40 @@ onMounted(async () => {
 
 <template>
   <ContentPane :header="`Students / ${headerText}`" subheader="Academic Year 2022 - 2023">
-    <div class="flex flex-col gap-3 h-full mr-1">
-      <IdentityForm
-        @dataChanged="updateFormData"
-        :identity="formData.identity"
-        :isViewMode="$route.meta.isViewMode"
-        :key="updateKey"
-      />
-      <BulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
+    <form @submit.prevent="handleConfirm">
+      <div class="flex flex-col gap-3 h-full mr-1">
+        <IdentityForm
+          @dataChanged="updateFormData"
+          :identity="formData.identity"
+          :isViewMode="$route.meta.isViewMode"
+          :key="updateKey"
+        />
+        <BulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
 
-      <div class="flex-none text-right">
-        <div class="inline-block">
-          <Button class="h-10 u-bg-green" @click="handleConfirm">
-            <div>
-              <font-awesome-icon
-                icon="fa-solid fa-circle-check"
-                class="absolute top-2/4 -mt-2 left-3"
-              />
-              <h2 class="pl-5 font-bold">{{ confirmBtnText }}</h2>
-            </div>
-          </Button>
-          <Button
-            class="h-10 ml-2 u-bg-red"
-            :label="cancelBtnText"
-            icon="fa-solid fa-circle-xmark"
-            @click="handleCancel"
-          />
+        <div class="flex-none text-right">
+          <div class="inline-block">
+            <Button
+              type="submit"
+              class="h-10 u-bg-green"
+              :disabled="!isFormDirty && !route.meta.isViewMode"
+            >
+              <div>
+                <font-awesome-icon
+                  icon="fa-solid fa-circle-check"
+                  class="absolute top-2/4 -mt-2 left-3"
+                />
+                <h2 class="pl-5 font-bold">{{ confirmBtnText }}</h2>
+              </div>
+            </Button>
+            <Button
+              class="h-10 ml-2 u-bg-red"
+              :label="cancelBtnText"
+              icon="fa-solid fa-circle-xmark"
+              @click="handleCancel"
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   </ContentPane>
 </template>

@@ -25,11 +25,9 @@ const identityValidator = [
 const personalValidator = [
   body("personalInfo").customSanitizer((value) => JSON.parse(value)),
   body("personalInfo.birthday").isISO8601(),
-  body("personalInfo.bloodType").exists({ values: "null" }),
-  body("personalInfo.birthBarangay").trim().isAscii(),
   body("personalInfo.birthCity").trim().isAscii(),
   body("personalInfo.birthProvince").trim().isAscii(),
-  body("personalInfo.religion").trim().isAscii(),
+  body("personalInfo.religion").optional({ values: "falsy" }).trim().isAscii(),
   body("personalInfo.sex").exists({ values: "null" }),
   body("personalInfo.civilStatus").exists({ values: "null" }),
   body("personalInfo.homeBlkLtSt").trim().isAscii(),
@@ -109,7 +107,6 @@ const prevSchoolValidator = [
   body("prevSchool.gradeStopped").exists({ values: "null" }),
   body("prevSchool.reason").trim().isAscii(),
   body("prevSchool.street").trim().isAscii(),
-  body("prevSchool.barangay").trim().isAscii(),
   body("prevSchool.city").trim().isAscii(),
   body("prevSchool.province").trim().isAscii(),
 ];

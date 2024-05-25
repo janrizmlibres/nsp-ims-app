@@ -10,7 +10,7 @@ import Button from 'primevue/button'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { FormParts } from '@/util/student_utils'
+import { FormParts, floatLabelPt } from '@/util/student_utils'
 import { useUtilitiesStore } from '@/stores/utilities'
 
 const emit = defineEmits(['dataChanged'])
@@ -18,19 +18,6 @@ const props = defineProps({ identity: Object, isViewMode: Boolean })
 
 const route = useRoute()
 const utilitiesStore = useUtilitiesStore()
-
-const floatLabelPt = {
-  root: [
-    'block relative',
-    '[&>*:last-child]:text-surface-900/60 dark:[&>*:last-child]:text-white/60',
-    '[&>*:last-child]:absolute',
-    '[&>*:last-child]:-top-4',
-    '[&>*:last-child]:-translate-y-1/2',
-    '[&>*:last-child]:left-3',
-    '[&>*:last-child]:pointer-events-none',
-    '[&>*:last-child]:text-sm'
-  ]
-}
 
 const op = ref()
 const uploader = ref(null)
@@ -44,15 +31,16 @@ const name = ref({
 const lrn = ref(props.identity.lrn)
 const selectedSuffix = ref(props.identity.suffixName)
 const selectedCat = ref(props.identity.category)
-const photoUrl = ref(props.identity.photoUrl && `http://localhost:8080/${props.identity.photoUrl}`)
+const photoUrl = ref(props.identity.photoUrl)
 
 const isAvatarHovered = ref(false)
 const isImgModalVisible = ref(false)
 
 const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 const categories = computed(() => utilitiesStore.categories.map((cat) => cat.category_name))
+const photoDisplay = ref(photoUrl.value && `http://localhost:8080/${photoUrl.value}`)
 
-watch(photoUrl, () => handleUpdate())
+watch(photoDisplay, () => handleUpdate())
 
 function setAvatarHover(value) {
   if (route.meta.isViewMode && !photoUrl.value) return
@@ -77,7 +65,7 @@ function handleUpdate() {
     lrn: lrn.value,
     suffixName: selectedSuffix.value,
     category: selectedCat.value,
-    photoUrl: photoUrl.value && uploader.value.files[0]
+    photoUrl: photoUrl
   }
 
   emit('dataChanged', FormParts.Identity, data)
@@ -85,8 +73,9 @@ function handleUpdate() {
 
 function handleImage() {
   if (uploader.value.files.length !== 0) {
-    URL.revokeObjectURL(photoUrl.value)
-    photoUrl.value = URL.createObjectURL(uploader.value.files[0])
+    URL.revokeObjectURL(photoDisplay.value)
+    photoDisplay.value = URL.createObjectURL(uploader.value.files[0])
+    photoUrl.value = uploader.value.files[0]
     setAvatarHover(false)
   }
 }
@@ -120,10 +109,10 @@ onMounted(async () => {
       @click="setImageModal(false)"
       >&times;</span
     >
-    <img :src="photoUrl" class="m-auto block w-5/6 max-w-3xl" />
+    <img :src="photoDisplay" class="m-auto block w-5/6 max-w-3xl" />
   </div>
 
-  <BaseCard isNotPadded="true" class="px-8">
+  <BaseCard :isNotPadded="true" class="px-8">
     <div class="flex gap-8 items-center">
       <div class="h-20 relative flex items-center">
         <div
@@ -133,7 +122,7 @@ onMounted(async () => {
           @click="handleAvatar"
         >
           <Avatar
-            :image="photoUrl"
+            :image="photoDisplay"
             size="xlarge"
             :pt="{
               root: 'bg-white shadow-md border-2 rounded dark:bg-surface-700'
@@ -144,8 +133,8 @@ onMounted(async () => {
           <div
             class="absolute w-full h-full flex items-center justify-center transition-opacity ease-in duration-300 bg-white shadow-md border-2 rounded"
             :class="{
-              'opacity-0': isAvatarHovered || (photoUrl && !isAvatarHovered),
-              'opacity-50': isAvatarHovered && photoUrl
+              'opacity-0': isAvatarHovered || (photoDisplay && !isAvatarHovered),
+              'opacity-50': isAvatarHovered && photoDisplay
             }"
           >
             <font-awesome-icon icon="fa-solid fa-user" size="lg" />
@@ -153,7 +142,7 @@ onMounted(async () => {
 
           <div
             class="shadow-md border-2 rounded absolute opacity-0 w-full h-full flex items-center justify-center transition-opacity ease-in duration-300"
-            :class="{ 'opacity-100': isAvatarHovered && !photoUrl }"
+            :class="{ 'opacity-100': isAvatarHovered && !photoDisplay }"
           >
             <font-awesome-icon icon="fa-solid fa-upload" size="lg" />
           </div>
@@ -183,10 +172,11 @@ onMounted(async () => {
             class="h-10 w-full"
             type="text"
             v-model="name.lastName"
+            required
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => {
-                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+                return { class: [{ '!opacity-100': context.disabled }] }
               }
             }"
             :ptOptions="{ mergeProps: true }"
@@ -201,10 +191,11 @@ onMounted(async () => {
             id="first-name"
             type="text"
             v-model="name.firstName"
+            required
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => {
-                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+                return { class: [{ '!opacity-100': context.disabled }] }
               }
             }"
             :ptOptions="{ mergeProps: true }"
@@ -222,7 +213,7 @@ onMounted(async () => {
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => ({
-                class: [{ '!opacity-100 !pointer-events-auto': context.disabled }]
+                class: [{ '!opacity-100': context.disabled }]
               })
             }"
             :ptOptions="{ mergeProps: true }"
@@ -241,7 +232,7 @@ onMounted(async () => {
             @change="handleUpdate"
             :pt="{
               root: ({ props }) => ({
-                class: { '!opacity-100 !pointer-events-auto': props.disabled }
+                class: { '!opacity-100': props.disabled }
               })
             }"
             :ptOptions="{ mergeProps: true }"
@@ -256,10 +247,11 @@ onMounted(async () => {
             id="lrn"
             type="text"
             v-model="lrn"
+            required
             @update:modelValue="handleUpdate"
             :pt="{
               root: ({ context }) => {
-                return { class: [{ '!opacity-100 !pointer-events-auto': context.disabled }] }
+                return { class: [{ '!opacity-100': context.disabled }] }
               }
             }"
             :ptOptions="{ mergeProps: true }"
@@ -277,7 +269,7 @@ onMounted(async () => {
             @change="handleUpdate"
             :pt="{
               root: ({ props }) => ({
-                class: { '!opacity-100 !pointer-events-auto': props.disabled }
+                class: { '!opacity-100': props.disabled }
               })
             }"
             :ptOptions="{ mergeProps: true }"

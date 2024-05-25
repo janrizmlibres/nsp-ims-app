@@ -36,9 +36,8 @@ export async function injectStudent() {
   });
 
   await PersonalInfo.create({
-    birthday: new Date(),
+    birthday: new Date(2020, 4, 2),
     bloodType: "O+",
-    birthBarangay: "Iponan",
     birthCity: "New York City",
     birthProvince: "Misamis Oriental",
     religion: "Roman Catholic",
@@ -90,7 +89,6 @@ export async function injectStudent() {
   await PersonalInfo.create({
     birthday: new Date("1998-05-14"),
     bloodType: "A-",
-    birthBarangay: "Carmen",
     birthCity: "Cagayan de Oro City",
     birthProvince: "Misamis Oriental",
     religion: "Islam",
