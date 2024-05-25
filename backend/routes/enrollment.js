@@ -39,5 +39,6 @@ router.get("/retrieve-grades/:enrollmentId/:classLearningStrandId", isAuth, enro
 router.get("/retrieve-attendance/:enrollmentId/:classLearningStrandId", isAuth, enrollmentController.getEnrolledAttendance);
 
 router.get("/enrollments", isAuth, enrollmentController.getAllEnrollments);
+router.get("/status-count", isAuth, enrollmentController.getStatusCount);
 
 export default router;

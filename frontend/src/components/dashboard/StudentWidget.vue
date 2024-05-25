@@ -53,7 +53,7 @@ export default {
         </div>
         <div class="total-container">
           <div class="total-text">{{ totalText }}</div>
-          <button class="total-button">View List</button>
+          <!--<button class="total-button">View List</button>-->
         </div>
       </div>
     </div>

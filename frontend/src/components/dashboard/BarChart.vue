@@ -17,6 +17,7 @@ export default {
   data() {
     return {
       series: [{
+        name: 'Student',
         data: this.chartData
       }],
       chartOptions: {

@@ -126,6 +126,16 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   
     return result.data
   }
+
+  async function getStatusCount() {
+  const authStore = useAuthStore()
+
+  const result = await axios.get('http://localhost:8080/enrollment/status-count', {
+    headers: { Authorization: 'Bearer ' + authStore.token }
+  })
+
+  return result.data
+}
   
   
   return {
@@ -148,5 +158,6 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     getEnrolledAttendance,
     setAttendance,
     getAllEnrollments,
+    getStatusCount
   }
 })

@@ -378,3 +378,17 @@ export const getAllEnrollments = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getStatusCount = async (req, res, next) => {
+  try {
+    const activeCount = await Enrollment.count({ where: { status: 'Active' } });
+    const inactiveCount = await Enrollment.count({ where: { status: 'Inactive' } });
+
+    res.status(200).json({
+      active: activeCount,
+      inactive: inactiveCount
+    });
+  } catch (error) {
+    next(error);
+  }
+};
