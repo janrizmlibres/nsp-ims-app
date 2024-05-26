@@ -1,6 +1,7 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue'
-import StudentHeader from '@/components/student_mgmt/StudentHeader.vue'
+import RequirementHeader from '@/components/student_mgmt/requirement_view/RequirementHeader.vue'
+import RequirementFooter from '@/components/student_mgmt/requirement_view/RequirementFooter.vue'
 import { useUtilitiesStore } from '@/stores/utilities'
 import { useStudentsStore } from '@/stores/students'
 import { ref, watch, onMounted } from 'vue'
@@ -31,11 +32,12 @@ onMounted(async () => {
 
 <template>
     <ContentPane header="Student Requirements">
-        <StudentHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
+        <RequirementHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
         <DataTable 
             :value="studentsStore.students"
             v-model:filters="filters"
             :globalFilterFields="['firstName', 'lastName']"
+            class="mb-0 pb-0"
         >
             <Column field="lrn" header="LRN" sortable></Column>
             <Column field="lastName" header="Last Name" sortable></Column>
@@ -49,5 +51,6 @@ onMounted(async () => {
                 </template>
             </Column>
         </DataTable>
+        <RequirementFooter />
     </ContentPane>
 </template>

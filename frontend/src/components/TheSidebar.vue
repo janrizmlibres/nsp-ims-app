@@ -41,8 +41,7 @@ const items = computed(() => [
         key: '2-3',
         label: 'Admit Students',
         icon: 'fa fa-user-plus',
-        route: { name: 'add-student' },
-        route: { name: 'dashboard' }
+        route: { name: 'add-student' }
       }
     ]
   },
