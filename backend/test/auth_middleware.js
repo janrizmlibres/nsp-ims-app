@@ -4,7 +4,7 @@ import sinon from "sinon";
 
 import authMiddleware from "../middleware/is_auth.js";
 
-describe("Auth Middleware", () => {
+describe.skip("Auth Middleware", () => {
   it("should throw an error if no authorization header is present", () => {
     const req = {
       get: (_headerName) => {

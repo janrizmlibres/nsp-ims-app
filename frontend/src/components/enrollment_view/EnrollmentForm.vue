@@ -10,12 +10,14 @@ import { computed, ref } from 'vue'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useStudentsStore } from '@/stores/students.js'
 import { useTermStore } from '@/stores/term.js'
+import { useUsersStore} from '@/stores/users.js'
 import { useToast } from 'primevue/usetoast'
 import { debounce } from 'lodash'
 
 const enrollmentStore = useEnrollmentStore()
 const studentsStore = useStudentsStore()
 const termStore = useTermStore()
+const usersStore = useUsersStore()
 
 const toast = useToast()
 
@@ -28,13 +30,16 @@ const editingStudent = ref(false)
 const currentEditStudentIndex = ref()
 const validSubmit = ref(false)
 const confirmedFile = ref(false)
-const chosenFileURL = ref()
 
 schoolLevels.value = termStore.activeTerm.class_levels
 
-const isValid = computed(() => {
-  return form.value.selectedRegularity && form.value.selectedSchoolLevelId
-})
+const notValid = computed(() => {
+  return !form.value.selectedRegularity || !form.value.selectedSchoolLevelId || !confirmedFile.value;
+});
+
+const notEnrollmentValid = computed(() => {
+  return !validSubmit.value || selectedLearnersList.value.length === 0 || selectedLearnersList.value.some(learner => learner.enrollmentForm === null || !learner.enrollmentForm)
+});
 
 const chosenFile = computed(() => {
   let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
@@ -78,13 +83,15 @@ function onSelectedLearner() {
       lrn: selectedStudent.lrn,
       fullname: selectedStudent.fullname,
       selectedSchoolLevelId: null,
-      hasEnrollmentForm: null,
-      digitalLiteracyScore: null,
       fltPretestScore: null,
       selectedRegularity: null,
       selectedRemarks: null,
     })
   }
+  
+  editEnrolled(selectedLearnersList.value.length - 1)
+  validSubmit.value = false
+  confirmedFile.value = false
   
   // Clear the input field
   selectedFullName.value = null
@@ -94,19 +101,20 @@ function editEnrolled(index) {
   currentEditStudentIndex.value = index
   
   form.value.selectedSchoolLevelId = selectedLearnersList.value[index].selectedSchoolLevelId
-  form.value.hasEnrollmentForm = selectedLearnersList.value[index].hasEnrollmentForm
-  form.value.digitalLiteracyScore = selectedLearnersList.value[index].digitalLiteracyScore
   form.value.fltPretestScore = selectedLearnersList.value[index].fltPretestScore
   form.value.selectedRegularity = selectedLearnersList.value[index].selectedRegularity
   form.value.selectedRemarks = selectedLearnersList.value[index].selectedRemarks
   
-  // Check if the learner's enrollment form is not null
   confirmedFile.value = !!selectedLearnersList.value[index].enrollmentForm;
+  validSubmit.value = false
   
   editingStudent.value = true
 }
 
 function removeLearner(index) {
+  if (currentEditStudentIndex.value === index) {
+    editingStudent.value = false
+  }
   selectedLearnersList.value.splice(index, 1)
 }
 
@@ -115,8 +123,6 @@ function saveLearner() {
   selectedLearnersList.value[currentEditStudentIndex.value] = {
     ...currentLearner,
     selectedSchoolLevelId: form.value.selectedSchoolLevelId,
-    hasEnrollmentForm: form.value.hasEnrollmentForm,
-    digitalLiteracyScore: form.value.digitalLiteracyScore,
     fltPretestScore: form.value.fltPretestScore,
     selectedRegularity: form.value.selectedRegularity,
     selectedRemarks: form.value.selectedRemarks,
@@ -135,6 +141,11 @@ function saveLearner() {
 async function submitEvent() {
   try {
     await enrollmentStore.enrollLearners(selectedLearnersList.value)
+    
+    for (const learner of selectedLearnersList.value) {
+      console.log(selectedLearnersList.value)
+      await usersStore.addAudit(`Enrolled student ${learner.fullname}`)
+    }
     toast.add({
       severity: 'success',
       summary: 'Success',
@@ -153,9 +164,7 @@ async function submitEvent() {
 
 function confirmUpload(event) {
   let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
-
-  URL.revokeObjectURL(chosenFileURL.value)
-  chosenFileURL.value = URL.createObjectURL(event.files[0])
+  
   selectedLearnersList.value[currentEditStudentIndex.value] = {
     ...currentLearner,
     enrollmentForm: event.files[0],
@@ -166,11 +175,14 @@ function confirmUpload(event) {
 }
 
 function cancelFile() {
+  console.log("Current Edit Student Index: ", currentEditStudentIndex.value)
   let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
   selectedLearnersList.value[currentEditStudentIndex.value] = {
     ...currentLearner,
-    enrollmentForm: null
+    enrollmentForm: null,
+    enrollmentFormName: null
   }
+  
   confirmedFile.value = false;
 }
 </script>
@@ -270,8 +282,8 @@ function cancelFile() {
         <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem"/>
       </div>
       <div class="flex gap-10 mb-2 items-center place-self-end">
-        <Button @click="saveLearner" label="Save Learner" class="mt-4 mb-10" :disabled="!isValid"/>
-        <Button v-if="validSubmit" @click="submitEvent" label="Enroll Learners" class="mt-4 mb-10" :disabled="!isValid"/>
+        <Button @click="saveLearner" label="Save Learner" class="mt-4 mb-10" :disabled="notValid"/>
+        <Button v-if="validSubmit" @click="submitEvent" label="Enroll Learners" class="mt-4 mb-10" :disabled="notEnrollmentValid"/>
       </div>
     </div>
     

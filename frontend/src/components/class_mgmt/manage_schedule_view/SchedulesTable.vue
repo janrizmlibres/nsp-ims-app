@@ -6,7 +6,7 @@ import Column from 'primevue/column';
 import Row from 'primevue/row';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
-import { inject, provide, ref, watch } from 'vue';
+import { inject, provide, ref } from 'vue';
 import { format } from 'date-fns';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -31,7 +31,7 @@ const termStatus = inject('termStatus')
 const term = inject('term')
 const classLevel = inject('classLevel')
 const classData = ref([])
-const isFetching = ref(true)
+const isFetching = ref(false)
 const selectedSchedules = ref([])
 const metaKey = ref(true)
 const editScheduleDialogState = ref(false)
@@ -43,10 +43,11 @@ provide('schedule', schedule)
 provide('editScheduleDialogState', editScheduleDialogState)
 provide('updateScheduleTable', updateScheduleTable)
 
-function updateScheduleTable(classId) {
+function updateScheduleTable() {
+    isFetching.value = true
     classData.value.length = 0
 
-    classStore.getClassSchedules(classId).then((data) => {
+    classStore.getClassSchedules(classLevel.value.id).then((data) => {
         for (const learningStrand of data) {
             for (const schedule of learningStrand.class_schedules) {
                 const start_time = format(new Date("01/01/0001 " + schedule.start_time), "hh:mm aaa")
@@ -66,24 +67,21 @@ function updateScheduleTable(classId) {
                 })
             }
         }
-    })
-}
 
-watch(() => classLevel.value, (data) => {
-    try {
-        updateScheduleTable(data.id)
-        
         isFetching.value = false
-    } catch (error) {
-        console.log(error);
+    }).catch((error) => {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered. Please refresh this page.',
+            detail: error.response.data.message,
             life: 3000
         })
-    }
-}, { immediate: true })
+
+        isFetching.value = false
+    })
+}
+
+updateScheduleTable()
 
 async function deleteSchedules() {
     confirm.require({
@@ -110,11 +108,7 @@ async function deleteSchedules() {
                         console.log(error);
                     }
 
-                    try {
-                        updateScheduleTable(classLevel.value.id)
-                    } catch(error) {
-                        console.log(error);
-                    }
+                    updateScheduleTable()
                 })
             } catch(error) {
                 console.log(error);

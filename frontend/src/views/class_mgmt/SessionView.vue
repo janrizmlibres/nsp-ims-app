@@ -37,32 +37,29 @@ provide('updateAttendanceTable', updateAttendanceTable)
 provide('isFetching', isFetching)
 
 function updateAttendanceTable() {
-    try {
-        isFetching.value = true
+    isFetching.value = true
 
-        classLearningStrandStore.getSession(route.query.id).then((data) => {
-            console.log(data);
-            learningStrand.value = data.classLearningStrand.learning_strand
-            term.value = data.classLearningStrand.class_level.term
-            classLevel.value = data.classLearningStrand.class_level
-            session.value = data.session
-            regular.value = data.attendances.regular
-            hybrid.value = data.attendances.hybrid
-            drop.value = data.attendances.drop
-            date.value = new Date(session.value.date).toDateString()
-            strand.value = data.classLearningStrand.learning_strand.name
-
-            isFetching.value = false
-        })
-    } catch (error) {
-        console.log(error);
+    classLearningStrandStore.getSession(route.query.id).then((data) => {
+        console.log(data);
+        learningStrand.value = data.classLearningStrand.learning_strand
+        term.value = data.classLearningStrand.class_level.term
+        classLevel.value = data.classLearningStrand.class_level
+        session.value = data.session
+        regular.value = data.attendances.regular
+        hybrid.value = data.attendances.hybrid
+        drop.value = data.attendances.drop
+        date.value = new Date(session.value.date).toDateString()
+        strand.value = data.classLearningStrand.learning_strand.name
+    }).catch((error) => {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: "Unexpected error encountered!",
+            detail: error.response.data.message,
             life: 3000
         })
-    }
+    })
+
+    isFetching.value = false
 }
 
 watch(() => route.query, () => {

@@ -13,7 +13,6 @@ const toast = useToast()
 const classLearningStrandStore = useClassLearningStrandStore()
 const usersStore = useUsersStore()
 
-const classLearningStrandId = inject('classLearningStrandId')
 const learningStrandInput = inject('learningStrandInput')
 const termStatus = inject('termStatus')
 const term = inject('term')
@@ -67,7 +66,7 @@ async function addSession() {
             newDates.push(newDate)
         }
 
-        await classLearningStrandStore.addSession(classLearningStrandId.value, {dates:newDates}). then(async (message) =>{
+        await classLearningStrandStore.addSession(learningStrandInput.value.id, {dates:newDates}). then(async (message) =>{
             toast.add({
                 severity: 'success',
                 summary: 'Success',

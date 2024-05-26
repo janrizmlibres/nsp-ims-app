@@ -19,7 +19,7 @@ export async function getUsers(req, res, next) {
     });
 
     res.status(200).json({
-      message: "Fetched all user successfully.",
+      message: "Fetched all users successfully.",
       users: users,
     });
   } catch (error) {
@@ -27,6 +27,7 @@ export async function getUsers(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+    return error;
   }
 }
 
@@ -42,7 +43,7 @@ export async function getUser(req, res, next) {
       throw error;
     }
 
-    res.status(200).json({ message: "user fetched.", user: user });
+    res.status(200).json({ message: "User fetched.", user: user });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -111,7 +112,7 @@ export async function updatePermissions(req, res, next) {
       await userInstance.permission.update(updatedPerms);
     }
 
-    res.status(200).json({ message: "Permissions Updated!" });
+    res.status(200).json({ message: "Permissions updated." });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -132,9 +133,9 @@ export async function updatePassword(req, res, next) {
       throw error;
     }
 
-    const hashedPw = await bcrypt.hash(req.body.newPw, 12);
+    const passEqual = await bcrypt.compare(req.body.newPw, user.hashedPw);
 
-    if (hashedPw === user.hashedPw) {
+    if (passEqual) {
       const error = Error("New password is the same as the old password.");
 
       // Code for Unprocessable Entity
@@ -144,8 +145,10 @@ export async function updatePassword(req, res, next) {
       throw error;
     }
 
+    const hashedPw = await bcrypt.hash(req.body.newPw, 12);
     await user.update({ hashedPw });
-    res.status(200).json({ message: "Password updated!" });
+
+    res.status(200).json({ message: "Password updated." });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
