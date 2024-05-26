@@ -32,11 +32,7 @@ const editingRows = ref([])
 const isRowEditing = (row) => editingRows.value.includes(row);
 
 const onRowEditSave = async (event) => {
-    try {
-        await studentsStore.updateStudent(event.data);
-    } catch (error) {
-        console.log(error);
-    }
+    console.log(event)
 };
 
 </script>
