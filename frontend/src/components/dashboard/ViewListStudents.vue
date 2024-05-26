@@ -2,11 +2,10 @@
     <Button label="View List" severity="info" class="total-button" @click="visible = !visible" />
     <div class="card flex justify-content-center">
       <Dialog v-model:visible="visible" modal header="Students" :style="{ width: 'auto' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-        <ul :style="{ textAlign: 'center' }">
-          <li v-for="(student, index) in studentsStore.students" :key="index">
-            {{ student.fullname }} - {{ getGender(student.personal_info.sex) }}
-          </li>
-        </ul>
+        <DataTable :value="studentsStore.students" tableStyle="min-width: 50rem">
+          <Column field="fullname" header="Full Name"></Column>
+          <Column field="personal_info.sex" header="Sex"></Column>
+      </DataTable>
       </Dialog>
     </div>
   </template>
@@ -17,12 +16,10 @@
   import Button from 'primevue/button';
   import DataTable from 'primevue/datatable';
   import { useStudentsStore } from '@/stores/students';
-
+  import Column from 'primevue/column';
+  
   const studentsStore = useStudentsStore();
   const visible = ref(false);
-  const getGender = (sex) => {
-    return sex === 'M' ? 'Male' : 'Female';
-};
 
   </script>
   

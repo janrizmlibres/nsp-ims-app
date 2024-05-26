@@ -2,28 +2,32 @@
     <Button label="View List" severity="info" class="total-button" @click="visible = !visible" />
     <div class="card flex justify-content-center">
       <Dialog v-model:visible="visible" modal header="Students" :style="{ width: 'auto' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-        <ul :style="{ textAlign: 'center' }">
-          <li v-for="(student, index) in enrollmentStore.allEnrolled" :key="index">
-            {{ studentsStore.students[index].fullname }} - {{ student.status }}
-          </li>
-        </ul>
+        <DataTable :value="enrollmentStore.allEnrolled" tableStyle="min-width: 50rem">
+        <Column field="fullname" header="Full Name"></Column>
+        <Column field="status" header="Status"></Column>
+      </DataTable>
       </Dialog>
     </div>
   </template>
   
   <script setup>
   import { ref, onMounted } from "vue";
-  import Dialog from 'primevue/dialog'; // Assuming you're using PrimeVue for the Dialog component
+  import Dialog from 'primevue/dialog';
   import Button from 'primevue/button';
   import DataTable from 'primevue/datatable';
-  import {useEnrollmentStore} from '@/stores/enrollment';
+  import Column from 'primevue/column';
+  import { useEnrollmentStore } from '@/stores/enrollment';
   import { useStudentsStore } from '@/stores/students';
-
+  
   const studentsStore = useStudentsStore();
   const enrollmentStore = useEnrollmentStore();
   const visible = ref(false);
-  //console.log(await enrollmentStore.allEnrolled)
-
+  
+  onMounted(async () => {
+    enrollmentStore.allEnrolled.forEach((enrollment, index) => {
+      enrollment.fullname = studentsStore.students[index].fullname;
+    });
+  });
   </script>
   
   <style scoped>

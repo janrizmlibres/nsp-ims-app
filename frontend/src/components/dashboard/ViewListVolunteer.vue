@@ -2,11 +2,10 @@
     <Button label="View List" severity="info" class="total-button" @click="visible = !visible" />
     <div class="card flex justify-content-center">
       <Dialog v-model:visible="visible" modal header="Volunteers" :style="{ width: 'auto' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-        <ul :style="{ textAlign: 'center' }">
-          <li v-for="(volunteer, index) in volunteerStore.volunteers" :key="index">
-            {{ volunteer.fullname }} - {{ volunteer.affiliation }}
-          </li>
-        </ul>
+        <DataTable :value="volunteerStore.volunteers" tableStyle="min-width: 50rem">
+          <Column field="fullname" header="Full Name"></Column>
+          <Column field="affiliation" header="Affilitation"></Column>
+      </DataTable>
       </Dialog>
     </div>
   </template>
@@ -17,6 +16,7 @@
   import Button from 'primevue/button';
   import { useVolunteerStore } from '@/stores/volunteer';
   import DataTable from 'primevue/datatable';
+  import Column from 'primevue/column';
 
   const volunteerStore = useVolunteerStore();
   const visible = ref(false);

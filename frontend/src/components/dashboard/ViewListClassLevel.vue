@@ -1,15 +1,18 @@
 <template>
-    <Button label="View List" severity="info" class="total-button" @click="visible = !visible" />
-    <div class="card flex justify-content-center">
-      <Dialog v-model:visible="visible" modal header="Students" :style="{ width: 'auto' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-        <ul :style="{ textAlign: 'center' }">
-          <li v-for="(student, index) in studentsStore.studentsWithClassLevel" :key="index">
-            {{ student.fullname }} - {{ student.class_levels[0].school_level }}
-          </li>
-        </ul>
-      </Dialog>
-    </div>
-  </template>
+  <Button label="View List" severity="info" class="total-button" @click="visible = !visible" />
+  <div class="card flex justify-content-center">
+    <Dialog v-model:visible="visible" modal header="Students" :style="{ width: 'auto' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+      <DataTable :value="studentsStore.studentsWithClassLevel" tableStyle="min-width: 50rem">
+          <Column field="fullname" header="Full Name"></Column>
+          <Column header="School Level">
+            <template #body="{ data }">
+              {{ data.class_levels[0].school_level }}
+            </template>
+          </Column>
+      </DataTable>
+    </Dialog>
+  </div>
+</template>
   
   <script setup>
   import { ref, onMounted } from "vue";
@@ -17,9 +20,12 @@
   import Button from 'primevue/button';
   import DataTable from 'primevue/datatable';
   import { useStudentsStore } from '@/stores/students';
+  import Column from 'primevue/column';
 
   const studentsStore = useStudentsStore();
   const visible = ref(false);
+
+  //console.log(studentsStore.studentsWithClassLevel)
 
   </script>
   
