@@ -117,7 +117,8 @@ onMounted(async () => {
       <div class="dashboard-text">Dashboard</div>
       <!--<YearButton class="year-button"/>-->
     </div>
-    <div class="student-dashboard-panels">
+    <div class="panels">
+      <div class="student-dashboard-panels">
         <StudentWidget 
           v-if="maleStudents || femaleStudents"
           class="student-widget" 
@@ -130,8 +131,7 @@ onMounted(async () => {
           :icon="['fas', 'user-graduate']" />
         <StudentWidget 
           v-if="activeStudents || inactiveStudents"
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
-          :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
+          class="student-widget" 
           :seriesData="[inactiveStudents, activeStudents]" 
           :labelsData="['Inactive', 'Active']" 
           widgetTitle="ENROLLED STUDENTS" 
@@ -142,19 +142,17 @@ onMounted(async () => {
            />
         <StudentWidget 
           v-if="gradeSchool || juniorHighSchool"
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
-          :style="`--translate-x: 52.5rem; --translate-y: -21.25rem`"
+          class="student-widget" 
           :seriesData="[juniorHighSchool, gradeSchool]" 
           :labelsData="['Junior High School', 'Grade School']" 
           widgetTitle="CLASS LEVEL" 
           :totalText= totalClassLevels.toString()
-          Data1= "Grade School"
-          Data2= "Junior High"
+          Data1= "GS"
+          Data2= "JHS"
           :icon="['fas', 'user-graduate']" />
         <StudentWidget
           v-if="studentVolunteerCount || professionalVolunteerCount"
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
-          :style="`--translate-x: 78.75rem; --translate-y: -31.875rem`"
+          class="student-widget" 
           :seriesData="[professionalVolunteerCount, studentVolunteerCount]" 
           :labelsData="['Professional', 'Student']" 
           widgetTitle="VOLUNTEERS" 
@@ -163,55 +161,33 @@ onMounted(async () => {
           Data2= "Professional"
           :icon="['fas', 'user']"  />
         
-    </div>
-    <div class="charts">
-      <LineChart 
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-line-chart' : 'line-chart'"
-          :style="`--initial-x: 28.125rem; --initial-y: 0.9375rem; --translate-x: 53.125rem; --translate-y: 13.125rem;`" />
-      <BarChart 
+      </div>
+      <div class="charts">
+        <LineChart class="line-chart"/>
+        <BarChart 
           v-if="cumulativeStudets"
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-bar-chart' : 'bar-chart'"
-          :chartData="[cumulativeStudets, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]"
-          :style="`--initial-x: 28.125rem; --initial-y: 2.125rem; --translate-x: 0.625rem; --translate-y: -6.9375rem;`" />
+          class="bar-chart"
+          :chartData="[cumulativeStudets, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]" />
+      </div>
     </div>
   </ContentPane>
 </template>
 
 <style scoped>
 .charts{
-  margin-top: 45px;
-  overflow: hidden;
+    width:80%;
+    display: grid;
+    grid-template-columns: 1fr;
+    position: absolute;
+    margin-top: 5rem;
+    margin-right: 10rem;
 }
   .student-widget {
     margin-bottom: 1.25rem;
     margin-right: 1.25rem;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
-  .year-button {
-    position: absolute;
-    display: block;
-    top: 10rem;
-    left: 104.600rem;
-    z-index: 3;
-  }
-  .student-widget {
-    margin-bottom: 1.25rem;
-    margin-right: 1.25rem;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
-  }
-  .year-button {
-    position: absolute;
-    display: block;
-    top: 10rem;
-    left: 90.600rem;
-    z-index: 3;
-  }
 
-  .header-container {
-    display: flex;
-    align-items: center; /* This will vertically align the items */
-    margin-bottom: 1.25rem;
-  }
   .header-container {
     display: flex;
     align-items: center; /* This will vertically align the items */
@@ -227,95 +203,21 @@ onMounted(async () => {
   }
   
   .student-dashboard-panels {
+    display: grid;
+    grid-template-columns: 1fr;
     position: absolute;
     margin-top: 5rem;
-    margin-left: 0.625rem;
     margin-right: 0.625rem;
-  }
-  .dashboard-text {
-    font-weight: bold;
-    position: absolute;
-    font-size: 1.875rem;
-    margin-top: 3rem;
-    margin-left: 0.625rem;
-  }
-  
-  .student-dashboard-panels {
-    position: absolute;
-    margin-top: 5rem;
-    margin-left: 0.625rem;
-    margin-right: 0.625rem;
+    z-index: 1;
   }
 
   .line-chart {
-    position: absolute;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
+    margin-left: 25.5rem;
+    margin-bottom: 1.25rem;
   }
   
   .bar-chart {
-    margin-top: 20.0625rem;
-    position: absolute;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
-  }
-  .line-chart {
-    position: absolute;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
-  }
-  
-  .bar-chart {
-    margin-top: 20.0625rem;
-    position: absolute;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
-  }
-
-  :root {
-    --translate-x: 0rem;
-    --translate-y: 0rem;
-    --initial-x: 0rem;
-    --initial-y: 0rem;
-  }
-  :root {
-    --translate-x: 0rem;
-    --translate-y: 0rem;
-    --initial-x: 0rem;
-    --initial-y: 0rem;
-  }
-
-  @keyframes slide {
-  from {
-    transform: translate(var(--initial-x), var(--initial-y));
-  }
-  to {
-    transform: translate(var(--translate-x), var(--translate-y));
-  }
-}
-
-@keyframes slide-back {
-  from {
-    transform: translate(var(--translate-x), var(--translate-y));
-  }
-  to {
-    transform: translate(var(--initial-x), var(--initial-y));
-  }
-}
-
-  .animate-student-widget {
-    animation: slide 0.5s ease 0s 1 normal forwards;
-  }
-  .animate-student-widget {
-    animation: slide 0.5s ease 0s 1 normal forwards;
-  }
-
-  .animate-line-chart {
-    position: absolute;
-    margin-top: 2.0625rem;
-    animation: slide 0.5s ease 0s 1 normal forwards;
-  }
-
-  .animate-bar-chart {
-    position: absolute;
-    margin-top: 22.0625rem;
-    animation: slide 0.5s ease 0s 1 normal forwards;
+    margin-left: 25.5rem;
   }
 
 </style>

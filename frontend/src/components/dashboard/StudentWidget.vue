@@ -2,9 +2,16 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DoughnutChart from './DoughnutChart.vue'
 import ViewListVolunteer from './ViewListVolunteer.vue'
-import ViewListStudents from './ViewListStudents.vue'
+import ViewList from './ViewList.vue'
 import ViewListClassLevel from './ViewListClassLevel.vue'
 import ViewListEnrolledStudents from './ViewListEnrolledStudents.vue'
+import { useStudentsStore } from '@/stores/students'
+import { useVolunteerStore } from '@/stores/volunteer'
+import { useEnrollmentStore } from '@/stores/enrollment'
+import { onMounted } from 'vue'
+const enrollmentStore = useEnrollmentStore()
+const volunteerStore = useVolunteerStore()
+const studentsStore = useStudentsStore()
 
 const props = defineProps({
   seriesData: {
@@ -34,9 +41,16 @@ const props = defineProps({
   icon: {
       type: Array,
       required: true
-    }
+    },
 })
+
+onMounted(async () => {
+    enrollmentStore.allEnrolled.forEach((enrollment, index) => {
+      enrollment.fullname = studentsStore.students[index].fullname;
+    });
+  });
 </script>
+
 <template>
   <div class="widget">
     <div class="widget-wrapper">
@@ -52,10 +66,30 @@ const props = defineProps({
         </div>
         <div class="total-container">
           <div class="total-text">{{ totalText }}</div>
-          <ViewListVolunteer v-if="widgetTitle=='VOLUNTEERS'" />
-          <ViewListStudents v-if="widgetTitle=='STUDENTS'" />
-          <ViewListEnrolledStudents v-if="widgetTitle=='ENROLLED STUDENTS'" />
-          <ViewListClassLevel v-if="widgetTitle=='CLASS LEVEL'" />
+          <div class="total-button">
+            <ViewList 
+              v-if="widgetTitle=='VOLUNTEERS'"
+              :values="volunteerStore.volunteers" 
+              :columns="[
+              { field: 'fullname', header: 'Full Name' },
+              { field: 'affiliation', header: 'Affiliations' },]"
+              :header="widgetTitle" />
+            <ViewList
+              v-if="widgetTitle=='STUDENTS'" 
+              :values="studentsStore.students" 
+              :columns="[
+              { field: 'fullname', header: 'Full Name' },
+              { field: 'personal_info.sex', header: 'Sex' },]"
+              :header="widgetTitle" />
+            <ViewList 
+              v-if="widgetTitle=='ENROLLED STUDENTS'"
+              :values="enrollmentStore.allEnrolled" 
+              :columns="[
+              { field: 'fullname', header: 'Full Name' },
+              { field: 'status', header: 'Status' },]"
+              :header="widgetTitle" />
+            <ViewListClassLevel v-if="widgetTitle=='CLASS LEVEL'" />
+          </div>
         </div>
       </div>
     </div>
@@ -90,7 +124,6 @@ const props = defineProps({
 
 .gender-container {
   display: flex;
-  justify-content: space-between;
 }
 
 .male-text {
@@ -124,7 +157,7 @@ const props = defineProps({
   flex-direction: column;
   justify-content: flex-start; /* Aligns children to the start on the main axis */
   align-items: flex-start; /* Aligns children to the start on the cross axis */
-  width: 400px;
+  width: 380px;
   height: 150px;
   background-color: white;
   border-radius: 10px;
@@ -140,8 +173,7 @@ const props = defineProps({
 }
 
 .total-button {
-  margin-top: 30px;
-  margin-left: 120px;
+  margin-left: 30px;
 }
 
 .male-icon {
