@@ -33,22 +33,71 @@ let totalVolunteers = ref(0);
 let studentVolunteerCount = ref(0);
 let professionalVolunteerCount = ref(0);
 
+const countEnrollmentStatus = (enrollments) => {
+  let activeCount = 0;
+  let inactiveCount = 0;
+
+  enrollments.forEach(enrollment => {
+    if (enrollment.status === 'Active') {
+      activeCount++;
+    } else if (enrollment.status === 'Inactive') {
+      inactiveCount++;
+    }
+  });
+
+  return { activeCount, inactiveCount };
+};
+
+function countClassLevels(studentsWithClassLevel) {
+  let gradeSchoolCount = 0;
+  let juniorHighSchoolCount = 0;
+
+  studentsWithClassLevel.forEach(student => {
+    student.class_levels.forEach(level => {
+      if (level.school_level === 'Grade School') {
+        gradeSchoolCount++;
+      } else if (level.school_level === 'Junior High School') {
+        juniorHighSchoolCount++;
+      }
+    });
+  });
+
+  return { gradeSchoolCount, juniorHighSchoolCount };
+}
+
+function countGenders(students) {
+  let maleCount = 0;
+  let femaleCount = 0;
+
+  students.forEach(student => {
+    if (student.personal_info.sex === 'M') {
+      maleCount++;
+    } else if (student.personal_info.sex === 'F') {
+      femaleCount++;
+    }
+  });
+
+  return { maleCount, femaleCount };
+}
+
 
 onMounted(async () => {
-  const genderCount = await studentsStore.getGenderCount();
-  const classLevelsCount = await utilitiesStore.countClassLevels();
-  const statusCount = await enrollmentStore.getStatusCount();
   await volunteerStore.getAllVolunteers()
   await studentsStore.getStudents()
+  await enrollmentStore.getAllEnrollments()
+  await studentsStore.getStudentsWithClassLevel()
+  await studentsStore.getStudents()
 
-  gradeSchool.value = classLevelsCount.gradeSchoolCount;
-  juniorHighSchool.value = classLevelsCount.juniorHighSchoolCount;
-  maleStudents.value = genderCount.data.maleCount;
-  femaleStudents.value = genderCount.data.femaleCount;
-  cumulativeStudets.value = maleStudents.value + femaleStudents.value;
+  const statusCount = countEnrollmentStatus(await enrollmentStore.allEnrolled);
+  activeStudents.value = statusCount.activeCount;
+  inactiveStudents.value = statusCount.inactiveCount;
+
+  gradeSchool.value = countClassLevels(studentsStore.studentsWithClassLevel).gradeSchoolCount;
+  juniorHighSchool.value = countClassLevels(studentsStore.studentsWithClassLevel).juniorHighSchoolCount;
+  maleStudents.value = countGenders(studentsStore.students).maleCount;
+  femaleStudents.value = countGenders(studentsStore.students).femaleCount;
+  cumulativeStudets.value = studentsStore.students.length;
   totalClassLevels.value = gradeSchool.value + juniorHighSchool.value;
-  activeStudents.value = statusCount.active
-  inactiveStudents.value = statusCount.inactive
   totalVolunteers.value = volunteerStore.volunteers.length
 
   for (let volunteer of volunteerStore.volunteers) {
@@ -58,9 +107,6 @@ onMounted(async () => {
       professionalVolunteerCount.value++;
     }
   }
-
-  console.log('Number of students:', studentVolunteerCount.value);
-  console.log('Number of professionals:', professionalVolunteerCount.value);
   
 });
 </script>
@@ -98,7 +144,7 @@ onMounted(async () => {
           v-if="gradeSchool || juniorHighSchool"
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
           :style="`--translate-x: 52.5rem; --translate-y: -21.25rem`"
-          :seriesData="[gradeSchool, juniorHighSchool]" 
+          :seriesData="[juniorHighSchool, gradeSchool]" 
           :labelsData="['Junior High School', 'Grade School']" 
           widgetTitle="CLASS LEVEL" 
           :totalText= totalClassLevels.toString()

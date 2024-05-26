@@ -1,81 +1,77 @@
-<script>
+<script setup>
+import { onMounted, ref } from 'vue';
 import VueApexCharts from "vue3-apexcharts";
 import { useEnrollmentStore } from '@/stores/enrollment';
 
-export default {
-  components: {
-    apexchart: VueApexCharts,
+let isLoading = ref(true);
+let series = ref([
+  {
+    name: 'Enrollments',
+    data: [],
   },
-  data() {
-    return {
-      series: [{
-        name: 'Enrollments',
-        data: []
-      }],
-      chartOptions: {
-        chart: {
-          height: 350,
-          type: 'line',
-          zoom: {
-            enabled: false
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'straight'
-        },
-        title: {
-          text: 'ENROLLMENT TREND',
-          align: 'center'
-        },
-        grid: {
-          row: {
-            colors: ['#f3f3f3', 'transparent'],
-            opacity: 0.5
-          },
-        },
-        xaxis: {
-          type: 'category',
-          title: {
-            text: 'Year'
-          }
-        },
-        yaxis: {
-          title: {
-            text: 'Number of Enrollments'
-          }
-        }
-      },
-    };
+]);
+
+let chartOptions = {
+  chart: {
+    height: 350,
+    type: 'line',
+    zoom: {
+      enabled: false
+    }
   },
-  async created() {
-    const enrollmentStore = useEnrollmentStore();
-    const enrollments = await enrollmentStore.getAllEnrollments();
-
-    const yearCounts = {};
-    enrollments.forEach(enrollment => {
-      const year = new Date(enrollment.dateEnrolled).getFullYear();
-      if (yearCounts[year]) {
-        yearCounts[year]++;
-      } else {
-        yearCounts[year] = 1;
-      }
-    });
-
-    const yearCountsArray = Object.entries(yearCounts).map(([year, count]) => ({ x: year, y: count }));
-    //should be refactored where yearCountsArray is placed inside data: []
-    this.series[0].data = yearCountsArray;
+  dataLabels: {
+    enabled: false
+  },
+  stroke: {
+    curve: 'straight'
+  },
+  title: {
+    text: 'ENROLLMENT TREND',
+    align: 'center'
+  },
+  grid: {
+    row: {
+      colors: ['#f3f3f3', 'transparent'],
+      opacity: 0.5
+    },
+  },
+  xaxis: {
+    type: 'category',
+    title: {
+      text: 'Year'
+    }
+  },
+  yaxis: {
+    title: {
+      text: 'Number of Enrollments'
+    }
   }
 };
+
+onMounted(async () => {
+  const enrollmentStore = useEnrollmentStore();
+  const enrollments = await enrollmentStore.allEnrolled;
+
+  const yearCounts = {};
+  enrollments.forEach(enrollment => {
+    const year = new Date(enrollment.dateEnrolled).getFullYear();
+    if (yearCounts[year]) {
+      yearCounts[year]++;
+    } else {
+      yearCounts[year] = 1;
+    }
+  });
+
+  series.value[0].data = Object.entries(yearCounts).map(([year, count]) => ({ x: year, y: count }));
+  isLoading.value = false
+});
 </script>
 
-
 <template>
-    <div class="LineChart-widget">
-        <apexchart type="line" height="310" :options="chartOptions" :series="series"></apexchart>
-    </div>
+  <div class="LineChart-widget">
+    <div v-if="isLoading">Loading...</div>
+    <vue-apex-charts v-else type="line" height="310" :options="chartOptions" :series="series"></vue-apex-charts>
+  </div>
 </template>
 
 <style>

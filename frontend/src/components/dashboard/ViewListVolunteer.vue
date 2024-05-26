@@ -20,7 +20,6 @@
 
   const volunteerStore = useVolunteerStore();
   const visible = ref(false);
-  console.log(volunteerStore.volunteers)
 
   </script>
   
