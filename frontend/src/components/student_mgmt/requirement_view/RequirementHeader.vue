@@ -18,6 +18,11 @@ async function goToAddRequirement() {
 function exportCSV() {
   props.dt.exportCSV()
 }
+
+function enterEditMode(){
+  console.log('enterEditMode')
+  this.$emit('enterEditMode')
+}
 </script>
 
 <template>
@@ -37,8 +42,16 @@ function exportCSV() {
         />
       </span>
       <Button
+        icon="fa-solid fa-pencil"
+        aria-label="Edit"
+        label=" Edit"
+        class="ml-2 h-10"
+        @click="enterEditMode"
+      />
+      <Button
         icon="fa-solid fa-plus"
         aria-label="Add Requirement"
+        label=" Add Requirement"
         class="ml-2 h-10"
         @click="goToAddRequirement"
       />
