@@ -21,20 +21,6 @@ function exportCSV() {
   props.dt.exportCSV()
 }
 
-//Code for Edit Mode
-
-const isEditMode = ref(false)
-
-function enterEditMode(){
-  isEditMode.value = true
-  this.$emit('enterEditMode')
-}
-
-function exitEditMode(){
-  isEditMode.value = false
-  this.$emit('exitEditMode')
-}
-
 </script>
 
 <template>
@@ -53,20 +39,6 @@ function exitEditMode(){
           @update:modelValue="$emit('filterChanged', filter)"
         />
       </span>
-      <Button v-if="!isEditMode"
-        icon="fa-solid fa-pencil"
-        aria-label="Edit"
-        label=" Edit"
-        class="ml-2 h-10 bg-yellow-500 border-yellow-500"
-        @click="enterEditMode"
-      />
-      <Button v-if="isEditMode"
-        icon="fa-solid fa-check"
-        aria-label="Confirm"
-        label=" Confirm"
-        class="ml-2 h-10"
-        @click="exitEditMode"
-      />
       <Button
         icon="fa-solid fa-plus"
         aria-label="Add Requirement"
