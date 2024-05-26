@@ -57,7 +57,7 @@ function exitEditMode(){
         icon="fa-solid fa-pencil"
         aria-label="Edit"
         label=" Edit"
-        class="ml-2 h-10"
+        class="ml-2 h-10 bg-yellow-500 border-yellow-500"
         @click="enterEditMode"
       />
       <Button v-if="isEditMode"
