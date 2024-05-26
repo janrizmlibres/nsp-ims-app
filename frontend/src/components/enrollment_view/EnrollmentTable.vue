@@ -11,9 +11,11 @@ import { useRouter } from 'vue-router'
 import { FilterMatchMode, FilterOperator } from 'primevue/api'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useTermStore } from '@/stores/term.js'
+import { useUsersStore } from '@/stores/users.js'
 import { useConfirm } from 'primevue/useconfirm'
 
 const enrollmentStore = useEnrollmentStore()
+const usersStore = useUsersStore()
 
 const learnersData = computed(() => enrollmentStore.learners)
 
@@ -55,6 +57,7 @@ async function changeStatus(data, statusToChange) {
   try {
     await enrollmentStore.changeEnrolledStatus(data.enrollmentId, statusToChange)
     await refreshStudentTable()
+    await usersStore.addAudit(`Changed student ${data.lastName} status to ${statusToChange}`)
     toast.add({
       severity: 'success',
       summary: 'Success',

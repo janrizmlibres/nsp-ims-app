@@ -188,25 +188,17 @@ export async function logout(req, res, next) {
   const token = req.body.token;
   const refreshToken = req.body.refreshToken;
 
-  if (!refreshToken) {
-    const error = new Error("No refresh token provided.");
-    error.statusCode = 401;
-    throw error;
-  }
-
-  if (!token) {
-    const error = new Error("No token provided.");
-    error.statusCode = 401;
-    throw error;
-  }
-
   try {
     jwt.verify(token, "HEHESECRET");
   } catch (error) {
-    invalidatedTokens.push(token);
+    if (token) {
+      invalidatedTokens.push(token);
+    }
   }
-
-  invalidatedTokens.push(refreshToken);
+  
+  if (refreshToken) {
+    invalidatedTokens.push(refreshToken);
+  }
 
   return res.status(200).json({ message: "Logout successful" });
 }
