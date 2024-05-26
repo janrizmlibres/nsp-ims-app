@@ -33,7 +33,6 @@ const term = inject('term')
 const learningStrands = inject('learningStrands')
 const classLevel = inject('classLevel')
 const isFetching = ref(false)
-const classLearningStrandId = ref()
 const metaKey = ref(true)
 const learningStrandInput = ref()
 const selectedSessions = ref([])
@@ -51,7 +50,6 @@ const cols = ref([
     {field: 'total', header: 'Total'},
 ])
 
-provide('classLearningStrandId', classLearningStrandId)
 provide('learningStrandInput', learningStrandInput)
 provide('session', session)
 provide('sessionByMonths', sessionByMonths)
@@ -65,51 +63,49 @@ watch(() => learningStrands.value, () => {
 })
 
 function updateSessionTable() {
-    try {
-        deselect()
+    isFetching.value = true
 
-        isFetching.value = true
-        classLearningStrandId.value = learningStrandInput.value.id
+    deselect()
 
-        classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((sessions) => {
-            sessionByMonths.value = (function() {
-                let start = new Date(term.value.start_date)
-                let end = new Date(term.value.end_date)
-                let months = []
+    sessionByMonths.value = (function() {
+        let start = new Date(term.value.start_date)
+        let end = new Date(term.value.end_date)
+        let months = []
 
-                while (start <= end) {
-                    months[start.getMonth()] = {
-                        id: start.getMonth()+1,
-                        month: format(start, "MMMM yyyy"),
-                        date: start.toLocaleDateString(),
-                        sessions: [],
-                        count: 0
-                    }
-                    
-                    start.setMonth(start.getMonth() + 1);
-                }
+        while (start <= end) {
+            months[start.getMonth()] = {
+                id: start.getMonth()+1,
+                month: format(start, "MMMM yyyy"),
+                date: start.toLocaleDateString(),
+                sessions: [],
+                count: 0
+            }
+            
+            start.setMonth(start.getMonth() + 1);
+        }
 
-                return months
-            })()
+        return months
+    })()
 
-            sessions.reduce((months, obj) => {
-                const month = new Date(obj.date).getMonth()
-                
-                sessionByMonths.value[month].sessions.push(obj);
-                sessionByMonths.value[month].count += 1
-            }, {});
-        })
+    classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((sessions) => {
+        sessions.reduce((months, obj) => {
+            const month = new Date(obj.date).getMonth()
+            
+            sessionByMonths.value[month].sessions.push(obj);
+            sessionByMonths.value[month].count += 1
+        }, {});
 
         isFetching.value = false
-    } catch (error) {
-        console.log(error);
+    }).catch((error) => {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered. Please refresh this page.',
+            detail: error.response.data.message,
             life: 3000
         })
-    }
+
+        isFetching.value = false
+    })
 }
 
 function editSession(data) {
@@ -248,6 +244,9 @@ function onCollapseRow() {
                         v-model:selection="selectedSessions"
                         selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewSession" @blur="deselect()"
                         sortField="date" :sortOrder="1" removableSort class="unselectable" ref="dt"
+                        paginator :rows="7"
+                        paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                        currentPageReportTemplate="{first} to {last} of {totalRecords}"
                     >
                         <template #empty> <div class="text-center">No records found.</div> </template>
 

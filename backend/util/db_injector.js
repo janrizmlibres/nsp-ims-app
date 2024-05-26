@@ -14,6 +14,7 @@ import ContactInfo from "../models/student/contact_info.js";
 import EmergencyPerson from "../models/student/emergency_person.js";
 import PreviousSchool from "../models/student/previous_school.js";
 import Enrollment from "../models/enrollment.js";
+import Grade from "../models/class/grade.js";
 
 export async function injectAll() {
   await injectUser();
@@ -410,55 +411,6 @@ export async function injectUser() {
 export async function injectAcademicYear() {
   const termData = [
     {
-      id: 1,
-      academic_year: "2016-2017",
-      start_date: new Date("2016-06-01"),
-      end_date: new Date("2017-03-31"),
-      status: false,
-    },
-    {
-      id: 2,
-      academic_year: "2017-2018",
-      start_date: new Date("2017-06-01"),
-      end_date: new Date("2018-03-31"),
-      status: false,
-    },
-    {
-      id: 3,
-      academic_year: "2018-2019",
-      start_date: new Date("2018-06-01"),
-      end_date: new Date("2019-03-31"),
-      status: false,
-    },
-    {
-      id: 4,
-      academic_year: "2019-2020",
-      start_date: new Date("2019-06-01"),
-      end_date: new Date("2020-03-31"),
-      status: false,
-    },
-    {
-      id: 5,
-      academic_year: "2020-2021",
-      start_date: new Date("2020-08-01"),
-      end_date: new Date("2021-05-31"),
-      status: false,
-    },
-    {
-      id: 6,
-      academic_year: "2021-2022",
-      start_date: new Date("2021-08-01"),
-      end_date: new Date("2022-05-31"),
-      status: false,
-    },
-    {
-      id: 7,
-      academic_year: "2022-2023",
-      start_date: new Date("2022-08-01"),
-      end_date: new Date("2023-05-31"),
-      status: false,
-    },
-    {
       id: 8,
       academic_year: "2023-2024",
       start_date: new Date("2023-08-01"),
@@ -504,34 +456,6 @@ export async function injectLearningStrand() {
     {
       code: "LS1",
       name: "Communication Skills - English",
-    },
-    {
-      code: "LS2",
-      name: "Communication Skills - Filipino",
-    },
-    {
-      code: "LS3",
-      name: "Science",
-    },
-    {
-      code: "LS4",
-      name: "Mathematics",
-    },
-    {
-      code: "LS5",
-      name: "Career and Life Skills",
-    },
-    {
-      code: "LS6",
-      name: "Understanding the Self and Society",
-    },
-    {
-      code: "LS7",
-      name: "Digital Literacy",
-    },
-    {
-      code: "HVE",
-      name: "Homeroom/Values Education",
     },
   ];
 
@@ -635,35 +559,12 @@ function getRandomDate() {
 export async function injectEnrollment() {
   const enrollmentData = [
     {
-      studentId: "1",
-      classLevelId: "1",
+      studentId: 1,
+      classLevelId: 1,
       dateEnrolled: getRandomDate(), // Random date between 2016 and now
       status: "Active",
     },
-    {
-      studentId: "2",
-      classLevelId: "1",
-      dateEnrolled: getRandomDate(), // Random date between 2016 and now
-      status: "Inactive",
-    },
-    {
-      studentId: "3",
-      classLevelId: "1",
-      dateEnrolled: getRandomDate(), // Random date between 2016 and now
-      status: "Active",
-    },
-    {
-      studentId: "4",
-      classLevelId: "1",
-      dateEnrolled: getRandomDate(), // Random date between 2016 and now
-      status: "Active",
-    },
-    {
-      studentId: "5",
-      classLevelId: "1",
-      dateEnrolled: getRandomDate(), // Random date between 2016 and now
-      status: "Active",
-    },
+    
     // Add more enrollment data here...
   ];
 
@@ -672,6 +573,13 @@ export async function injectEnrollment() {
       await Enrollment.create(enrollment);
     })
   );
+
+  await Promise.resolve(
+    await Grade.create({
+      enrollmentId: 1,
+      classLearningStrandId: 1
+    })
+  )
 }
 
 export async function injectVolunteer() {
@@ -692,6 +600,66 @@ export async function injectVolunteer() {
       affiliation: "Student",
       lastName: "Firma",
       firstName: "Alejandra",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Smith",
+      firstName: "John",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Johnson",
+      firstName: "Emma",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Garcia",
+      firstName: "Liam",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Martinez",
+      firstName: "Olivia",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Lee",
+      firstName: "Noah",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Wang",
+      firstName: "Sophia",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Kim",
+      firstName: "Seo-yeon",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Doe",
+      firstName: "John",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Doe",
+      firstName: "Jane",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Doe",
+      firstName: "Jim",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Smith",
+      firstName: "Jack",
+    },
+    {
+      affiliation: "Student",
+      lastName: "Smith",
+      firstName: "Jill",
     },
   ];
 
@@ -723,7 +691,114 @@ export async function injectVolunteer() {
       city: "City C",
       province: "Province C",
     },
-    // ... add more entries here ...
+    {
+      nickname: "John",
+      sex: "M",
+      birthday: new Date(1995, 1, 1),
+      housing: "321 Elm St",
+      barangay: "Barangay 4",
+      city: "City D",
+      province: "Province D",
+    },
+    {
+      nickname: "Emma",
+      sex: "F",
+      birthday: new Date(2000, 1, 1),
+      housing: "654 Pine Ave",
+      barangay: "Barangay 5",
+      city: "City E",
+      province: "Province E",
+    },
+    {
+      nickname: "Liam",
+      sex: "M",
+      birthday: new Date(2005, 1, 1),
+      housing: "987 Cedar Rd",
+      barangay: "Barangay 6",
+      city: "City F",
+      province: "Province F",
+    },
+    {
+      nickname: "Olivia",
+      sex: "F",
+      birthday: new Date(2010, 1, 1),
+      housing: "321 Elm St",
+      barangay: "Barangay 7",
+      city: "City G",
+      province: "Province G",
+    },
+    {
+      nickname: "Noah",
+      sex: "M",
+      birthday: new Date(2015, 1, 1),
+      housing: "654 Pine Ave",
+      barangay: "Barangay 8",
+      city: "City H",
+      province: "Province H",
+    },
+    {
+      nickname: "Sophia",
+      sex: "F",
+      birthday: new Date(2020, 1, 1),
+      housing: "987 Cedar Rd",
+      barangay: "Barangay 9",
+      city: "City I",
+      province: "Province I",
+    },
+    {
+      nickname: "Seo-yeon",
+      sex: "F",
+      birthday: new Date(2025, 1, 1),
+      housing: "123 Main St",
+      barangay: "Barangay 10",
+      city: "City J",
+      province: "Province J",
+    },
+    {
+      nickname: "John",
+      sex: "M",
+      birthday: new Date(1980, 1, 1),
+      housing: "123 Main St",
+      barangay: "Barangay 1",
+      city: "City A",
+      province: "Province A",
+    },
+    {
+      nickname: "Jane",
+      sex: "F",
+      birthday: new Date(1985, 1, 1),
+      housing: "456 Maple Ave",
+      barangay: "Barangay 2",
+      city: "City B",
+      province: "Province B",
+    },
+    {
+      nickname: "Jim",
+      sex: "M",
+      birthday: new Date(1990, 1, 1),
+      housing: "789 Oak St",
+      barangay: "Barangay 3",
+      city: "City C",
+      province: "Province C",
+    },
+    {
+      nickname: "Jack",
+      sex: "M",
+      birthday: new Date(1995, 1, 1),
+      housing: "321 Elm St",
+      barangay: "Barangay 4",
+      city: "City D",
+      province: "Province D",
+    },
+    {
+      nickname: "Jill",
+      sex: "F",
+      birthday: new Date(2000, 1, 1),
+      housing: "654 Pine Ave",
+      barangay: "Barangay 5",
+      city: "City E",
+      province: "Province E",
+    },
   ];
 
   const volunteerEmergencyContacts = [
@@ -745,20 +820,101 @@ export async function injectVolunteer() {
       contactNumber: "+639345678901",
       relationship: "Brother",
     },
-  ];
-
-  const StudentVolunteer = [
     {
-      program: "BS PSY",
-      year: "1st",
+      firstName: "Jack",
+      lastName: "Smith",
+      contactNumber: "+639456789012",
+      relationship: "Father",
     },
     {
-      program: "BS CS",
-      year: "2nd",
+      firstName: "Jill",
+      lastName: "Smith",
+      contactNumber: "+639567890123",
+      relationship: "Mother",
     },
     {
-      program: "BS IT",
-      year: "3rd",
+      firstName: "James",
+      lastName: "Johnson",
+      contactNumber: "+639678901234",
+      relationship: "Brother",
+    },
+    {
+      firstName: "Jessica",
+      lastName: "Johnson",
+      contactNumber: "+639789012345",
+      relationship: "Sister",
+    },
+    {
+      firstName: "Jacob",
+      lastName: "Garcia",
+      contactNumber: "+639890123456",
+      relationship: "Brother",
+    },
+    {
+      firstName: "Emily",
+      lastName: "Garcia",
+      contactNumber: "+639901234567",
+      relationship: "Sister",
+    },
+    {
+      firstName: "Ethan",
+      lastName: "Martinez",
+      contactNumber: "+639012345678",
+      relationship: "Brother",
+    },
+    {
+      firstName: "Ella",
+      lastName: "Martinez",
+      contactNumber: "+639123456789",
+      relationship: "Sister",
+    },
+    {
+      firstName: "William",
+      lastName: "Lee",
+      contactNumber: "+639234567890",
+      relationship: "Brother",
+    },
+    {
+      firstName: "Oliver",
+      lastName: "Lee",
+      contactNumber: "+639345678901",
+      relationship: "Brother",
+    },
+    {
+      firstName: "Daniel",
+      lastName: "Wang",
+      contactNumber: "+639456789012",
+      relationship: "Brother",
+    },
+    {
+      firstName: "Ava",
+      lastName: "Wang",
+      contactNumber: "+639567890123",
+      relationship: "Sister",
+    },
+    {
+      firstName: "Seo-joon",
+      lastName: "Kim",
+      contactNumber: "+639678901234",
+      relationship: "Brother",
+    },
+    {
+      firstName: "Seo-yeon",
+      lastName: "Kim",
+      contactNumber: "+639789012345",
+      relationship: "Sister",
+    },
+    {
+      firstName: "John",
+      lastName: "Doe",
+      contactNumber: "+639123456789",
+      relationship: "Brother",
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      contactNumber: "+639234567890",
+      relationship: "Sister",
     },
   ];
 
@@ -778,7 +934,149 @@ export async function injectVolunteer() {
       facebook: "Alejandra-Firma",
       email: "alejandra-firma@example.com",
     },
-    // ... add more entries here ...
+    {
+      contactNumber: "+639123456786",
+      facebook: "John-Smith",
+      email: "john-smith@example.com",
+    },
+    {
+      contactNumber: "+639123456785",
+      facebook: "Emma-Johnson",
+      email: "emma-johnson@example.com",
+    },
+    {
+      contactNumber: "+639123456784",
+      facebook: "Liam-Garcia",
+      email: "liam-garcia@example.com",
+    },
+    {
+      contactNumber: "+639123456783",
+      facebook: "Olivia-Martinez",
+      email: "olivia-martinez@example.com",
+    },
+    {
+      contactNumber: "+639123456782",
+      facebook: "Noah-Lee",
+      email: "noah-lee@example.com",
+    },
+    {
+      contactNumber: "+639123456781",
+      facebook: "Sophia-Wang",
+      email: "sophia-wang@example.com",
+    },
+    {
+      contactNumber: "+639123456780",
+      facebook: "Seo-yeon-Kim",
+      email: "seo-yeon-kim@example.com",
+    },
+    {
+      contactNumber: "+639123456789",
+      facebook: "John-Doe",
+      email: "john-doe@example.com",
+    },
+    {
+      contactNumber: "+639123456788",
+      facebook: "Jane-Doe",
+      email: "jane-doe@example.com",
+    },
+    {
+      contactNumber: "+639123456787",
+      facebook: "Jim-Doe",
+      email: "jim-doe@example.com",
+    },
+    {
+      contactNumber: "+639123456786",
+      facebook: "Jack-Smith",
+      email: "jack-smith@example.com",
+    },
+    {
+      contactNumber: "+639123456785",
+      facebook: "Jill-Smith",
+      email: "jill-smith@example.com",
+    },
+  ];
+
+  const StudentVolunteer = [
+    {
+      program: "BS PSY",
+      year: "1st",
+    },
+    {
+      program: "BS CS",
+      year: "2nd",
+    },
+    {
+      program: "BS IT",
+      year: "3rd",
+    },
+    {
+      program: "BS BA",
+      year: "4th",
+    },
+    {
+      program: "BS HRM",
+      year: "1st",
+    },
+    {
+      program: "BS ECE",
+      year: "2nd",
+    },
+    {
+      program: "BS ME",
+      year: "3rd",
+    },
+    {
+      program: "BS CE",
+      year: "4th",
+    },
+    {
+      program: "BS EE",
+      year: "1st",
+    },
+    {
+      program: "BS CPE",
+      year: "2nd",
+    },
+    {
+      program: "BS PSY",
+      year: "1st",
+    },
+    {
+      program: "BS CS",
+      year: "2nd",
+    },
+    {
+      program: "BS IT",
+      year: "3rd",
+    },
+    {
+      program: "BS BA",
+      year: "4th",
+    },
+    {
+      program: "BS HRM",
+      year: "1st",
+    },
+    {
+      program: "BS ECE",
+      year: "2nd",
+    },
+    {
+      program: "BS ME",
+      year: "3rd",
+    },
+    {
+      program: "BS CE",
+      year: "4th",
+    },
+    {
+      program: "BS EE",
+      year: "1st",
+    },
+    {
+      program: "BS CPE",
+      year: "2nd",
+    },
   ];
 
   function getRandomAvailability() {
