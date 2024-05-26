@@ -1,7 +1,6 @@
 <script setup>
 import ContentPane from '@/components/UI/ContentPane.vue'
 import RequirementHeader from '@/components/student_mgmt/requirement_view/RequirementHeader.vue'
-import RequirementFooter from '@/components/student_mgmt/requirement_view/RequirementFooter.vue'
 import { useUtilitiesStore } from '@/stores/utilities'
 import { useStudentsStore } from '@/stores/students'
 import { ref, watch, onMounted } from 'vue'
@@ -51,6 +50,5 @@ onMounted(async () => {
                 </template>
             </Column>
         </DataTable>
-        <RequirementFooter />
     </ContentPane>
 </template>

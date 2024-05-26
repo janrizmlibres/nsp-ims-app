@@ -7,6 +7,8 @@ import { useRouter } from 'vue-router'
 
 const props = defineProps({ globalFilter: Object, dt: Object })
 
+
+
 const router = useRouter()
 
 const filter = ref(props.globalFilter)
@@ -19,10 +21,20 @@ function exportCSV() {
   props.dt.exportCSV()
 }
 
+//Code for Edit Mode
+
+const isEditMode = ref(false)
+
 function enterEditMode(){
-  console.log('enterEditMode')
+  isEditMode.value = true
   this.$emit('enterEditMode')
 }
+
+function exitEditMode(){
+  isEditMode.value = false
+  this.$emit('exitEditMode')
+}
+
 </script>
 
 <template>
@@ -41,12 +53,19 @@ function enterEditMode(){
           @update:modelValue="$emit('filterChanged', filter)"
         />
       </span>
-      <Button
+      <Button v-if="!isEditMode"
         icon="fa-solid fa-pencil"
         aria-label="Edit"
         label=" Edit"
         class="ml-2 h-10"
         @click="enterEditMode"
+      />
+      <Button v-if="isEditMode"
+        icon="fa-solid fa-check"
+        aria-label="Confirm"
+        label=" Confirm"
+        class="ml-2 h-10"
+        @click="exitEditMode"
       />
       <Button
         icon="fa-solid fa-plus"
