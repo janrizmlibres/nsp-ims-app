@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DoughnutChart from './DoughnutChart.vue'
 import ViewListVolunteer from './ViewListVolunteer.vue'
 import ViewListStudents from './ViewListStudents.vue'
+import ViewListClassLevel from './ViewListClassLevel.vue'
+import ViewListEnrolledStudents from './ViewListEnrolledStudents.vue'
 
 const props = defineProps({
   seriesData: {
@@ -52,6 +54,8 @@ const props = defineProps({
           <div class="total-text">{{ totalText }}</div>
           <ViewListVolunteer v-if="widgetTitle=='VOLUNTEERS'" />
           <ViewListStudents v-if="widgetTitle=='STUDENTS'" />
+          <ViewListEnrolledStudents v-if="widgetTitle=='ENROLLED STUDENTS'" />
+          <ViewListClassLevel v-if="widgetTitle=='CLASS LEVEL'" />
         </div>
       </div>
     </div>
