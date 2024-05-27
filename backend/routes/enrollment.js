@@ -29,6 +29,7 @@ router.post(
     body("learners.*.ftl_pretest").isInt(),
     body("learners.*.regularity").isString(),
     body("learners.*.remarks").isString(),
+    body("learners.*.currentTerm").isInt(),
   ],
   enrollmentController.enrollLearners);
 

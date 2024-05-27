@@ -1,10 +1,10 @@
 ﻿import Term from "../models/term.js";
-import Enrollment from "../models/enrollment.js";
+import Enrollment from '../models/enrollment.js'
 import ClassLevel from "../models/class/class_level.js";
-import ClassLearningStrand from "../models/class/class_learning_strand.js";
-import Session from "../models/class/session.js";
-import Module from "../models/class/module.js";
-import Student from "../models/student/student.js";
+import ClassLearningStrand from '../models/class/class_learning_strand.js'
+import Session from '../models/class/session.js'
+import Module from '../models/class/module.js'
+import Student from '../models/student/student.js'
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
@@ -30,15 +30,17 @@ import fs from "fs";
  */
 export const getAllEnrolledOnTerm = async (req, res, next) => {
   try {
-    const currentTerm = await Term.findByPk(req.params.termID);
+    const currentTerm = await Term.findByPk(
+      req.params.termID
+    )
 
     const classLevels = await ClassLevel.findAll({
-      where: { termId: currentTerm.id },
-      include: { model: Student, include: { model: Enrollment } },
-    });
+      where: {termId: req.params.termID},
+      include: {model: Student, include: {model: Enrollment}},
+    })
 
-    const parsedData = classLevels.map((classLevel) => {
-      return classLevel.students.map((student) => {
+    const parsedData = classLevels.map(classLevel => {
+      return classLevel.students.map(student => {
         return {
           lrn: student.lrn,
           lastName: student.lastName,
@@ -52,7 +54,7 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
           classLevelId: classLevel.id,
           enrollmentId: student.enrollment.id,
           studentId: student.id,
-          enrollmentFormURL: student.enrollment.enrollmentFormURL,
+          enrollmentFormURL: student.enrollment.enrollmentFormURL
         };
       });
     });
@@ -95,7 +97,7 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
  */
 export const enrollLearners = async (req, res, next) => {
   try {
-    let index = 0;
+    let index = 0
     for (let learner of req.body.learners) {
       learner = JSON.parse(learner);
 
@@ -109,7 +111,7 @@ export const enrollLearners = async (req, res, next) => {
         throw error;
       }
 
-      const student = await Student.findByPk(learner.studentId);
+      const student = await Student.findByPk(learner.studentId)
 
       if (!student) {
         const error = new Error("Student not found.");
@@ -117,13 +119,22 @@ export const enrollLearners = async (req, res, next) => {
         throw error;
       }
 
-      // Check if student is already enrolled in the class level
-      const isEnrolled = await classLevel.hasStudent(student);
+      // Check if student is already enrolled in the current term
+      const term = await Term.findByPk(
+        learner.currentTerm,
+        { include: { model: ClassLevel } }
+      );
 
+      let isEnrolled = false;
+      for (let i = 0; i < term.class_levels.length; i++) {
+        if (await term.class_levels[i].hasStudent(student)) {
+          isEnrolled = true;
+          break;
+        }
+      }
+      
       if (isEnrolled) {
-        const error = new Error(
-          `${student.lastName} is already enrolled in this year class level.`
-        );
+        const error = new Error(`${student.lastName} is already enrolled in the current term.`);
         error.statusCode = 400;
         throw error;
       }
@@ -135,32 +146,31 @@ export const enrollLearners = async (req, res, next) => {
           status: "Active",
           regularity: learner.selectedRegularity,
           remarks: learner.selectedRemarks,
-          enrollmentFormURL:
-            req.files[index] && req.files[index].path.replace("\\", "/"),
-        },
+          enrollmentFormURL: req.files[index] && req.files[index].path.replace("\\", "/")
+        }
       });
-      index += 1;
+      index += 1
 
       const classLearningStrands = await ClassLearningStrand.findAll({
-        where: { classLevelId: learner.selectedSchoolLevelId },
-        include: [Module, Session],
-      });
+        where: {classLevelId: learner.selectedSchoolLevelId},
+        include: [Module, Session]
+      })
 
-      classLearningStrands.map((classLearningStrand) => {
-        classLearningStrand.addEnrollment(enrollment);
+      classLearningStrands.map(classLearningStrand => {
+        classLearningStrand.addEnrollment(enrollment)
 
-        classLearningStrand.modules.map((module) => {
-          module.addEnrollment(enrollment);
-        });
+        classLearningStrand.modules.map(module => {
+          module.addEnrollment(enrollment)
+        })
 
-        classLearningStrand.sessions.map((session) => {
-          session.addEnrollment(enrollment);
-        });
-      });
+        classLearningStrand.sessions.map(session => {
+          session.addEnrollment(enrollment)
+        })
+      })
     }
 
     res.status(201).json({
-      message: "Enrolled learners successfully!",
+      message: 'Enrolled learners successfully!'
     });
   } catch (error) {
     if (!error.statusCode) {
@@ -173,8 +183,8 @@ export const enrollLearners = async (req, res, next) => {
 
 export const updateEnrollment = async (req, res, next) => {
   try {
-    const enrollment = await Enrollment.findByPk(req.params.enrollmentId);
-
+    const enrollment = await Enrollment.findByPk(req.params.enrollmentId)
+    
     if (req.files[0]) {
       const enrollmentFormURL = req.files[0]
         ? req.files[0].path.replace("\\", "/")
@@ -185,22 +195,19 @@ export const updateEnrollment = async (req, res, next) => {
         req.body.enrollmentForm = enrollmentFormURL;
       }
 
-      console.log("Enrollment Form: " + req.body.enrollmentForm);
-      console.log("Enrollment Form URL: " + req.files[0]);
-
       await enrollment.update({
-        enrollmentFormURL: req.body.enrollmentForm,
-      });
+        enrollmentFormURL: req.body.enrollmentForm
+      })
     }
-
+    
     await enrollment.update({
       ftl_pretest: req.body.fltPretestScore,
       regularity: req.body.selectedRegularity.code,
       remarks: req.body.selectedRemarks,
-    });
-
-    res.status(201).json({
-      message: "Updated learner enrollment successfully!",
+    })
+    
+    res.status(201).json({ 
+      message: 'Updated learner enrollment successfully!' 
     });
   } catch (error) {
     if (!error.statusCode) {
@@ -209,21 +216,22 @@ export const updateEnrollment = async (req, res, next) => {
     next(error);
     return error;
   }
-};
+}
 
 export const getEnrolled = async (req, res, next) => {
   try {
     // Find student from student id and then include the enrollment where it is equal to the enrollmentId which also includes the class level
-    const enrolledStudent = await Enrollment.findByPk(req.params.enrollmentId, {
-      include: [Student, ClassLevel],
-    });
-
+    const enrolledStudent = await Enrollment.findByPk(
+      req.params.enrollmentId, {
+      include: [ Student, ClassLevel ]
+    })
+    
     if (!enrolledStudent) {
       const error = new Error("No enrolled student found.");
       error.statusCode = 404;
       throw error;
     }
-
+    
     // Parse the data to be returned in an array
     const student = {
       lrn: enrolledStudent.student.lrn,
@@ -238,10 +246,10 @@ export const getEnrolled = async (req, res, next) => {
       callable: enrolledStudent.callable,
       Bridger: enrolledStudent.bridger,
     };
-
+    
     res.status(200).json({
-      message: "Fetched enrolled student successfully!",
-      enrolled: student,
+      message: 'Fetched enrolled student successfully!',
+      enrolled: student
     });
   } catch (error) {
     if (!error.statusCode) {
@@ -250,18 +258,18 @@ export const getEnrolled = async (req, res, next) => {
     next(error);
     return error;
   }
-};
+}
 
 export const changeEnrollmentStatus = async (req, res, next) => {
   try {
-    const enrollment = await Enrollment.findByPk(req.params.enrollmentId);
-
+    const enrollment = await Enrollment.findByPk(req.params.enrollmentId)
+    
     await enrollment.update({
-      status: req.body.statusToChange,
-    });
-
+      status: req.body.statusToChange
+    })
+    
     res.status(201).json({
-      message: "Updated learner enrollment successfully!",
+      message: 'Updated learner enrollment successfully!'
     });
   } catch (error) {
     if (!error.statusCode) {
@@ -270,7 +278,7 @@ export const changeEnrollmentStatus = async (req, res, next) => {
     next(error);
     return error;
   }
-};
+}
 
 const clearEnrollmentForm = (filePath) => {
   if (!filePath) return;

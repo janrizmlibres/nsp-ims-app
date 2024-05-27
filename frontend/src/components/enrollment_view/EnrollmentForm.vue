@@ -82,6 +82,7 @@ function onSelectedLearner() {
       studentId: selectedStudent.id,
       lrn: selectedStudent.lrn,
       fullname: selectedStudent.fullname,
+      currentTerm: termStore.activeTerm.id,
       selectedSchoolLevelId: null,
       fltPretestScore: null,
       selectedRegularity: null,
@@ -125,7 +126,7 @@ function saveLearner() {
     selectedSchoolLevelId: form.value.selectedSchoolLevelId,
     fltPretestScore: form.value.fltPretestScore,
     selectedRegularity: form.value.selectedRegularity,
-    selectedRemarks: form.value.selectedRemarks,
+    selectedRemarks: typeof form.value.selectedRemarks === 'string' ? form.value.selectedRemarks.trim() : form.value.selectedRemarks
   }
   
   validSubmit.value = true
@@ -143,7 +144,6 @@ async function submitEvent() {
     await enrollmentStore.enrollLearners(selectedLearnersList.value)
     
     for (const learner of selectedLearnersList.value) {
-      console.log(selectedLearnersList.value)
       await usersStore.addAudit(`Enrolled student ${learner.fullname}`)
     }
     toast.add({
@@ -237,9 +237,9 @@ function cancelFile() {
     <div v-if="editingStudent" class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-28 text-right ml-4">
-          <span>Enrollment Form</span>
+          <span>Enrollment Form<span class="text-red-500">*</span></span>
         </div>
-        <FileUpload class="u-bg-pcolor !rounded-2xl hover:u-bg-pcolor hover:transform hover:scale-[1.10] transition-all duration-300 ease-in-out grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
+        <FileUpload class="u-bg-pcolor !rounded-2xl hover:u-bg-pcolor hover:transform hover:scale-[1.10] transition-all duration-300 ease-in-out grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="10485760" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-28 text-right ml-4">

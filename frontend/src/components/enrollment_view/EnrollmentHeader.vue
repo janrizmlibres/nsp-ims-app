@@ -24,57 +24,47 @@ const termStore = useTermStore()
 const enrollmentStore = useEnrollmentStore()
 
 async function getAllTerms()  {
-    try {
-        await termStore.getTerms()
-        termsOptions.value = termStore.terms
-        
-        if (enrollmentStore.editedTerm) {
-        selectedTerm.value = termStore.terms.find(term => term.academic_year === enrollmentStore.editedTerm)
-        enrollmentStore.setEditedTerm(null)
-        } else  {
-        selectedTerm.value = termStore.terms[0]
-        }
-    } catch (error) {
-        toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.response.data.message,
-        life: 3000
-        })
+  try {
+    await termStore.getTerms()
+    termsOptions.value = termStore.terms
+
+    if (enrollmentStore.editedTerm) {
+      selectedTerm.value = await termStore.terms.find(term => term.academic_year === enrollmentStore.editedTerm)
+      termStore.setChosenTerm(selectedTerm.value.id)
+      await enrollmentStore.getAllEnrolledFromTerm(termStore.chosenTerm)
+      enrollmentStore.setEditedTerm(null)
+    } else  {
+      selectedTerm.value = termStore.terms[0]
+      await termStore.getActiveTerm()
+      termStore.setChosenTerm(termStore.activeTerm.id)
+
+      await enrollmentStore.getAllEnrolledFromTerm(termStore.chosenTerm)
     }
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
 }
 
 async function getAllStudentsFromTerm() {
-    try {
-        await enrollmentStore.getAllEnrolledFromTerm(selectedTerm.value.id)
-    } catch (error) {
-        toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.response.data.message,
-        life: 3000
-        })
-    }
-}
-
-async function getCurrentEnrolled()  {
-    try {
-        await termStore.getActiveTerm()
-        currentTerm.value = termStore.activeTerm
-
-        await enrollmentStore.getAllEnrolledFromTerm(currentTerm.value.id)
-    } catch (error) {
-        toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: error.response.data.message,
-        life: 3000
-        })
-    }
+  try {
+    termStore.setChosenTerm(selectedTerm.value.id)
+    await enrollmentStore.getAllEnrolledFromTerm(termStore.chosenTerm)
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
 }
 
 getAllTerms()
-getCurrentEnrolled()
 </script>
 
 <template>

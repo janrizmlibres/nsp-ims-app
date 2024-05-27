@@ -109,10 +109,7 @@ async function changeStatus(data, statusToChange) {
 
 async function refreshStudentTable() {
   try {
-    await termStore.getActiveTerm()
-    const currentTerm = termStore.activeTerm
-
-    await enrollmentStore.getAllEnrolledFromTerm(currentTerm.id)
+    await enrollmentStore.getAllEnrolledFromTerm(termStore.chosenTerm)
   } catch (error) {
     toast.add({
       severity: 'error',

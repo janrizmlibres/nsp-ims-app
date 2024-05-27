@@ -52,8 +52,12 @@ const chosenFile = computed(() => {
   return enrollmentFormName.value ? enrollmentFormName.value : "Please Upload an Enrollment Form";
 })
 
-const isEqual = (newValue, oldValue) =>
-  newValue === oldValue || (newValue === "" && oldValue === null);
+const isEqual = (newValue, oldValue) => {
+  if (typeof newValue === 'string' && typeof oldValue === 'string') {
+    return newValue.trim() === oldValue.trim() || (newValue.trim() === "" && false)
+  }
+  return newValue === oldValue || (newValue.trim() === "" && oldValue === null);
+};
 
 const checkChanges = computed(() => {
   if (!isLoaded.value) return true;
@@ -195,7 +199,7 @@ getStudent()
         <div class="basis-32 text-right">
           <span>Enrollment Form</span>
         </div>
-        <FileUpload class="u-bg-pcolor !rounded-2xl hover:u-bg-pcolor hover:transform hover:scale-[1.10] transition-all duration-300 ease-in-out grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
+        <FileUpload class="u-bg-pcolor !rounded-2xl hover:u-bg-pcolor hover:transform hover:scale-[1.10] transition-all duration-300 ease-in-out grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="10485760" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
