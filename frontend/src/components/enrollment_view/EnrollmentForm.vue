@@ -82,6 +82,7 @@ function onSelectedLearner() {
       studentId: selectedStudent.id,
       lrn: selectedStudent.lrn,
       fullname: selectedStudent.fullname,
+      currentTerm: termStore.activeTerm.id,
       selectedSchoolLevelId: null,
       fltPretestScore: null,
       selectedRegularity: null,

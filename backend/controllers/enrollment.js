@@ -113,12 +113,23 @@ export const enrollLearners = async (req, res, next) => {
         throw error;
       }
 
-      // Check if student is already enrolled in the class level
-      const isEnrolled = await classLevel.hasStudent(student);
+      // Check if student is already enrolled in the current term
+      const term = await Term.findByPk(
+        learner.currentTerm,
+        { include: { model: ClassLevel } }
+      );
 
+      let isEnrolled = false;
+      for (let i = 0; i < term.class_levels.length; i++) {
+        if (await term.class_levels[i].hasStudent(student)) {
+          isEnrolled = true;
+          break;
+        }
+      }
+      
       if (isEnrolled) {
-        const error = new Error(`${student.lastName} is already enrolled in this year class level.`);
-        error.statusCode = 400;
+        const error = new Error(`${student.lastName} is already enrolled in the current term.`);
+        error.statusCode = 404;
         throw error;
       }
 
