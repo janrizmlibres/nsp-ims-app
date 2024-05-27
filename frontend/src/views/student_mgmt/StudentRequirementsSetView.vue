@@ -66,7 +66,7 @@ const resetData = () => {
 </script>
 
 <template>
-    <ContentPane header="Student Requirements">
+    <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Students'}, {label: 'Requirements'}]">
         <RequirementHeader :globalFilter="filters.global.value" @filterChanged="updateGlobalFilter" />
         <DataTable 
             :value="studentsStore.students"
