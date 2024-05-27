@@ -11,9 +11,9 @@ import fs from "fs";
 
 /**
  * Retrieves all learners enrolled in a term.
- * 
+ *
  * The request must contain the termID as a parameter.
- * 
+ *
  * The response will contain an array of objects, each object representing a learner.
  * The object will contain the following properties:
  * - lrn: The LRN of the learner.
@@ -35,7 +35,7 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
     )
 
     const classLevels = await ClassLevel.findAll({
-      where: {termId: currentTerm.id},
+      where: {termId: req.params.termID},
       include: {model: Student, include: {model: Enrollment}},
     })
 
@@ -62,8 +62,12 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
     // Flatten the array
     const flattenedData = [].concat(...parsedData);
 
-    res.status(200).json({ message: 'Fetched all active students successfully!', learners: flattenedData });
-
+    res
+      .status(200)
+      .json({
+        message: "Fetched all active students successfully!",
+        learners: flattenedData,
+      });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -75,7 +79,7 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
 
 /**
  * Enrolls a learner to a class level.
- * 
+ *
  * The request body must contain:
  * - learnerID: The ID of the learner to be enrolled.
  * - classLevelID: The ID of the class level to enroll the learner to.
@@ -95,9 +99,11 @@ export const enrollLearners = async (req, res, next) => {
   try {
     let index = 0
     for (let learner of req.body.learners) {
-      learner = JSON.parse(learner)
-      
-      const classLevel = await ClassLevel.findByPk(learner.selectedSchoolLevelId);
+      learner = JSON.parse(learner);
+
+      const classLevel = await ClassLevel.findByPk(
+        learner.selectedSchoolLevelId
+      );
 
       if (!classLevel) {
         const error = new Error("Class level not found.");
@@ -113,11 +119,22 @@ export const enrollLearners = async (req, res, next) => {
         throw error;
       }
 
-      // Check if student is already enrolled in the class level
-      const isEnrolled = await classLevel.hasStudent(student);
+      // Check if student is already enrolled in the current term
+      const term = await Term.findByPk(
+        learner.currentTerm,
+        { include: { model: ClassLevel } }
+      );
 
+      let isEnrolled = false;
+      for (let i = 0; i < term.class_levels.length; i++) {
+        if (await term.class_levels[i].hasStudent(student)) {
+          isEnrolled = true;
+          break;
+        }
+      }
+      
       if (isEnrolled) {
-        const error = new Error(`${student.lastName} is already enrolled in this year class level.`);
+        const error = new Error(`${student.lastName} is already enrolled in the current term.`);
         error.statusCode = 400;
         throw error;
       }
@@ -155,7 +172,6 @@ export const enrollLearners = async (req, res, next) => {
     res.status(201).json({
       message: 'Enrolled learners successfully!'
     });
-
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -179,9 +195,6 @@ export const updateEnrollment = async (req, res, next) => {
         req.body.enrollmentForm = enrollmentFormURL;
       }
 
-      console.log("Enrollment Form: " + req.body.enrollmentForm)
-      console.log("Enrollment Form URL: " + req.files[0])
-
       await enrollment.update({
         enrollmentFormURL: req.body.enrollmentForm
       })
@@ -196,7 +209,6 @@ export const updateEnrollment = async (req, res, next) => {
     res.status(201).json({ 
       message: 'Updated learner enrollment successfully!' 
     });
-
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -239,7 +251,6 @@ export const getEnrolled = async (req, res, next) => {
       message: 'Fetched enrolled student successfully!',
       enrolled: student
     });
-    
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -260,7 +271,6 @@ export const changeEnrollmentStatus = async (req, res, next) => {
     res.status(201).json({
       message: 'Updated learner enrollment successfully!'
     });
-
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -277,12 +287,6 @@ const clearEnrollmentForm = (filePath) => {
   filePath = path.join(__dirname, "..", filePath);
   fs.unlink(filePath, (err) => console.log(err));
 };
-
-
-
-
-
-
 
 export const getAllEnrollments = async (req, res, next) => {
   try {
