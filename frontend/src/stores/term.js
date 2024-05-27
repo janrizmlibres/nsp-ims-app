@@ -6,6 +6,7 @@ import { ref } from 'vue'
 export const useTermStore = defineStore('term', () => {
   const visibleAddTermDialog = ref(false)
   const activeTerm = ref()
+  const chosenTerm = ref()
   const terms = ref([])
 
   async function getTerms() {
@@ -46,6 +47,10 @@ export const useTermStore = defineStore('term', () => {
     activeTerm.value = result.data.data
   }
   
+  function setChosenTerm(termId) {
+    chosenTerm.value = termId
+  }
+  
   async function getAllTerms() {
     const authStore = useAuthStore()
 
@@ -60,5 +65,5 @@ export const useTermStore = defineStore('term', () => {
     visibleAddTermDialog.value = !visibleAddTermDialog.value
   }
 
-  return { terms, visibleAddTermDialog, activeTerm, getTerms, addTerm, getActiveTerm, getTerm, getAllTerms, showHideAddTermDialog }
+  return { terms, visibleAddTermDialog, activeTerm, chosenTerm , getTerms, addTerm, getActiveTerm, getTerm, getAllTerms, showHideAddTermDialog, setChosenTerm }
 })

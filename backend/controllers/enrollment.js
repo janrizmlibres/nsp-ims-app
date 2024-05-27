@@ -35,7 +35,7 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
     )
 
     const classLevels = await ClassLevel.findAll({
-      where: {termId: currentTerm.id},
+      where: {termId: req.params.termID},
       include: {model: Student, include: {model: Enrollment}},
     })
 
