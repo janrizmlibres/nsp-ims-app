@@ -56,7 +56,10 @@ const isEqual = (newValue, oldValue) => {
   if (typeof newValue === 'string' && typeof oldValue === 'string') {
     return newValue.trim() === oldValue.trim() || (newValue.trim() === "" && false)
   }
-  return newValue === oldValue || (newValue.trim() === "" && oldValue === null);
+  if(typeof newValue === 'string') {
+    return newValue === oldValue || (newValue.trim() === "" && oldValue === null);
+  }
+  return newValue === oldValue || (newValue === "" && oldValue === null);
 };
 
 const checkChanges = computed(() => {
