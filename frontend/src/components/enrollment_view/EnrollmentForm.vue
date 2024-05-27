@@ -32,8 +32,9 @@ const currentEditStudentIndex = ref()
 const validSubmit = ref(false)
 const confirmedFile = ref(false)
 
-function onSetup() {
+async function onSetup() {
   try {
+    await termStore.getActiveTerm()
     if (!termStore.activeTerm) {
       return
     }
@@ -132,6 +133,7 @@ function removeLearner(index) {
   if (currentEditStudentIndex.value === index) {
     editingStudent.value = false
   }
+  currentEditStudentIndex.value -= 1
   selectedLearnersList.value.splice(index, 1)
 }
 
