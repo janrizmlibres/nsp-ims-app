@@ -277,3 +277,18 @@ const clearEnrollmentForm = (filePath) => {
   filePath = path.join(__dirname, "..", filePath);
   fs.unlink(filePath, (err) => console.log(err));
 };
+
+
+
+
+
+
+
+export const getAllEnrollments = async (req, res, next) => {
+  try {
+    const enrollments = await Enrollment.findAll();
+    res.status(200).json(enrollments);
+  } catch (error) {
+    next(error);
+  }
+};

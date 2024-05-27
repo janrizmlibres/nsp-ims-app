@@ -1,48 +1,61 @@
-<script>
+<script setup>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DoughnutChart from './DoughnutChart.vue'
+import ViewListVolunteer from './ViewListVolunteer.vue'
+import ViewList from './ViewList.vue'
+import ViewListClassLevel from './ViewListClassLevel.vue'
+import ViewListEnrolledStudents from './ViewListEnrolledStudents.vue'
+import { useStudentsStore } from '@/stores/students'
+import { useVolunteerStore } from '@/stores/volunteer'
+import { useEnrollmentStore } from '@/stores/enrollment'
+import { onMounted } from 'vue'
+const enrollmentStore = useEnrollmentStore()
+const volunteerStore = useVolunteerStore()
+const studentsStore = useStudentsStore()
 
-export default {
-  components: {
-    'font-awesome-icon': FontAwesomeIcon,
-    DoughnutChart
+const props = defineProps({
+  seriesData: {
+    type: Array,
+    required: true
   },
-  props: {
-    seriesData: {
+  labelsData: {
+    type: Array,
+    required: true
+  },
+  widgetTitle: {
+    type: String,
+    required: true
+  },
+  totalText: {
+    type: String,
+    required: true
+  },
+  Data1: {
+    type: String,
+    required: true
+  },
+  Data2: {
+    type: String,
+    required: true
+  },
+  icon: {
       type: Array,
       required: true
     },
-    labelsData: {
-      type: Array,
-      required: true
-    },
-    widgetTitle: {
-      type: String,
-      required: true
-    },
-    totalText: {
-      type: String,
-      required: true
-    },
-    Data1: {
-      type: String,
-      required: true
-    },
-    Data2: {
-      type: String,
-      required: true
-    }
-  },
-  mounted() {
-  }
-}
+})
+
+onMounted(async () => {
+    enrollmentStore.allEnrolled.forEach((enrollment, index) => {
+      enrollment.fullname = studentsStore.students[index].fullname;
+    });
+  });
 </script>
 
 <template>
   <div class="widget">
     <div class="widget-wrapper">
       <DoughnutChart class="my-chart" :seriesData="seriesData" :labelsData="labelsData"/>
-      <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
+      <font-awesome-icon class="graduate-icon" :icon="icon" />
       <div class="widget-container">
         <div class="widget-title">{{ widgetTitle }}</div>
         <div class="gender-container">
@@ -53,7 +66,30 @@ export default {
         </div>
         <div class="total-container">
           <div class="total-text">{{ totalText }}</div>
-          <!--<button class="total-button">View List</button>-->
+          <div class="total-button">
+            <ViewList 
+              v-if="widgetTitle=='VOLUNTEERS'"
+              :values="volunteerStore.volunteers" 
+              :columns="[
+              { field: 'fullname', header: 'Full Name' },
+              { field: 'affiliation', header: 'Affiliations' },]"
+              :header="widgetTitle" />
+            <ViewList
+              v-if="widgetTitle=='STUDENTS'" 
+              :values="studentsStore.students" 
+              :columns="[
+              { field: 'fullname', header: 'Full Name' },
+              { field: 'personal_info.sex', header: 'Sex' },]"
+              :header="widgetTitle" />
+            <ViewList 
+              v-if="widgetTitle=='ENROLLED STUDENTS'"
+              :values="enrollmentStore.allEnrolled" 
+              :columns="[
+              { field: 'fullname', header: 'Full Name' },
+              { field: 'status', header: 'Status' },]"
+              :header="widgetTitle" />
+            <ViewListClassLevel v-if="widgetTitle=='CLASS LEVEL'" />
+          </div>
         </div>
       </div>
     </div>
@@ -64,14 +100,14 @@ export default {
 .my-chart {
   position: absolute;
   top: 2px;
-  left: -11px;
+  left: -22px;
   width: 169px;
   height: 169px;
   z-index: 1; /* place the chart behind other elements */
 }
 .graduate-icon {
   font-size: 55px; /* adjust as needed */
-  margin-left: 50px;
+  margin-left: 40px;
   color: #11285e;
   position: relative;
 }
@@ -83,12 +119,11 @@ export default {
 }
 
 .widget-container {
-  margin-left: 0px; /* adjust as needed */
+  margin-left: -15px; /* adjust as needed */
 }
 
 .gender-container {
   display: flex;
-  justify-content: space-between;
 }
 
 .male-text {
@@ -122,7 +157,7 @@ export default {
   flex-direction: column;
   justify-content: flex-start; /* Aligns children to the start on the main axis */
   align-items: flex-start; /* Aligns children to the start on the cross axis */
-  width: 390px;
+  width: 380px;
   height: 150px;
   background-color: white;
   border-radius: 10px;
@@ -138,13 +173,7 @@ export default {
 }
 
 .total-button {
-  margin-top: 30px;
-  margin-left: 90px;
-  background-color: #265492;
-  padding: 8px;
-  color: white;
-  border-radius: 10px;
-  font-size: 12px;
+  margin-left: 30px;
 }
 
 .male-icon {
@@ -158,7 +187,7 @@ export default {
 
 .female-icon {
   margin-top: 7px;
-  margin-left: 40px;
+  margin-left: 10px;
   margin-right: 5px;
   width: 10px;
   height: 10px;

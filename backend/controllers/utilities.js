@@ -332,25 +332,3 @@ export async function deleteCategory(req, res, next) {
     next(error);
   }
 }
-
-export async function countClassLevels(req, res, next) {
-  try {
-    const gradeSchoolCount = await ClassLevel.count({
-      where: { school_level: "Grade School" }
-    });
-
-    const juniorHighSchoolCount = await ClassLevel.count({
-      where: { school_level: "Junior High School" }
-    });
-
-    res.status(200).json({
-      gradeSchoolCount,
-      juniorHighSchoolCount
-    });
-  } catch (error) {
-    if (!error.statusCode) {
-      error.statusCode = 500;
-    }
-    next(error);
-  }
-}
