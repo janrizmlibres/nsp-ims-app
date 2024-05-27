@@ -43,7 +43,7 @@ const props = defineProps({
 })
 
 onMounted(async () => {
-    enrollmentStore.allEnrolled.forEach((enrollment, index) => {
+    enrollmentStore.allEnrolled.data.forEach((enrollment, index) => {
       enrollment.fullname = studentsStore.students[index].fullname;
     });
   });
@@ -81,7 +81,7 @@ onMounted(async () => {
               :header="widgetTitle" />
             <ViewList 
               v-if="widgetTitle=='ENROLLED STUDENTS'"
-              :values="enrollmentStore.allEnrolled" 
+              :values="enrollmentStore.allEnrolled.data" 
               :columns="[
               { field: 'fullname', header: 'Full Name' },
               { field: 'status', header: 'Status' },]"
@@ -151,12 +151,12 @@ onMounted(async () => {
 }
 
 .widget {
+  height: 50vh; /* Adjust this value as needed */
+  max-height: 140px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* Aligns children to the start on the main axis */
   align-items: flex-start; /* Aligns children to the start on the cross axis */
-  width: 380px;
-  height: 150px;
   background-color: white;
   border-radius: 10px;
   border-bottom: 5px solid #265492;

@@ -32,6 +32,23 @@ let inactiveStudents = ref(0);
 let totalVolunteers = ref(0);
 let studentVolunteerCount = ref(0);
 let professionalVolunteerCount = ref(0);
+const enrollmentTrends = ref([]);
+
+function getEnrollmentYearsFrequency(enrollments) {
+  const yearFrequency = {};
+
+  enrollments.forEach(enrollment => {
+    const year = new Date(enrollment.dateEnrolled).getFullYear().toString();
+
+    if (yearFrequency[year]) {
+      yearFrequency[year]++;
+    } else {
+      yearFrequency[year] = 1;
+    }
+  });
+
+  return Object.entries(yearFrequency).map(([year, frequency]) => ({ year, frequency }));
+}
 
 const countEnrollmentStatus = (enrollments) => {
   let activeCount = 0;
@@ -88,7 +105,7 @@ onMounted(async () => {
   await studentsStore.getStudentsWithClassLevel()
   await studentsStore.getStudents()
 
-  const statusCount = countEnrollmentStatus(await enrollmentStore.allEnrolled);
+  const statusCount = countEnrollmentStatus(await enrollmentStore.allEnrolled.data);
   activeStudents.value = statusCount.activeCount;
   inactiveStudents.value = statusCount.inactiveCount;
 
@@ -108,7 +125,16 @@ onMounted(async () => {
     }
   }
   
+  enrollmentTrends.value = getEnrollmentYearsFrequency(enrollmentStore.allEnrolled.data);
+
+  console.log(cumulativeStudets.value, gradeSchool.value, juniorHighSchool.value, activeStudents.value, inactiveStudents.value)
 });
+
+console.log(cumulativeStudets);
+console.log(gradeSchool);
+console.log(juniorHighSchool);
+console.log(activeStudents);
+console.log(inactiveStudents);
 </script>
 
 <template>
@@ -159,7 +185,9 @@ onMounted(async () => {
         
       </div>
       <div class="charts">
-        <LineChart class="line-chart"/>
+        <LineChart 
+          v-if="enrollmentTrends && enrollmentTrends.length > 0" 
+          class="line-chart" :data="enrollmentTrends"/>
         <BarChart 
           v-if="cumulativeStudets"
           class="bar-chart"
@@ -170,18 +198,17 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.charts{
-    width:80%;
-    display: grid;
-    grid-template-columns: 1fr;
+.charts {
+    height: 80vh; /* 75% of the viewport height */
+    width: 80vw; /* 80% of the viewport width */
+    display: flex;
+    flex-direction: column;
     position: absolute;
-    margin-top: 5rem;
     margin-right: 10rem;
 }
   .student-widget {
     margin-bottom: 1.25rem;
     margin-right: 1.25rem;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
 
   .header-container {
@@ -202,7 +229,6 @@ onMounted(async () => {
     display: grid;
     grid-template-columns: 1fr;
     position: absolute;
-    margin-top: 5rem;
     margin-right: 0.625rem;
     z-index: 1;
   }
@@ -210,10 +236,12 @@ onMounted(async () => {
   .line-chart {
     margin-left: 25.5rem;
     margin-bottom: 1.25rem;
+    flex-grow: 1;
   }
   
   .bar-chart {
     margin-left: 25.5rem;
+    flex-grow: 1;
   }
 
 </style>

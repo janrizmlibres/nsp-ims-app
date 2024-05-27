@@ -22,6 +22,7 @@ export async function injectAll() {
   await injectVolunteer();
   await injectStudentRequirement();
   await injectStudentCategory();
+  await injectEnrollment();
 }
 
 export async function injectStudent() {

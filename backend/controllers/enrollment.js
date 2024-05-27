@@ -291,8 +291,15 @@ const clearEnrollmentForm = (filePath) => {
 export const getAllEnrollments = async (req, res, next) => {
   try {
     const enrollments = await Enrollment.findAll();
-    res.status(200).json(enrollments);
+    
+    res.status(200).json({ 
+      message: 'Fetched all enrollments successfully!', 
+      data: enrollments 
+    });
   } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
     next(error);
   }
-};
+}
