@@ -9,7 +9,7 @@ import { useUtilitiesStore } from '@/stores/utilities';
 const utilitiesStore = useUtilitiesStore()
 
 const terms = computed(() => utilitiesStore.terms)
-const classes = computed(() => termInput.value.class_levels)
+const classes = computed(() => termInput.value ? termInput.value.class_levels : termInput.value)
 const termInput = ref(terms.value.find(term => term.status === true))
 const classLevelInput = ref(null)
 const goToInput = ref(null)
