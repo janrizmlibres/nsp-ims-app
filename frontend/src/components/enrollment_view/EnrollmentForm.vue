@@ -125,7 +125,7 @@ function saveLearner() {
     selectedSchoolLevelId: form.value.selectedSchoolLevelId,
     fltPretestScore: form.value.fltPretestScore,
     selectedRegularity: form.value.selectedRegularity,
-    selectedRemarks: form.value.selectedRemarks,
+    selectedRemarks: typeof form.value.selectedRemarks === 'string' ? form.value.selectedRemarks.trim() : form.value.selectedRemarks
   }
   
   validSubmit.value = true
