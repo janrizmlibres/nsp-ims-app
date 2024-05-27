@@ -34,7 +34,13 @@ const items = computed(() => [
         key: '2-2',
         label: 'Student Requirements',
         icon: 'fa fa-list-check',
-        route: { name: 'dashboard' }
+        route: { name: 'student-requirements-set' }
+      },
+      {
+        key: '2-3',
+        label: 'Admit Students',
+        icon: 'fa fa-user-plus',
+        route: { name: 'add-student' }
       }
     ]
   },

@@ -13,6 +13,7 @@ import EmergencyPerson from "../models/student/emergency_person.js";
 import PreviousSchool from "../models/student/previous_school.js";
 import Enrollment from "../models/enrollment.js";
 import Grade from "../models/class/grade.js";
+import RequirementInfo from "../models/student/requirement_info.js";
 
 export async function injectAll() {
   await injectUser();
@@ -22,6 +23,7 @@ export async function injectAll() {
   await injectVolunteer();
   await injectStudentRequirement();
   await injectStudentCategory();
+  await injectRequirementInfo()
 }
 
 export async function injectStudent() {
@@ -684,6 +686,8 @@ export async function injectVolunteer() {
     },
   ];
 
+  
+
   const volunteerPersonalInformationData = [
     {
       nickname: "Shelly",
@@ -1141,4 +1145,21 @@ export async function injectVolunteer() {
       });
     })
   );
+}
+
+export async function injectRequirementInfo() {
+
+  const students = await Student.findAll();
+
+  const studentRequirements = await StudentRequirement.findAll();
+
+  for (const student of students) {
+    for (const studentRequirement of studentRequirements) {
+      await RequirementInfo.create({
+        studentId: student.id,
+        studentRequirementId: studentRequirement.id,
+        met: true
+      });
+    }
+  }
 }
