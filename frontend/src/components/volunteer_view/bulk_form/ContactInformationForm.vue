@@ -49,11 +49,15 @@ function updateEmergencyContact() {
 
         <div class="grid grid-cols-5 gap-3 mt-4">
           <template v-for="field of Object.values(leftFields)" :key="field.label">
-            <div class="flex items-center justify-end pr-6 col-span-2">
+            <div v-if="field.label !== 'Contact Number'" class="flex items-center justify-end pr-6 col-span-2">
               <span>{{ field.label }}</span>
             </div>
+            <div v-else class="flex gap-1 items-center justify-end pr-6 col-span-2">
+              <div>{{ field.label }}</div>
+              <div class="text-red-500 text-xl">*</div>
+            </div>
             <InputText
-              class="h-10 col-span-3"
+              class="col-span-3"
               type="text"
               v-model="field.data"
               @update:modelValue="updateContactInfo"
@@ -72,12 +76,16 @@ function updateEmergencyContact() {
 
         <div class="grid grid-cols-5 gap-3 mt-4">
           <template v-for="(field, key) in rightFields" :key="field.label">
-            <div class="flex items-center justify-end pr-6 col-span-2">
+            <div v-if="field.label !== 'Middle Name' && field.label !== 'Suffix'" class="flex gap-1 items-center justify-end pr-6 col-span-2">
+              <div>{{ field.label }}</div>
+              <div class="text-red-500 text-xl">*</div>
+            </div>
+            <div v-else class="flex items-center justify-end pr-6 col-span-2">
               <span>{{ field.label }}</span>
             </div>
             <InputText
             v-if="key !== 'suffixName'"
-              class="h-10 col-span-3"
+              class="col-span-3"
               type="text"
               v-model="field.data"
               @update:modelValue="updateEmergencyContact"
@@ -87,7 +95,7 @@ function updateEmergencyContact() {
             />
             <Dropdown
               v-else
-              class="h-10 col-span-3"
+              class="col-span-3"
               v-model="field.data"
               :options="suffixes"
               @update:modelValue="updateEmergencyContact"
@@ -97,10 +105,11 @@ function updateEmergencyContact() {
           </template>
 
           <div class="flex items-center justify-end pr-6 col-span-2">
-            <span>Relationship</span>
+            <div>Relationship</div>
+            <div class="text-red-500 text-xl">*</div>
           </div>
           <InputText
-            class="h-10 col-span-3"
+            class="col-span-3"
             type="text"
             v-model="relationship"
             @update:modelValue="updateEmergencyContact"

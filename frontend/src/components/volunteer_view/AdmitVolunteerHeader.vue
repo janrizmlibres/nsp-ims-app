@@ -49,10 +49,10 @@ function handleUpdate() {
   <div>
     <div class="flex gap-10 items-center">
       <div class="basis-32 text-right">
-        <span>Last Name</span>
+        <label for="last-name">Last Name<span class="text-red-500 text-xl">*</span></label>
       </div>
       <InputText
-        class="grow h-10"
+        class="grow"
         type="text"
         v-model="name.lastName"
         @update:modelValue="handleUpdate"
@@ -66,10 +66,10 @@ function handleUpdate() {
       />
 
       <div class="basis-32 text-right">
-        <span>First Name</span>
+        <label for="first-name">First Name<span class="text-red-500 text-xl">*</span></label>
       </div>
       <InputText
-        class="grow h-10"
+        class="grow"
         type="text"
         v-model="name.firstName"
         @update:modelValue="handleUpdate"
@@ -86,7 +86,7 @@ function handleUpdate() {
         <span>Middle Name</span>
       </div>
       <InputText
-        class="grow h-10"
+        class="grow"
         type="text"
         v-model="name.middleName"
         @update:modelValue="handleUpdate"
@@ -103,7 +103,6 @@ function handleUpdate() {
         <span>Suffix</span>
       </div>
       <Dropdown
-          class="h-10"
           v-model="selectedSuffix"
           :options="suffixes"
           @change="handleUpdate"
@@ -117,15 +116,15 @@ function handleUpdate() {
         />
     </div>
 
-    <div class="flex gap-10 items-center mt-2">
+    <div class="flex gap-9 items-center mt-2">
 
       <div class="basis-32 text-right">
-        <span>Affiliation</span>
+        <label for="affiliation">Affiliation<span class="text-red-500 text-xl">*</span></label>
       </div>
       <Dropdown 
         v-model="selectedAffiliation"
         :options="affiliations"
-        class="grow h-10 flex-grow" 
+        class="flex-grow" 
         @change="handleUpdate"
         :pt="{
               root: ({ props }) => ({

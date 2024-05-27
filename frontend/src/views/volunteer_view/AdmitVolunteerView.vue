@@ -156,7 +156,7 @@ async function handleAddVolunteer(data) {
       group: 'user-headless',
       header: 'Data is Incorrect',
       message:
-        'Make sure inputs are correct and all required fields marked with an asterisk (*) are filled in.',
+      'Make sure inputs are correct and all required fields marked with an asterisk (*) are filled in.',
       acceptLabel: 'OK',
       icon: 'fa-solid fa-triangle-exclamation'
     })
@@ -179,7 +179,7 @@ async function handleUpdateVolunteer(id, data) {
       group: 'user-headless',
       header: 'Data is Incorrect',
       message:
-        'Make sure inputs are correct and all required fields marked with an asterisk (*) are filled in.',
+      'Make sure inputs are correct and all required fields marked with an asterisk (*) are filled in.',
       acceptLabel: 'OK',
       icon: 'fa-solid fa-triangle-exclamation'
     })

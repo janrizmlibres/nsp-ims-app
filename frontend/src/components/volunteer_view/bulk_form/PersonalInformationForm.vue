@@ -111,10 +111,10 @@ function updateProfessionalVolunteer() {
 
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Nickname</span>
+            <label for="nickname">Nickname<span class="text-red-500 text-xl">*</span></label>
           </div>
           <InputText
-            class="grow h-10"
+            class="grow"
             type="text"
             v-model="nickname"
             @update:modelValue="handleUpdate"
@@ -126,10 +126,9 @@ function updateProfessionalVolunteer() {
 
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Sex</span>
+            <label for="sex">Sex<span class="text-red-500 text-xl">*</span></label>
           </div>
           <Dropdown 
-          class="h-10" 
           v-model="selectedSex" 
           :options="sex" 
           @change="handleUpdate" 
@@ -141,10 +140,10 @@ function updateProfessionalVolunteer() {
 
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Date of Birth</span>
+            <label for="date-of-birth">Date of Birth<span class="text-red-500 text-xl">*</span></label>
           </div>
           <Dropdown
-            class="h-10 col-span-5"
+            class="col-span-5"
             v-model="birthday.month"
             :options="months"
             optionLabel="name"
@@ -156,7 +155,7 @@ function updateProfessionalVolunteer() {
             :disabled="$route.meta.isViewMode"
           />
           <Dropdown
-            class="h-10 col-span-3"
+            class="col-span-3"
             v-model="birthday.day"
             :options="days"
             placeholder="Day"
@@ -166,7 +165,7 @@ function updateProfessionalVolunteer() {
             :disabled="$route.meta.isViewMode"
           />
           <Dropdown
-            class="h-10 col-span-4"
+            class="col-span-4"
             v-model="birthday.year"
             :options="years"
             filter
@@ -184,7 +183,7 @@ function updateProfessionalVolunteer() {
               <span>{{ field.label }}</span>
             </div>
             <InputText
-              class="h-10 col-span-3"
+              class="col-span-3"
               type="text"
               v-model="field.data"
               @update:modelValue="updateStudentVolunteer"
@@ -200,7 +199,7 @@ function updateProfessionalVolunteer() {
             <span>Work (if professional)</span>
           </div>
           <InputText
-            class="grow h-10"
+            class="grow"
             type="text"
             v-model="work"
             @update:modelValue="updateProfessionalVolunteer"
@@ -216,13 +215,13 @@ function updateProfessionalVolunteer() {
 
         <div class="flex mb-2 items-start" style="gap: 4.60rem;">
           <div class="basis-32 text-right whitespace-nowrap">
-            <span>Address</span>
+            <label for="address">Address<span class="text-red-500 text-xl">*</span></label>
           </div>
           <div class="flex flex-col w-full">
             <InputText
               v-for="(value, key) of address"
               :key="key"
-              class="h-10 col-span-3 mb-2"
+              class="col-span-3 mb-2"
               :class="{ 'col-start-2': value.label !== 'Blk/Lt/St' }"
               type="text"
               v-model="value.data"

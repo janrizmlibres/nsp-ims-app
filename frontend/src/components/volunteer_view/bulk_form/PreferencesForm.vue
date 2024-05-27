@@ -28,7 +28,7 @@ const handleAreaUpdate = () => {
       <div class="basis-1/2 pr-16 pl-2">
         <div class="flex gap-10 mb-7 items-center">
           <div class="basis-32 text-right">
-            <span>Availability</span>
+            <label for="availability">Availability<span class="text-red-500 text-xl">*</span></label>
           </div>
             <div class="flex align-items-center">
                 <Checkbox 
@@ -98,10 +98,11 @@ const handleAreaUpdate = () => {
             </div>
         </div>
 
-        <div class="flex gap-10 mb-2 items-center">
-          <div class="basis-32 text-right">
-            <span>Area of Specialization</span>
+        <div class="flex gap-[4.25rem] mb-2 items-center">
+          <div class="text-right">
+            <label for="area-of-specialization">Area of Specialization<span class="text-red-500 text-xl">*</span></label>
           </div>
+          <div class="flex gap-4">
             <div class="flex align-items-center">
                 <Checkbox 
                   v-model="area" 
@@ -190,6 +191,7 @@ const handleAreaUpdate = () => {
                   :disabled="$route.meta.isViewMode" />
                 <label for="homeroom" class="ml-2"> Homeroom</label>
             </div>
+          </div>
         </div>
 
       </div>
