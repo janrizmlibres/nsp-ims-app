@@ -9,6 +9,8 @@ import ContactInfo from "../models/student/contact_info.js";
 import EmergencyPerson from "../models/student/emergency_person.js";
 import ParentalInfo from "../models/student/parental_info.js";
 import PreviousSchool from "../models/student/previous_school.js";
+import RequirementInfo from "../models/student/requirement_info.js";
+import StudentRequirement from "../models/student_requirement.js";
 
 export async function getStudents(_req, res, next) {
   try {
@@ -96,6 +98,16 @@ export async function addStudent(req, res, next) {
     await PreviousSchool.create({
       ...req.body.prevSchool,
       studentId: student.id,
+    });
+
+    //add student requirements
+    const requirements = await StudentRequirement.findAll();
+    const requirementNames = requirements.map(requirement => requirement.requirement_name);
+    const requirementInfos = requirementNames.map(name => ({ name, met: false }));
+
+    await RequirementInfo.create({ 
+      studentId: student.id,
+      requirements: requirementInfos
     });
 
     res.status(200).json({
