@@ -18,6 +18,7 @@ const enrollmentStore = useEnrollmentStore()
 const studentsStore = useStudentsStore()
 const termStore = useTermStore()
 const usersStore = useUsersStore()
+const showEnrollmentForm = ref(false)
 
 const toast = useToast()
 
@@ -31,7 +32,22 @@ const currentEditStudentIndex = ref()
 const validSubmit = ref(false)
 const confirmedFile = ref(false)
 
-schoolLevels.value = termStore.activeTerm.class_levels
+function onSetup() {
+  try {
+    if (!termStore.activeTerm) {
+      return
+    }
+    showEnrollmentForm.value = true
+    schoolLevels.value = termStore.activeTerm.class_levels ? termStore.activeTerm.class_levels : []
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
+}
 
 const notValid = computed(() => {
   return !form.value.selectedRegularity || !form.value.selectedSchoolLevelId || !confirmedFile.value;
@@ -185,6 +201,8 @@ function cancelFile() {
   
   confirmedFile.value = false;
 }
+
+onSetup()
 </script>
 
 <template>
@@ -193,9 +211,10 @@ function cancelFile() {
     <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pl-16">
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
-          <span>Full Name</span>
+          <span v-if="showEnrollmentForm">Full Name</span>
         </div>
         <AutoComplete
+          v-if="showEnrollmentForm"
           v-model="selectedFullName"
           placeholder="Type a Learner"
           forceSelection
