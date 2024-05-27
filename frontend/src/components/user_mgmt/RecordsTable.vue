@@ -40,7 +40,12 @@ onMounted(() => emit('dtReferred', dt.value))
       <template #body="slotProps">
         <div class="flex items-center justify-center gap-2">
           <RouterLink :to="{ name: 'edit-user', params: { userId: slotProps.data.id } }">
-            <Button icon="fa-solid fa-user-pen" text class="u-txt-pcolor hover:text-white hover:u-bg-pcolor" aria-label="Edit" />
+            <Button
+              icon="fa-solid fa-user-pen"
+              text
+              class="u-txt-pcolor hover:text-white hover:u-bg-pcolor"
+              aria-label="Edit"
+            />
           </RouterLink>
           <Button
             class="h-8 u-border-pcolor u-txt-pcolor hover:text-white hover:u-bg-pcolor"
@@ -66,7 +71,7 @@ onMounted(() => emit('dtReferred', dt.value))
       </template>
     </Column>
 
-    <Column field="position" header="Position" sortable></Column>
+    <Column field="position" header="Position" sortable />
 
     <Column field="lastLogin" header="Last Login" sortable>
       <template #body="slotProps">
@@ -77,7 +82,8 @@ onMounted(() => emit('dtReferred', dt.value))
 
     <template #footer>
       <span class="font-medium">
-        Record(s) count:
+        <span>Record(s) count:</span>
+
         <span class="u-txt-red">
           {{ data.length }}
         </span>

@@ -6,6 +6,8 @@ import { inject, ref } from 'vue'
 import { FormParts } from '@/util/student_utils'
 import { objectMap } from '@/util/helpers'
 
+import ValidateField from '../../ValidateField.vue'
+
 const { formData, updateFormData } = inject('formData')
 
 const contactInfo = formData.contactInfo
@@ -57,11 +59,33 @@ function updateEmergencyContact() {
               <div class="text-red-500 text-xl">*</div>
             </div>
 
+            <ValidateField v-if="key === 'contactNum'" v-slot="slotProps">
+              <InputText
+                class="col-span-3"
+                type="text"
+                v-model="field.data"
+                @update:modelValue="
+                  () => {
+                    updateContactInfo()
+                    slotProps.inputEntered(field.data)
+                  }
+                "
+                :pt="{
+                  root: ({ context }) => {
+                    return { class: [{ '!opacity-100': context.disabled }] }
+                  }
+                }"
+                :ptOptions="{ mergeProps: true }"
+                :disabled="$route.meta.isViewMode"
+                :invalid="slotProps.isInvalid"
+              />
+            </ValidateField>
+
             <InputText
+              v-else
               class="col-span-3"
               type="text"
               v-model="field.data"
-              :="key === 'contactNum'"
               @update:modelValue="updateContactInfo"
               :pt="{
                 root: ({ context }) => {
@@ -88,26 +112,51 @@ function updateEmergencyContact() {
             >
               <span>{{ field.label }}</span>
             </div>
+
             <div v-else class="flex gap-1 items-center justify-end pr-6 col-span-2">
               <div>{{ field.label }}</div>
               <div class="text-red-500 text-xl">*</div>
             </div>
 
-            <InputText
-              v-if="key !== 'suffixName'"
-              class="col-span-3"
-              type="text"
-              v-model="field.data"
-              :="!['middleName', 'suffixName'].includes(key)"
-              @update:modelValue="updateEmergencyContact"
-              :pt="{
-                root: ({ context }) => {
-                  return { class: [{ '!opacity-100': context.disabled }] }
-                }
-              }"
-              :ptOptions="{ mergeProps: true }"
-              :disabled="$route.meta.isViewMode"
-            />
+            <template v-if="key !== 'suffixName'">
+              <ValidateField v-if="key !== 'middleName'" v-slot="slotProps">
+                <InputText
+                  class="col-span-3"
+                  type="text"
+                  v-model="field.data"
+                  @update:modelValue="
+                    () => {
+                      updateEmergencyContact()
+                      slotProps.inputEntered(field.data)
+                    }
+                  "
+                  :pt="{
+                    root: ({ context }) => {
+                      return { class: [{ '!opacity-100': context.disabled }] }
+                    }
+                  }"
+                  :ptOptions="{ mergeProps: true }"
+                  :disabled="$route.meta.isViewMode"
+                  :invalid="slotProps.isInvalid"
+                />
+              </ValidateField>
+
+              <InputText
+                v-else
+                class="col-span-3"
+                type="text"
+                v-model="field.data"
+                @update:modelValue="updateEmergencyContact"
+                :pt="{
+                  root: ({ context }) => {
+                    return { class: [{ '!opacity-100': context.disabled }] }
+                  }
+                }"
+                :ptOptions="{ mergeProps: true }"
+                :disabled="$route.meta.isViewMode"
+              />
+            </template>
+
             <Dropdown
               v-else
               class="col-span-3"
@@ -125,19 +174,28 @@ function updateEmergencyContact() {
             <div>Relationship</div>
             <div class="text-red-500 text-xl">*</div>
           </div>
-          <InputText
-            class="col-span-3"
-            type="text"
-            v-model="selectedRelationship"
-            @update:modelValue="updateEmergencyContact"
-            :pt="{
-              root: ({ context }) => {
-                return { class: [{ '!opacity-100': context.disabled }] }
-              }
-            }"
-            :ptOptions="{ mergeProps: true }"
-            :disabled="$route.meta.isViewMode"
-          />
+
+          <ValidateField v-slot="slotProps">
+            <InputText
+              class="col-span-3"
+              type="text"
+              v-model="selectedRelationship"
+              @update:modelValue="
+                () => {
+                  updateEmergencyContact()
+                  slotProps.inputEntered(selectedRelationship)
+                }
+              "
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
+              :invalid="slotProps.isInvalid"
+            />
+          </ValidateField>
         </div>
       </div>
     </div>
