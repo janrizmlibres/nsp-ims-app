@@ -29,8 +29,6 @@ onMounted(async () => {
     await requirementsStore.getRequirements()
     await studentsStore.getStudents()
     originalData.value = JSON.parse(JSON.stringify(studentsStore.students))
-    console.log(studentsStore.students)
-    console.log(requirementsStore.requirements)
 })
 
 const getRequirementMet = (student, requirementId) => {
