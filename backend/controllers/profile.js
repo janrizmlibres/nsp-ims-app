@@ -104,13 +104,14 @@ export async function addStudent(req, res, next) {
 
     //add student requirements
     const requirements = await StudentRequirement.findAll();
-    const requirementNames = requirements.map(requirement => requirement.requirement_name);
-    const requirementInfos = requirementNames.map(name => ({ name, met: false }));
 
-    await RequirementInfo.create({ 
-      studentId: student.id,
-      requirements: requirementInfos
-    });
+    await Promise.all(requirements.map(requirement => 
+      RequirementInfo.create({ 
+        studentId: student.id,
+        name: requirement.requirement_name,
+        met: false
+      })
+    ));
 
     res.status(200).json({
       message: "Student record created.",

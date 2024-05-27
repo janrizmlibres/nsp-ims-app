@@ -51,7 +51,7 @@ function setAssociations() {
   ParentalInfo.belongsTo(Student);
 
   // Student-RequirementInfo Relationship
-  Student.hasOne(RequirementInfo);
+  Student.hasMany(RequirementInfo);
   RequirementInfo.belongsTo(Student);
 
   // Student-PreviousSchool Relationship
