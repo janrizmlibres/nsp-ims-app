@@ -252,7 +252,7 @@ function onCollapseRow() {
 
                         <Column :exportable="false" style="width:2rem">
                             <template #body="slotProps">
-                                <Button v-if="termStatus" icon="fa fa-pencil" text @click="editSession(slotProps.data)" />
+                                <Button v-if="termStatus" icon="fa fa-pencil" text :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedSessions.length}, {'text-white hover:u-bg-scolor': selectedSessions.length}]" @click="editSession(slotProps.data)" />
                             </template>
                         </Column>
                         <Column field="date" header="Session Date" sortable>

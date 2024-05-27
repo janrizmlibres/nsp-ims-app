@@ -174,7 +174,7 @@ function deselect() {
 
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">
-                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" />
+                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedSchedules.length}, {'text-white hover:u-bg-scolor': selectedSchedules.length}]" />
                     </template>
                 </Column>
                 <Column field="name" />

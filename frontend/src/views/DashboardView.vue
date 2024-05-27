@@ -112,12 +112,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane>
-    <div class="header-container">
-      <div class="dashboard-text">Dashboard</div>
-      <!--<YearButton class="year-button"/>-->
-    </div>
-    <div class="panels">
+  <ContentPane :breadcrumb="[{label: 'Dashboard'}]">
+    <div>
       <div class="student-dashboard-panels">
         <StudentWidget 
           v-if="maleStudents || femaleStudents"

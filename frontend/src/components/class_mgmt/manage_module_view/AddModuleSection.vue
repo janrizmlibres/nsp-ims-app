@@ -174,8 +174,8 @@ function resetForm() {
             <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" :disabled="disableInput" />
         </div>
         <div class="flex flex-row gap-2">
-            <Button type="button" outlined rounded label="Add" :disabled="disableAdd" @click="addModule" class="w-full" />
-            <Button type="button" outlined rounded label="Reset" :disabled="!min && !max && !dates" @click="resetForm" severity="danger" class="w-full" />
+            <Button type="button" outlined label="Add" :disabled="disableAdd" @click="addModule" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
+            <Button type="button" outlined label="Reset" :disabled="!min && !max && !dates" @click="resetForm" severity="danger" class="w-full" />
         </div>
     </div>
 </template>

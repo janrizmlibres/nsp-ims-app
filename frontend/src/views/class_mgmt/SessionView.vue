@@ -70,7 +70,7 @@ watch(() => route.query, () => {
 </script>
 
 <template>
-    <ContentPane :header="date" :subheader="strand">
+    <ContentPane :breadcrumb="[{label: 'Management'}, {label: 'Class'}, {label: strand}, {label: date}]">
         <AttendanceTab />
     </ContentPane>
 </template>

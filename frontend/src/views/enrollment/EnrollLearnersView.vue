@@ -33,7 +33,7 @@ getActiveStudents()
 </script>
 
 <template>
-  <ContentPane header="Enrollment" :subheader="'Academic Year ' + currentTerm.academic_year">
+  <ContentPane :breadcrumb="[{label: 'Enrollment'}, {label: `S.Y ${currentTerm.academic_year}`}, {label: 'Enroll'}]">
     <div class="h-full overflow-auto flex justify-center bg-white rounded-md shadow-xl p-2 px-4">
       <EnrollmentForm class="h-fit mt-10"/>
     </div>

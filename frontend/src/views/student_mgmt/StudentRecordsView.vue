@@ -57,14 +57,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane header="Student Records">
+  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Students'}]">
     <StudentHeader
       :dt="dt"
       :globalFilter="filters.global.value"
       @filterChanged="updateGlobalFilter"
     />
 
-    <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="rounded-md inline-block">
+    <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="!rounded-2xl h-full overflow-hidden inline-block">
       <template #content>
         <DataTable
           ref="dt"
@@ -72,19 +72,20 @@ onMounted(async () => {
           v-model:filters="filters"
           dataKey="id"
           filterDisplay="menu"
-          paginator
-          :rows="5"
-          :rowsPerPageOptions="[5, 10, 20, 50]"
+          paginator :rows="15" :rowsPerPageOptions="[15, 20, 30, 50]"
+          paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+          currentPageReportTemplate="{first} to {last} of {totalRecords}"
           :globalFilterFields="['lrn', 'firstName', 'lastName']"
           scrollable
           removableSort
         >
           <template #header>
             <Button
+              class="u-txt-pcolor hover:text-white hover:u-bg-pcolor-2"
               type="button"
               icon="pi pi-filter-slash"
               label="Clear"
-              outlined
+              text
               size="small"
               @click="clearFilter"
             />
@@ -97,6 +98,7 @@ onMounted(async () => {
             <template #body="slotProps">
               <RouterLink :to="{ name: 'view-student', params: { studentId: slotProps.data.id } }">
                 <Button
+                  class="u-bg-scolor hover:u-bg-scolor"
                   label="View"
                   icon="fa-solid fa-eye"
                   rounded

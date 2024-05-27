@@ -119,7 +119,7 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
         <InputText
-          class="h-10 col-span-3"
+          class="col-span-3"
           type="text"
           v-model="schoolName"
           @update:model-value="handleUpdate"
@@ -137,7 +137,7 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedType"
           :options="types"
           @change="handleUpdate"
@@ -151,7 +151,7 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedAffiliation"
           :options="affiliations"
           @change="handleUpdate"
@@ -167,7 +167,7 @@ onMounted(() => {
 
         <div class="grid grid-cols-5 gap-3 col-span-3">
           <Dropdown
-            class="h-10 col-span-2"
+            class="col-span-2"
             v-model="selectedYearL"
             :options="yearsL"
             filter
@@ -177,7 +177,7 @@ onMounted(() => {
           />
           <span class="flex items-center justify-center">-</span>
           <Dropdown
-            class="h-10 col-span-2"
+            class="col-span-2"
             v-model="selectedYearR"
             :options="yearsR"
             filter
@@ -192,7 +192,7 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedEduc"
           :options="educAttainment"
           @change="handleUpdate"
@@ -207,7 +207,7 @@ onMounted(() => {
         </div>
 
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedLevel"
           :options="levels"
           @change="handleUpdate"
@@ -256,7 +256,7 @@ onMounted(() => {
           :pt="floatLabelPt"
         >
           <InputText
-            class="h-10 w-full"
+            class="w-full"
             type="text"
             v-model="value.data"
             @update:model-value="handleUpdate"

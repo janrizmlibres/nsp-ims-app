@@ -209,7 +209,7 @@ onBeforeRouteLeave((to) => {
                         <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableSave" @click="updateAttendances"/>
                         <Button icon="fa fa-xmark" label="Discard" severity="danger" aria-label="Discard Changes" iconClass="['mr-4']" size="small" rounded outlined @click="resetData"/>
                     </div>
-                    <Button v-else icon="fa fa-pencil" label="Edit Attendances" aria-label="Edit Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableEdit" @click="changeMode"/>
+                    <Button v-else icon="fa fa-pencil" label="Edit Attendances" aria-label="Edit Grades" class="u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableEdit" @click="changeMode"/>
                 </div>
             </template>
         </DataTable>

@@ -34,7 +34,7 @@ getActiveStudents()
 </script>
 
 <template>
-  <ContentPane header="Enrollment" :subheader="'Academic Year ' + currentTerm.academic_year">
+  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Enrollment'}, {label: `S.Y ${currentTerm.academic_year}`}]">
     <EnrollmentTable />
   </ContentPane>
 </template>

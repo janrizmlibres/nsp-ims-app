@@ -141,8 +141,8 @@ const onRowEditCancel = () => {
 </script>
 
 <template>
-    <ContentPane header="Student Requirement" subheader="Configuration">
-    <div class="bg-white shadow-xl rounded-md p-5">
+    <ContentPane :breadcrumb="[{label: 'Management'}, {label: 'Student Requirements'}]">
+    <div class="bg-white shadow-xl rounded-2xl h-full p-5">
         <DataTable  
             v-model:value="requirements" dataKey="id" 
             sortField="requirement_name" :sortOrder="1" removableSort 
@@ -176,11 +176,11 @@ const onRowEditCancel = () => {
                         ]
                     }),
                     sorticon: ({ context }) => ({
-                        class: ['ml-2', context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70']
+                        class: ['ml-2', context.sorted ? 'u-txt-scolor dark:text-white/80' : 'u-txt-active dark:text-white/70']
                     }),
                     bodycell: {class: 'py-4 '},
                     roweditorinitbutton: {
-                        class: ['relative', 'inline-flex items-center justify-center', 'text-left', 'w-8 h-8', 'border-0 rounded-full', 'u-txt-link', 'border-transparent', 
+                        class: ['relative', 'inline-flex items-center justify-center', 'text-left', 'w-8 h-8', 'border-0 rounded-full', 'u-txt-pcolor', 'border-transparent', 
                         'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-400/50', 'hover:text-surface-700 hover:bg-surface-300/20', 'transition duration-200', 
                         'overflow-hidden', 'cursor-pointer select-none']
                     },
@@ -213,7 +213,7 @@ const onRowEditCancel = () => {
             </template>
         </Column>
         <template #footer> 
-            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Student Requirement" text raised rounded @click="requirementStore.showHideAddRequirementDialog" />
+            <Button class="u-txt-pcolor hover:bg-surface-300/20" icon="fa fa-plus" label="Create a Student Requirement" text raised rounded @click="requirementStore.showHideAddRequirementDialog" />
             <AddRequirementDialog />
         </template>
         </DataTable>

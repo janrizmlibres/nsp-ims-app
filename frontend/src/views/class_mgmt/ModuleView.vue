@@ -86,7 +86,7 @@ watch(() => route.query, () => {
 </script>
 
 <template>
-    <ContentPane :header="moduleTitle" :subheader="strandName">
+    <ContentPane :breadcrumb="[{label: 'Management'}, {label: 'Class'}, {label: strandName}, {label: moduleTitle}]">
         <ModuleInfoSection />
         <Divider class="before:border-t before:border-surface-400 my-10"/>
         <ModuleTab />

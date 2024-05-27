@@ -5,6 +5,7 @@ import Tag from 'primevue/tag'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import Card from 'primevue/card'
 import { useToast } from 'primevue/usetoast'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -13,6 +14,8 @@ import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useTermStore } from '@/stores/term.js'
 import { useUsersStore } from '@/stores/users.js'
 import { useConfirm } from 'primevue/useconfirm'
+import Menu from 'primevue/menu'
+import EnrollmentHeader from './EnrollmentHeader.vue'
 
 const enrollmentStore = useEnrollmentStore()
 const usersStore = useUsersStore()
@@ -23,6 +26,36 @@ const router = useRouter()
 const confirm = useConfirm()
 const toast = useToast()
 const termStore = useTermStore()
+const dt = ref()
+
+const menu = ref();
+const items = ref((data) => [
+    {
+        label: 'Options',
+        items: [
+            {
+                label: 'edit',
+                icon: 'fa fa-pencil',
+                command: () => editEnrolled(data)
+            },
+            {
+                label: data.status === 'Active' ? 'Deactivate' : 'Activate',
+                icon: data.status === 'Active' ? 'fa fa-toggle-on' : 'fa fa-toggle-off',
+                command: () => confirmStatusChange(data)
+                
+            },
+            {
+                label: 'drop',
+                icon: 'fa fa-user-minus',
+                command: () => confirmDrop(data)
+            }
+        ]
+    }
+]);
+
+const toggle = (event) => {
+    menu.value.toggle(event);
+};
 
 const confirmDrop = (data) => {
   confirm.require({
@@ -167,164 +200,172 @@ refreshStudentTable()
 </script>
 
 <template>
-  <DataTable
-    v-model:filters="filters"
-    :value="learnersData"
-    paginator
-    :rows="10"
-    dataKey="id"
-    filterDisplay="menu"
-    :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']"
-    removableSort
-  >
-    <column field="lrn" header="LRN" sortable>
-      <template #body="{ data }">
-        {{ data.lrn }}
-      </template>
-      <template #filter="{ filterModel }">
-        <InputText
-          v-model="filterModel.value"
-          type="text"
-          class="p-column-filter"
-          placeholder="Search by name"
-        />
-      </template>
-    </column>
-    <column frozen field="lastName" header="Last Name" sortable>
-      <template #body="{ data }">
-        {{ data.lastName }}
-      </template>
-      <template #filter="{ filterModel }">
-        <InputText
-          v-model="filterModel.value"
-          type="text"
-          class="p-column-filter"
-          placeholder="Search by name"
-        />
-      </template>
-    </column>
-    <column frozen field="firstName" header="First Name" sortable>
-      <template #body="{ data }">
-        {{ data.firstName }}
-      </template>
-      <template #filter="{ filterModel }">
-        <InputText
-          v-model="filterModel.value"
-          type="text"
-          class="p-column-filter"
-          placeholder="Search by name"
-        />
-      </template>
-    </column>
-    <column field="middleName" header="Middle Name" sortable>
-      <template #body="{ data }">
-        {{ data.middleName }}
-      </template>
-      <template #filter="{ filterModel }">
-        <InputText
-          v-model="filterModel.value"
-          type="text"
-          class="p-column-filter"
-          placeholder="Search by name"
-        />
-      </template>
-    </column>
-    <column
-      header="School Level"
-      filterField="schoolLevel"
-      :showFilterMatchModes="false"
-      :filterMenuStyle="{ width: '9rem' }"
-      style="min-width: 9rem"
-    >
-      <template #body="{ data }">
-        <div class="flex align-items-center gap-2">
-          <span>{{ data.schoolLevel }}</span>
-        </div>
-      </template>
-      <template #filter="{ filterModel }">
-        <Dropdown
-          v-model="filterModel.value"
-          :options="schoolLevels"
-          placeholder="Select One"
-          class="p-column-filter"
+  <EnrollmentHeader
+    :dt="dt"
+    :globalFilter="filters"
+  />
+  <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="h-full !rounded-2xl inline-block">
+    <template #content>
+      <DataTable
+        ref="dt"
+        v-model:filters="filters"
+        :value="learnersData"
+        paginator :rows="15" :rowsPerPageOptions="[15, 20, 30, 50]"
+        paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+        currentPageReportTemplate="{first} to {last} of {totalRecords}"
+        dataKey="id"
+        filterDisplay="menu"
+        :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']"
+        removableSort
+      >
+        <template #empty> <div class="text-center">No records found.</div> </template>
+
+        <column frozen field="lrn" header="LRN" style="min-width: 12rem;" sortable>
+          <template #body="{ data }">
+            {{ data.lrn }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              v-model="filterModel.value"
+              type="text"
+              class="p-column-filter"
+              placeholder="Search by name"
+            />
+          </template>
+        </column>
+        <column frozen field="lastName" header="Last Name" style="min-width: 12rem;" sortable>
+          <template #body="{ data }">
+            {{ data.lastName }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              v-model="filterModel.value"
+              type="text"
+              class="p-column-filter"
+              placeholder="Search by name"
+            />
+          </template>
+        </column>
+        <column frozen field="firstName" header="First Name" style="min-width: 12rem;" sortable>
+          <template #body="{ data }">
+            {{ data.firstName }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              v-model="filterModel.value"
+              type="text"
+              class="p-column-filter"
+              placeholder="Search by name"
+            />
+          </template>
+        </column>
+        <column field="middleName" header="Middle Name" style="min-width: 14rem;" sortable>
+          <template #body="{ data }">
+            {{ data.middleName }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              v-model="filterModel.value"
+              type="text"
+              class="p-column-filter"
+              placeholder="Search by name"
+            />
+          </template>
+        </column>
+        <column
+          header="School Level"
+          filterField="schoolLevel"
+          :showFilterMatchModes="false"
+          :filterMenuStyle="{ width: '9rem' }"
+          style="min-width: 12rem"
         >
-          <template #option="slotProps">
+          <template #body="{ data }">
             <div class="flex align-items-center gap-2">
-              <span>{{ slotProps.option }}</span>
+              <span>{{ data.schoolLevel }}</span>
             </div>
           </template>
-        </Dropdown>
-      </template>
-    </column>
-    <column field="dateEnrolled" header="Date Enrolled" sortable>
-      <template #body="{ data }">
-        {{ data.dateEnrolled ? new Date(data.dateEnrolled).toISOString().split('T')[0] : '' }}
-      </template>
-    </column>
-    <column
-      header="Enrollment Form"
-    >
-      <template #body="{ data }">
-        <Button
-          icon="pi pi-download"
-          label="View"
-          @click="downloadEnrollmentForm(data.lastName, data.enrollmentFormURL)" />
-      </template>
-    </column>
-    <Column
-      header="Status"
-      filterField="status"
-      :showFilterMatchModes="false"
-      :filterMenuStyle="{ width: '7rem' }"
-      style="min-width: 7rem"
-    >
-      <template #body="{ data }">
-        <div class="flex align-items-center gap-2">
-          <Tag :value="data.status" :severity="getSeverity(data.status)" />
-        </div>
-      </template>
-      <template #filter="{ filterModel }">
-        <Dropdown
-          v-model="filterModel.value"
-          :options="statuses"
-          placeholder="Select One"
-          class="p-column-filter"
+          <template #filter="{ filterModel }">
+            <Dropdown
+              v-model="filterModel.value"
+              :options="schoolLevels"
+              placeholder="Select One"
+              class="p-column-filter"
+            >
+              <template #option="slotProps">
+                <div class="flex align-items-center gap-2">
+                  <span>{{ slotProps.option }}</span>
+                </div>
+              </template>
+            </Dropdown>
+          </template>
+        </column>
+        <column field="dateEnrolled" header="Date Enrolled" style="min-width: 12rem;" sortable>
+          <template #body="{ data }">
+            {{ data.dateEnrolled ? new Date(data.dateEnrolled).toISOString().split('T')[0] : '' }}
+          </template>
+        </column>
+        <column
+          header="Enrollment Form"
+          style="min-width: 10rem;"
         >
-          <template #option="slotProps">
+          <template #body="{ data }">
+            <Button
+              icon="fa fa-eye"
+              label="View"
+              @click="downloadEnrollmentForm(data.lastName, data.enrollmentFormURL)" 
+              size="small"
+              class="u-bg-scolor text-white hover:transform hover:u-bg-scolor hover:scale-[1.10]"
+            />
+          </template>
+        </column>
+        <column
+          header="Status"
+          filterField="status"
+          :showFilterMatchModes="false"
+          :filterMenuStyle="{ width: '7rem' }"
+          style="min-width: 7rem"
+        >
+          <template #body="{ data }">
             <div class="flex align-items-center gap-2">
-              <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+              <Tag :value="data.status" :severity="getSeverity(data.status)" />
             </div>
           </template>
-        </Dropdown>
-      </template>
-    </Column>
-    <Column
-      headerStyle="width: 5rem; text-align: center"
-      bodyStyle="text-align: center; overflow: visible"
-    >
-      <template #body="{ data }">
-        <Button icon="pi pi-pencil" label="Edit" @click="editEnrolled(data)" />
-      </template>
-    </Column>
-    <Column
-      headerStyle="width: 5rem; text-align: center"
-      bodyStyle="text-align: center; overflow: visible"
-    >
-      <template #body="{ data }">
-        <Button label="Drop" @click="confirmDrop(data)" :disabled="data.status === 'Drop'" />
-      </template>
-    </Column>
-    <Column
-      headerStyle="width: 5rem; text-align: center"
-      bodyStyle="text-align: center; overflow: visible"
-    >
-      <template #body="{ data }">
-        <Button
-          :label="data.status === 'Active' ? 'Deactivate' : 'Activate'"
-          @click="confirmStatusChange(data)"
-          class="w-40"
-        />
-      </template>
-    </Column>
-  </DataTable>
+          <template #filter="{ filterModel }">
+            <Dropdown
+              v-model="filterModel.value"
+              :options="statuses"
+              placeholder="Select One"
+              class="p-column-filter"
+            >
+              <template #option="slotProps">
+                <div class="flex align-items-center gap-2">
+                  <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                </div>
+              </template>
+            </Dropdown>
+          </template>
+        </Column>
+        <column
+          headerStyle="width: 5rem; text-align: center"
+          bodyStyle="text-align: center; overflow: visible"
+          class="right-0"
+          frozen
+        >
+          <template #body="{ data }">
+            <Button v-if="data.status !== 'Drop'" type="button" icon="pi pi-ellipsis-v" @click="toggle" text aria-haspopup="true" aria-controls="overlay_menu" class="u-txt-active hover:transform hover:bg-transparent hover:scale-[1.10]" />
+            <Menu ref="menu" id="overlay_menu" :model="items(data)" :popup="true" />
+          </template>
+        </column>
+
+        <template #footer>
+          <span class="font-medium">
+              Record(s) count:
+              <span class="u-txt-red">
+                {{ learnersData.length }}
+              </span>
+            </span>
+        </template>
+      </DataTable>
+    </template>
+  </Card>
 </template>
