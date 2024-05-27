@@ -83,8 +83,8 @@ let isOkToLeave = false
 const updateKey = ref(0)
 
 const headerText = computed(() => {
-  if (!route.params.id) return 'Add Record'
-  return route.meta.isViewMode ? 'View Record' : 'Edit Record'
+  if (!route.params.id) return 'Add'
+  return route.meta.isViewMode ? 'View' : 'Edit'
 })
 const confirmBtnText = computed(() => (route.meta.isViewMode ? 'Edit' : 'Submit'))
 const cancelBtnText = computed(() => (route.meta.isViewMode ? 'Back' : 'Cancel'))
@@ -295,7 +295,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane :header="`Volunteers / ${headerText}`" subheader="Academic Year 2022 - 2023">
+  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Volunteer'}, {label: `${headerText}`}]">
     <div class="flex flex-col gap-3 h-full mr-1">
       <AdmitVolunteerHeader
         @dataChanged="updateFormData"
@@ -305,9 +305,12 @@ onMounted(async () => {
       />
       <VolunteerBulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
 
-      <div class="flex-none text-right">
-        <div class="inline-block">
-          <Button class="h-10 u-bg-green" :disabled="!isFormDirty && !route.meta.isViewMode" @click="handleConfirm">
+      <div class="flex flex-row justify-end gap-2">
+          <Button
+            :disabled="!isFormDirty && !route.meta.isViewMode"
+            type="submit"
+            @click="handleConfirm"
+          >
             <div>
               <font-awesome-icon
                 icon="fa-solid fa-circle-check"
@@ -317,12 +320,11 @@ onMounted(async () => {
             </div>
           </Button>
           <Button
-            class="h-10 ml-2 u-bg-red"
+            severity="danger"
             :label="cancelBtnText"
             icon="fa-solid fa-circle-xmark"
             @click="handleCancel"
           />
-        </div>
       </div>
     </div>
   </ContentPane>

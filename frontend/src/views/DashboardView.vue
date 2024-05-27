@@ -10,16 +10,18 @@ import { useSidebarStore } from '@/stores/sidebar.js';
 import { useStudentsStore } from '@/stores/students';
 import { useUtilitiesStore } from '@/stores/utilities';
 import { useEnrollmentStore } from '@/stores/enrollment';
+import { useVolunteerStore } from '@/stores/volunteer';
 
 const enrollmentStore = useEnrollmentStore();
 const studentsStore = useStudentsStore();
 const sidebarStore = useSidebarStore();
 const utilitiesStore = useUtilitiesStore();
+const volunteerStore = useVolunteerStore();
 
 const isSidebarHovering = computed(() => sidebarStore.isHovering);
 const isSidebarPinned = computed(() => sidebarStore.isPinned);
 
-let totalStudents = ref(0);
+let cumulativeStudets = ref(0);
 let maleStudents = ref(0);
 let femaleStudents = ref(0);
 let gradeSchool = ref(0);
@@ -27,118 +29,161 @@ let juniorHighSchool = ref(0);
 let totalClassLevels = ref(0);
 let activeStudents = ref(0);
 let inactiveStudents = ref(0);
+let totalVolunteers = ref(0);
+let studentVolunteerCount = ref(0);
+let professionalVolunteerCount = ref(0);
+
+const countEnrollmentStatus = (enrollments) => {
+  let activeCount = 0;
+  let inactiveCount = 0;
+
+  enrollments.forEach(enrollment => {
+    if (enrollment.status === 'Active') {
+      activeCount++;
+    } else if (enrollment.status === 'Inactive') {
+      inactiveCount++;
+    }
+  });
+
+  return { activeCount, inactiveCount };
+};
+
+function countClassLevels(studentsWithClassLevel) {
+  let gradeSchoolCount = 0;
+  let juniorHighSchoolCount = 0;
+
+  studentsWithClassLevel.forEach(student => {
+    student.class_levels.forEach(level => {
+      if (level.school_level === 'Grade School') {
+        gradeSchoolCount++;
+      } else if (level.school_level === 'Junior High School') {
+        juniorHighSchoolCount++;
+      }
+    });
+  });
+
+  return { gradeSchoolCount, juniorHighSchoolCount };
+}
+
+function countGenders(students) {
+  let maleCount = 0;
+  let femaleCount = 0;
+
+  students.forEach(student => {
+    if (student.personal_info.sex === 'M') {
+      maleCount++;
+    } else if (student.personal_info.sex === 'F') {
+      femaleCount++;
+    }
+  });
+
+  return { maleCount, femaleCount };
+}
+
 
 onMounted(async () => {
-  const genderCount = await studentsStore.getGenderCount();
-  const classLevelsCount = await utilitiesStore.countClassLevels();
-  const statusCount = await enrollmentStore.getStatusCount();
+  await volunteerStore.getAllVolunteers()
+  await studentsStore.getStudents()
+  await enrollmentStore.getAllEnrollments()
+  await studentsStore.getStudentsWithClassLevel()
+  await studentsStore.getStudents()
 
-  gradeSchool.value = classLevelsCount.gradeSchoolCount;
-  juniorHighSchool.value = classLevelsCount.juniorHighSchoolCount;
-  maleStudents.value = genderCount.data.maleCount;
-  femaleStudents.value = genderCount.data.femaleCount;
-  totalStudents.value = maleStudents.value + femaleStudents.value;
+  const statusCount = countEnrollmentStatus(await enrollmentStore.allEnrolled);
+  activeStudents.value = statusCount.activeCount;
+  inactiveStudents.value = statusCount.inactiveCount;
+
+  gradeSchool.value = countClassLevels(studentsStore.studentsWithClassLevel).gradeSchoolCount;
+  juniorHighSchool.value = countClassLevels(studentsStore.studentsWithClassLevel).juniorHighSchoolCount;
+  maleStudents.value = countGenders(studentsStore.students).maleCount;
+  femaleStudents.value = countGenders(studentsStore.students).femaleCount;
+  cumulativeStudets.value = studentsStore.students.length;
   totalClassLevels.value = gradeSchool.value + juniorHighSchool.value;
-  activeStudents.value = statusCount.active
-  inactiveStudents.value = statusCount.inactive
+  totalVolunteers.value = volunteerStore.volunteers.length
+
+  for (let volunteer of volunteerStore.volunteers) {
+    if (volunteer.affiliation === 'Student') {
+      studentVolunteerCount.value++;
+    } else if (volunteer.affiliation === 'Professional') {
+      professionalVolunteerCount.value++;
+    }
+  }
   
 });
 </script>
 
 <template>
-  <ContentPane>
-    <div class="header-container">
-      <div class="dashboard-text">Dashboard</div>
-      <!--<YearButton class="year-button"/>-->
-    </div>
-    <div class="student-dashboard-panels">
+  <ContentPane :breadcrumb="[{label: 'Dashboard'}]">
+    <div>
+      <div class="student-dashboard-panels">
         <StudentWidget 
-          v-if="maleStudents && femaleStudents"
-          class="student-widget-" 
+          v-if="maleStudents || femaleStudents"
+          class="student-widget" 
           :seriesData="[femaleStudents, maleStudents]" 
           :labelsData="['Female', 'Male']" 
           widgetTitle="STUDENTS" 
-          :totalText= totalStudents.toString()
+          :totalText= cumulativeStudets.toString()
           Data1= "Male"
-          Data2= "Female" />
+          Data2= "Female"
+          :icon="['fas', 'user-graduate']" />
         <StudentWidget 
-          v-if="gradeSchool && juniorHighSchool"
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
-          :style="`--translate-x: 26.25rem; --translate-y: -10.625rem`"
-          :seriesData="[gradeSchool, juniorHighSchool]" 
+          v-if="activeStudents || inactiveStudents"
+          class="student-widget" 
+          :seriesData="[inactiveStudents, activeStudents]" 
+          :labelsData="['Inactive', 'Active']" 
+          widgetTitle="ENROLLED STUDENTS" 
+          :totalText= "(inactiveStudents+activeStudents).toString()"
+          Data1= "Active"
+          Data2= "Inactive"
+          :icon="['fas', 'user-graduate']"
+           />
+        <StudentWidget 
+          v-if="gradeSchool || juniorHighSchool"
+          class="student-widget" 
+          :seriesData="[juniorHighSchool, gradeSchool]" 
           :labelsData="['Junior High School', 'Grade School']" 
-          widgetTitle="CLASS LEVELS" 
+          widgetTitle="CLASS LEVEL" 
           :totalText= totalClassLevels.toString()
           Data1= "GS"
-          Data2= "JHS" />
-        <StudentWidget 
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
-          :style="`--translate-x: 52.5rem; --translate-y: -21.25rem`"
-          :seriesData="[0, 0]" 
-          :labelsData="['Female', 'Male']" 
-          widgetTitle="INACTIVE STUDENTS" 
-          :totalText= "inactiveStudents.toString()"
-          Data1= "Male"
-          Data2= "Female" />
+          Data2= "JHS"
+          :icon="['fas', 'user-graduate']" />
         <StudentWidget
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-student-widget' : 'student-widget'" 
-          :style="`--translate-x: 78.75rem; --translate-y: -31.875rem`"
-          :seriesData="[0, 0]" 
-          :labelsData="['Female', 'Male']" 
-          widgetTitle="ACTIVE STUDENTS" 
-          :totalText= "activeStudents.toString()"
-          Data1= "Male"
-          Data2= "Female" />
+          v-if="studentVolunteerCount || professionalVolunteerCount"
+          class="student-widget" 
+          :seriesData="[professionalVolunteerCount, studentVolunteerCount]" 
+          :labelsData="['Professional', 'Student']" 
+          widgetTitle="VOLUNTEERS" 
+          :totalText= "totalVolunteers.toString()"
+          Data1= "Student"
+          Data2= "Professional"
+          :icon="['fas', 'user']"  />
         
-    </div>
-    <div class="charts">
-      <LineChart 
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-line-chart' : 'line-chart'"
-          :style="`--initial-x: 28.125rem; --initial-y: 0.9375rem; --translate-x: 53.125rem; --translate-y: 13.125rem;`" />
-      <BarChart 
-          v-if="totalStudents"
-          :class="!isSidebarHovering && !isSidebarPinned ? 'animate-bar-chart' : 'bar-chart'"
-          :chartData="[totalStudents, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]"
-          :style="`--initial-x: 28.125rem; --initial-y: 2.125rem; --translate-x: 0.625rem; --translate-y: -6.9375rem;`" />
+      </div>
+      <div class="charts">
+        <LineChart class="line-chart"/>
+        <BarChart 
+          v-if="cumulativeStudets"
+          class="bar-chart"
+          :chartData="[cumulativeStudets, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]" />
+      </div>
     </div>
   </ContentPane>
 </template>
 
 <style scoped>
 .charts{
-  margin-top: 45px;
-  overflow: hidden;
+    width:80%;
+    display: grid;
+    grid-template-columns: 1fr;
+    position: absolute;
+    margin-top: 5rem;
+    margin-right: 10rem;
 }
   .student-widget {
     margin-bottom: 1.25rem;
     margin-right: 1.25rem;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
-  .year-button {
-    position: absolute;
-    display: block;
-    top: 10rem;
-    left: 104.600rem;
-    z-index: 3;
-  }
-  .student-widget {
-    margin-bottom: 1.25rem;
-    margin-right: 1.25rem;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
-  }
-  .year-button {
-    position: absolute;
-    display: block;
-    top: 10rem;
-    left: 90.600rem;
-    z-index: 3;
-  }
 
-  .header-container {
-    display: flex;
-    align-items: center; /* This will vertically align the items */
-    margin-bottom: 1.25rem;
-  }
   .header-container {
     display: flex;
     align-items: center; /* This will vertically align the items */
@@ -154,97 +199,21 @@ onMounted(async () => {
   }
   
   .student-dashboard-panels {
+    display: grid;
+    grid-template-columns: 1fr;
     position: absolute;
     margin-top: 5rem;
-    margin-left: 0.625rem;
     margin-right: 0.625rem;
-  }
-  .dashboard-text {
-    font-weight: bold;
-    position: absolute;
-    font-size: 1.875rem;
-    margin-top: 3rem;
-    margin-left: 0.625rem;
-  }
-  
-  .student-dashboard-panels {
-    position: absolute;
-    margin-top: 5rem;
-    margin-left: 0.625rem;
-    margin-right: 0.625rem;
+    z-index: 1;
   }
 
   .line-chart {
-    position: absolute;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
+    margin-left: 25.5rem;
+    margin-bottom: 1.25rem;
   }
   
   .bar-chart {
-    margin-top: 20.0625rem;
-    position: absolute;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
-  }
-  .line-chart {
-    position: absolute;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
-  }
-  
-  .bar-chart {
-    margin-top: 20.0625rem;
-    position: absolute;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
-  }
-
-  :root {
-    --translate-x: 0rem;
-    --translate-y: 0rem;
-    --initial-x: 0rem;
-    --initial-y: 0rem;
-  }
-  :root {
-    --translate-x: 0rem;
-    --translate-y: 0rem;
-    --initial-x: 0rem;
-    --initial-y: 0rem;
-  }
-
-  @keyframes slide {
-  from {
-    transform: translate(var(--initial-x), var(--initial-y));
-  }
-  to {
-    transform: translate(var(--translate-x), var(--translate-y));
-  }
-}
-
-@keyframes slide-back {
-  from {
-    transform: translate(var(--translate-x), var(--translate-y));
-  }
-  to {
-    transform: translate(var(--initial-x), var(--initial-y));
-  }
-}
-
-  .animate-student-widget {
-    animation: slide 0.5s ease 0s 1 normal forwards;
-  }
-  .animate-student-widget {
-    animation: slide 0.5s ease 0s 1 normal forwards;
-  }
-
-  .animate-line-chart {
-    position: absolute;
-    margin-top: 2.0625rem;
-    animation: slide 0.5s ease 0s 1 normal forwards;
-    width: 50.625rem;
-  }
-
-  .animate-bar-chart {
-    position: absolute;
-    margin-top: 22.0625rem;
-    animation: slide 0.5s ease 0s 1 normal forwards;
-    width: 50.625rem;
+    margin-left: 25.5rem;
   }
 
 </style>

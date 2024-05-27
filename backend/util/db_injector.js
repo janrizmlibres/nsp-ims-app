@@ -1,7 +1,5 @@
 import bcrypt from "bcryptjs";
 
-import ClassLevel from "../models/class/class_level.js";
-import ClassLearningStrand from "../models/class/class_learning_strand.js";
 import Student from "../models/student/student.js";
 import User from "../models/user/user.js";
 import Term from "../models/term.js";
@@ -14,6 +12,7 @@ import ContactInfo from "../models/student/contact_info.js";
 import EmergencyPerson from "../models/student/emergency_person.js";
 import PreviousSchool from "../models/student/previous_school.js";
 import Enrollment from "../models/enrollment.js";
+import Grade from "../models/class/grade.js";
 
 export async function injectAll() {
   await injectUser();
@@ -23,7 +22,6 @@ export async function injectAll() {
   await injectVolunteer();
   await injectStudentRequirement();
   await injectStudentCategory();
-  await injectEnrollment();
 }
 
 export async function injectStudent() {
@@ -410,55 +408,6 @@ export async function injectUser() {
 export async function injectAcademicYear() {
   const termData = [
     {
-      id: 1,
-      academic_year: "2016-2017",
-      start_date: new Date("2016-06-01"),
-      end_date: new Date("2017-03-31"),
-      status: false,
-    },
-    {
-      id: 2,
-      academic_year: "2017-2018",
-      start_date: new Date("2017-06-01"),
-      end_date: new Date("2018-03-31"),
-      status: false,
-    },
-    {
-      id: 3,
-      academic_year: "2018-2019",
-      start_date: new Date("2018-06-01"),
-      end_date: new Date("2019-03-31"),
-      status: false,
-    },
-    {
-      id: 4,
-      academic_year: "2019-2020",
-      start_date: new Date("2019-06-01"),
-      end_date: new Date("2020-03-31"),
-      status: false,
-    },
-    {
-      id: 5,
-      academic_year: "2020-2021",
-      start_date: new Date("2020-08-01"),
-      end_date: new Date("2021-05-31"),
-      status: false,
-    },
-    {
-      id: 6,
-      academic_year: "2021-2022",
-      start_date: new Date("2021-08-01"),
-      end_date: new Date("2022-05-31"),
-      status: false,
-    },
-    {
-      id: 7,
-      academic_year: "2022-2023",
-      start_date: new Date("2022-08-01"),
-      end_date: new Date("2023-05-31"),
-      status: false,
-    },
-    {
       id: 8,
       academic_year: "2023-2024",
       start_date: new Date("2023-08-01"),
@@ -504,34 +453,6 @@ export async function injectLearningStrand() {
     {
       code: "LS1",
       name: "Communication Skills - English",
-    },
-    {
-      code: "LS2",
-      name: "Communication Skills - Filipino",
-    },
-    {
-      code: "LS3",
-      name: "Science",
-    },
-    {
-      code: "LS4",
-      name: "Mathematics",
-    },
-    {
-      code: "LS5",
-      name: "Career and Life Skills",
-    },
-    {
-      code: "LS6",
-      name: "Understanding the Self and Society",
-    },
-    {
-      code: "LS7",
-      name: "Digital Literacy",
-    },
-    {
-      code: "HVE",
-      name: "Homeroom/Values Education",
     },
   ];
 
@@ -635,41 +556,49 @@ function getRandomDate() {
 export async function injectEnrollment() {
   const enrollmentData = [
     {
-      studentId: "1",
-      classLevelId: "1",
+      studentId: 1,
+      classLevelId: 1,
       dateEnrolled: getRandomDate(), // Random date between 2016 and now
       status: "Active",
     },
     {
-      studentId: "2",
-      classLevelId: "1",
+      studentId: 2,
+      classLevelId: 1,
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    {
+      studentId: 3,
+      classLevelId: 1,
       dateEnrolled: getRandomDate(), // Random date between 2016 and now
       status: "Inactive",
     },
     {
-      studentId: "3",
-      classLevelId: "1",
+      studentId: 4,
+      classLevelId: 1,
       dateEnrolled: getRandomDate(), // Random date between 2016 and now
-      status: "Active",
+      status: "Inactive",
     },
     {
-      studentId: "4",
-      classLevelId: "1",
+      studentId: 5,
+      classLevelId: 1,
       dateEnrolled: getRandomDate(), // Random date between 2016 and now
       status: "Active",
     },
-    {
-      studentId: "5",
-      classLevelId: "1",
-      dateEnrolled: getRandomDate(), // Random date between 2016 and now
-      status: "Active",
-    },
+
     // Add more enrollment data here...
   ];
 
   await Promise.all(
     enrollmentData.map(async (enrollment) => {
       await Enrollment.create(enrollment);
+    })
+  );
+
+  await Promise.resolve(
+    await Grade.create({
+      enrollmentId: 1,
+      classLearningStrandId: 1,
     })
   );
 }

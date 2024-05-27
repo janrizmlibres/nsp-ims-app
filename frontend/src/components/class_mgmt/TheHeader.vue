@@ -52,7 +52,7 @@ function updateGoToInput() {
 </script>
 
 <template>
-    <div class="flex justify-between gap-8 bg-slate-200 rounded-t-md shadow-xl p-4 u-txt-active">
+    <div class="flex justify-between gap-8 u-bg-pcolor-2 rounded-t-2xl shadow-xl p-4 text-white">
         <div class="flex flex-col gap-1 w-full">
             <small class="font-semibold">Academic Year:</small>
             <Dropdown v-model="termInput" :options="terms" optionLabel="academic_year" placeholder="Select an Academic Year" class="w-full flex-grow" @update:modelValue="updateTerm" />

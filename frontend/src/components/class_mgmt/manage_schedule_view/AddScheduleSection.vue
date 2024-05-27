@@ -61,39 +61,38 @@ async function addSchedule() {
             return
     }
 
-    try {
-        await classLearningStrandStore.addSchedule(learningStrandInput.value.id, {
-            volunteer: formData.value.volunteer,
-            days: formData.value.school_days.toString(),
-            start_time: format(new Date(formData.value.start_time), "HH:mm"),
-            end_time: format(new Date(formData.value.end_time), "HH:mm"),
-        }).then(async (message) => {
-            toast.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: message,
-                life: 3000
-            })
-
-            try {
-                await usersStore.addAudit(
-                    `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
-                )
-            } catch(error) {
-                console.log(error);
-            }
-            
-            onSubmit(classLevel.value.id)
-        })
-    } catch (error) {
-        console.log(error);
+    classLearningStrandStore.addSchedule(learningStrandInput.value.id, {
+        volunteer: formData.value.volunteer,
+        days: formData.value.school_days.toString(),
+        start_time: format(new Date(formData.value.start_time), "HH:mm"),
+        end_time: format(new Date(formData.value.end_time), "HH:mm"),
+    }).then(async (message) => {
         toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: "Unexpected error encountered.",
+            severity: 'success',
+            summary: 'Success',
+            detail: message,
             life: 3000
         })
-    }
+
+        try {
+            await usersStore.addAudit(
+                `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+            )
+        } catch(error) {
+            console.log(error);
+        }
+        
+        onSubmit()
+        resetForm()
+    }).catch((error) => {
+        console.log(error);
+    toast.add({
+        severity: 'error',
+            summary: 'Error',
+            detail: error,
+            life: 3000
+        })
+    })
 }
 
 onMounted(() => {
@@ -146,8 +145,8 @@ function resetForm() {
             <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.end_time" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" timeOnly hourFormat="12" :disabled="!termStatus" @update:modelValue="invalid = false" />
         </div>
         <div class="flex flex-row gap-2">
-            <Button type="button" outlined rounded label="Add" :disabled="disableSubmitButton" @click="addSchedule" class="w-full" />
-            <Button type="button" outlined rounded label="Reset" :disabled="enableResetButton" @click="resetForm" severity="danger" class="w-full" />
+            <Button type="button" outlined label="Add" :disabled="disableSubmitButton" @click="addSchedule" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
+            <Button type="button" outlined label="Reset" :disabled="enableResetButton" @click="resetForm" severity="danger" class="w-full" />
         </div>
     </div>
 </template>

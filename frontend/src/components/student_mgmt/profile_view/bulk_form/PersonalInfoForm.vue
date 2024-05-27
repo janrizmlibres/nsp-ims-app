@@ -3,6 +3,8 @@ import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import FloatLabel from 'primevue/floatlabel'
 
+import ValidateField from '../../ValidateField.vue'
+
 import { ref, computed, watch, onMounted, inject } from 'vue'
 import { getDaysInMonth, format, getYear, getMonth, getDate } from 'date-fns'
 
@@ -120,7 +122,6 @@ onMounted(() => {
 
         <div class="col-span-3 grid grid-cols-3 gap-6">
           <Dropdown
-            class="h-10"
             v-model="selectedSex"
             :options="sex"
             @change="handleUpdate"
@@ -133,7 +134,6 @@ onMounted(() => {
             <span>Blood Type</span>
           </div>
           <Dropdown
-            class="h-10"
             v-model="selectedBloodType"
             :options="bloodTypes"
             @change="handleUpdate"
@@ -148,7 +148,7 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedCivilStat"
           :options="civilStatus"
           @change="handleUpdate"
@@ -161,9 +161,9 @@ onMounted(() => {
           <div>Date of Birth</div>
           <div class="text-red-500 text-xl">*</div>
         </div>
-        <div class="col-span-3 grid grid-cols-12 gap-3 flex items-center">
+        <div class="col-span-3 grid grid-cols-12 gap-3 items-center">
           <Dropdown
-            class="h-10 col-span-5"
+            class="col-span-5"
             v-model="birthday.month"
             :options="months"
             optionLabel="name"
@@ -175,7 +175,7 @@ onMounted(() => {
             :disabled="$route.meta.isViewMode"
           />
           <Dropdown
-            class="h-10 col-span-3"
+            class="col-span-3"
             v-model="birthday.day"
             :options="days"
             placeholder="Day"
@@ -185,7 +185,7 @@ onMounted(() => {
             :disabled="$route.meta.isViewMode"
           />
           <Dropdown
-            class="h-10 col-span-4"
+            class="col-span-4"
             v-model="birthday.year"
             :options="years"
             filter
@@ -203,30 +203,47 @@ onMounted(() => {
         </div>
 
         <FloatLabel class="col-span-3 col-start-2 flex items-center mt-5" :pt="floatLabelPt">
-          <InputText
-            class="h-10 w-full"
-            id="birth-city"
-            type="text"
-            v-model="birthPlace.birthCity"
-            @update:modelValue="handleUpdate"
-            :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
-            :ptOptions="{ mergeProps: true }"
-            :disabled="$route.meta.isViewMode"
-          />
+          <ValidateField v-slot="slotProps">
+            <InputText
+              class="w-full"
+              id="birth-city"
+              type="text"
+              v-model="birthPlace.birthCity"
+              @update:modelValue="
+                () => {
+                  handleUpdate()
+                  slotProps.inputEntered(birthPlace.birthCity)
+                }
+              "
+              :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
+              :invalid="slotProps.isInvalid"
+            />
+          </ValidateField>
+
           <label for="birth-city">City</label>
         </FloatLabel>
 
         <FloatLabel class="col-span-3 col-start-2 flex items-center mt-4" :pt="floatLabelPt">
-          <InputText
-            class="h-10 w-full"
-            id="birth-province"
-            type="text"
-            v-model="birthPlace.birthProvince"
-            @update:modelValue="handleUpdate"
-            :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
-            :ptOptions="{ mergeProps: true }"
-            :disabled="$route.meta.isViewMode"
-          />
+          <ValidateField v-slot="slotProps">
+            <InputText
+              class="w-full"
+              id="birth-province"
+              type="text"
+              v-model="birthPlace.birthProvince"
+              @update:modelValue="
+                () => {
+                  handleUpdate()
+                  slotProps.inputEntered(birthPlace.birthProvince)
+                }
+              "
+              :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
+              :invalid="slotProps.isInvalid"
+            />
+          </ValidateField>
           <label for="birth-province">Province</label>
         </FloatLabel>
       </div>
@@ -238,7 +255,7 @@ onMounted(() => {
           <span>Religion</span>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           editable
           v-model="selectedReligion"
           :options="religions"
@@ -263,16 +280,25 @@ onMounted(() => {
           }"
           :pt="floatLabelPt"
         >
-          <InputText
-            class="h-10 w-full"
-            :id="key"
-            type="text"
-            v-model="value.data"
-            @update:modelValue="handleUpdate"
-            :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
-            :ptOptions="{ mergeProps: true }"
-            :disabled="$route.meta.isViewMode"
-          />
+          <ValidateField v-slot="slotProps">
+            <InputText
+              class="w-full"
+              :id="key"
+              type="text"
+              v-model="value.data"
+              @update:modelValue="
+                () => {
+                  handleUpdate()
+                  slotProps.inputEntered(value.data)
+                }
+              "
+              :pt="{ root: ({ context }) => ({ class: [{ '!opacity-100': context.disabled }] }) }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
+              :invalid="slotProps.isInvalid"
+            />
+          </ValidateField>
+
           <label :for="key">{{ value.label }}</label>
         </FloatLabel>
       </div>

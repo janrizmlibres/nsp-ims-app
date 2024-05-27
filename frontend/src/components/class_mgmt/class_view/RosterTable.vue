@@ -61,7 +61,7 @@ const customPt = {
     sorticon: ({ context }) => ({
       class: [
         'ml-2',
-        context.sorted ? 'u-legend-txt-color dark:text-white/80' : 'u-txt-active dark:text-white/70'
+        context.sorted ? 'u-txt-scolor dark:text-white/80' : 'u-txt-active dark:text-white/70'
       ]
     }),
     bodycell: { class: 'py-3 ' }

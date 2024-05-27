@@ -8,8 +8,8 @@ const route = useRoute()
 </script>
 
 <template>
-  <ContentPane header="Enrollment" :subheader="'Edit Enrolled'">
-    <div class="h-full flex justify-center bg-white rounded-md shadow-xl p-2 px-4">
+  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Enrollment'}, {label: 'Edit'}]">
+    <div class="h-full flex justify-center bg-white rounded-2xl shadow-xl p-2 px-4">
       <div class="flex flex-col w-full">
         <EditEnrolledForm 
           class="h-fit mt-10" 

@@ -112,7 +112,7 @@ async function submitEvent() {
                   !props.text &&
                   !props.outlined &&
                   !props.plain,
-                'border u-bc-button dark:border-primary-400':
+                'border u-border-pcolor-darker dark:border-primary-400':
                   !props.link &&
                   props.severity === null &&
                   !props.text &&
@@ -122,13 +122,13 @@ async function submitEvent() {
 
               // Primary Outlined Button
               {
-                'border u-bc-button hover:u-bc-button':
+                'border u-border-pcolor-darker hover:u-border-pcolor-darker':
                   props.outlined && props.severity === null && !props.plain
               },
 
               // Primary
               {
-                'hover:u-bg-button-hover dark:hover:bg-primary-300 hover:u-bg-border-button-hover dark:hover:border-primary-300':
+                'hover:u-bg-pcolor dark:hover:bg-primary-300 hover:u-border-pcolor dark:hover:border-primary-300':
                   !props.link &&
                   props.severity === null &&
                   !props.text &&
@@ -136,7 +136,7 @@ async function submitEvent() {
                   !props.plain
               },
               {
-                'focus:u-bg-border-button-focus dark:focus:ring-primary-300/50':
+                'focus:u-ring-pcolor dark:focus:ring-primary-300/50':
                   props.severity === null
               }
             ]

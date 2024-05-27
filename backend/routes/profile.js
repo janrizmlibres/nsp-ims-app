@@ -145,6 +145,6 @@ router.put(
   profileController.updateStudent
 );
 
-router.get('/gender-count', profileController.getGenderCount);
+router.get('/students-with-class-level', profileController.getAllStudentsWithClassLevel);
 
 export default router;

@@ -18,7 +18,7 @@ function handleUpdate(part, data) {
 
 <template>
   <BaseCard :isNotPadded="true" class="grow px-2">
-    <TabView>
+    <TabView :pt="{ nav: {class:['rounded-t-2xl']}, tabpanel: { headerAction: { class: [''] }}}" :ptOptions="{mergeProps: true}">
       <TabPanel header="Personal Information">
         <PersonalInfoForm @dataChanged="handleUpdate" />
       </TabPanel>

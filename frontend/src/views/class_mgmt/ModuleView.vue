@@ -42,43 +42,40 @@ provide('updateModuleSubmissionTable', updateModuleSubmissionTable)
 function updateModuleSubmissionTable() {
     isFetching.value = true
 
-    try {
-        classLearningStrandStore.getModule(route.query.id).then((data) => {
-            const actTemp = []
-            const inactTemp = []
-            const dropTemp = []
+    classLearningStrandStore.getModule(route.query.id).then((data) => {
+        const actTemp = []
+        const inactTemp = []
+        const dropTemp = []
 
-            for (const moduleSubmission of data.module_submissions) {
-                const enrollment = moduleSubmission.enrollment
+        for (const moduleSubmission of data.module_submissions) {
+            const enrollment = moduleSubmission.enrollment
 
-                if (enrollment.status == 'Active') actTemp.push(moduleSubmission)
-                else if (enrollment.status == 'Inactive') inactTemp.push(moduleSubmission)
-                else dropTemp.push(moduleSubmission)
-            }
+            if (enrollment.status == 'Active') actTemp.push(moduleSubmission)
+            else if (enrollment.status == 'Inactive') inactTemp.push(moduleSubmission)
+            else dropTemp.push(moduleSubmission)
+        }
 
-            active.value = actTemp
-            inactive.value = inactTemp
-            drop.value = dropTemp
+        active.value = actTemp
+        inactive.value = inactTemp
+        drop.value = dropTemp
 
-            console.log(data);
-            term.value = data.class_learning_strand.class_level.term
-            classLevel.value = data.class_learning_strand.class_level
-            learningStrand.value = data.class_learning_strand.learning_strand
-            module.value = data
-            moduleTitle.value = data.title
-            strandName.value = data.class_learning_strand.learning_strand.name
-
-            isFetching.value = false
-        })
-    } catch (error) {
-        console.log(error);
+        console.log(data);
+        term.value = data.class_learning_strand.class_level.term
+        classLevel.value = data.class_learning_strand.class_level
+        learningStrand.value = data.class_learning_strand.learning_strand
+        module.value = data
+        moduleTitle.value = data.title
+        strandName.value = data.class_learning_strand.learning_strand.name
+    }).catch((error) => {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: "Unexpected error encountered!",
+            detail: error.response.data.message,
             life: 3000
         })
-    }
+    })
+
+    isFetching.value = false
 }
 
 watch(() => route.query, () => {
@@ -89,7 +86,7 @@ watch(() => route.query, () => {
 </script>
 
 <template>
-    <ContentPane :header="moduleTitle" :subheader="strandName">
+    <ContentPane :breadcrumb="[{label: 'Management'}, {label: 'Class'}, {label: strandName}, {label: moduleTitle}]">
         <ModuleInfoSection />
         <Divider class="before:border-t before:border-surface-400 my-10"/>
         <ModuleTab />

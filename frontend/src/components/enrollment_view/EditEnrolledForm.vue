@@ -8,12 +8,14 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useTermStore } from '@/stores/term.js'
+import { useUsersStore } from '@/stores/users.js'
 import { useToast } from 'primevue/usetoast'
 import { defineProps } from 'vue'
 import Textarea from 'primevue/textarea'
 
 const enrollmentStore = useEnrollmentStore()
 const termStore = useTermStore()
+const usersStore = useUsersStore()
 
 const toast = useToast()
 const router = useRouter()
@@ -50,8 +52,12 @@ const chosenFile = computed(() => {
   return enrollmentFormName.value ? enrollmentFormName.value : "Please Upload an Enrollment Form";
 })
 
-const isEqual = (newValue, oldValue) =>
-  newValue === oldValue || (newValue === "" && oldValue === null);
+const isEqual = (newValue, oldValue) => {
+  if (typeof newValue === 'string' && typeof oldValue === 'string') {
+    return newValue.trim() === oldValue.trim() || (newValue.trim() === "" && false)
+  }
+  return newValue === oldValue || (newValue.trim() === "" && oldValue === null);
+};
 
 const checkChanges = computed(() => {
   if (!isLoaded.value) return true;
@@ -102,6 +108,7 @@ async function updateEnrolled() {
       props.enrollmentId,
       form.value
     )
+    await usersStore.addAudit(`Edited student ${enrollmentStore.learner.lastName}`)
     toast.add({
       severity: 'success',
       summary: 'Success',
@@ -192,14 +199,16 @@ getStudent()
         <div class="basis-32 text-right">
           <span>Enrollment Form</span>
         </div>
-        <FileUpload class="grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
-        <Button label="X" @click="cancelFile" class="h-11" v-if="confirmedFile"/>     
+        <FileUpload class="u-bg-pcolor !rounded-2xl hover:u-bg-pcolor hover:transform hover:scale-[1.10] transition-all duration-300 ease-in-out grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="10485760" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Current Saved File:</span>
         </div>
-          <span class="max-w-36 overflow-auto">{{ chosenFile }}</span>
+        <div class="flex gap-4 items-center">
+          <span class="overflow-auto">{{ chosenFile }}</span>
+          <Button label="X" text @click="cancelFile" severity="danger" class="h-8 w-4 !rounded-full" v-if="confirmedFile"/>  
+        </div> 
       </div>
     </div>
 
@@ -230,8 +239,8 @@ getStudent()
         <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem" />
       </div>
       <div class="flex gap-4 mb-2 items-center place-self-end">
-        <Button @click="updateEnrolled" label="Update Learner" class="mt-4" :disabled="checkChanges"/>
-        <Button @click="cancelEdit" label="Cancel" class="mt-4"/>
+        <Button @click="updateEnrolled" outlined label="Update Learner" class="text-white u-bg-pcolor border-none hover:u-bg-pcolor mt-4" :disabled="checkChanges"/>
+        <Button @click="cancelEdit" severity="danger" label="Cancel" class="mt-4"/>
       </div>
     </div>
 

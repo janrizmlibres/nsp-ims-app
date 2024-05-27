@@ -79,34 +79,33 @@ function updateModuleTable() {
     isFetching.value = true
     allModules.value.length = 0
     
-    try {
-        classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((modules) => {
-            for (const module of modules) {
-                allModules.value.push({
-                    id: module.id,
-                    title: module.title,
-                    distribution_date: new Date(module.distribution_date).toLocaleDateString(),
-                    retrieval_date: new Date(module.retrieval_date).toLocaleDateString(),
-                    no_submissions: module.noSubmissions,
-                    submitted: module.submitted,
-                    graded: module.graded,
-                    total: module.total,
-                    status: module.status,
-                    updatedAt: new Date(module.updatedAt).toLocaleString()
-                })
-            }
+    classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((modules) => {
+        for (const module of modules) {
+            allModules.value.push({
+                id: module.id,
+                title: module.title,
+                distribution_date: new Date(module.distribution_date).toLocaleDateString(),
+                retrieval_date: new Date(module.retrieval_date).toLocaleDateString(),
+                no_submissions: module.noSubmissions,
+                submitted: module.submitted,
+                graded: module.graded,
+                total: module.total,
+                status: module.status,
+                updatedAt: new Date(module.updatedAt).toLocaleString()
+            })
+        }
 
-            isFetching.value = false
-        })
-    } catch (error) {
-        console.log(error);
+        isFetching.value = false
+    }).catch((error) => {
         toast.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Unexpected error encountered. Please refresh this page.',
+            detail: error.response.data.message,
             life: 3000
         })
-    }
+
+        isFetching.value = false
+    })
 }
 
 async function deleteModules() {
@@ -291,7 +290,7 @@ function editModule(data) {
 
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">
-                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editModule(slotProps.data)" />
+                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editModule(slotProps.data)" :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedModules.length}, {'text-white hover:u-bg-scolor': selectedModules.length}]" />
                     </template>
                 </Column>
                 <Column field="title" header="Title" sortable />

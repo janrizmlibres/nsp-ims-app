@@ -6,12 +6,15 @@ import Dropdown from 'primevue/dropdown';
 import Toolbar from 'primevue/toolbar';
 import InputText from 'primevue/inputtext';
 import { inject, provide, ref, watch } from 'vue';
+import { useToast } from 'primevue/usetoast';
 
 // // Custom
 import GradesTable from '@/components/class_mgmt/manage_grade_view/GradesTable.vue';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
+
+const toast = useToast()
 
 const classLearningStrandStore = useClassLearningStrandStore()
 
@@ -29,34 +32,40 @@ provide('updateGradesData', updateGradesData)
 provide('learningStrandInput', learningStrandInput)
 
 function updateGradesData() {
-    try {
-        isFetching.value = true
-        active.value.length = 0
-        inactive.value.length = 0
-        drop.value.length = 0
+    isFetching.value = true
 
-        const actTemp = []
-        const inactTemp = []
-        const dropTemp = []
+    active.value.length = 0
+    inactive.value.length = 0
+    drop.value.length = 0
 
-        classLearningStrandStore.getAllGrades(learningStrandInput.value.id).then((data) => {  
-            for (const grade of data) {
-                const enrollment = grade.enrollment
+    const actTemp = []
+    const inactTemp = []
+    const dropTemp = []
 
-                if (enrollment.status == 'Active') actTemp.push(grade)
-                else if (enrollment.status == 'Inactive') inactTemp.push(grade)
-                else dropTemp.push(grade)
-            }
+    classLearningStrandStore.getAllGrades(learningStrandInput.value.id).then((data) => {  
+        for (const grade of data) {
+            const enrollment = grade.enrollment
 
-            active.value = actTemp
-            inactive.value = inactTemp
-            drop.value = dropTemp
-            
-            isFetching.value = false
+            if (enrollment.status == 'Active') actTemp.push(grade)
+            else if (enrollment.status == 'Inactive') inactTemp.push(grade)
+            else dropTemp.push(grade)
+        }
+
+        active.value = actTemp
+        inactive.value = inactTemp
+        drop.value = dropTemp
+
+        isFetching.value = false
+    }).catch((error) => {
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
         })
-    } catch (error) {
-        console.log(error);
-    }
+
+        isFetching.value = false
+    })
 }
 
 watch(() => learningStrands.value, () => {

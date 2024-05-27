@@ -29,10 +29,11 @@ router.post(
     body("learners.*.ftl_pretest").isInt(),
     body("learners.*.regularity").isString(),
     body("learners.*.remarks").isString(),
+    body("learners.*.currentTerm").isInt(),
   ],
   enrollmentController.enrollLearners);
 
-router.get("/enrollments", isAuth, enrollmentController.getAllEnrollments);
-router.get("/status-count", isAuth, enrollmentController.getStatusCount);
 
+  router.get("/enrollments", isAuth, enrollmentController.getAllEnrollments);
+  
 export default router;

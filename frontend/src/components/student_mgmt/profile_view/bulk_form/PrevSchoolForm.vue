@@ -4,6 +4,8 @@ import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import FloatLabel from 'primevue/floatlabel'
 
+import ValidateField from '../../ValidateField.vue'
+
 import { ref, onMounted, watch, computed, inject } from 'vue'
 import { getYear } from 'date-fns'
 
@@ -118,26 +120,35 @@ onMounted(() => {
           <div>School Name</div>
           <div class="text-red-500 text-xl">*</div>
         </div>
-        <InputText
-          class="h-10 col-span-3"
-          type="text"
-          v-model="schoolName"
-          @update:model-value="handleUpdate"
-          :pt="{
-            root: ({ context }) => {
-              return { class: [{ '!opacity-100': context.disabled }] }
-            }
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
+
+        <ValidateField v-slot="slotProps">
+          <InputText
+            class="col-span-3"
+            type="text"
+            v-model="schoolName"
+            @update:modelValue="
+              () => {
+                handleUpdate()
+                slotProps.inputEntered(schoolName)
+              }
+            "
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+            :invalid="slotProps.isInvalid"
+          />
+        </ValidateField>
 
         <div class="flex gap-1 items-center justify-end pr-6 col-span-2">
           <div>Type</div>
           <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedType"
           :options="types"
           @change="handleUpdate"
@@ -151,7 +162,7 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedAffiliation"
           :options="affiliations"
           @change="handleUpdate"
@@ -167,7 +178,7 @@ onMounted(() => {
 
         <div class="grid grid-cols-5 gap-3 col-span-3">
           <Dropdown
-            class="h-10 col-span-2"
+            class="col-span-2"
             v-model="selectedYearL"
             :options="yearsL"
             filter
@@ -177,7 +188,7 @@ onMounted(() => {
           />
           <span class="flex items-center justify-center">-</span>
           <Dropdown
-            class="h-10 col-span-2"
+            class="col-span-2"
             v-model="selectedYearR"
             :options="yearsR"
             filter
@@ -192,7 +203,7 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedEduc"
           :options="educAttainment"
           @change="handleUpdate"
@@ -207,7 +218,7 @@ onMounted(() => {
         </div>
 
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedLevel"
           :options="levels"
           @change="handleUpdate"
@@ -225,20 +236,28 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
 
-        <Textarea
-          class="col-span-3"
-          v-model="discontinuationReason"
-          rows="5"
-          cols="30"
-          @update:model-value="handleUpdate"
-          :pt="{
-            root: ({ context }) => {
-              return { class: [{ '!opacity-100': context.disabled }] }
-            }
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
+        <ValidateField v-slot="slotProps">
+          <Textarea
+            class="col-span-3"
+            v-model="discontinuationReason"
+            rows="5"
+            cols="30"
+            @update:modelValue="
+              () => {
+                handleUpdate()
+                slotProps.inputEntered(discontinuationReason)
+              }
+            "
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+            :invalid="slotProps.isInvalid"
+          />
+        </ValidateField>
 
         <div class="flex gap-1 items-center justify-end pr-6">
           <div>Address</div>
@@ -255,19 +274,28 @@ onMounted(() => {
           }"
           :pt="floatLabelPt"
         >
-          <InputText
-            class="h-10 w-full"
-            type="text"
-            v-model="value.data"
-            @update:model-value="handleUpdate"
-            :pt="{
-              root: ({ context }) => {
-                return { class: [{ '!opacity-100': context.disabled }] }
-              }
-            }"
-            :ptOptions="{ mergeProps: true }"
-            :disabled="$route.meta.isViewMode"
-          />
+          <ValidateField v-slot="slotProps">
+            <InputText
+              class="w-full"
+              type="text"
+              v-model="value.data"
+              @update:modelValue="
+                () => {
+                  handleUpdate()
+                  slotProps.inputEntered(value.data)
+                }
+              "
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
+              :invalid="slotProps.isInvalid"
+            />
+          </ValidateField>
+
           <label :for="key">{{ value.label }}</label>
         </FloatLabel>
       </div>

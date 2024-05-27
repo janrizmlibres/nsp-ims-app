@@ -10,6 +10,8 @@ import Button from 'primevue/button'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
+import ValidateField from '../ValidateField.vue'
+
 import { FormParts, floatLabelPt } from '@/util/student_utils'
 import { useUtilitiesStore } from '@/stores/utilities'
 
@@ -40,7 +42,6 @@ const suffixes = ref(['Jr.', 'Sr.', 'I', 'II', 'III', 'IV'])
 const categories = computed(() => utilitiesStore.categories.map((cat) => cat.category_name))
 const photoDisplay = ref(photoUrl.value && `http://localhost:8080/${photoUrl.value}`)
 
-console.log(photoDisplay.value)
 watch(photoDisplay, () => handleUpdate())
 
 function setAvatarHover(value) {
@@ -124,9 +125,8 @@ onMounted(async () => {
         >
           <Avatar
             :image="photoDisplay"
-            size="xlarge"
             :pt="{
-              root: 'bg-white shadow-md border-2 rounded dark:bg-surface-700'
+              root: 'w-32 h-32 bg-white shadow-md border-2 rounded dark:bg-surface-700'
             }"
             :ptOptions="{ mergeProps: true }"
           />
@@ -168,46 +168,63 @@ onMounted(async () => {
 
       <div class="grid grid-cols-7 w-full gap-2">
         <FloatLabel class="col-span-2 mt-8" :pt="floatLabelPt">
-          <InputText
-            id="last-name"
-            class="h-10 w-full"
-            type="text"
-            v-model="name.lastName"
-            required
-            @update:modelValue="handleUpdate"
-            :pt="{
-              root: ({ context }) => {
-                return { class: [{ '!opacity-100': context.disabled }] }
-              }
-            }"
-            :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
-          />
+          <ValidateField v-slot="slotProps">
+            <InputText
+              id="last-name"
+              class="w-full"
+              type="text"
+              v-model="name.lastName"
+              required
+              @update:modelValue="
+                () => {
+                  handleUpdate()
+                  slotProps.inputEntered(name.lastName)
+                }
+              "
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="isViewMode"
+              :invalid="slotProps.isInvalid"
+            />
+          </ValidateField>
+
           <label for="last-name">Last Name <span class="text-red-500 text-xl">*</span></label>
         </FloatLabel>
 
         <FloatLabel class="col-span-2 mt-8" :pt="floatLabelPt">
-          <InputText
-            class="h-10 w-full"
-            id="first-name"
-            type="text"
-            v-model="name.firstName"
-            required
-            @update:modelValue="handleUpdate"
-            :pt="{
-              root: ({ context }) => {
-                return { class: [{ '!opacity-100': context.disabled }] }
-              }
-            }"
-            :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
-          />
+          <ValidateField v-slot="slotProps">
+            <InputText
+              class="w-full"
+              id="first-name"
+              type="text"
+              v-model="name.firstName"
+              required
+              @update:modelValue="
+                () => {
+                  handleUpdate()
+                  slotProps.inputEntered(name.firstName)
+                }
+              "
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="isViewMode"
+              :invalid="slotProps.isInvalid"
+            />
+          </ValidateField>
           <label for="first-name">First Name <span class="text-red-500 text-xl">*</span></label>
         </FloatLabel>
 
         <FloatLabel class="col-span-2 mt-8" :pt="floatLabelPt">
           <InputText
-            class="h-10 w-full"
+            class="w-full"
             id="middle-name"
             type="text"
             v-model="name.middleName"
@@ -225,7 +242,7 @@ onMounted(async () => {
 
         <FloatLabel class="mt-8" :pt="floatLabelPt">
           <Dropdown
-            class="h-10 w-full"
+            class="w-full"
             id="suffix"
             v-model="selectedSuffix"
             showClear
@@ -243,27 +260,35 @@ onMounted(async () => {
         </FloatLabel>
 
         <FloatLabel class="col-span-2 mt-5 mb-3" :pt="floatLabelPt">
-          <InputText
-            class="h-10 w-full"
-            id="lrn"
-            type="text"
-            v-model="lrn"
-            required
-            @update:modelValue="handleUpdate"
-            :pt="{
-              root: ({ context }) => {
-                return { class: [{ '!opacity-100': context.disabled }] }
-              }
-            }"
-            :ptOptions="{ mergeProps: true }"
-            :disabled="isViewMode"
-          />
+          <ValidateField v-slot="slotProps">
+            <InputText
+              class="w-full"
+              id="lrn"
+              type="text"
+              v-model="name.lrn"
+              required
+              @update:modelValue="
+                () => {
+                  handleUpdate()
+                  slotProps.inputEntered(name.lrn)
+                }
+              "
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="isViewMode"
+              :invalid="slotProps.isInvalid"
+            />
+          </ValidateField>
           <label for="lrn">LRN <span class="text-red-500 text-xl">*</span></label>
         </FloatLabel>
 
         <FloatLabel class="col-span-2 mt-5 mb-3" :pt="floatLabelPt">
           <Dropdown
-            class="h-10 w-full"
+            class="w-full"
             id="category"
             v-model="selectedCat"
             :options="categories"
