@@ -185,13 +185,13 @@ console.log(inactiveStudents);
         
       </div>
       <div class="charts">
-        <LineChart 
-          v-if="enrollmentTrends && enrollmentTrends.length > 0" 
-          class="line-chart" :data="enrollmentTrends"/>
         <BarChart 
           v-if="cumulativeStudets"
           class="bar-chart"
           :chartData="[cumulativeStudets, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]" />
+        <LineChart 
+          v-if="enrollmentTrends && enrollmentTrends.length > 0" 
+          class="line-chart" :data="enrollmentTrends"/>
       </div>
     </div>
   </ContentPane>
@@ -235,12 +235,13 @@ console.log(inactiveStudents);
 
   .line-chart {
     margin-left: 25.5rem;
-    margin-bottom: 1.25rem;
+    
     flex-grow: 1;
   }
   
   .bar-chart {
     margin-left: 25.5rem;
+    margin-bottom: 1.25rem;
     flex-grow: 1;
   }
 

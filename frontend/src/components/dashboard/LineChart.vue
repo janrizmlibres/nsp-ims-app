@@ -15,7 +15,7 @@ function fetchData() {
   chartData.value = {
     labels: data.map(item => item.year),
     datasets: [{
-      label: 'Frequency',
+      label: 'Enrollment Trends',
       data: data.map(item => item.frequency),
       fill: false,
       borderColor: 'rgb(75, 192, 192)',
