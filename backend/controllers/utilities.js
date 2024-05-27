@@ -4,6 +4,8 @@ import LearningStrand from "../models/learning_strand.js";
 import ClassLearningStrand from "../models/class/class_learning_strand.js"
 import StudentRequirement from "../models/student_requirement.js";
 import StudentCategory from "../models/student_category.js";
+import Student from "../models/student/student.js";
+import RequirementInfo from "../models/student/requirement_info.js";
 
 // for Academic Term Creation Operations
 export async function addTerm(req, res, next) {
@@ -188,7 +190,18 @@ export async function addRequirement(req, res, next) {
       }
     })
 
-    await StudentRequirement.create(req.body)
+    const newRequirement = await StudentRequirement.create(req.body)
+
+    // add requirement info to all students
+    const students = await Student.findAll();
+
+    for (const student of students) {
+      await RequirementInfo.create({
+        met: false,
+        StudentId: student.id,
+        StudentRequirementId: newRequirement.id
+      });
+    }
 
     res.status(201).json({ 
       message: "New Student Requirement Created!"
@@ -224,26 +237,35 @@ export async function updateRequirement(req, res, next) {
   try {
     await StudentRequirement.update(
       req.body,
-      { where: { id: requirementId }
-    });
-    
+      { where: { id: requirementId } }
+    );
+
+    // update requirement info for all students
+    const newRequirementId = req.body.requirementId;
+    await RequirementInfo.update({ StudentRequirementId: newRequirementId }, { where: { StudentRequirementId: requirementId } });
+
     res.status(200).json({ message: "Student Requirement updated successfully!" });
   } catch (error) {
-      if (!error.statusCode) {
-          error.statusCode = 500;
-      }
-      next(error);
-      return error;
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
   } 
 }
 
 export async function deleteRequirement(req, res, next) {
   try {
+    const requirementId = req.params.requirementId;
+
     await StudentRequirement.destroy({
       where: {
-        id: req.params.requirementId
+        id: requirementId
       }
-    })
+    });
+
+    // delete requirement info for all students
+    await RequirementInfo.destroy({ where: { StudentRequirementId: requirementId } });
 
     res.status(200).json({ 
       message: "Student Requirement deleted successfully!"

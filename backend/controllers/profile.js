@@ -107,8 +107,8 @@ export async function addStudent(req, res, next) {
 
     await Promise.all(requirements.map(requirement => 
       RequirementInfo.create({ 
-        studentId: student.id,
-        name: requirement.requirement_name,
+        StudentId: student.id,
+        StudentRequirementId: requirement.id,
         met: false
       })
     ));
