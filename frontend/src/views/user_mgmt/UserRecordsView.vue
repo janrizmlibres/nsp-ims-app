@@ -77,7 +77,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane header="User Records">
+  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Users'}]" header="User Records">
     <TheHeader
       :dt="dt"
       :tabindex="tabindex"
@@ -85,7 +85,7 @@ onMounted(async () => {
       @filterChanged="updateGlobalFilter"
     />
 
-    <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="rounded-md inline-block">
+    <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="h-full overflow-hidden !rounded-2xl inline-block">
       <template #content>
         <TabView v-if="isAdmin" :tabindex="tabindex" :pt="{ tabpanel: { content: '' } }">
           <TabPanel header="Sub-Admins">
@@ -113,7 +113,7 @@ onMounted(async () => {
           </TabPanel>
         </TabView>
 
-        <TabView v-else :tabindex="tabindex" :pt="{ tabpanel: { content: '' } }">
+        <TabView v-else :tabindex="tabindex">
           <TabPanel header="Staff">
             <RecordsTable
               :data="usersStore.staffs"
@@ -127,16 +127,15 @@ onMounted(async () => {
           </TabPanel>
         </TabView>
       </template>
+      
     </Card>
-
-    <div v-show="isAdmin" class="font-medium mt-4 ml-4">
-      Total users:
-      <span class="u-txt-red">
-        {{ usersStore.users.length }}
-      </span>
-    </div>
   </ContentPane>
-
+  <div v-show="isAdmin" class="font-medium my-2 ml-4">
+    Total users:
+    <span class="u-txt-red">
+      {{ usersStore.users.length }}
+    </span>
+  </div>
   <ChangePwDialog
     v-model:visible="visible"
     :userId="pwUpdateUserId"

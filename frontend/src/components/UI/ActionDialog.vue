@@ -19,12 +19,12 @@ import Button from 'primevue/button';
                     class: [
                     {
                         'u-bg-red dark:bg-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                        'border u-bg-logout-border dark:border-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+                        'border u-border-red dark:border-primary-400': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
                     },
                     
                     // Primary
-                    { 'hover:u-bg-logout-hover dark:hover:bg-primary-300 hover:u-bg-logout-border-hover dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
-                    { 'focus:u-bg-logout-border-focus dark:focus:ring-primary-300/50': props.severity === null },
+                    { 'hover:u-bg-red-2 dark:hover:bg-primary-300 hover:u-border-red dark:hover:border-primary-300': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain },
+                    { 'focus:ur-ring-red-2 dark:focus:ring-primary-300/50': props.severity === null },
                     ]
                 })
                 }"
@@ -35,8 +35,8 @@ import Button from 'primevue/button';
                 root: ({ props, context, parent }) => ({
                     class: [
                     // Primary Outlined Button
-                    { 'u-txt-red border u-bg-logout-border hover:u-bg-cancel-border-hover': props.outlined && props.severity === null && !props.plain },
-                    { 'focus:u-bg-logout-border-focus dark:focus:ring-primary-300/50': props.severity === null },
+                    { 'u-txt-red border u-border-red hover:u-bg-red-darker': props.outlined && props.severity === null && !props.plain },
+                    { 'focus:ur-ring-red-2 dark:focus:ring-primary-300/50': props.severity === null },
                     ]
                 })
                 }"

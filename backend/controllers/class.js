@@ -28,8 +28,14 @@ export async function getClassSchedules(req, res, next) {
             order: [[LearningStrand, 'code', 'ASC']]
         })
 
-        res.status(201).json({ 
-            message: "Fetched all strands successfully!",
+        if (classLearningStrands.every(obj => !obj.dataValues.class_schedules.length)) {
+            const error = new Error("No class schedules found.");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        res.status(200).json({ 
+            message: "Fetched class schedules successfully!",
             data: classLearningStrands
         });
     } catch (error) {
@@ -49,8 +55,14 @@ export async function getAllStudents(req, res, next) {
             include: [{model: Student, include: [ContactInfo, PersonalInfo]}]
         })
 
-        res.status(201).json({ 
-            message: "Students fetched successfully!",
+        if (!enrollments.length) {
+            const error = new Error("No students found.");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        res.status(200).json({ 
+            message: "Fetched students successfully!",
             data: enrollments
         });
     } catch (error) {
@@ -76,8 +88,8 @@ export async function getStudent(req, res, next) {
             ]
         })
 
-        res.status(201).json({ 
-            message: "Student fetched successfully!",
+        res.status(200).json({ 
+            message: "Fetched student successfully!",
             data: classLearningStrands
         });
     } catch (error) {

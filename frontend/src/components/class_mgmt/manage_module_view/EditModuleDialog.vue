@@ -117,7 +117,7 @@ onBeforeRouteLeave(() => {
             <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
         </div>
         <div class="flex justify-end gap-2">
-            <Button type="button" outlined rounded label="Update" :disabled="disableUpdate" @click="updateModule" />
+            <Button type="button" outlined rounded label="Update" :disabled="disableUpdate" @click="updateModule" class="u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
             <Button type="button" outlined rounded label="Cancel" severity="danger" @click="cancel" />
         </div>
     </Dialog>

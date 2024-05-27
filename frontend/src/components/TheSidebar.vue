@@ -1,6 +1,5 @@
 <script setup>
 // Presets
-import Button from 'primevue/button'
 import PanelMenu from 'primevue/panelmenu'
 
 // Utils
@@ -157,27 +156,6 @@ const role = computed(() => {
   }
 })
 
-const buttonPt = {
-  root: ({ props }) => ({
-    class: [
-      // Colors
-      {
-        'text-surface-100':
-          !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-        'bg-transparent':
-          !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-        'border-none':
-          !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
-      },
-      // States
-      {
-        'hover:u-bg-pcolor-darker':
-          !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
-      },
-      { 'focus:u-ring-scolor': props.severity === null }
-    ]
-  })
-}
 const panelMenuPt = {
   root: {
     class: 'my-4'
@@ -189,7 +167,7 @@ const panelMenuPt = {
     class: [
       // Color
       'border-none',
-      'u-bg-pcolor',
+      'bg-none',
       'text-surface-100',
       // States
       'hover:bg-surface-100',
@@ -259,11 +237,6 @@ function collapseAll() {
   expandedKeys.value = {}
 }
 
-function changeState() {
-  collapseAll()
-  sidebarStore.changePinnedState()
-}
-
 function setVisibility(keyValue) {
   if ([1, 2].includes(authStore.user.accessLevel)) return true
   else if (keyValue === '7') return false
@@ -295,34 +268,18 @@ const handleMouseLeave = () => {
 </script>
 
 <template>
-  <div
-    class="flex flex-col z-50 u-sidemain-max-height h-screen u-bg-pcolor text-surface-100 rounded-md border-none shadow-xltransition-all duration-500 ease-in-out ml-4 my-4"
+  <aside
+    class="
+      flex flex-col z-50 view-max-height
+      bg-transparent text-surface-100 my-2
+      transition-all duration-500 ease-in-out"
     :class="sidebarStore.isPinned ? 'u-sidebar-expanded' : 'u-sidebar-collapsed'"
     @mouseover="handleMouseOver"
     @mouseleave="handleMouseLeave"
   >
-    <div class="u-sidebar-header text-surface-100 whitespace-nowrap p-5">
+    <div class="flex flex-row items-center gap-2 text-surface-100 p-5 overflow-hidden">
+      <img src="@/assets/logo.png" class="max-w-10 h-10 bg-white shadow-xl rounded-full" />
       <span class="u-sidebar-header-text text-3xl">Menu</span>
-      <Button
-        v-if="sidebarStore.isPinned"
-        icon="fa fa-chevron-left"
-        type="button"
-        class="min-w-8 h-8"
-        @click="changeState"
-        :pt="buttonPt"
-        :pt-options="{ mergeProps: true, mergeSections: true }"
-      >
-      </Button>
-      <Button
-        v-else
-        icon="fa fa-bars"
-        type="button"
-        class="min-w-8 h-8"
-        @click="changeState"
-        :pt="buttonPt"
-        :pt-options="{ mergeProps: true, mergeSections: true }"
-      >
-      </Button>
     </div>
     <div class="border-t mx-6"></div>
 
@@ -336,12 +293,9 @@ const handleMouseLeave = () => {
         <div v-show="setVisibility(item.key)">
           <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
             <a v-ripple v-bind="props.action" :href="href" @click="navigate">
-              <div class="flex items-center px-5 py-3" @click="collapseAll">
-                <span
-                  class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md"
-                >
-                  <span :class="item.icon" class="fa-lg text-surface-100"
-                /></span>
+              <div class="flex items-center px-6 py-3" @click="collapseAll">
+                <span class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md">
+                  <span :class="item.icon" class="fa-lg text-surface-100"/></span>
                 <span class="u-sidebar-menuitem-text">{{ item.label }}</span>
               </div>
             </a>
@@ -349,7 +303,7 @@ const handleMouseLeave = () => {
           <a
             v-else
             v-ripple
-            class="flex items-center px-5 py-3"
+            class="flex items-center px-6 py-3"
             v-bind="props.action"
             :href="item.url"
             :target="item.target"
@@ -371,8 +325,8 @@ const handleMouseLeave = () => {
     </PanelMenu>
 
     <div class="border-t mx-6"></div>
-    <div class="px-5 py-4 text-surface-100 whitespace-nowrap u-sidebar-footer">
-      <span class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md">
+    <div class="px-6 py-4 text-surface-100 whitespace-nowrap u-sidebar-footer overflow-hidden">
+      <span class="flex justify-center items-center min-w-8 h-8 rounded-md u-bg-scolor shadow-md my-2">
         <span class="fa fa-circle-user text-surface-100" />
       </span>
       <div class="flex flex-col u-sidebar-footer-text">
@@ -380,7 +334,7 @@ const handleMouseLeave = () => {
         <span class="text-sm"> {{ role }}</span>
       </div>
     </div>
-  </div>
+  </aside>
 </template>
 
 <style scoped>
@@ -417,7 +371,7 @@ const handleMouseLeave = () => {
 
 /* sidebar collapsed */
 .u-sidebar-collapsed {
-  width: 4.5rem;
+  width: 5rem;
 }
 
 .u-sidebar-collapsed:hover {

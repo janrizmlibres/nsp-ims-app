@@ -124,9 +124,8 @@ onMounted(async () => {
         >
           <Avatar
             :image="photoDisplay"
-            size="xlarge"
             :pt="{
-              root: 'bg-white shadow-md border-2 rounded dark:bg-surface-700'
+              root: 'w-32 h-32 bg-white shadow-md border-2 rounded dark:bg-surface-700'
             }"
             :ptOptions="{ mergeProps: true }"
           />
@@ -170,7 +169,7 @@ onMounted(async () => {
         <FloatLabel class="col-span-2 mt-8" :pt="floatLabelPt">
           <InputText
             id="last-name"
-            class="h-10 w-full"
+            class="w-full"
             type="text"
             v-model="name.lastName"
             required
@@ -188,7 +187,7 @@ onMounted(async () => {
 
         <FloatLabel class="col-span-2 mt-8" :pt="floatLabelPt">
           <InputText
-            class="h-10 w-full"
+            class="w-full"
             id="first-name"
             type="text"
             v-model="name.firstName"
@@ -207,7 +206,7 @@ onMounted(async () => {
 
         <FloatLabel class="col-span-2 mt-8" :pt="floatLabelPt">
           <InputText
-            class="h-10 w-full"
+            class="w-full"
             id="middle-name"
             type="text"
             v-model="name.middleName"
@@ -225,7 +224,7 @@ onMounted(async () => {
 
         <FloatLabel class="mt-8" :pt="floatLabelPt">
           <Dropdown
-            class="h-10 w-full"
+            class="w-full"
             id="suffix"
             v-model="selectedSuffix"
             showClear
@@ -244,7 +243,7 @@ onMounted(async () => {
 
         <FloatLabel class="col-span-2 mt-5 mb-3" :pt="floatLabelPt">
           <InputText
-            class="h-10 w-full"
+            class="w-full"
             id="lrn"
             type="text"
             v-model="lrn"
@@ -263,7 +262,7 @@ onMounted(async () => {
 
         <FloatLabel class="col-span-2 mt-5 mb-3" :pt="floatLabelPt">
           <Dropdown
-            class="h-10 w-full"
+            class="w-full"
             id="category"
             v-model="selectedCat"
             :options="categories"

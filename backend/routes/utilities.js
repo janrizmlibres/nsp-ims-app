@@ -27,6 +27,4 @@ router.get("/categories", isAuth, utilitiesController.getCategories);
 router.patch("/category/:categoryId/update", isAuth, utilitiesController.updateCategory);
 router.delete("/category/:categoryId/delete", isAuth, utilitiesController.deleteCategory);
 
-router.get("/count-class-levels", isAuth, utilitiesController.countClassLevels);
-
 export default router;

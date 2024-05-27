@@ -9,12 +9,15 @@ import Dropdown from 'primevue/dropdown';
 import Toolbar from 'primevue/toolbar';
 import ProgressSpinner from 'primevue/progressspinner';
 import { inject, onMounted, provide, ref } from 'vue';
+import { useToast } from 'primevue/usetoast';
 
 //Custom
 import ViewStudentDialog from './ViewStudentDialog.vue';
 
 //stores
 import { useClassStore } from '@/stores/class';
+
+const toast = useToast()
 
 const classStore = useClassStore()
 
@@ -65,11 +68,20 @@ function updateStudentsTable() {
                 photoUrl: enrollment.student.photoUrl
             }
 
-        learners.value.push(temp)
+            learners.value.push(temp)
         }
-    })
 
-    isFetching.value = false
+        isFetching.value = false
+    }).catch((error) => {
+            toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: error.response.data.message,
+            life: 3000
+        })
+
+        isFetching.value = false
+    })
 }
 
 onMounted(() => updateStudentsTable())
@@ -127,7 +139,16 @@ function viewStudent(student) {
 
             <Column header="Action" :exportable="false" frozen>
                 <template #body="slotProps">
-                    <Button icon="fa fa-eye" label="view" outlined rounded @click="viewStudent(slotProps.data)" />
+                    <Button
+                        class="u-bg-scolor hover:u-bg-scolor"
+                        label="View"
+                        icon="fa-solid fa-eye"
+                        rounded
+                        raised
+                        aria-label="View"
+                        size="small"
+                        @click="viewStudent(slotProps.data)"
+                    />
                 </template>
             </Column>
             <Column field="lrn" header="LRN" style="min-width: 12rem;" />

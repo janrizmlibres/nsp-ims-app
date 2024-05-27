@@ -5,6 +5,7 @@ import axios from 'axios'
 
 export const useStudentsStore = defineStore('students', () => {
   const students = ref([])
+  const studentsWithClassLevel = ref([])
 
   const studentsNormalized = computed(() => {
     return students.value.map((student) => {
@@ -75,15 +76,15 @@ export const useStudentsStore = defineStore('students', () => {
     return result
   }
 
-  async function getGenderCount() {
-    const authStore = useAuthStore();
-    
-    const result = await axios.get('http://localhost:8080/profile/gender-count', {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    });
-    
-    return result;
-  }
+  async function getStudentsWithClassLevel() {
+  const authStore = useAuthStore();
 
-  return { students, studentsNormalized, getStudents, getStudent, addStudent, updateStudent, getGenderCount }
+  const result = await axios.get('http://localhost:8080/profile/students-with-class-level', {
+    headers: { Authorization: 'Bearer ' + authStore.token }
+  });
+
+  studentsWithClassLevel.value = result.data.students;
+}
+
+  return { students, studentsNormalized, studentsWithClassLevel, getStudents, getStudent, addStudent, updateStudent, getStudentsWithClassLevel }
 })

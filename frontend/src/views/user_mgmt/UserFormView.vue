@@ -35,7 +35,7 @@ const isLoading = ref(false)
 const okToLeave = ref(false)
 const updateKey = ref(0)
 
-const headerName = computed(() => (route.params.userId ? 'Edit Record' : 'Add Record'))
+const headerName = computed(() => (route.params.userId ? 'Edit' : 'Add'))
 const submitLabel = computed(() => (route.params.userId ? 'Save' : 'Submit'))
 const isEditView = computed(() => !route.params.userId)
 const isFormDirty = computed(() => !isEqual(initialData, formData.value))
@@ -158,17 +158,15 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane :header="`User Management / ${headerName}`">
+  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'User'}, {label: headerName}]">
     <form @submit.prevent="submitData">
       <div class="flex flex-col gap-3" :key="updateKey">
         <BaseCard class="grow">
           <UserForm :formDataProp="formData" :isEditView="isEditView" @dataChanged="updateData" />
         </BaseCard>
 
-        <div class="flex-none text-right">
-          <div class="inline-block">
+        <div class="flex gap-2 justify-end">
             <Button
-              class="h-10 u-bg-green"
               :label="submitLabel"
               :loading="isLoading"
               type="submit"
@@ -176,13 +174,12 @@ onMounted(async () => {
               :disabled="!isFormDirty"
             />
             <Button
-              class="h-10 ml-2 u-bg-red"
+              severity="danger"
               label="Cancel"
               icon="fa-solid fa-circle-xmark"
               @click="goToUserRecordsView"
             />
           </div>
-        </div>
       </div>
     </form>
   </ContentPane>

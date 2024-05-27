@@ -188,7 +188,7 @@ function cancelFile() {
 
 <template>
   <div class="flex flex-row justify-center grow gap-20">
-    
+
     <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pl-16">
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
@@ -202,24 +202,29 @@ function cancelFile() {
           optionLabel="fullname"
           :suggestions="filteredLearners"
           @complete="search" @item-select="onSelectedLearner"
-          inputStyle="width: 80"
+          inputClass="w-[80]"
           class="basis-full h-11"
         />
       </div>
-      <DataView :value="selectedLearnersList" paginator :rows="5" class="w-fit">
+      <DataView :value="selectedLearnersList" 
+        paginator :rows="5" :rowsPerPageOptions="[5, 10, 15]"
+        paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+        currentPageReportTemplate="{first} to {last} of {totalRecords}" class="w-fit">
         <template #list="slotProps">
           <div class="grid grid-nogutter">
             <div v-for="(item, index) in slotProps.items" :key="index">
               <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
-                <div class="flex justify-between gap-2">
+                <div class="flex justify-between gap-16">
                   <div class="basis-32">
                     <span><span class="font-bold">Student:<br/></span>{{ item.fullname }}</span>
                   </div>
                   <div class="basis-32">
                     <span><span class="font-bold">LRN:<br/></span>{{ item.lrn }}</span>
                   </div>
-                  <Button icon="pi pi-pencil" label="Edit" @click="editEnrolled(index)" class="h-11"/>
-                  <Button @click="removeLearner(index)" label="X" class="h-11"/>
+                  <div class="flex gap-2">
+                    <Button icon="fa fa-pencil" label="Edit" @click="editEnrolled(index)" class="u-bg-pcolor hover:u-bg-pcolor h-11 !p-6"/>
+                    <Button icon="fa fa-xmark" @click="removeLearner(index)" label="Remove" severity="danger" class="h-11 !p-6"/>
+                  </div>
                 </div>
               </div>
             </div>
@@ -233,14 +238,16 @@ function cancelFile() {
         <div class="basis-28 text-right ml-4">
           <span>Enrollment Form<span class="text-red-500">*</span></span>
         </div>
-        <FileUpload class="grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
-        <Button label="X" @click="cancelFile" class="h-11" v-if="confirmedFile"/>
+        <FileUpload class="u-bg-pcolor !rounded-2xl hover:u-bg-pcolor hover:transform hover:scale-[1.10] transition-all duration-300 ease-in-out grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-28 text-right ml-4">
           <span>Current Saved File:</span>
         </div>
-        <span class="max-w-36 overflow-auto">{{ chosenFile }}</span>
+        <div class="flex gap-4 items-center">
+          <span class="overflow-auto">{{ chosenFile }}</span>
+          <Button label="X" text @click="cancelFile" class="h-8 w-4 !rounded-full" severity="danger" v-if="confirmedFile"/>
+        </div>
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-28 text-right ml-4">
@@ -280,9 +287,9 @@ function cancelFile() {
         </div>
         <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem"/>
       </div>
-      <div class="flex gap-10 mb-2 items-center place-self-end">
+      <div class="flex gap-4 mb-2 items-center place-self-end">
         <Button @click="saveLearner" label="Save Learner" class="mt-4 mb-10" :disabled="notValid"/>
-        <Button v-if="validSubmit" @click="submitEvent" label="Enroll Learners" class="mt-4 mb-10" :disabled="notEnrollmentValid"/>
+        <Button v-if="validSubmit" @click="submitEvent" label="Enroll Learners" class="u-bg-pcolor hover:u-bg-pcolor mt-4 mb-10" :disabled="notEnrollmentValid"/>
       </div>
     </div>
     

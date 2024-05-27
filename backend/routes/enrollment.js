@@ -32,4 +32,7 @@ router.post(
   ],
   enrollmentController.enrollLearners);
 
+
+  router.get("/enrollments", isAuth, enrollmentController.getAllEnrollments);
+  
 export default router;

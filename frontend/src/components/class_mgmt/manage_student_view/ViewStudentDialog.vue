@@ -108,15 +108,21 @@ function setImageModal(value) {
         </span>
         <img :src="photoUrl" class="m-auto block w-5/6 max-w-3xl" />
     </div>
-    <Dialog v-model:visible="studentDialogState" modal :style="{ width: '80%', height: '80%' }" :draggable="false"
+    <Dialog v-model:visible="studentDialogState" modal :draggable="false"
         @show="updateStudentData(studentData)"
         @after-hide="() => {
             activeTab = 0
             learningStrandInput = null
         }"
         :pt="{
+            root: {
+                class: ['h-[80%] w-[80%] !rounded-2xl']
+            },
+            header: {
+                class: ['!rounded-t-2xl']
+            },
             content: {
-                class: ['h-full']
+                class: ['h-full !rounded-b-2xl']
             }
         }" :ptOptions="{mergeProps: true}" 
     >
@@ -130,7 +136,7 @@ function setImageModal(value) {
                 >
                     <Avatar :image="photoUrl" size="xlarge"
                         :pt="{
-                            root: 'bg-white shadow-md border-2 rounded'
+                            root: 'w-24 h-24 bg-white shadow-md border-2 rounded'
                         }" :ptOptions="{ mergeProps: true }"
                     />
 
@@ -159,10 +165,10 @@ function setImageModal(value) {
             </div>
         </template>
         <div class="relative flex flex-col h-full shadow-xl">
-            <Toolbar class="!bg-slate-200 !rounded-t-md !rounded-b-none !border-none">
+            <Toolbar class="!u-bg-pcolor-2 !rounded-t-md !rounded-b-none !border-none">
                 <template #end>
                     <div v-if="activeTab !== 1" class="flex flex-row gap-4 items-center mr-4">
-                        <label class="font-semibold">Learning Strand:</label>
+                        <label class="font-semibold text-white">Learning Strand:</label>
                         <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" /> 
                     </div>
                 </template>

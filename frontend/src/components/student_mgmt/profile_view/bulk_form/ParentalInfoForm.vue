@@ -55,7 +55,7 @@ function handleUpdate() {
             </div>
             <InputText
               v-if="!['suffixNameF', 'suffixNameM'].includes(dataKeys[idx][n])"
-              class="h-10 col-span-3"
+              class="col-span-3"
               type="text"
               v-model="parentalData[parentKeys[idx]][dataKeys[idx][n]]"
               @update:model-value="handleUpdate"
@@ -69,7 +69,7 @@ function handleUpdate() {
             />
             <Dropdown
               v-else
-              class="h-10 col-span-3"
+              class="col-span-3"
               v-model="parentalData[parentKeys[idx]][dataKeys[idx][n]]"
               showClear
               :options="suffixes"
