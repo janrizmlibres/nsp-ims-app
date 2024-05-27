@@ -7,6 +7,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   const learners = ref([])
   const learner = ref(null)
   const editedTerm = ref(null)
+  const allEnrolled = ref([])
   
   async function getAllEnrolledFromTerm(termID) {
     const authStore = useAuthStore()
@@ -149,24 +150,14 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
   
-    return result.data
+    allEnrolled.value = result.data
   }
-
-  async function getStatusCount() {
-  const authStore = useAuthStore()
-
-  const result = await axios.get('http://localhost:8080/enrollment/status-count', {
-    headers: { Authorization: 'Bearer ' + authStore.token }
-  })
-
-  return result.data
-}
-  
   
   return {
     learners, 
     learner, 
     editedTerm,
+    allEnrolled,
     changeEnrolledStatus, 
     setEditedTerm, 
     getAllEnrolledFromTerm, 
@@ -180,6 +171,5 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     getEnrolledAttendance,
     setAttendance,
     getAllEnrollments,
-    getStatusCount
   }
 })

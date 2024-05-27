@@ -4,16 +4,17 @@ import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 
-import TheHeader from '@/components/volunteer_view/VolunteerHeader.vue';
-import ContentPane from "@/components/UI/ContentPane.vue";
-import { useVolunteerStore } from '@/stores/volunteer';
-import { useUsersStore } from '@/stores/users';
+import TheHeader from '@/components/volunteer_view/VolunteerHeader.vue'
+import ContentPane from "@/components/UI/ContentPane.vue"
+import { useVolunteerStore } from '@/stores/volunteer'
+import { useUsersStore } from '@/stores/users'
 
-import { ref, onMounted } from 'vue';
-import { FilterMatchMode } from 'primevue/api';
+import { ref, onMounted } from 'vue'
+import { FilterMatchMode } from 'primevue/api'
 
-import { useConfirm } from "primevue/useconfirm";
-import { useToast } from "primevue/usetoast";
+import ConfirmDialog from 'primevue/confirmdialog'
+import { useConfirm } from "primevue/useconfirm"
+import { useToast } from "primevue/usetoast"
 
 const confirm = useConfirm();
 const toast = useToast();
@@ -23,20 +24,18 @@ const dt = ref(null)
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }
-});
+})
 
 const columns = ref([
-  /*{ field: 'id', header: 'Database ID' },
-  { field: 'student_volunteer.id', header: 'Volunteer ID' },*/
   { field: 'fullname', header: 'Full Name' },
   { field: 'volunteer_personal_information.sex', header: 'Sex'},
   { field: 'affiliation', header: 'Affiliation' },
   { field: 'volunteer_contact_information.contactNumber', header: 'Contact Number' },
-]);
+])
 
 const updateGlobalFilter = (newValue) => {
   filters.value.global.value = newValue
-};
+}
 
 const confirmDelete = (id) => {
     confirm.require({
@@ -49,28 +48,28 @@ const confirmDelete = (id) => {
         acceptClass: 'p-button-danger',
         accept: () => {
             handleDelete(id)
-            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
+            toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 })
         }
-    });
-};
+    })
+}
 
 async function handleDelete(id) {
   try {
-    const result = await volunteerStore.getVolunteer(id);
+    const result = await volunteerStore.getVolunteer(id)
     const volunteer = result.data.volunteer
-    volunteerStore.deleteVolunteer(id);
-    addAuditTrail(`Deleted: Volunteer "${volunteer.fullname}" with ID: ${volunteer.id}`);
-    window.location.reload();
+    volunteerStore.deleteVolunteer(id)
+    addAuditTrail(`Deleted: Volunteer "${volunteer.fullname}" with ID: ${volunteer.id}`)
+    window.location.reload()
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
 async function addAuditTrail(descripton) {
   try {
-    await userStore.addAudit(descripton);
+    await userStore.addAudit(descripton)
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
@@ -78,9 +77,9 @@ onMounted(async () => {
   try{
     await volunteerStore.getAllVolunteers()
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-});
+})
 </script>
 
 <template>

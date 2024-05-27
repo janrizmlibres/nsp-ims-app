@@ -117,25 +117,6 @@ function updateFormData(part, data) {
   updateMapping[part]()
 }
 
-/*function findUpdatedAttributes(oldObj, newObj, prefix = '') {
-  let updates = {};
-
-  for (let key in oldObj) {
-    if (key === 'updatedAt') continue; // Skip updatedAt fields
-
-    if (oldObj[key] instanceof Object && newObj[key]) {
-      let nestedUpdates = findUpdatedAttributes(oldObj[key], newObj[key], `${prefix}${key}.`);
-      if (Object.keys(nestedUpdates).length > 0) {
-        updates = { ...updates, ...nestedUpdates };
-      }
-    } else if (oldObj[key] !== newObj[key]) {
-      updates[`${prefix}${key}`] = { old: oldObj[key], new: newObj[key] };
-    }
-  }
-
-  return updates;
-}*/
-
 function findUpdatedAttributes(oldObj, newObj, prefix = '') {
   let updates = [];
 
@@ -171,11 +152,13 @@ async function handleAddVolunteer(data) {
     await addAuditTrail('Added: Volunteer"' + result.data.volunteer.fullname + '" with ID: ' + result.data.volunteer.id);
     return result;
   } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
+    confirm.require({
+      group: 'user-headless',
+      header: 'Data is Incorrect',
+      message:
+        'Make sure inputs are correct and all required fields marked with an asterisk (*) are filled in.',
+      acceptLabel: 'OK',
+      icon: 'fa-solid fa-triangle-exclamation'
     })
   }
 }
@@ -192,11 +175,13 @@ async function handleUpdateVolunteer(id, data) {
     }
      return result;
   } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response.data.message,
-      life: 3000
+    confirm.require({
+      group: 'user-headless',
+      header: 'Data is Incorrect',
+      message:
+        'Make sure inputs are correct and all required fields marked with an asterisk (*) are filled in.',
+      acceptLabel: 'OK',
+      icon: 'fa-solid fa-triangle-exclamation'
     })
   }
 }
@@ -224,22 +209,29 @@ async function submitForm() {
         ? await handleAddVolunteer(formData.value)
         : await handleUpdateVolunteer(route.params.id, formData.value)
     
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: result.data.message,
-      life: 5000
-    })
-    isOkToLeave = true
-    await goToVolunteerRecords()
+      confirm.require({
+        group: 'user-headless',
+        header: 'Success',
+        message: result.data.message,
+        acceptLabel: 'OK',
+        icon: 'fa-solid fa-thumbs-up',
+        accept: async () => {
+        isOkToLeave = true
+        await goToVolunteerRecords()
+        }
+      })
 }
 
 onBeforeRouteLeave((to) => {
   if (!isFormDirty.value || isOkToLeave) return true
 
   confirm.require({
-    message: 'Do you really want to leave? You have unsaved changes!',
+    group: 'user-headless',
     header: 'Redirect Confirmation',
+    message: 'Do you really want to leave? You have unsaved changes!',
+    acceptLabel: 'Yes',
+    rejectLabel: 'No',
+    icon: 'fa-solid fa-diamond-turn-right',
     accept: async () => {
       isOkToLeave = true
       await router.push(to)
@@ -315,6 +307,7 @@ onMounted(async () => {
 
       <div class="flex flex-row justify-end gap-2">
           <Button
+            :disabled="!isFormDirty && !route.meta.isViewMode"
             type="submit"
             @click="handleConfirm"
           >

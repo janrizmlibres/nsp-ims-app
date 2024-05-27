@@ -8,12 +8,14 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useEnrollmentStore } from '@/stores/enrollment.js'
 import { useTermStore } from '@/stores/term.js'
+import { useUsersStore } from '@/stores/users.js'
 import { useToast } from 'primevue/usetoast'
 import { defineProps } from 'vue'
 import Textarea from 'primevue/textarea'
 
 const enrollmentStore = useEnrollmentStore()
 const termStore = useTermStore()
+const usersStore = useUsersStore()
 
 const toast = useToast()
 const router = useRouter()
@@ -102,6 +104,7 @@ async function updateEnrolled() {
       props.enrollmentId,
       form.value
     )
+    await usersStore.addAudit(`Edited student ${enrollmentStore.learner.lastName}`)
     toast.add({
       severity: 'success',
       summary: 'Success',

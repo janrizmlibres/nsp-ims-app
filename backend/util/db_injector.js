@@ -564,6 +564,30 @@ export async function injectEnrollment() {
       dateEnrolled: getRandomDate(), // Random date between 2016 and now
       status: "Active",
     },
+    {
+      studentId: 2,
+      classLevelId: 1,
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
+    {
+      studentId: 3,
+      classLevelId: 1,
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Inactive",
+    },
+    {
+      studentId: 4,
+      classLevelId: 1,
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Inactive",
+    },
+    {
+      studentId: 5,
+      classLevelId: 1,
+      dateEnrolled: getRandomDate(), // Random date between 2016 and now
+      status: "Active",
+    },
     
     // Add more enrollment data here...
   ];
