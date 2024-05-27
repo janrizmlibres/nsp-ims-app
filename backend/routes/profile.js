@@ -111,12 +111,6 @@ const prevSchoolValidator = [
   body("prevSchool.province").trim().isAscii(),
 ];
 
-const requirementValidator = [
-  body().isArray(),
-  body('*.id').exists().isUUID(),
-  body('*.met').isBoolean()
-];
-
 const router = express.Router();
 
 router.get("/students", isAuth, profileController.getStudents);
@@ -154,7 +148,6 @@ router.put(
 router.patch(
   '/student/:studentId/requirements',
   isAuth,
-  requirementValidator,
   profileController.updateStudentRequirements
 );
 

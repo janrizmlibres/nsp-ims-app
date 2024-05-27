@@ -197,7 +197,7 @@ export async function addRequirement(req, res, next) {
 
     for (const student of students) {
       await RequirementInfo.create({
-        met: false,
+        met: false  ,
         studentId: student.id,
         studentRequirementId: newRequirement.id
       });

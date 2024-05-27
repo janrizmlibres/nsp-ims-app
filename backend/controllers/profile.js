@@ -214,6 +214,56 @@ export async function updateStudent(req, res, next) {
   }
 }
 
+export async function updateStudentRequirements(req, res, next) {
+  try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
+      error.statusCode = 422;
+      throw error;
+    }
+
+    const studentId = req.params.studentId;
+    const requirementInfos = req.body.requirement_infos.requirement_infos;
+    console.log(requirementInfos)
+
+    const student = await Student.findByPk(studentId);
+
+    if (!student) {
+      const error = new Error("Student not found.");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const existingRequirements = await RequirementInfo.findAll({
+      where: { studentId: student.id },
+    });
+
+    for (const requirementInfo of requirementInfos) {
+      const existingRequirement = existingRequirements.find(
+        (req) => req.id === requirementInfo.id
+      );
+
+      if (existingRequirement) {
+        await existingRequirement.update(requirementInfo);
+      } else {
+        const error = new Error("Requirement not found.");
+        error.statusCode = 404;
+        throw error;
+      }
+    }
+
+    res.status(200).json({ message: "Student requirements updated." });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+    return error;
+  }
+}
+
 const clearImage = (filePath) => {
   if (!filePath) return;
 
