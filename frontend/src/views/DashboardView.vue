@@ -1,11 +1,10 @@
 <script setup>
-import { computed, ref, onMounted, reactive } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import ContentPane from "@/components/UI/ContentPane.vue";
 import YearButton from "@/components/dashboard/YearButton.vue";
 import StudentWidget from "@/components/dashboard/StudentWidget.vue";
 import BarChart from "@/components/dashboard/BarChart.vue";
 import LineChart from "@/components/dashboard/LineChart.vue";
-
 
 import { useSidebarStore } from '@/stores/sidebar.js';
 import { useStudentsStore } from '@/stores/students';
@@ -114,33 +113,7 @@ onMounted(async () => {
 
 <template>
   <ContentPane :breadcrumb="[{label: 'Dashboard'}]">
-    <section class="w-full mb-4">
-      <YearButton />
-    </section>
-    <section class="grid grid-flow-col w-full">
-      <section class="grid grid-flow-row grid-row-4 w-full">
-        <StudentWidget v-for="datum of data" :key="datum.id"
-          :seriesData="datum.seriesData" 
-          :labelsData="datum.labelsData" 
-          :widgetTitle="datum.widgetTitle" 
-          :totalText="datum.totalText"
-          :Data1=datum.data1
-          :Data2=datum.data2
-        />
-      </section>
-      <section class="grid grid-flow-row">
-        <LineChart 
-            :style="`--initial-x: 28.125rem; --initial-y: 0.9375rem; --translate-x: 53.125rem; --translate-y: 13.125rem;`" />
-        <BarChart
-            :chartData="[totalStudents, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]"
-            :style="`--initial-x: 28.125rem; --initial-y: 2.125rem; --translate-x: 0.625rem; --translate-y: -6.9375rem;`" />
-      </section>
-    </section>
-    <!-- <div class="header-container">
-      <div class="dashboard-text">Dashboard</div>
-      <YearButton class="year-button"/>
-    </div>
-    <div class="panels">
+    <div>
       <div class="student-dashboard-panels">
         <StudentWidget 
           v-if="maleStudents || femaleStudents"

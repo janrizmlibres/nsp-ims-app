@@ -289,8 +289,8 @@ function cancelFile() {
         <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem"/>
       </div>
       <div class="flex gap-4 mb-2 items-center place-self-end">
-        <Button @click="saveLearner" label="Save Learner" class="mt-4 mb-10" :disabled="!isValid"/>
-        <Button v-if="validSubmit" @click="submitEvent" label="Enroll Learners" class="u-bg-pcolor hover:u-bg-pcolor mt-4 mb-10" :disabled="!isValid"/>
+        <Button @click="saveLearner" label="Save Learner" class="mt-4 mb-10" :disabled="notValid"/>
+        <Button v-if="validSubmit" @click="submitEvent" label="Enroll Learners" class="u-bg-pcolor hover:u-bg-pcolor mt-4 mb-10" :disabled="notEnrollmentValid"/>
       </div>
     </div>
     
