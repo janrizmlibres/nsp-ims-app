@@ -107,14 +107,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane header="Staff Permissions">
+  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Users'}, {label: 'Permissions'}]" header="Staff Permissions">
     <TheHeader
       :includeExport="false"
       :globalFilter="filters.global.value"
       @filterChanged="updateGlobalFilter"
     />
 
-    <Card :pt="{ content: 'h-full', body: 'h-full px-4 pb-4' }" class="rounded-md">
+    <Card :pt="{ content: 'h-full', body: 'h-full px-4 pb-4' }" class="h-full overflow-hidden !rounded-2xl">
       <template #content>
         <DataTable
           v-model:filters="filters"
@@ -168,24 +168,22 @@ onMounted(async () => {
       </template>
     </Card>
 
-    <div class="flex justify-end">
-      <div class="mt-4">
-        <Button class="h-10 u-bg-green" :disabled="noChanges" @click="updatePerms">
-          <font-awesome-icon
-            icon="fa-solid fa-circle-check"
-            class="absolute top-2/4 -mt-2 left-3"
-          />
-          <h2 class="pl-5 font-bold">Save</h2>
-        </Button>
-
-        <Button
-          class="h-10 ml-2 u-bg-red"
-          label="Reset"
-          icon="fa-solid fa-circle-xmark"
-          :disabled="noChanges"
-          @click="resetData"
+    <div class="flex gap-2 mt-4 justify-end">
+      <Button :disabled="noChanges" @click="updatePerms">
+        <font-awesome-icon
+          icon="fa-solid fa-circle-check"
+          class="absolute top-2/4 -mt-2 left-3"
         />
-      </div>
+        <h2 class="pl-5 font-bold">Save</h2>
+      </Button>
+
+      <Button
+        severity="danger"
+        label="Reset"
+        icon="fa-solid fa-circle-xmark"
+        :disabled="noChanges"
+        @click="resetData"
+      />
     </div>
   </ContentPane>
 </template>

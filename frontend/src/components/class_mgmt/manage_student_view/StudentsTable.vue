@@ -139,7 +139,16 @@ function viewStudent(student) {
 
             <Column header="Action" :exportable="false" frozen>
                 <template #body="slotProps">
-                    <Button icon="fa fa-eye" label="view" outlined rounded @click="viewStudent(slotProps.data)" />
+                    <Button
+                        class="u-bg-scolor hover:u-bg-scolor"
+                        label="View"
+                        icon="fa-solid fa-eye"
+                        rounded
+                        raised
+                        aria-label="View"
+                        size="small"
+                        @click="viewStudent(slotProps.data)"
+                    />
                 </template>
             </Column>
             <Column field="lrn" header="LRN" style="min-width: 12rem;" />

@@ -168,8 +168,8 @@ watch(() => data.value, (data) => {
             <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :invalid="invalidDateRange" :disabled="disableInputComponent" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="validateModuleRangeInput" />
         </div>
         <div class="flex flex-row gap-2">
-            <Button type="button" outlined rounded label="Add" :disabled="disableAdd" @click="addSession" class="w-full" />
-            <Button type="button" outlined rounded label="Reset" :disabled="!date" @click="resetForm" severity="danger" class="w-full" />
+            <Button type="button" outlined label="Add" :disabled="disableAdd" @click="addSession" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
+            <Button type="button" outlined label="Reset" :disabled="!date" @click="resetForm" severity="danger" class="w-full" />
         </div>
     </div>
 </template>

@@ -37,7 +37,7 @@ const isAdmin = computed(() => authStore.user.accessLevel === 1)
           </div>
 
           <InputText
-            class="grow h-10"
+            class="grow "
             type="text"
             v-model="formData.firstName"
             required
@@ -50,7 +50,7 @@ const isAdmin = computed(() => authStore.user.accessLevel === 1)
             <span>Middle Name</span>
           </div>
           <InputText
-            class="grow h-10"
+            class="grow "
             type="text"
             v-model="formData.middleName"
             @update:modelValue="$emit('dataChanged', formData)"
@@ -64,7 +64,7 @@ const isAdmin = computed(() => authStore.user.accessLevel === 1)
           </div>
 
           <InputText
-            class="grow h-10"
+            class="grow "
             type="text"
             v-model="formData.lastName"
             required
@@ -78,7 +78,7 @@ const isAdmin = computed(() => authStore.user.accessLevel === 1)
           </div>
 
           <Dropdown
-            class="w-36 h-10"
+            class="w-36 "
             v-model="formData.suffixName"
             showClear
             :options="suffixes"
@@ -94,7 +94,7 @@ const isAdmin = computed(() => authStore.user.accessLevel === 1)
           <Password
             v-model="formData.password"
             toggleMask
-            class="grow h-10"
+            class="grow "
             :required="isEditView"
             @change="$emit('dataChanged', formData)"
           >
@@ -121,7 +121,7 @@ const isAdmin = computed(() => authStore.user.accessLevel === 1)
           </div>
 
           <Password
-            class="grow h-10"
+            class="grow "
             v-model="formData.confirmPass"
             :required="isEditView"
             :feedback="false"
@@ -139,7 +139,7 @@ const isAdmin = computed(() => authStore.user.accessLevel === 1)
           </div>
 
           <InputText
-            class="grow h-10"
+            class="grow "
             type="text"
             v-model="formData.contactNum"
             required
@@ -152,7 +152,7 @@ const isAdmin = computed(() => authStore.user.accessLevel === 1)
             <span>Email Address</span>
           </div>
           <InputText
-            class="grow h-10"
+            class="grow "
             type="text"
             v-model="formData.email"
             @update:modelValue="$emit('dataChanged', formData)"
@@ -166,7 +166,7 @@ const isAdmin = computed(() => authStore.user.accessLevel === 1)
           </div>
 
           <InputText
-            class="grow h-10"
+            class="grow "
             type="text"
             v-model="formData.position"
             required

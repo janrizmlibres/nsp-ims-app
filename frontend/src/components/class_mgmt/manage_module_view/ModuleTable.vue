@@ -290,7 +290,7 @@ function editModule(data) {
 
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">
-                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editModule(slotProps.data)" />
+                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editModule(slotProps.data)" :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedModules.length}, {'text-white hover:u-bg-scolor': selectedModules.length}]" />
                     </template>
                 </Column>
                 <Column field="title" header="Title" sortable />

@@ -105,16 +105,16 @@ async function addCategory() {
                         class: [
                             {
                                 'u-bg-pcolor-darker': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain,
-                                'border u-bc-button': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
+                                'border u-border-pcolor-darker': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain
                             },
                             {
-                                'border u-bc-button hover:u-bc-button': props.outlined && props.severity === null && !props.plain
+                                'border u-border-pcolor-darker hover:u-border-pcolor-darker': props.outlined && props.severity === null && !props.plain
                             },
                             { 
-                                'hover:u-bg-button-hover hover:u-bg-border-button-hover': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain 
+                                'hover:u-bg-pcolor hover:u-border-pcolor': !props.link && props.severity === null && !props.text && !props.outlined && !props.plain 
                             },
                             { 
-                                'focus:u-bg-border-button-focus': props.severity === null 
+                                'focus:u-ring-pcolor': props.severity === null 
                             },
                         ]
                     })

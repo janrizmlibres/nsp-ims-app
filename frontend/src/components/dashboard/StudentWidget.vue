@@ -1,47 +1,16 @@
-<script>
+<script setup>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DoughnutChart from './DoughnutChart.vue'
+import { computed } from 'vue';
 
-export default {
-  components: {
-    'font-awesome-icon': FontAwesomeIcon,
-    DoughnutChart
-  },
-  props: {
-    seriesData: {
-      type: Array,
-      required: true
-    },
-    labelsData: {
-      type: Array,
-      required: true
-    },
-    widgetTitle: {
-      type: String,
-      required: true
-    },
-    totalText: {
-      type: String,
-      required: true
-    },
-    Data1: {
-      type: String,
-      required: true
-    },
-    Data2: {
-      type: String,
-      required: true
-    }
-  },
-  mounted() {
-  }
-}
+const props = defineProps(['seriesData', 'labelsData', 'widgetTitle', 'totalText', 'Data1', 'Data2'])
+const seriesData = computed(() => props.seriesData)
 </script>
 
 <template>
   <div class="widget">
     <div class="widget-wrapper">
-      <DoughnutChart class="my-chart" :seriesData="seriesData" :labelsData="labelsData"/>
+      <DoughnutChart class="my-chart" :seriesData="seriesData" :labelsData="props.labelsData"/>
       <font-awesome-icon class="graduate-icon" :icon="['fas', 'user-graduate']" />
       <div class="widget-container">
         <div class="widget-title">{{ widgetTitle }}</div>
@@ -64,14 +33,14 @@ export default {
 .my-chart {
   position: absolute;
   top: 2px;
-  left: -11px;
+  left: -17px;
   width: 169px;
   height: 169px;
   z-index: 1; /* place the chart behind other elements */
 }
 .graduate-icon {
   font-size: 55px; /* adjust as needed */
-  margin-left: 50px;
+  margin-left: 45px;
   color: #11285e;
   position: relative;
 }
@@ -121,15 +90,14 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* Aligns children to the start on the main axis */
-  align-items: flex-start; /* Aligns children to the start on the cross axis */
-  width: 390px;
+  align-items: flex-start; 
+  width: 26rem;
   height: 150px;
   background-color: white;
   border-radius: 10px;
   border-bottom: 5px solid #265492;
   padding: 10px; /* Add padding to the widget for better control of inner elements */
   margin-bottom: 20px;
-  margin-right: 20px;
 }
 
 .total-container {

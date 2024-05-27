@@ -1,15 +1,17 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted, reactive } from 'vue';
 import ContentPane from "@/components/UI/ContentPane.vue";
 import YearButton from "@/components/dashboard/YearButton.vue";
 import StudentWidget from "@/components/dashboard/StudentWidget.vue";
 import BarChart from "@/components/dashboard/BarChart.vue";
 import LineChart from "@/components/dashboard/LineChart.vue";
 
+
 import { useSidebarStore } from '@/stores/sidebar.js';
 import { useStudentsStore } from '@/stores/students';
 import { useUtilitiesStore } from '@/stores/utilities';
 import { useEnrollmentStore } from '@/stores/enrollment';
+import DoughnutChart from '@/components/dashboard/DoughnutChart.vue';
 
 const enrollmentStore = useEnrollmentStore();
 const studentsStore = useStudentsStore();
@@ -19,16 +21,17 @@ const utilitiesStore = useUtilitiesStore();
 const isSidebarHovering = computed(() => sidebarStore.isHovering);
 const isSidebarPinned = computed(() => sidebarStore.isPinned);
 
-let totalStudents = ref(0);
-let maleStudents = ref(0);
-let femaleStudents = ref(0);
-let gradeSchool = ref(0);
-let juniorHighSchool = ref(0);
-let totalClassLevels = ref(0);
-let activeStudents = ref(0);
-let inactiveStudents = ref(0);
+const totalStudents = ref(0);
+const maleStudents = ref(0);
+const femaleStudents = ref(0);
+const gradeSchool = ref(0);
+const juniorHighSchool = ref(0);
+const totalClassLevels = ref(0);
+const activeStudents = ref(0);
+const inactiveStudents = ref(0);
 
 onMounted(async () => {
+  await utilitiesStore.getTerms()
   const genderCount = await studentsStore.getGenderCount();
   const classLevelsCount = await utilitiesStore.countClassLevels();
   const statusCount = await enrollmentStore.getStatusCount();
@@ -41,15 +44,75 @@ onMounted(async () => {
   totalClassLevels.value = gradeSchool.value + juniorHighSchool.value;
   activeStudents.value = statusCount.active
   inactiveStudents.value = statusCount.inactive
-  
 });
+
+const data = computed(() => [
+  {
+    id:1,
+    seriesData: [femaleStudents.value, maleStudents.value],
+    labelsData: ['Female', 'Male'],
+    widgetTitle: "TOTAL STUDENTS",
+    totalText: totalStudents.value.toString(),
+    data1: "Male",
+    data2: "Female"
+  },
+  {
+    id:2,
+    seriesData: [gradeSchool.value, juniorHighSchool.value],
+    labelsData: ['Female', 'Male'],
+    widgetTitle: "CLASS LEVELS",
+    totalText: totalClassLevels.value.toString(),
+    data1: "GS",
+    data2: "JHS"
+  },
+  {
+    id:3,
+    seriesData: [0, 0],
+    labelsData: ['Female', 'Male'],
+    widgetTitle: "INACTIVE STUDENTS",
+    totalText: inactiveStudents.value.toString(),
+    data1: "Male",
+    data2: "Female"
+  },
+  {
+    id:4,
+    seriesData: [0, 0],
+    labelsData: ['Female', 'Male'],
+    widgetTitle: "ACTIVE STUDENTS",
+    totalText: activeStudents.value.toString(),
+    data1: "Male",
+    data2: "Female"
+  },
+])
 </script>
 
 <template>
-  <ContentPane>
-    <div class="header-container">
+  <ContentPane :breadcrumb="[{label: 'Dashboard'}]">
+    <section class="w-full mb-4">
+      <YearButton />
+    </section>
+    <section class="grid grid-flow-col w-full">
+      <section class="grid grid-flow-row grid-row-4 w-full">
+        <StudentWidget v-for="datum of data" :key="datum.id"
+          :seriesData="datum.seriesData" 
+          :labelsData="datum.labelsData" 
+          :widgetTitle="datum.widgetTitle" 
+          :totalText="datum.totalText"
+          :Data1=datum.data1
+          :Data2=datum.data2
+        />
+      </section>
+      <section class="grid grid-flow-row">
+        <LineChart 
+            :style="`--initial-x: 28.125rem; --initial-y: 0.9375rem; --translate-x: 53.125rem; --translate-y: 13.125rem;`" />
+        <BarChart
+            :chartData="[totalStudents, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]"
+            :style="`--initial-x: 28.125rem; --initial-y: 2.125rem; --translate-x: 0.625rem; --translate-y: -6.9375rem;`" />
+      </section>
+    </section>
+    <!-- <div class="header-container">
       <div class="dashboard-text">Dashboard</div>
-      <!--<YearButton class="year-button"/>-->
+      <YearButton class="year-button"/>
     </div>
     <div class="student-dashboard-panels">
         <StudentWidget 
@@ -100,7 +163,7 @@ onMounted(async () => {
           :class="!isSidebarHovering && !isSidebarPinned ? 'animate-bar-chart' : 'bar-chart'"
           :chartData="[totalStudents, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]"
           :style="`--initial-x: 28.125rem; --initial-y: 2.125rem; --translate-x: 0.625rem; --translate-y: -6.9375rem;`" />
-    </div>
+    </div> -->
   </ContentPane>
 </template>
 
@@ -111,7 +174,6 @@ onMounted(async () => {
 }
   .student-widget {
     margin-bottom: 1.25rem;
-    margin-right: 1.25rem;
     animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
   .year-button {
@@ -120,11 +182,6 @@ onMounted(async () => {
     top: 10rem;
     left: 104.600rem;
     z-index: 3;
-  }
-  .student-widget {
-    margin-bottom: 1.25rem;
-    margin-right: 1.25rem;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
   .year-button {
     position: absolute;

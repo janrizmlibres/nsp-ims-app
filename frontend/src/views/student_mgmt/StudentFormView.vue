@@ -90,8 +90,8 @@ let isOkToLeave = false
 const updateKey = ref(0)
 
 const headerText = computed(() => {
-  if (!route.params.studentId) return 'Add Record'
-  return route.meta.isViewMode ? 'View Record' : 'Edit Record'
+  if (!route.params.studentId) return 'Add'
+  return route.meta.isViewMode ? 'View' : 'Edit'
 })
 const confirmBtnText = computed(() => (route.meta.isViewMode ? 'Edit' : 'Submit'))
 const cancelBtnText = computed(() => (route.meta.isViewMode ? 'Back' : 'Cancel'))
@@ -263,8 +263,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane :header="`Students / ${headerText}`" subheader="Academic Year 2022 - 2023">
-    <form @submit.prevent="handleConfirm">
+  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Student'}, {label: `${headerText}`}]">
+    <form @submit.prevent="handleConfirm" class="h-full">
       <div class="flex flex-col gap-3 h-full mr-1">
         <IdentityForm
           @dataChanged="updateFormData"
@@ -274,11 +274,9 @@ onMounted(async () => {
         />
         <BulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
 
-        <div class="flex-none text-right">
-          <div class="inline-block">
+        <div class="flex flex-row justify-end gap-2">
             <Button
               type="submit"
-              class="h-10 u-bg-green"
               :disabled="!isFormDirty && !route.meta.isViewMode"
             >
               <div>
@@ -290,12 +288,11 @@ onMounted(async () => {
               </div>
             </Button>
             <Button
-              class="h-10 ml-2 u-bg-red"
+              severity="danger"
               :label="cancelBtnText"
               icon="fa-solid fa-circle-xmark"
               @click="handleCancel"
             />
-          </div>
         </div>
       </div>
     </form>

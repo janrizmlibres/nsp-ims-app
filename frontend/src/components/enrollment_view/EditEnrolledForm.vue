@@ -192,14 +192,16 @@ getStudent()
         <div class="basis-32 text-right">
           <span>Enrollment Form</span>
         </div>
-        <FileUpload class="grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
-        <Button label="X" @click="cancelFile" class="h-11" v-if="confirmedFile"/>     
+        <FileUpload class="u-bg-pcolor !rounded-2xl hover:u-bg-pcolor hover:transform hover:scale-[1.10] transition-all duration-300 ease-in-out grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span>Current Saved File:</span>
         </div>
-          <span class="max-w-36 overflow-auto">{{ chosenFile }}</span>
+        <div class="flex gap-4 items-center">
+          <span class="overflow-auto">{{ chosenFile }}</span>
+          <Button label="X" text @click="cancelFile" severity="danger" class="h-8 w-4 !rounded-full" v-if="confirmedFile"/>  
+        </div> 
       </div>
     </div>
 
@@ -230,8 +232,8 @@ getStudent()
         <Textarea v-model="form.selectedRemarks" rows="5" cols="30" class="grow md:w-14rem" />
       </div>
       <div class="flex gap-4 mb-2 items-center place-self-end">
-        <Button @click="updateEnrolled" label="Update Learner" class="mt-4" :disabled="checkChanges"/>
-        <Button @click="cancelEdit" label="Cancel" class="mt-4"/>
+        <Button @click="updateEnrolled" outlined label="Update Learner" class="text-white u-bg-pcolor border-none hover:u-bg-pcolor mt-4" :disabled="checkChanges"/>
+        <Button @click="cancelEdit" severity="danger" label="Cancel" class="mt-4"/>
       </div>
     </div>
 

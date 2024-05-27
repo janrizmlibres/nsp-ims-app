@@ -120,7 +120,6 @@ onMounted(() => {
 
         <div class="col-span-3 grid grid-cols-3 gap-6">
           <Dropdown
-            class="h-10"
             v-model="selectedSex"
             :options="sex"
             @change="handleUpdate"
@@ -133,7 +132,6 @@ onMounted(() => {
             <span>Blood Type</span>
           </div>
           <Dropdown
-            class="h-10"
             v-model="selectedBloodType"
             :options="bloodTypes"
             @change="handleUpdate"
@@ -148,7 +146,7 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           v-model="selectedCivilStat"
           :options="civilStatus"
           @change="handleUpdate"
@@ -161,9 +159,9 @@ onMounted(() => {
           <div>Date of Birth</div>
           <div class="text-red-500 text-xl">*</div>
         </div>
-        <div class="col-span-3 grid grid-cols-12 gap-3 flex items-center">
+        <div class="col-span-3 grid grid-cols-12 gap-3 items-center">
           <Dropdown
-            class="h-10 col-span-5"
+            class="col-span-5"
             v-model="birthday.month"
             :options="months"
             optionLabel="name"
@@ -175,7 +173,7 @@ onMounted(() => {
             :disabled="$route.meta.isViewMode"
           />
           <Dropdown
-            class="h-10 col-span-3"
+            class="col-span-3"
             v-model="birthday.day"
             :options="days"
             placeholder="Day"
@@ -185,7 +183,7 @@ onMounted(() => {
             :disabled="$route.meta.isViewMode"
           />
           <Dropdown
-            class="h-10 col-span-4"
+            class="col-span-4"
             v-model="birthday.year"
             :options="years"
             filter
@@ -204,7 +202,7 @@ onMounted(() => {
 
         <FloatLabel class="col-span-3 col-start-2 flex items-center mt-5" :pt="floatLabelPt">
           <InputText
-            class="h-10 w-full"
+            class="w-full"
             id="birth-city"
             type="text"
             v-model="birthPlace.birthCity"
@@ -218,7 +216,7 @@ onMounted(() => {
 
         <FloatLabel class="col-span-3 col-start-2 flex items-center mt-4" :pt="floatLabelPt">
           <InputText
-            class="h-10 w-full"
+            class="w-full"
             id="birth-province"
             type="text"
             v-model="birthPlace.birthProvince"
@@ -238,7 +236,7 @@ onMounted(() => {
           <span>Religion</span>
         </div>
         <Dropdown
-          class="h-10 col-span-3"
+          class="col-span-3"
           editable
           v-model="selectedReligion"
           :options="religions"
@@ -264,7 +262,7 @@ onMounted(() => {
           :pt="floatLabelPt"
         >
           <InputText
-            class="h-10 w-full"
+            class="w-full"
             :id="key"
             type="text"
             v-model="value.data"

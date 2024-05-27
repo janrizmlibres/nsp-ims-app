@@ -156,8 +156,8 @@ onBeforeRouteLeave(() => {
             <Calendar id="calendar-timeonly" v-model="endTime" timeOnly hourFormat="12" :invalid="invalid" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" @update:modelValue="invalid = false" />
         </div>
         <div class="flex justify-end gap-2">
-            <Button type="button" label="Update" :disabled="disableUpdate" outlined rounded @click="updateSchedule"></Button>
-            <Button type="button" label="Cancel" severity="danger" outlined rounded @click="cancel"></Button>
+            <Button type="button" label="Update" :disabled="disableUpdate" outlined class="u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2" @click="updateSchedule"></Button>
+            <Button type="button" label="Cancel" severity="danger" outlined @click="cancel"></Button>
         </div>
     </Dialog>
 </template>

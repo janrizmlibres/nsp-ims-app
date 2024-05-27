@@ -141,8 +141,8 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
 </script>
 
 <template>
-  <ContentPane header="Academic Term" subheader="Configuration">
-    <div class="bg-white shadow-xl rounded-md p-5">
+  <ContentPane :breadcrumb="[{label: 'Management'}, {label: 'Terms'}]">
+    <div class="bg-white shadow-xl rounded-2xl h-full p-5">
       <DataTable
         v-model:value="terms"
         dataKey="id"
@@ -190,7 +190,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
               class: [
                 'ml-2',
                 context.sorted
-                  ? 'u-legend-txt-color dark:text-white/80'
+                  ? 'u-txt-scolor dark:text-white/80'
                   : 'u-txt-active dark:text-white/70'
               ]
             }),
@@ -202,7 +202,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
                 'text-left',
                 'w-8 h-8',
                 'border-0 rounded-full',
-                'u-txt-link',
+                'u-txt-pcolor',
                 'border-transparent',
                 'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-400/50',
                 'hover:text-surface-700 hover:bg-surface-300/20',
@@ -271,7 +271,7 @@ watch(() => termStore.terms, fetchTerms, { immediate: false })
         </Column>
         <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
         <template #footer> 
-            <Button class="u-txt-link hover:bg-surface-300/20" icon="fa fa-plus" label="Create an Academic Term" text raised rounded @click="termStore.showHideAddTermDialog"/>
+            <Button class="u-txt-pcolor hover:bg-surface-300/20" icon="fa fa-plus" label="Create an Academic Term" text raised rounded @click="termStore.showHideAddTermDialog"/>
             <AddTermDialog />
         </template>
       </DataTable>
