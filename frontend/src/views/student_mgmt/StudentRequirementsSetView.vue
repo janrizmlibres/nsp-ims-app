@@ -28,6 +28,11 @@ onMounted(async () => {
     console.log(studentsStore.students);
 });
 
+function getRequirementInfo(rowData, requirementId) {
+    const requirementInfo = rowData.requirement_infos.find(info => info.studentRequirementId === requirementId);
+    return requirementInfo ? requirementInfo.met : '';
+}
+
 const editingRows = ref([])
 
 const isRowEditing = (row) => editingRows.value.includes(row);
@@ -60,7 +65,7 @@ const onRowEditSave = async (event) => {
             <Column v-for="requirement in requirementsStore.requirements" :key="requirement.id"
                 :header="requirement.requirement_name">
                 <template #body="slotProps">
-                    <Checkbox v-model="slotProps.data[requirement.id]" :disabled="!isRowEditing(slotProps.data)" />
+                    {{ getRequirementInfo(slotProps.data, requirement.id) }}
                 </template>
             </Column>
         </DataTable>
