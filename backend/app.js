@@ -25,7 +25,11 @@ app.use(express.json());
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use("/images", express.static(path.join(__dirname, "images")));
-app.use("/enrollmentForms", cors(), express.static(path.join(__dirname, "enrollmentForms")));
+app.use(
+  "/enrollmentForms",
+  cors(),
+  express.static(path.join(__dirname, "enrollmentForms"))
+);
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
