@@ -25,6 +25,7 @@ function updateGlobalFilter(newValue) {
 onMounted(async () => {
     await requirementsStore.getRequirements();
     await studentsStore.getStudents();
+    console.log(studentsStore.students);
 });
 
 const editingRows = ref([])

@@ -17,7 +17,7 @@ import ClassLevel from "../models/class/class_level.js";
 export async function getStudents(_req, res, next) {
   try {
     const students = await Student.findAll({
-      include: [PersonalInfo, ContactInfo],
+      include: [PersonalInfo, ContactInfo, RequirementInfo],
     });
 
     res.status(200).json({
@@ -43,6 +43,7 @@ export async function getStudent(req, res, next) {
         EmergencyPerson,
         ParentalInfo,
         PreviousSchool,
+        RequirementInfo
       ],
     });
 
@@ -102,16 +103,24 @@ export async function addStudent(req, res, next) {
       studentId: student.id,
     });
 
-    //add student requirements
-    const requirements = await StudentRequirement.findAll();
+    try {
+      const requirements = await StudentRequirement.findAll();
+      console.log(requirements);
+      console.log("im making requirements!");
 
-    await Promise.all(requirements.map(requirement => 
-      RequirementInfo.create({ 
-        StudentId: student.id,
-        StudentRequirementId: requirement.id,
-        met: false
-      })
-    ));
+      await Promise.all(requirements.map(requirement => 
+        RequirementInfo.create({ 
+          studentId: student.id,
+          studentRequirementId: requirement.id,
+          met: false
+        })
+      ))
+      
+      console.log(await RequirementInfo.findAll());
+      ;
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
 
     res.status(200).json({
       message: "Student record created.",

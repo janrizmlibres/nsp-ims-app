@@ -198,8 +198,8 @@ export async function addRequirement(req, res, next) {
     for (const student of students) {
       await RequirementInfo.create({
         met: false,
-        StudentId: student.id,
-        StudentRequirementId: newRequirement.id
+        studentId: student.id,
+        studentRequirementId: newRequirement.id
       });
     }
 
@@ -242,7 +242,7 @@ export async function updateRequirement(req, res, next) {
 
     // update requirement info for all students
     const newRequirementId = req.body.requirementId;
-    await RequirementInfo.update({ StudentRequirementId: newRequirementId }, { where: { StudentRequirementId: requirementId } });
+    await RequirementInfo.update({ studentRequirementId: newRequirementId }, { where: { studentRequirementId: requirementId } });
 
     res.status(200).json({ message: "Student Requirement updated successfully!" });
   } catch (error) {
@@ -258,14 +258,14 @@ export async function deleteRequirement(req, res, next) {
   try {
     const requirementId = req.params.requirementId;
 
+    // delete requirement info for all students
+    await RequirementInfo.destroy({ where: { studentRequirementId: requirementId } });
+
     await StudentRequirement.destroy({
       where: {
         id: requirementId
       }
     });
-
-    // delete requirement info for all students
-    await RequirementInfo.destroy({ where: { StudentRequirementId: requirementId } });
 
     res.status(200).json({ 
       message: "Student Requirement deleted successfully!"
