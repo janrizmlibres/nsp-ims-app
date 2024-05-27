@@ -12,6 +12,8 @@ import PreviousSchool from "../models/student/previous_school.js";
 import RequirementInfo from "../models/student/requirement_info.js";
 import StudentRequirement from "../models/student_requirement.js";
 
+import ClassLevel from "../models/class/class_level.js";
+
 export async function getStudents(_req, res, next) {
   try {
     const students = await Student.findAll({
@@ -210,28 +212,19 @@ const clearImage = (filePath) => {
   fs.unlink(filePath, (err) => console.log(err));
 };
 
-export async function getGenderCount(_req, res, next) {
+export async function getAllStudentsWithClassLevel(req, res, next) {
   try {
-    const maleCount = await Student.count({
-      include: [
-        {
-          model: PersonalInfo,
-          where: { sex: "M" },
-        },
-      ],
+    const students = await Student.findAll({
+      include: [ClassLevel]
     });
 
-    const femaleCount = await Student.count({
-      include: [
-        {
-          model: PersonalInfo,
-          where: { sex: "F" },
-        },
-      ],
-    });
+    if (!students) {
+      const error = new Error("No students found.");
+      error.statusCode = 404;
+      throw error;
+    }
 
-    res.status(200).json({ maleCount, femaleCount });
-    console.log("count: ", maleCount, femaleCount);
+    res.status(200).json({ message: "Students fetched.", students: students });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;

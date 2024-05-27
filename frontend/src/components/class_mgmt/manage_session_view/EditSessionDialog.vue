@@ -97,8 +97,8 @@ onBeforeRouteLeave(() => {
             <Textarea v-model="session.remarks" rows="5" cols="30" />
         </div>
         <div class="flex justify-end gap-2">
-            <Button type="button" label="Update" outlined rounded :disabled="disableUpdate" @click="updateSession"></Button>
-            <Button type="button" label="Cancel" outlined rounded severity="danger" @click="cancel"></Button>
+            <Button type="button" label="Update" outlined :disabled="disableUpdate" class="u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2"  @click="updateSession"></Button>
+            <Button type="button" label="Cancel" outlined severity="danger" @click="cancel"></Button>
         </div>
     </Dialog>
 </template>

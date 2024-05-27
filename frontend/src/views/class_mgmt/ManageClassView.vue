@@ -75,11 +75,11 @@ function updateViewState(termInput, classLevelInput, goToInput) {
 </script>
 
 <template>
-    <ProgressSpinner v-if="isLoading" class="self-center" />
-    <ContentPane v-else header="Class" subheader="Management">
+    <ProgressSpinner v-if="isLoading" class="h-full self-center" />
+    <ContentPane v-else :breadcrumb="[{label: 'Management'}, {label: 'Class'}]">
         <TheHeader />
-        <div v-if="viewState === null" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
-            <Panel  class="shadow-md">
+        <div class="h-full w-full bg-white shadow-xl rounded-b-2xl p-4 overflow-hidden">
+            <Panel v-if="viewState === null" class="shadow-md">
                 <template #header>
                     <div class="flex items-center gap-2">
                         <i class="fa fa-circle-info fa-xl"></i>
@@ -90,21 +90,11 @@ function updateViewState(termInput, classLevelInput, goToInput) {
                     Please fill necessary information in order to continue. Thank you!
                 </p>
             </Panel>
-        </div>
-        <div v-else-if="viewState === 0" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
-            <StudentsTable  />
-        </div>
-        <div v-else-if="viewState === 1" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
-            <ModuleTable/>
-        </div>
-        <div v-else-if="viewState === 2" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
-            <GradesTab/>
-        </div>
-        <div v-else-if="viewState === 3" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
-            <SessionTable />
-        </div>
-        <div v-else-if="viewState === 4" class="h-full w-full bg-white shadow-xl rounded-b-md p-4 overflow-hidden">
-            <SchedulesTable />
+            <StudentsTable v-else-if="viewState === 0" />
+            <ModuleTable v-else-if="viewState === 1" />
+            <GradesTab v-else-if="viewState === 2" />
+            <SessionTable v-else-if="viewState === 3" />
+            <SchedulesTable v-else-if="viewState === 4" />
         </div>
     </ContentPane>
 </template>

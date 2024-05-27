@@ -40,10 +40,10 @@ onMounted(() => emit('dtReferred', dt.value))
       <template #body="slotProps">
         <div class="flex items-center justify-center gap-2">
           <RouterLink :to="{ name: 'edit-user', params: { userId: slotProps.data.id } }">
-            <Button icon="fa-solid fa-user-pen" text rounded aria-label="Edit" />
+            <Button icon="fa-solid fa-user-pen" text class="u-txt-pcolor hover:text-white hover:u-bg-pcolor" aria-label="Edit" />
           </RouterLink>
           <Button
-            class="h-8"
+            class="h-8 u-border-pcolor u-txt-pcolor hover:text-white hover:u-bg-pcolor"
             label="Change Pasword"
             icon="fa-solid fa-key"
             outlined

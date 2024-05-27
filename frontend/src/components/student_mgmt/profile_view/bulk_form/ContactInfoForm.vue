@@ -58,7 +58,7 @@ function updateEmergencyContact() {
             </div>
 
             <InputText
-              class="h-10 col-span-3"
+              class="col-span-3"
               type="text"
               v-model="field.data"
               :="key === 'contactNum'"
@@ -95,7 +95,7 @@ function updateEmergencyContact() {
 
             <InputText
               v-if="key !== 'suffixName'"
-              class="h-10 col-span-3"
+              class="col-span-3"
               type="text"
               v-model="field.data"
               :="!['middleName', 'suffixName'].includes(key)"
@@ -110,7 +110,7 @@ function updateEmergencyContact() {
             />
             <Dropdown
               v-else
-              class="h-10 col-span-3"
+              class="col-span-3"
               v-model="field.data"
               showClear
               :options="suffixes"
@@ -126,7 +126,7 @@ function updateEmergencyContact() {
             <div class="text-red-500 text-xl">*</div>
           </div>
           <InputText
-            class="h-10 col-span-3"
+            class="col-span-3"
             type="text"
             v-model="selectedRelationship"
             @update:modelValue="updateEmergencyContact"

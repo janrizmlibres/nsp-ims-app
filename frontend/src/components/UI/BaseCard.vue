@@ -7,7 +7,7 @@ defineProps({ isNotPadded: Boolean })
 <template>
   <Card
     :pt="{ content: 'h-full', body: isNotPadded ? 'h-full' : 'p-5 h-full' }"
-    class="rounded-[0.3125rem] inline-block"
+    class="!rounded-2xl inline-block"
   >
     <template #content>
       <slot></slot>
