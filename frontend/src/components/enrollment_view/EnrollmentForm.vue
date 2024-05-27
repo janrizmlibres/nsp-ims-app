@@ -143,7 +143,6 @@ async function submitEvent() {
     await enrollmentStore.enrollLearners(selectedLearnersList.value)
     
     for (const learner of selectedLearnersList.value) {
-      console.log(selectedLearnersList.value)
       await usersStore.addAudit(`Enrolled student ${learner.fullname}`)
     }
     toast.add({
@@ -232,7 +231,7 @@ function cancelFile() {
     <div v-if="editingStudent" class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-28 text-right ml-4">
-          <span>Enrollment Form</span>
+          <span>Enrollment Form<span class="text-red-500">*</span></span>
         </div>
         <FileUpload class="grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
         <Button label="X" @click="cancelFile" class="h-11" v-if="confirmedFile"/>

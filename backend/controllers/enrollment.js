@@ -179,9 +179,6 @@ export const updateEnrollment = async (req, res, next) => {
         req.body.enrollmentForm = enrollmentFormURL;
       }
 
-      console.log("Enrollment Form: " + req.body.enrollmentForm)
-      console.log("Enrollment Form URL: " + req.files[0])
-
       await enrollment.update({
         enrollmentFormURL: req.body.enrollmentForm
       })
