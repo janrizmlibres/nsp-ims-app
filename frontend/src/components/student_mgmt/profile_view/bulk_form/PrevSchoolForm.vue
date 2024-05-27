@@ -4,6 +4,8 @@ import InputText from 'primevue/inputtext'
 import Textarea from 'primevue/textarea'
 import FloatLabel from 'primevue/floatlabel'
 
+import ValidateField from '../../ValidateField.vue'
+
 import { ref, onMounted, watch, computed, inject } from 'vue'
 import { getYear } from 'date-fns'
 
@@ -118,19 +120,28 @@ onMounted(() => {
           <div>School Name</div>
           <div class="text-red-500 text-xl">*</div>
         </div>
-        <InputText
-          class="col-span-3"
-          type="text"
-          v-model="schoolName"
-          @update:model-value="handleUpdate"
-          :pt="{
-            root: ({ context }) => {
-              return { class: [{ '!opacity-100': context.disabled }] }
-            }
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
+
+        <ValidateField v-slot="slotProps">
+          <InputText
+            class="col-span-3"
+            type="text"
+            v-model="schoolName"
+            @update:modelValue="
+              () => {
+                handleUpdate()
+                slotProps.inputEntered(schoolName)
+              }
+            "
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+            :invalid="slotProps.isInvalid"
+          />
+        </ValidateField>
 
         <div class="flex gap-1 items-center justify-end pr-6 col-span-2">
           <div>Type</div>
@@ -225,20 +236,28 @@ onMounted(() => {
           <div class="text-red-500 text-xl">*</div>
         </div>
 
-        <Textarea
-          class="col-span-3"
-          v-model="discontinuationReason"
-          rows="5"
-          cols="30"
-          @update:model-value="handleUpdate"
-          :pt="{
-            root: ({ context }) => {
-              return { class: [{ '!opacity-100': context.disabled }] }
-            }
-          }"
-          :ptOptions="{ mergeProps: true }"
-          :disabled="$route.meta.isViewMode"
-        />
+        <ValidateField v-slot="slotProps">
+          <Textarea
+            class="col-span-3"
+            v-model="discontinuationReason"
+            rows="5"
+            cols="30"
+            @update:modelValue="
+              () => {
+                handleUpdate()
+                slotProps.inputEntered(discontinuationReason)
+              }
+            "
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+            :invalid="slotProps.isInvalid"
+          />
+        </ValidateField>
 
         <div class="flex gap-1 items-center justify-end pr-6">
           <div>Address</div>
@@ -255,19 +274,28 @@ onMounted(() => {
           }"
           :pt="floatLabelPt"
         >
-          <InputText
-            class="w-full"
-            type="text"
-            v-model="value.data"
-            @update:model-value="handleUpdate"
-            :pt="{
-              root: ({ context }) => {
-                return { class: [{ '!opacity-100': context.disabled }] }
-              }
-            }"
-            :ptOptions="{ mergeProps: true }"
-            :disabled="$route.meta.isViewMode"
-          />
+          <ValidateField v-slot="slotProps">
+            <InputText
+              class="w-full"
+              type="text"
+              v-model="value.data"
+              @update:modelValue="
+                () => {
+                  handleUpdate()
+                  slotProps.inputEntered(value.data)
+                }
+              "
+              :pt="{
+                root: ({ context }) => {
+                  return { class: [{ '!opacity-100': context.disabled }] }
+                }
+              }"
+              :ptOptions="{ mergeProps: true }"
+              :disabled="$route.meta.isViewMode"
+              :invalid="slotProps.isInvalid"
+            />
+          </ValidateField>
+
           <label :for="key">{{ value.label }}</label>
         </FloatLabel>
       </div>

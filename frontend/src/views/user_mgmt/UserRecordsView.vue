@@ -77,69 +77,73 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Users'}]" header="User Records">
-    <TheHeader
-      :dt="dt"
-      :tabindex="tabindex"
-      :globalFilter="filters.global.value"
-      @filterChanged="updateGlobalFilter"
-    />
+  <div>
+    <ContentPane :breadcrumb="[{ label: 'Records' }, { label: 'Users' }]" header="User Records">
+      <TheHeader
+        :dt="dt"
+        :tabindex="tabindex"
+        :globalFilter="filters.global.value"
+        @filterChanged="updateGlobalFilter"
+      />
 
-    <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="h-full overflow-hidden !rounded-2xl inline-block">
-      <template #content>
-        <TabView v-if="isAdmin" :tabindex="tabindex" :pt="{ tabpanel: { content: '' } }">
-          <TabPanel header="Sub-Admins">
-            <RecordsTable
-              :data="usersStore.subadmins"
-              :filtersProp="filters"
-              emptyText="No sub-admins found."
-              loadingText="Loading sub-admin data. Please wait."
-              :isLoading="isLoading"
-              @emitClick="openPwDialog"
-              @dtReferred="updateDt"
-            />
-          </TabPanel>
+      <Card
+        :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }"
+        class="h-full overflow-hidden !rounded-2xl inline-block"
+      >
+        <template #content>
+          <TabView v-if="isAdmin" :tabindex="tabindex" :pt="{ tabpanel: { content: '' } }">
+            <TabPanel header="Sub-Admins">
+              <RecordsTable
+                :data="usersStore.subadmins"
+                :filtersProp="filters"
+                emptyText="No sub-admins found."
+                loadingText="Loading sub-admin data. Please wait."
+                :isLoading="isLoading"
+                @emitClick="openPwDialog"
+                @dtReferred="updateDt"
+              />
+            </TabPanel>
 
-          <TabPanel header="Staff">
-            <RecordsTable
-              :data="usersStore.staffs"
-              :filtersProp="filters"
-              emptyText="No staff found."
-              loadingText="Loading staff data. Please wait."
-              :isLoading="isLoading"
-              @emitClick="openPwDialog"
-              @dtReferred="updateDt"
-            />
-          </TabPanel>
-        </TabView>
+            <TabPanel header="Staff">
+              <RecordsTable
+                :data="usersStore.staffs"
+                :filtersProp="filters"
+                emptyText="No staff found."
+                loadingText="Loading staff data. Please wait."
+                :isLoading="isLoading"
+                @emitClick="openPwDialog"
+                @dtReferred="updateDt"
+              />
+            </TabPanel>
+          </TabView>
 
-        <TabView v-else :tabindex="tabindex">
-          <TabPanel header="Staff">
-            <RecordsTable
-              :data="usersStore.staffs"
-              :filtersProp="filters"
-              emptyText="No staff found."
-              loadingText="Loading staff data. Please wait."
-              :isLoading="isLoading"
-              @emitClick="openPwDialog"
-              @dtReferred="updateDt"
-            />
-          </TabPanel>
-        </TabView>
-      </template>
-      
-    </Card>
-  </ContentPane>
-  <div v-show="isAdmin" class="font-medium my-2 ml-4">
-    Total users:
-    <span class="u-txt-red">
-      {{ usersStore.users.length }}
-    </span>
+          <TabView v-else :tabindex="tabindex">
+            <TabPanel header="Staff">
+              <RecordsTable
+                :data="usersStore.staffs"
+                :filtersProp="filters"
+                emptyText="No staff found."
+                loadingText="Loading staff data. Please wait."
+                :isLoading="isLoading"
+                @emitClick="openPwDialog"
+                @dtReferred="updateDt"
+              />
+            </TabPanel>
+          </TabView>
+        </template>
+      </Card>
+    </ContentPane>
+    <div v-show="isAdmin" class="font-medium my-2 ml-4">
+      <span> Total users: </span>
+      <span class="u-txt-red">
+        {{ usersStore.users.length }}
+      </span>
+    </div>
+    <ChangePwDialog
+      v-model:visible="visible"
+      :userId="pwUpdateUserId"
+      :fullname="pwUpdateFullname"
+      @closeDialog="visible = false"
+    ></ChangePwDialog>
   </div>
-  <ChangePwDialog
-    v-model:visible="visible"
-    :userId="pwUpdateUserId"
-    :fullname="pwUpdateFullname"
-    @closeDialog="visible = false"
-  ></ChangePwDialog>
 </template>

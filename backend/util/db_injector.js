@@ -1,7 +1,5 @@
 import bcrypt from "bcryptjs";
 
-import ClassLevel from "../models/class/class_level.js";
-import ClassLearningStrand from "../models/class/class_learning_strand.js";
 import Student from "../models/student/student.js";
 import User from "../models/user/user.js";
 import Term from "../models/term.js";
@@ -588,7 +586,7 @@ export async function injectEnrollment() {
       dateEnrolled: getRandomDate(), // Random date between 2016 and now
       status: "Active",
     },
-    
+
     // Add more enrollment data here...
   ];
 
@@ -601,9 +599,9 @@ export async function injectEnrollment() {
   await Promise.resolve(
     await Grade.create({
       enrollmentId: 1,
-      classLearningStrandId: 1
+      classLearningStrandId: 1,
     })
-  )
+  );
 }
 
 export async function injectVolunteer() {
