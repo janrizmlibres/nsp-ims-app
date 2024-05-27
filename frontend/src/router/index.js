@@ -28,6 +28,7 @@ import AuditView from '@/views/user_mgmt/AuditView.vue'
 
 import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
 import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
+import StudentRequirementsSetView from '@/views/student_mgmt/StudentRequirementsSetView.vue'
 
 import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue'
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
@@ -87,6 +88,11 @@ const router = createRouter({
               name: 'edit-student',
               component: StudentFormView,
               meta: { isViewMode: false }
+            },
+            {
+              path: 'requirements',
+              name: 'student-requirements-set',
+              component: StudentRequirementsSetView
             }
           ]
         },
