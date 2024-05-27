@@ -1,45 +1,42 @@
 <script setup>
+import { ref, onMounted, computed } from 'vue'
 import ContentPane from '@/components/UI/ContentPane.vue'
 import RequirementHeader from '@/components/student_mgmt/requirement_view/RequirementHeader.vue'
 import { useUtilitiesStore } from '@/stores/utilities'
 import { useStudentsStore } from '@/stores/students'
-import { ref, watch, onMounted } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import Checkbox from 'primevue/checkbox'
-import Button from 'primevue/button'
 import { FilterMatchMode } from 'primevue/api'
+import Checkbox from 'primevue/checkbox'
 
-const requirementsStore = useUtilitiesStore();
-const studentsStore = useStudentsStore();
+const requirementsStore = useUtilitiesStore()
+const studentsStore = useStudentsStore()
 
 const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 })
 
 function updateGlobalFilter(newValue) {
-  filters.value.global.value = newValue
+    filters.value.global.value = newValue
 }
 
-// Fetch the requirements and students when the component is mounted
 onMounted(async () => {
-    await requirementsStore.getRequirements();
-    await studentsStore.getStudents();
-    console.log(studentsStore.students);
-});
+    await requirementsStore.getRequirements()
+    await studentsStore.getStudents()
+    console.log(studentsStore.students)
+})
 
-function getRequirementInfo(rowData, requirementId) {
-    const requirementInfo = rowData.requirement_infos.find(info => info.studentRequirementId === requirementId);
-    return requirementInfo ? requirementInfo.met : '';
+const getRequirementMet = (student, requirementName) => {
+    const requirementInfo = student.requirements_info?.find(info => info.name === requirementName)
+    return requirementInfo ? requirementInfo.met : null
 }
 
-const editingRows = ref([])
-
-const isRowEditing = (row) => editingRows.value.includes(row);
-
-const onRowEditSave = async (event) => {
-    console.log(event)
-};
+const setRequirementMet = (student, requirementName, value) => {
+    const requirementInfo = student.requirements_info?.find(info => info.name === requirementName)
+    if (requirementInfo) {
+        requirementInfo.met = value
+    }
+}
 
 </script>
 
@@ -51,12 +48,8 @@ const onRowEditSave = async (event) => {
             v-model:filters="filters"
             :globalFilterFields="['firstName', 'lastName']"
             class="mb-0 pb-0"
-            v-model:editingRows="editingRows" 
-            editMode="row"
-            @row-edit-save="onRowEditSave" 
             :ptOptions="{mergeProps:true}"
         >
-            <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
             <Column field="lrn" header="LRN" sortable></Column>
             <Column field="lastName" header="Last Name" sortable></Column>
             <Column field="firstName" header="First Name" sortable></Column>
@@ -65,7 +58,9 @@ const onRowEditSave = async (event) => {
             <Column v-for="requirement in requirementsStore.requirements" :key="requirement.id"
                 :header="requirement.requirement_name">
                 <template #body="slotProps">
-                    {{ getRequirementInfo(slotProps.data, requirement.id) }}
+                    <Checkbox 
+                        :modelValue="getRequirementMet(slotProps.data, requirement.requirement_name)"
+                    />
                 </template>
             </Column>
         </DataTable>
