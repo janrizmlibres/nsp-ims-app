@@ -73,12 +73,6 @@ const items = computed(() => [
         label: 'Volunteer Records',
         icon: 'fa fa-address-book',
         route: { name: 'volunteer-records' }
-      },
-      {
-        key: '4-2',
-        label: 'Admit Volunteers',
-        icon: 'fa fa-user-plus',
-        route: { name: 'admit-volunteers' } // Update this line
       }
     ]
   },
