@@ -238,7 +238,7 @@ function cancelFile() {
         <div class="basis-28 text-right ml-4">
           <span>Enrollment Form<span class="text-red-500">*</span></span>
         </div>
-        <FileUpload class="u-bg-pcolor !rounded-2xl hover:u-bg-pcolor hover:transform hover:scale-[1.10] transition-all duration-300 ease-in-out grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="1000000" />
+        <FileUpload class="u-bg-pcolor !rounded-2xl hover:u-bg-pcolor hover:transform hover:scale-[1.10] transition-all duration-300 ease-in-out grow" mode="basic" customUpload @uploader="confirmUpload" :multiple="true" accept="application/pdf" :maxFileSize="10485760" />
       </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-28 text-right ml-4">
