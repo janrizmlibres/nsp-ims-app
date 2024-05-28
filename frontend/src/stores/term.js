@@ -3,6 +3,8 @@ import axios from 'axios'
 import { useAuthStore } from './auth'
 import { ref } from 'vue'
 
+const apiUrl = import.meta.env.VITE_API_ENDPOINT
+
 export const useTermStore = defineStore('term', () => {
   const visibleAddTermDialog = ref(false)
   const activeTerm = ref()
@@ -12,7 +14,7 @@ export const useTermStore = defineStore('term', () => {
   async function getTerms() {
     const authStore = useAuthStore()
 
-    const result = await axios.get('http://localhost:8080/utilities/terms', {
+    const result = await axios.get(apiUrl + 'utilities/terms', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -21,43 +23,43 @@ export const useTermStore = defineStore('term', () => {
 
   async function addTerm(dates) {
     const authStore = useAuthStore()
-    
-    await axios.post('http://localhost:8080/utilities/term/create', dates, {
-      headers: {Authorization: 'Bearer ' + authStore.token}
+
+    await axios.post(apiUrl + 'utilities/term/create', dates, {
+      headers: { Authorization: 'Bearer ' + authStore.token }
     })
   }
 
   async function getTerm(termId) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(`http://localhost:8080/term/${termId}`, {
+    const result = await axios.get(apiUrl + `term/${termId}`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
-    
+
     return result.data.data
   }
 
   async function getActiveTerm() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(`http://localhost:8080/term/active`, {
+    const result = await axios.get(apiUrl + `term/active`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
-    
+
     activeTerm.value = result.data.data
   }
-  
+
   function setChosenTerm(termId) {
     chosenTerm.value = termId
   }
-  
+
   async function getAllTerms() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(`http://localhost:8080/term/terms`, {
+    const result = await axios.get(apiUrl + `term/terms`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
-    
+
     return result.data.data
   }
 
@@ -65,5 +67,17 @@ export const useTermStore = defineStore('term', () => {
     visibleAddTermDialog.value = !visibleAddTermDialog.value
   }
 
-  return { terms, visibleAddTermDialog, activeTerm, chosenTerm , getTerms, addTerm, getActiveTerm, getTerm, getAllTerms, showHideAddTermDialog, setChosenTerm }
+  return {
+    terms,
+    visibleAddTermDialog,
+    activeTerm,
+    chosenTerm,
+    getTerms,
+    addTerm,
+    getActiveTerm,
+    getTerm,
+    getAllTerms,
+    showHideAddTermDialog,
+    setChosenTerm
+  }
 })

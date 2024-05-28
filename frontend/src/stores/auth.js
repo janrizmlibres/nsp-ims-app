@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import axios from 'axios'
 
+const apiUrl = import.meta.env.VITE_API_ENDPOINT
+
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(sessionStorage.getItem('token') || null)
   const refreshToken = ref(sessionStorage.getItem('refreshToken') || null)
@@ -9,7 +11,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => token.value !== null)
 
   async function login(userIdInput, password) {
-    const result = await axios.post('http://localhost:8080/auth/login', {
+    const result = await axios.post(apiUrl + 'auth/login', {
       userId: userIdInput,
       password
     })
@@ -39,7 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
    */
   async function extendSession() {
     try {
-      const result = await axios.post('http://localhost:8080/auth/refresh-token', {
+      const result = await axios.post(apiUrl + 'auth/refresh-token', {
         refreshToken: refreshToken.value
       })
 
@@ -59,7 +61,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function logout() {
     try {
-      await axios.post('http://localhost:8080/auth/logout', {
+      await axios.post(apiUrl + 'auth/logout', {
         token: token.value,
         refreshToken: refreshToken.value
       })
