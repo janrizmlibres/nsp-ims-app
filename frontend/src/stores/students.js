@@ -78,6 +78,34 @@ export const useStudentsStore = defineStore('students', () => {
     return result
   }
 
+  async function updateStudentRequirements(studentId, requirementInfos) {
+    const authStore = useAuthStore()
+
+    const result = await axios.patch(
+      `http://localhost:8080/profile/student/${studentId}/requirements`,
+      { requirement_infos: requirementInfos },
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
+
+    return result
+  }
+
+  async function updateStudentRequirements(studentId, requirementInfos) {
+    const authStore = useAuthStore()
+
+    const result = await axios.patch(
+      `http://localhost:8080/profile/student/${studentId}/requirements`,
+      { requirement_infos: requirementInfos },
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
+
+    return result
+  }
+
   async function getStudentsWithClassLevel() {
     const authStore = useAuthStore()
 
@@ -96,6 +124,7 @@ export const useStudentsStore = defineStore('students', () => {
     getStudent,
     addStudent,
     updateStudent,
+    updateStudentRequirements,
     getStudentsWithClassLevel
   }
 })

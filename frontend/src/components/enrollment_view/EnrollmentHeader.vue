@@ -30,14 +30,20 @@ async function getAllTerms()  {
 
     if (enrollmentStore.editedTerm) {
       selectedTerm.value = await termStore.terms.find(term => term.academic_year === enrollmentStore.editedTerm)
+      
       termStore.setChosenTerm(selectedTerm.value.id)
       await enrollmentStore.getAllEnrolledFromTerm(termStore.chosenTerm)
       enrollmentStore.setEditedTerm(null)
     } else  {
       selectedTerm.value = termStore.terms[0]
       await termStore.getActiveTerm()
+      
+      if (!termStore.activeTerm) {
+        return
+      }
+      
       termStore.setChosenTerm(termStore.activeTerm.id)
-
+      
       await enrollmentStore.getAllEnrolledFromTerm(termStore.chosenTerm)
     }
   } catch (error) {

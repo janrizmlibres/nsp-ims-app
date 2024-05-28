@@ -5,7 +5,6 @@ import LoginView from '../views/login/LoginView.vue'
 import TheRootView from '../views/TheRootView.vue'
 
 // Enrollment Views
-import CurrentEnrollmentView from '@/views/enrollment/CurrentEnrollmentView.vue'
 import EnrollmentHistoryView from '@/views/enrollment/EnrollmentHistoryView.vue'
 import EnrollLearnersView from '@/views/enrollment/EnrollLearnersView.vue'
 import EditEnrolledView from '@/views/enrollment/EditEnrolledView.vue'
@@ -29,6 +28,7 @@ import AuditView from '@/views/user_mgmt/AuditView.vue'
 
 import StudentRecordsView from '@/views/student_mgmt/StudentRecordsView.vue'
 import StudentFormView from '@/views/student_mgmt/StudentFormView.vue'
+import StudentRequirementsSetView from '@/views/student_mgmt/StudentRequirementsSetView.vue'
 
 import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vue'
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
@@ -88,6 +88,11 @@ const router = createRouter({
               name: 'edit-student',
               component: StudentFormView,
               meta: { isViewMode: false }
+            },
+            {
+              path: 'requirements',
+              name: 'student-requirements-set',
+              component: StudentRequirementsSetView
             }
           ]
         },
@@ -104,11 +109,6 @@ const router = createRouter({
             return hasPermission() ? true : { name: 'dashboard' }
           },
           children: [
-            {
-              path: 'current',
-              name: 'current-enrollment',
-              component: CurrentEnrollmentView
-            },
             {
               path: 'history',
               name: 'enrollment-history',

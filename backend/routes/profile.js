@@ -145,6 +145,12 @@ router.put(
   profileController.updateStudent
 );
 
+router.patch(
+  '/student/:studentId/requirements',
+  isAuth,
+  profileController.updateStudentRequirements
+);
+
 router.get('/students-with-class-level', profileController.getAllStudentsWithClassLevel);
 
 export default router;
