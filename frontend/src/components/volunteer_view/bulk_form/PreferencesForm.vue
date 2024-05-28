@@ -1,10 +1,18 @@
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, inject, onMounted } from 'vue'
 import Checkbox from 'primevue/checkbox'
 import FormParts from '@/util/volunteer_form_parts'
+import { useUtilitiesStore } from '@/stores/utilities';
+
+const utilitiesStore = useUtilitiesStore()
 
 const { formData, updateFormData } = inject('formData')
 const props = defineProps({ Volunteer: Object, isViewMode: Boolean })
+
+const areaOfSpecializationOptions = ref([
+    {name: 'LS1-E', key: 'LS1-E'},
+    {name: 'LS1-F', key: 'LS1-F'}
+]);
 
 const availability = formData.availability
 const specialization = formData.specialization 
@@ -19,6 +27,15 @@ const handleDayUpdate = () => {
 const handleAreaUpdate = () => {
   updateFormData(FormParts.VolunteerSpecialization, { area: area.value.join(', ') })
 }
+
+onMounted(async () => {
+  try{
+    await utilitiesStore.getLearningStrands()
+    areaOfSpecializationOptions.value = utilitiesStore.strands.map(strand => ({name: strand.code, key: strand.code}))
+  } catch (error) {
+    console.log(error)
+  }
+})
 </script>
 
 <template>
@@ -103,94 +120,11 @@ const handleAreaUpdate = () => {
             <label for="area-of-specialization">Area of Specialization<span class="text-red-500 text-xl">*</span></label>
           </div>
           <div class="flex gap-4">
-            <div class="flex align-items-center">
-                <Checkbox 
-                  v-model="area" 
-                  inputId="ls1-e" 
-                  name="ls1-e" 
-                  value="LS1-E" 
-                  @change="handleAreaUpdate"
-                  :ptOptions="{ mergeProps: true }"
-                  :disabled="$route.meta.isViewMode" />
-                <label for="ls1-e" class="ml-2 whitespace-nowrap"> LS1-E </label>
+            <div v-for="Specialization of areaOfSpecializationOptions" :key="Specialization.key" class="flex align-items-center flex gap-4">
+                <Checkbox v-model="area" :inputId="Specialization.key" name="Specialization" :value="Specialization.name" @change="handleAreaUpdate" />
+                <label :for="Specialization.key">{{ Specialization.name }}</label>
             </div>
-            <div class="flex align-items-center">
-                <Checkbox 
-                  v-model="area" 
-                  inputId="ls1-f" 
-                  name="ls1-f" 
-                  value="LS1-F" 
-                  @change="handleAreaUpdate"
-                  :ptOptions="{ mergeProps: true }"
-                  :disabled="$route.meta.isViewMode" />
-                <label for="ls1-f" class="ml-2 whitespace-nowrap"> LS1-F </label>
-            </div>
-            <div class="flex align-items-center">
-                <Checkbox 
-                  v-model="area" 
-                  inputId="ls2-S" 
-                  name="ls2-s" 
-                  value="LS2-S" 
-                  @change="handleAreaUpdate"
-                  :ptOptions="{ mergeProps: true }"
-                  :disabled="$route.meta.isViewMode" />
-                <label for="ls2-s" class="ml-2 whitespace-nowrap"> LS2-S </label>
-            </div>
-            <div class="flex align-items-center">
-                <Checkbox 
-                  v-model="area" 
-                  inputId="ls3-m" 
-                  name="ls3-m" 
-                  value="LS3-M" 
-                  @change="handleAreaUpdate"
-                  :ptOptions="{ mergeProps: true }"
-                  :disabled="$route.meta.isViewMode" />
-                <label for="ls3-m" class="ml-2 whitespace-nowrap"> LS3-M </label>
-            </div>
-            <div class="flex align-items-center">
-                <Checkbox 
-                  v-model="area" 
-                  inputId="ls4-cls" 
-                  name="ls4-cls" 
-                  value="LS4-CLS" 
-                  @change="handleAreaUpdate"
-                  :ptOptions="{ mergeProps: true }"
-                  :disabled="$route.meta.isViewMode" />
-                <label for="ls4-cls" class="ml-2 whitespace-nowrap"> LS4-CLS</label>
-            </div>
-            <div class="flex align-items-center">
-                <Checkbox 
-                  v-model="area" 
-                  inputId="ls5-uts" 
-                  name="ls5-uts" 
-                  value="LS5-UTS" 
-                  @change="handleAreaUpdate"
-                  :ptOptions="{ mergeProps: true }"
-                  :disabled="$route.meta.isViewMode" />
-                <label for="ls5-uts" class="ml-2 whitespace-nowrap"> LS5-UTS</label>
-            </div>
-            <div class="flex align-items-center">
-                <Checkbox 
-                  v-model="area" 
-                  inputId="ls6-dl" 
-                  name="ls6-dl" 
-                  value="LS6-DL" 
-                  @change="handleAreaUpdate"
-                  :ptOptions="{ mergeProps: true }"
-                  :disabled="$route.meta.isViewMode" />
-                <label for="ls6-dl" class="ml-2 whitespace-nowrap"> LS6-DL</label>
-            </div>
-            <div class="flex align-items-center">
-                <Checkbox 
-                  v-model="area" 
-                  inputId="hr" 
-                  name="homeroom" 
-                  value="Homeroom" 
-                  @change="handleAreaUpdate"
-                  :ptOptions="{ mergeProps: true }"
-                  :disabled="$route.meta.isViewMode" />
-                <label for="homeroom" class="ml-2"> Homeroom</label>
-            </div>
+
           </div>
         </div>
 
