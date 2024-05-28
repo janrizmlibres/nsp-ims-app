@@ -4,6 +4,8 @@ import ContactInfo from "../models/student/contact_info.js";
 import EmergencyPerson from "../models/student/emergency_person.js";
 import ParentalInfo from "../models/student/parental_info.js";
 import PreviousSchool from "../models/student/previous_school.js";
+import StudentRequirement from "../models/student_requirement.js";
+import RequirementInfo from "../models/student/requirement_info.js";
 
 import ClassLearningStrand from "../models/class/class_learning_strand.js";
 import ClassSchedule from "../models/class/class_schedule.js";
@@ -48,6 +50,13 @@ function setAssociations() {
   // Student-ParentalInfo Relationship
   Student.hasOne(ParentalInfo);
   ParentalInfo.belongsTo(Student);
+
+  // Student-RequirementInfo Relationship
+  Student.hasMany(RequirementInfo);
+  RequirementInfo.belongsTo(Student);
+
+  StudentRequirement.hasMany(RequirementInfo);
+  RequirementInfo.belongsTo(StudentRequirement);
 
   // Student-PreviousSchool Relationship
   Student.hasOne(PreviousSchool);
