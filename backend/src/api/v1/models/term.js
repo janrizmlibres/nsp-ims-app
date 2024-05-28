@@ -1,5 +1,5 @@
 import { INTEGER, DATE, BOOLEAN, STRING } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../util/database.js";
 
 const Term = sequelize.define("term", {
   id: {
@@ -10,20 +10,20 @@ const Term = sequelize.define("term", {
   },
   academic_year: {
     type: STRING,
-    allowNull: false
+    allowNull: false,
   },
   start_date: {
     type: DATE,
-    allowNull: false
+    allowNull: false,
   },
   end_date: {
     type: DATE,
-    allowNull: false
+    allowNull: false,
   },
   status: {
     type: BOOLEAN,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 });
 
 export default Term;

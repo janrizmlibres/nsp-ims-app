@@ -34,7 +34,7 @@ import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.
 import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
 import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
 
-function setAssociations() {
+export default setAssociations = () => {
   // Student-PersonalInfo Relationship
   Student.hasOne(PersonalInfo);
   PersonalInfo.belongsTo(Student);
@@ -155,6 +155,4 @@ function setAssociations() {
   // Volunteer-Specialization Relationship
   Volunteer.hasOne(VolunteerSpecialization);
   VolunteerSpecialization.belongsTo(Volunteer);
-}
-
-export default setAssociations;
+};

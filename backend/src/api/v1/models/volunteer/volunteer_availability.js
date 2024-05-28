@@ -1,17 +1,17 @@
 import { INTEGER, STRING } from "sequelize";
-import sequelize from "../../util/database.js";
+import sequelize from "../../../util/database.js";
 
-const VolunteerSpecialization = sequelize.define("volunteer_specialization", {
+const VolunteerAvailability = sequelize.define("volunteer_availability", {
   id: {
     type: INTEGER,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true,
   },
-  area: {
+  day: {
     type: STRING,
     allowNull: false,
   },
 });
 
-export default VolunteerSpecialization;
+export default VolunteerAvailability;

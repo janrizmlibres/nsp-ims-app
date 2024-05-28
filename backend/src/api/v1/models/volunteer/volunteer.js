@@ -1,5 +1,5 @@
 import { INTEGER, STRING, VIRTUAL, BOOLEAN } from "sequelize";
-import sequelize from "../../util/database.js";
+import sequelize from "../../../util/database.js";
 
 const Volunteer = sequelize.define("volunteer", {
   id: {
