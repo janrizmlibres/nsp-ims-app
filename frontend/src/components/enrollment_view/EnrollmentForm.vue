@@ -184,9 +184,9 @@ function saveLearner() {
   validSubmit.value = true
 
   toast.add({
-    severity: 'success',
-    summary: 'Success',
-    detail: 'Learner temporarily saved. Click Submit to enroll all.',
+    severity: 'info',
+    summary: 'Saved',
+    detail: 'Learner temporarily saved. Click "Enroll Learners" to enroll all.',
     life: 3000
   })
 }
