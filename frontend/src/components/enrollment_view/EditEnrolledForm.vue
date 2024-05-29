@@ -107,6 +107,7 @@ async function getStudent()  {
 
 async function updateEnrolled() {
   try {
+    form.value.selectedRemarks = typeof form.value.selectedRemarks === 'string' ? form.value.selectedRemarks.trim() : form.value.selectedRemarks
     await enrollmentStore.updateLearner(
       props.enrollmentId,
       form.value

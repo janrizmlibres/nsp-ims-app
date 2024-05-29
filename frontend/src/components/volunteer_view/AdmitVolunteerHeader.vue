@@ -49,7 +49,7 @@ function handleUpdate() {
   <div>
     <div class="flex gap-10 items-center">
       <div class="basis-32 text-right">
-        <span>Last Name</span>
+        <label for="last-name">Last Name<span class="text-red-500 text-xl">*</span></label>
       </div>
       <InputText
         class="grow"
@@ -66,7 +66,7 @@ function handleUpdate() {
       />
 
       <div class="basis-32 text-right">
-        <span>First Name</span>
+        <label for="first-name">First Name<span class="text-red-500 text-xl">*</span></label>
       </div>
       <InputText
         class="grow"
@@ -119,7 +119,7 @@ function handleUpdate() {
     <div class="flex gap-9 items-center mt-2">
 
       <div class="basis-32 text-right">
-        <span>Affiliation</span>
+        <label for="affiliation">Affiliation<span class="text-red-500 text-xl">*</span></label>
       </div>
       <Dropdown 
         v-model="selectedAffiliation"
