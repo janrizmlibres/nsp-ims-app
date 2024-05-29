@@ -39,7 +39,7 @@ import {
   VolunteerAvailability,
 } from "../api/v1/models/volunteer/index.js";
 
-export default setAssociations = () => {
+function setAssociations() {
   // Student-PersonalInfo Relationship
   Student.hasOne(PersonalInfo);
   PersonalInfo.belongsTo(Student);
@@ -160,4 +160,6 @@ export default setAssociations = () => {
   // Volunteer-Specialization Relationship
   Volunteer.hasOne(VolunteerSpecialization);
   VolunteerSpecialization.belongsTo(Volunteer);
-};
+}
+
+export default setAssociations;

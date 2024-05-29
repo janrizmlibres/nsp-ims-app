@@ -1,8 +1,8 @@
 import { INTEGER, STRING, DATE, TEXT } from "sequelize";
 import sequelize from "../../../../util/database.js";
 
-import { Session } from "./index.js";
-import { Enrollment } from "../index.js";
+import { Session } from "./session.js";
+import { Enrollment } from "../enrollment.js";
 
 export const Attendance = sequelize.define("attendance", {
   id: {

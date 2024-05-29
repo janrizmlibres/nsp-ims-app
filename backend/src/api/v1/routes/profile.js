@@ -4,7 +4,7 @@ import { body } from "express-validator";
 
 import isAuth from "../middlewares/is_auth.js";
 import * as profileController from "../controllers/profile.js";
-import { fileStorage } from "../../../util/multer_config.js";
+import { fileStorage, imageFilter } from "../../../util/multer_config.js";
 
 const identityValidator = [
   body("identity").customSanitizer((value) => JSON.parse(value)),

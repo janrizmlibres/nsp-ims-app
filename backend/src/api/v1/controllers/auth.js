@@ -24,7 +24,7 @@ export async function signup(req, res, next) {
     const min = 10000;
     const max = 99999;
 
-    const hashedPw = await bcrypt.hash(req.body.password, 12);
+    const hashedPw = await bcrypt.hash(req.body.password, process.env.PW_SALT);
     let userId = prand.unsafeUniformIntDistribution(min, max, rng);
     let user = await User.findByPk(userId);
 
@@ -100,11 +100,11 @@ export async function login(req, res, next) {
       throw error;
     }
 
-    const authToken = jwt.sign({ userId: user.id }, "HEHESECRET", {
+    const authToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
-    const refreshToken = jwt.sign({ userId: user.id }, "HEHESECRET", {
+    const refreshToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: "10h", // Refresh token valid for 7 days
     });
 
@@ -157,7 +157,7 @@ export async function refreshToken(req, res, next) {
 
   let userId;
   try {
-    const decoded = jwt.verify(refreshToken, "HEHESECRET");
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
     userId = decoded.userId;
   } catch (err) {
     const error = new Error("Invalid refresh token.");
@@ -165,11 +165,11 @@ export async function refreshToken(req, res, next) {
     throw error;
   }
 
-  const newAuthToken = jwt.sign({ userId: userId }, "HEHESECRET", {
+  const newAuthToken = jwt.sign({ userId: userId }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
 
-  const newRefreshToken = jwt.sign({ userId: userId }, "HEHESECRET", {
+  const newRefreshToken = jwt.sign({ userId: userId }, process.env.JWT_SECRET, {
     expiresIn: "10h",
   });
 
@@ -188,7 +188,7 @@ export async function logout(req, res, next) {
   const refreshToken = req.body.refreshToken;
 
   try {
-    jwt.verify(token, "HEHESECRET");
+    jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
     if (token) {
       invalidatedTokens.push(token);

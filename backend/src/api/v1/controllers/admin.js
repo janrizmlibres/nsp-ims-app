@@ -143,7 +143,7 @@ export async function updatePassword(req, res, next) {
       throw error;
     }
 
-    const hashedPw = await bcrypt.hash(req.body.newPw, 12);
+    const hashedPw = await bcrypt.hash(req.body.newPw, process.env.PW_SALT);
     await user.update({ hashedPw });
 
     res.status(200).json({ message: "Password updated." });

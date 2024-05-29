@@ -1,5 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
+
 import * as adminController from "../controllers/admin.js";
 import isAuth from "../middlewares/is_auth.js";
 

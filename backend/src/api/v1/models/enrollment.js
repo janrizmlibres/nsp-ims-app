@@ -1,8 +1,8 @@
 import { INTEGER, STRING, DATE, BOOLEAN, TEXT } from "sequelize";
 import sequelize from "../../../util/database.js";
 
-import { ClassLevel } from "./class/index.js";
-import { Student } from "./student/index.js";
+import { ClassLevel } from "./class/class_level.js";
+import { Student } from "./student/student.js";
 
 export const Enrollment = sequelize.define("enrollment", {
   id: {

@@ -1,9 +1,9 @@
-export * from "./admin.js";
-export * from "./auth.js";
-export * from "./class.js";
-export * from "./class_learning_strand.js";
-export * from "./enrollment.js";
-export * from "./profile.js";
-export * from "./term.js";
-export * from "./utilities.js";
-export * from "./volunteer.js";
+export { default as adminRoutes } from "./admin.js";
+export { default as authRoutes } from "./auth.js";
+export { default as classRoutes } from "./class.js";
+export { default as classLearningStrandRoutes } from "./class_learning_strand.js";
+export { default as enrollmentRoutes } from "./enrollment.js";
+export { default as profileRoutes } from "./profile.js";
+export { default as termRoutes } from "./term.js";
+export { default as utilitiesRoutes } from "./utilities.js";
+export { default as volunteerRoutes } from "./volunteer.js";
