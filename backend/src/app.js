@@ -2,8 +2,8 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
 
-import swaggerJSDoc from "swagger-jsdoc";
-import swaggerui from "swagger-ui-express";
+import swaggerjsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
 import sequelize from "./util/database.js";
 import { injectAll } from "./util/db_injector.js";
@@ -58,17 +58,6 @@ app.get("/", (_, res) => {
   res.send("Please enter a valid endpoint.");
 });
 
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    servers: [{ url: "http:localhost:8080/" }],
-  },
-  apis: ["./api/v1/routes/*.js"],
-};
-
-const specs = swaggerJSDoc(swaggerOptions);
-app.use("/api-docs", swaggerui.serve, swaggerui.setup(specs));
-
 app.use("/profile", profileRoutes);
 app.use("/admin", adminRoutes);
 app.use("/auth", authRoutes);
@@ -78,6 +67,21 @@ app.use("/class", classRoutes);
 app.use("/classLearningStrand", classLearningStrandRoutes);
 app.use("/utilities", utilitiesRoutes);
 app.use("/volunteer", volunteerRoutes);
+
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "XU-NSP API Docs",
+      version: "1.0.0",
+    },
+    servers: [{ url: "http:localhost:8080/v1" }],
+  },
+  apis: ["./src/api/v1/routes/*.js"],
+};
+
+const specs = swaggerjsdoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use((error, _req, res, next) => {
   console.log(error);
