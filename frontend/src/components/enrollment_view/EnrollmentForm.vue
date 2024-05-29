@@ -196,7 +196,7 @@ async function submitEvent() {
     await enrollmentStore.enrollLearners(selectedLearnersList.value)
     
     for (const learner of selectedLearnersList.value) {
-      await usersStore.addAudit(`Enrolled student ${learner.fullname}`)
+      await usersStore.addAudit(`Enrolled student ${learner.fullname} on ${selectedTerm.value.academic_year}`)
     }
     toast.add({
       severity: 'success',
