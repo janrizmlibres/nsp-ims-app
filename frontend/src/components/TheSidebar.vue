@@ -34,7 +34,13 @@ const items = computed(() => [
         key: '2-2',
         label: 'Student Requirements',
         icon: 'fa fa-list-check',
-        route: { name: 'dashboard' }
+        route: { name: 'student-requirements-set' }
+      },
+      {
+        key: '2-3',
+        label: 'Admit Students',
+        icon: 'fa fa-user-plus',
+        route: { name: 'add-student' }
       }
     ]
   },
@@ -45,18 +51,12 @@ const items = computed(() => [
     items: [
       {
         key: '3-1',
-        label: 'Academic Year',
-        icon: 'fa fa-calendar-week',
-        route: { name: 'current-enrollment' }
-      },
-      {
-        key: '3-2',
         label: 'Enrollment Records',
         icon: 'fa fa-scroll',
         route: { name: 'enrollment-history' }
       },
       {
-        key: '3-3',
+        key: '3-2',
         label: 'Enroll Students',
         icon: 'fa fa-school-flag',
         route: { name: 'enroll-learners' }
@@ -73,12 +73,6 @@ const items = computed(() => [
         label: 'Volunteer Records',
         icon: 'fa fa-address-book',
         route: { name: 'volunteer-records' }
-      },
-      {
-        key: '4-2',
-        label: 'Admit Volunteers',
-        icon: 'fa fa-user-plus',
-        route: { name: 'admit-volunteers' } // Update this line
       }
     ]
   },

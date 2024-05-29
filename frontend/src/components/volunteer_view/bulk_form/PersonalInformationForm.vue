@@ -111,7 +111,7 @@ function updateProfessionalVolunteer() {
 
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Nickname</span>
+            <label for="nickname">Nickname<span class="text-red-500 text-xl">*</span></label>
           </div>
           <InputText
             class="grow"
@@ -126,7 +126,7 @@ function updateProfessionalVolunteer() {
 
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Sex</span>
+            <label for="sex">Sex<span class="text-red-500 text-xl">*</span></label>
           </div>
           <Dropdown 
           v-model="selectedSex" 
@@ -140,7 +140,7 @@ function updateProfessionalVolunteer() {
 
         <div class="flex gap-10 mb-2 items-center">
           <div class="basis-32 text-right">
-            <span>Date of Birth</span>
+            <label for="date-of-birth">Date of Birth<span class="text-red-500 text-xl">*</span></label>
           </div>
           <Dropdown
             class="col-span-5"
@@ -215,7 +215,7 @@ function updateProfessionalVolunteer() {
 
         <div class="flex mb-2 items-start" style="gap: 4.60rem;">
           <div class="basis-32 text-right whitespace-nowrap">
-            <span>Address</span>
+            <label for="address">Address<span class="text-red-500 text-xl">*</span></label>
           </div>
           <div class="flex flex-col w-full">
             <InputText
