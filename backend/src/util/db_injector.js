@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 import {
   Student,
@@ -403,7 +403,10 @@ export async function injectUser() {
   const createUser = async (userData) => {
     const [user, perms, audit] = userData;
 
-    user.hashedPw = await bcrypt.hash(user.password, process.env.PW_SALT);
+    user.hashedPw = await bcrypt.hash(
+      user.password,
+      Number(process.env.PW_SALT)
+    );
     delete user.password;
 
     const createdUser = await User.create(user);

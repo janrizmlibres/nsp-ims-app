@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import prand from "pure-rand";
 import { validationResult } from "express-validator";
@@ -24,7 +24,10 @@ export async function signup(req, res, next) {
     const min = 10000;
     const max = 99999;
 
-    const hashedPw = await bcrypt.hash(req.body.password, process.env.PW_SALT);
+    const hashedPw = await bcrypt.hash(
+      req.body.password,
+      Number(process.env.PW_SALT)
+    );
     let userId = prand.unsafeUniformIntDistribution(min, max, rng);
     let user = await User.findByPk(userId);
 
