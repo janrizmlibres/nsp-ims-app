@@ -153,6 +153,7 @@ function editEnrolled(index) {
   form.value.fltPretestScore = selectedLearnersList.value[index].fltPretestScore
   form.value.selectedRegularity = selectedLearnersList.value[index].selectedRegularity
   form.value.selectedRemarks = selectedLearnersList.value[index].selectedRemarks
+  currentEditingStudent.value = selectedLearnersList.value[index].fullname
   
   confirmedFile.value = !!selectedLearnersList.value[index].enrollmentForm;
   validSubmit.value = false
@@ -163,6 +164,7 @@ function editEnrolled(index) {
 function removeLearner(index) {
   if (currentEditStudentIndex.value === index) {
     editingStudent.value = false
+    currentEditingStudent.value = ''
   }
   currentEditStudentIndex.value -= 1
   selectedLearnersList.value.splice(index, 1)
@@ -242,7 +244,15 @@ onSetup()
 <template>
   <div class="flex flex-row justify-center grow gap-7">
 
-    <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pl-16">
+    <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pl-16 max-w-full">
+      <div v-if="showEnrollmentForm" class="flex gap-10 mb-2 items-center">
+        <div class="basis-36 text-right">
+          <span class="font-bold">Currently Editing:</span>
+        </div>
+        <div class="basis-32">
+          <span>{{ currentEditingStudent }}</span>
+        </div>
+      </div>
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
           <span v-if="showEnrollmentForm">Full Name:</span>
