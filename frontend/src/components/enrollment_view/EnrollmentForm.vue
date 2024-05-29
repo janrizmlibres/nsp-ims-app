@@ -31,15 +31,20 @@ const editingStudent = ref(false)
 const currentEditStudentIndex = ref()
 const validSubmit = ref(false)
 const confirmedFile = ref(false)
+const currentEditingStudent = ref('')
+const termsOptions = ref([])
+const selectedTerm = ref()
+const hasSelectedTerm = ref(false)
 
 async function onSetup() {
   try {
-    await termStore.getActiveTerm()
-    if (!termStore.activeTerm) {
+    await termStore.getTerms()
+    if (!termStore.terms) {
       return
     }
     showEnrollmentForm.value = true
-    schoolLevels.value = termStore.activeTerm.class_levels ? termStore.activeTerm.class_levels : []
+
+    termsOptions.value = termStore.terms ? termStore.terms : []
   } catch (error) {
     toast.add({
       severity: 'error',
@@ -55,7 +60,12 @@ const notValid = computed(() => {
 });
 
 const notEnrollmentValid = computed(() => {
-  return !validSubmit.value || selectedLearnersList.value.length === 0 || selectedLearnersList.value.some(learner => learner.enrollmentForm === null || !learner.enrollmentForm)
+  return !validSubmit.value || 
+    selectedLearnersList.value.length === 0 || 
+    selectedLearnersList.value.some(learner => learner.enrollmentForm === null || 
+      !learner.enrollmentForm) ||
+    selectedLearnersList.value.some(learner => !learner.selectedSchoolLevelId ||
+      !learner.selectedSchoolLevelId)
 });
 
 const chosenFile = computed(() => {
@@ -99,7 +109,6 @@ function onSelectedLearner() {
       studentId: selectedStudent.id,
       lrn: selectedStudent.lrn,
       fullname: selectedStudent.fullname,
-      currentTerm: termStore.activeTerm.id,
       selectedSchoolLevelId: null,
       fltPretestScore: null,
       selectedRegularity: null,
@@ -115,7 +124,29 @@ function onSelectedLearner() {
   selectedFullName.value = null
 }
 
+function onSelectedAcademicYear() {
+  schoolLevels.value = selectedTerm.value.class_levels ? selectedTerm.value.class_levels : []
+  hasSelectedTerm.value = true
+  // go to each student and set the selected term to null
+  selectedLearnersList.value.forEach(learner => {
+    learner.selectedSchoolLevelId = null
+  })
+  form.value.selectedSchoolLevelId = null
+}
+
 function editEnrolled(index) {
+  
+  if(!hasSelectedTerm.value) {
+    console.log("herllo")
+    toast.add({
+      severity: 'info',
+      summary: 'Notice',
+      detail: 'Please select an academic year first',
+      life: 3000
+    })
+    
+  }
+  
   currentEditStudentIndex.value = index
   
   form.value.selectedSchoolLevelId = selectedLearnersList.value[index].selectedSchoolLevelId
@@ -141,6 +172,7 @@ function saveLearner() {
   let currentLearner = selectedLearnersList.value[currentEditStudentIndex.value];
   selectedLearnersList.value[currentEditStudentIndex.value] = {
     ...currentLearner,
+    currentTerm: selectedTerm.value.id,
     selectedSchoolLevelId: form.value.selectedSchoolLevelId,
     fltPretestScore: form.value.fltPretestScore,
     selectedRegularity: form.value.selectedRegularity,
@@ -208,12 +240,12 @@ onSetup()
 </script>
 
 <template>
-  <div class="flex flex-row justify-center grow gap-20">
+  <div class="flex flex-row justify-center grow gap-7">
 
     <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pl-16">
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-32 text-right">
-          <span v-if="showEnrollmentForm">Full Name</span>
+          <span v-if="showEnrollmentForm">Full Name:</span>
         </div>
         <AutoComplete
           v-if="showEnrollmentForm"
@@ -225,7 +257,21 @@ onSetup()
           :suggestions="filteredLearners"
           @complete="search" @item-select="onSelectedLearner"
           inputClass="w-[80]"
-          class="basis-full h-11"
+          class="grow h-11"
+        />
+      </div>
+      <div class="flex gap-10 mb-2 items-center">
+        <div class="basis-32 text-right">
+          <span v-if="showEnrollmentForm">Academic Year:</span>
+        </div>
+        <Dropdown
+          v-if="showEnrollmentForm"
+          v-model="selectedTerm"
+          :options="termsOptions"
+          placeholder="Select an Academic Year"
+          optionLabel="academic_year"
+          @change="onSelectedAcademicYear"
+          class="max-w-[80] h-11"
         />
       </div>
       <DataView :value="selectedLearnersList" 
@@ -236,12 +282,15 @@ onSetup()
           <div class="grid grid-nogutter">
             <div v-for="(item, index) in slotProps.items" :key="index">
               <div class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
-                <div class="flex justify-between gap-16">
+                <div class="flex justify-between gap-9">
                   <div class="basis-32">
                     <span><span class="font-bold">Student:<br/></span>{{ item.fullname }}</span>
                   </div>
                   <div class="basis-32">
-                    <span><span class="font-bold">LRN:<br/></span>{{ item.lrn }}</span>
+                    <span class="font-bold">LRN:<br/></span>
+                    <div class="max-w-24 overflow-auto">
+                      <span>{{ item.lrn }}</span>
+                    </div>
                   </div>
                   <div class="flex gap-2">
                     <Button icon="fa fa-pencil" label="Edit" @click="editEnrolled(index)" class="u-bg-pcolor hover:u-bg-pcolor h-11 !p-6"/>
@@ -255,7 +304,7 @@ onSetup()
       </DataView>
     </div>
     
-    <div v-if="editingStudent" class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
+    <div v-if="editingStudent && hasSelectedTerm" class="flex flex-col item-center basis-1/2 gap-8 pt-3 pr-16">
       <div class="flex gap-10 mb-2 items-center">
         <div class="basis-28 text-right ml-4">
           <span>Enrollment Form<span class="text-red-500">*</span></span>
@@ -300,7 +349,7 @@ onSetup()
           optionValue="code"
           optionLabel="name"
           placeholder="Select a Regularity"
-          class="grow md:w-14rem"
+          class="grow h-11"
         />
       </div>
       <div class="flex gap-10 mb-2 items-center">
