@@ -32,23 +32,6 @@ let inactiveStudents = ref(0);
 let totalVolunteers = ref(0);
 let studentVolunteerCount = ref(0);
 let professionalVolunteerCount = ref(0);
-const enrollmentTrends = ref([]);
-
-function getEnrollmentYearsFrequency(enrollments) {
-  const yearFrequency = {};
-
-  enrollments.forEach(enrollment => {
-    const year = new Date(enrollment.dateEnrolled).getFullYear().toString();
-
-    if (yearFrequency[year]) {
-      yearFrequency[year]++;
-    } else {
-      yearFrequency[year] = 1;
-    }
-  });
-
-  return Object.entries(yearFrequency).map(([year, frequency]) => ({ year, frequency }));
-}
 
 const countEnrollmentStatus = (enrollments) => {
   let activeCount = 0;
@@ -105,7 +88,7 @@ onMounted(async () => {
   await studentsStore.getStudentsWithClassLevel()
   await studentsStore.getStudents()
 
-  const statusCount = countEnrollmentStatus(await enrollmentStore.allEnrolled.data);
+  const statusCount = countEnrollmentStatus(await enrollmentStore.allEnrolled);
   activeStudents.value = statusCount.activeCount;
   inactiveStudents.value = statusCount.inactiveCount;
 
@@ -125,16 +108,7 @@ onMounted(async () => {
     }
   }
   
-  enrollmentTrends.value = getEnrollmentYearsFrequency(enrollmentStore.allEnrolled.data);
-
-  console.log(cumulativeStudets.value, gradeSchool.value, juniorHighSchool.value, activeStudents.value, inactiveStudents.value)
 });
-
-console.log(cumulativeStudets);
-console.log(gradeSchool);
-console.log(juniorHighSchool);
-console.log(activeStudents);
-console.log(inactiveStudents);
 </script>
 
 <template>
@@ -185,6 +159,7 @@ console.log(inactiveStudents);
         
       </div>
       <div class="charts">
+        <LineChart class="line-chart"/>
         <BarChart 
           v-if="cumulativeStudets"
           class="bar-chart"
@@ -198,17 +173,18 @@ console.log(inactiveStudents);
 </template>
 
 <style scoped>
-.charts {
-    height: 80vh; /* 75% of the viewport height */
-    width: 80vw; /* 80% of the viewport width */
-    display: flex;
-    flex-direction: column;
+.charts{
+    width:80%;
+    display: grid;
+    grid-template-columns: 1fr;
     position: absolute;
+    margin-top: 5rem;
     margin-right: 10rem;
 }
   .student-widget {
     margin-bottom: 1.25rem;
     margin-right: 1.25rem;
+    animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
 
   .header-container {
@@ -229,20 +205,18 @@ console.log(inactiveStudents);
     display: grid;
     grid-template-columns: 1fr;
     position: absolute;
+    margin-top: 5rem;
     margin-right: 0.625rem;
     z-index: 1;
   }
 
   .line-chart {
     margin-left: 25.5rem;
-    
-    flex-grow: 1;
+    margin-bottom: 1.25rem;
   }
   
   .bar-chart {
     margin-left: 25.5rem;
-    margin-bottom: 1.25rem;
-    flex-grow: 1;
   }
 
 </style>

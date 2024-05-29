@@ -31,7 +31,7 @@ const { values, columns, header } = defineProps({
   }
 })
 
-//console.log(values, columns); // Use students directly
+console.log(values, columns); // Use students directly
 
 const visible = ref(false);
 </script>

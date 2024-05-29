@@ -149,6 +149,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     const result = await axios.get('http://localhost:8080/enrollment/enrollments', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
+  
     allEnrolled.value = result.data
   }
   
