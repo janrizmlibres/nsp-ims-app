@@ -3,8 +3,6 @@ import axios from 'axios'
 import { useAuthStore } from './auth'
 import { ref } from 'vue'
 
-const apiUrl = import.meta.env.VITE_API_ENDPOINT
-
 export const useUtilitiesStore = defineStore('utilities', () => {
   const terms = ref([])
   const visibleAddTermDialog = ref(false)
@@ -19,7 +17,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function addTerm(dates) {
     const authStore = useAuthStore()
 
-    await axios.post(apiUrl + 'utilities/term/create', dates, {
+    await axios.post('http://localhost:8080/api/v1/utilities/term/create', dates, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -29,7 +27,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function getTerms() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + 'utilities/terms', {
+    const result = await axios.get('http://localhost:8080/api/v1/utilities/terms', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -43,7 +41,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function updateTerm(termId, form) {
     const authStore = useAuthStore()
 
-    await axios.patch(apiUrl + `utilities/term/${termId}/update`, form, {
+    await axios.patch(`http://localhost:8080/api/v1/utilities/term/${termId}/update`, form, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -54,7 +52,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function addLearningStrand(strands) {
     const authStore = useAuthStore()
 
-    await axios.post(apiUrl + 'utilities/strand/create', strands, {
+    await axios.post('http://localhost:8080/api/v1/utilities/strand/create', strands, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -64,7 +62,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function getLearningStrands() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + 'utilities/strands', {
+    const result = await axios.get('http://localhost:8080/api/v1/utilities/strands', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
     console.log(result.data.data)
@@ -78,7 +76,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function updateLearningStrand(strandId, form) {
     const authStore = useAuthStore()
 
-    await axios.patch(apiUrl + `utilities/strand/${strandId}/update`, form, {
+    await axios.patch(`http://localhost:8080/api/v1/utilities/strand/${strandId}/update`, form, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -88,7 +86,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function deleteLearningStrand(strandId) {
     const authStore = useAuthStore()
 
-    await axios.delete(apiUrl + `utilities/strand/${strandId}/delete`, {
+    await axios.delete(`http://localhost:8080/api/v1/utilities/strand/${strandId}/delete`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -99,7 +97,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function addRequirement(requirement) {
     const authStore = useAuthStore()
 
-    await axios.post(apiUrl + 'utilities/requirement/create', requirement, {
+    await axios.post('http://localhost:8080/api/v1/utilities/requirement/create', requirement, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -109,7 +107,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function getRequirements() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + 'utilities/requirements', {
+    const result = await axios.get('http://localhost:8080/api/v1/utilities/requirements', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
     console.log(result.data.data)
@@ -123,9 +121,13 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function updateRequirement(requirementId, form) {
     const authStore = useAuthStore()
 
-    await axios.patch(apiUrl + `utilities/requirement/${requirementId}/update`, form, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    await axios.patch(
+      `http://localhost:8080/api/v1/utilities/requirement/${requirementId}/update`,
+      form,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     await addAudit(`Updated: Student Requirement with ID: ${requirementId}`)
   }
@@ -133,9 +135,12 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function deleteRequirement(requirementId) {
     const authStore = useAuthStore()
 
-    await axios.delete(apiUrl + `utilities/requirement/${requirementId}/delete`, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    await axios.delete(
+      `http://localhost:8080/api/v1/utilities/requirement/${requirementId}/delete`,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     await addAudit(`Deleted: Student Requirement with ID: ${requirementId}`)
   }
@@ -144,7 +149,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function addCategory(category) {
     const authStore = useAuthStore()
 
-    await axios.post(apiUrl + 'utilities/category/create', category, {
+    await axios.post('http://localhost:8080/api/v1/utilities/category/create', category, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -154,7 +159,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function getCategories() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + 'utilities/categories', {
+    const result = await axios.get('http://localhost:8080/api/v1/utilities/categories', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -168,9 +173,13 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function updateCategory(categoryId, form) {
     const authStore = useAuthStore()
 
-    await axios.patch(apiUrl + `utilities/category/${categoryId}/update`, form, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    await axios.patch(
+      `http://localhost:8080/api/v1/utilities/category/${categoryId}/update`,
+      form,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     await addAudit(`Updated: Student Category with ID: ${categoryId}`)
   }
@@ -178,7 +187,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
   async function deleteCategory(categoryId) {
     const authStore = useAuthStore()
 
-    await axios.delete(apiUrl + `utilities/category/${categoryId}/delete`, {
+    await axios.delete(`http://localhost:8080/api/v1/utilities/category/${categoryId}/delete`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
   }
@@ -187,7 +196,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
     const authStore = useAuthStore()
 
     const result = await axios.post(
-      apiUrl + `admin/user/add-audit`,
+      `http://localhost:8080/api/v1/admin/user/add-audit`,
       {
         userId: authStore.user.id,
         description,

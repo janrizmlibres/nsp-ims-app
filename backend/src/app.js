@@ -1,6 +1,7 @@
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import express from "express";
+import cors from "cors";
 
 import swaggerjsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
@@ -22,8 +23,6 @@ import {
   volunteerRoutes,
   profileRoutes,
 } from "./api/v1/routes/index.js";
-
-import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -58,15 +57,17 @@ app.get("/", (_, res) => {
   res.send("Please enter a valid endpoint.");
 });
 
-app.use("/profile", profileRoutes);
-app.use("/admin", adminRoutes);
-app.use("/auth", authRoutes);
-app.use("/enrollment", enrollmentRoutes);
-app.use("/term", termRoutes);
-app.use("/class", classRoutes);
-app.use("/classLearningStrand", classLearningStrandRoutes);
-app.use("/utilities", utilitiesRoutes);
-app.use("/volunteer", volunteerRoutes);
+const router = express.Router();
+
+app.use("/api/v1/profile", profileRoutes);
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/enrollment", enrollmentRoutes);
+app.use("/api/v1/term", termRoutes);
+app.use("/api/v1/class", classRoutes);
+app.use("/api/v1/classLearningStrand", classLearningStrandRoutes);
+app.use("/api/v1/utilities", utilitiesRoutes);
+app.use("/api/v1/volunteer", volunteerRoutes);
 
 const swaggerOptions = {
   swaggerDefinition: {
