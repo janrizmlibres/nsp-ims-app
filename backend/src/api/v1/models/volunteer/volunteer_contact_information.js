@@ -1,7 +1,7 @@
 import { INTEGER, STRING } from "sequelize";
-import sequelize from "../../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const VolunteerContactInformation = sequelize.define(
+export const VolunteerContactInformation = sequelize.define(
   "volunteer_contact_information",
   {
     id: {
@@ -18,5 +18,3 @@ const VolunteerContactInformation = sequelize.define(
     facebook: STRING,
   }
 );
-
-export default VolunteerContactInformation;

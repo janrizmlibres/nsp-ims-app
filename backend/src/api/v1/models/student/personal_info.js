@@ -1,7 +1,7 @@
 import { DATE, ENUM, INTEGER, STRING } from "sequelize";
-import sequelize from "../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const PersonalInfo = sequelize.define("personal_info", {
+export const PersonalInfo = sequelize.define("personal_info", {
   id: {
     type: INTEGER,
     allowNull: false,
@@ -51,5 +51,3 @@ const PersonalInfo = sequelize.define("personal_info", {
     allowNull: false,
   },
 });
-
-export default PersonalInfo;

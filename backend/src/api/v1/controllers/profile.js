@@ -3,16 +3,18 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 import { validationResult } from "express-validator";
 
-import Student from "../models/student/student.js";
-import PersonalInfo from "../models/student/personal_info.js";
-import ContactInfo from "../models/student/contact_info.js";
-import EmergencyPerson from "../models/student/emergency_person.js";
-import ParentalInfo from "../models/student/parental_info.js";
-import PreviousSchool from "../models/student/previous_school.js";
-import RequirementInfo from "../models/student/requirement_info.js";
-import StudentRequirement from "../models/student_requirement.js";
+import {
+  Student,
+  PersonalInfo,
+  ContactInfo,
+  EmergencyPerson,
+  ParentalInfo,
+  PreviousSchool,
+  RequirementInfo,
+} from "../models/student/index.js";
 
-import ClassLevel from "../models/class/class_level.js";
+import { StudentRequirement } from "../models/student_requirement.js";
+import { ClassLevel } from "../models/class/class_level.js";
 
 export async function getStudents(_req, res, next) {
   try {
@@ -43,7 +45,7 @@ export async function getStudent(req, res, next) {
         EmergencyPerson,
         ParentalInfo,
         PreviousSchool,
-        RequirementInfo
+        RequirementInfo,
       ],
     });
 
@@ -108,18 +110,19 @@ export async function addStudent(req, res, next) {
       console.log(requirements);
       console.log("im making requirements!");
 
-      await Promise.all(requirements.map(requirement => 
-        RequirementInfo.create({ 
-          studentId: student.id,
-          studentRequirementId: requirement.id,
-          met: false
-        })
-      ))
-      
+      await Promise.all(
+        requirements.map((requirement) =>
+          RequirementInfo.create({
+            studentId: student.id,
+            studentRequirementId: requirement.id,
+            met: false,
+          })
+        )
+      );
+
       console.log(await RequirementInfo.findAll());
-      ;
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.error("An error occurred:", error);
     }
 
     res.status(200).json({
@@ -226,7 +229,7 @@ export async function updateStudentRequirements(req, res, next) {
 
     const studentId = req.params.studentId;
     const requirementInfos = req.body.requirement_infos.requirement_infos;
-    console.log(requirementInfos)
+    console.log(requirementInfos);
 
     const student = await Student.findByPk(studentId);
 
@@ -275,7 +278,7 @@ const clearImage = (filePath) => {
 export async function getAllStudentsWithClassLevel(req, res, next) {
   try {
     const students = await Student.findAll({
-      include: [ClassLevel]
+      include: [ClassLevel],
     });
 
     if (!students) {

@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import * as adminController from "../controllers/admin.js";
-import isAuth from "../middleware/is_auth.js";
+import isAuth from "../middlewares/is_auth.js";
 
 const router = express.Router();
 

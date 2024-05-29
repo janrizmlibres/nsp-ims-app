@@ -1,9 +1,7 @@
 import { validationResult } from "express-validator";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
-import User from "../models/user/user.js";
-import Permission from "../models/user/permission.js";
-import Audit from "../models/user/audit.js";
+import { User, Permission, Audit } from "../models/user/index.js";
 
 export async function getUsers(req, res, next) {
   try {

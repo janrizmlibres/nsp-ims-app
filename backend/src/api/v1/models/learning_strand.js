@@ -1,7 +1,7 @@
 import { INTEGER, STRING } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../../util/database.js";
 
-const LearningStrand = sequelize.define("learning_strand", {
+export const LearningStrand = sequelize.define("learning_strand", {
   id: {
     type: INTEGER,
     autoIncrement: true,
@@ -15,7 +15,5 @@ const LearningStrand = sequelize.define("learning_strand", {
   name: {
     type: STRING,
     allowNull: false,
-  }
+  },
 });
-
-export default LearningStrand;

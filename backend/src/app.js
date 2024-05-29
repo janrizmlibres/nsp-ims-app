@@ -6,15 +6,18 @@ import sequelize from "./util/database.js";
 import { injectAll } from "./util/db_injector.js";
 import setAssociations from "./util/associations.js";
 
-import adminRoutes from "./routes/admin.js";
-import authRoutes from "./routes/auth.js";
-import enrollmentRoutes from "./routes/enrollment.js";
-import termRoutes from "./routes/term.js";
-import classRoutes from "./routes/class.js";
-import classLearningStrandRoutes from "./routes/class_learning_strand.js";
-import utilitiesRoutes from "./routes/utilities.js";
-import volunteerRoutes from "./routes/volunteer.js";
-import profileRoutes from "./routes/profile.js";
+import {
+  adminRoutes,
+  authRoutes,
+  enrollmentRoutes,
+  termRoutes,
+  classRoutes,
+  classLearningStrandRoutes,
+  utilitiesRoutes,
+  volunteerRoutes,
+  profileRoutes,
+} from "./api/v1/routes/index.js";
+
 import cors from "cors";
 
 const app = express();

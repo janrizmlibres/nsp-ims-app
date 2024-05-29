@@ -1,7 +1,7 @@
 import { INTEGER, STRING, VIRTUAL, BOOLEAN } from "sequelize";
-import sequelize from "../../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const Volunteer = sequelize.define("volunteer", {
+export const Volunteer = sequelize.define("volunteer", {
   id: {
     type: INTEGER,
     autoIncrement: true,
@@ -42,5 +42,3 @@ const Volunteer = sequelize.define("volunteer", {
     },
   },
 });
-
-export default Volunteer;

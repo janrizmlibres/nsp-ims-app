@@ -1,7 +1,7 @@
 import { INTEGER, STRING, BIGINT, VIRTUAL } from "sequelize";
-import sequelize from "../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const Student = sequelize.define("student", {
+export const Student = sequelize.define("student", {
   id: {
     type: INTEGER,
     allowNull: false,
@@ -39,5 +39,3 @@ const Student = sequelize.define("student", {
     },
   },
 });
-
-export default Student;

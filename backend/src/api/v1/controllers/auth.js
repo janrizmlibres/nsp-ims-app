@@ -1,10 +1,9 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import prand from "pure-rand";
 import { validationResult } from "express-validator";
 
-import User from "../models/user/user.js";
-import Permission from "../models/user/permission.js";
+import { User, Permission } from "../models/user/index.js";
 
 // This could be a database or in-memory data structure
 // This is a simple in-memory implementation
@@ -195,7 +194,7 @@ export async function logout(req, res, next) {
       invalidatedTokens.push(token);
     }
   }
-  
+
   if (refreshToken) {
     invalidatedTokens.push(refreshToken);
   }

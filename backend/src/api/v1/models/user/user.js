@@ -1,7 +1,7 @@
 import { INTEGER, DATE, STRING, VIRTUAL } from "sequelize";
-import sequelize from "../../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const User = sequelize.define("user", {
+export const User = sequelize.define("user", {
   id: {
     type: INTEGER,
     allowNull: false,
@@ -54,5 +54,3 @@ const User = sequelize.define("user", {
     },
   },
 });
-
-export default User;

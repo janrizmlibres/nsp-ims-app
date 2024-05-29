@@ -1,7 +1,7 @@
 import { ENUM, INTEGER, STRING, TEXT } from "sequelize";
-import sequelize from "../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const PreviousSchool = sequelize.define("previous_school", {
+export const PreviousSchool = sequelize.define("previous_school", {
   id: {
     type: INTEGER,
     allowNull: false,
@@ -49,5 +49,3 @@ const PreviousSchool = sequelize.define("previous_school", {
     allowNull: false,
   },
 });
-
-export default PreviousSchool;

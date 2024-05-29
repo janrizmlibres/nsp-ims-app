@@ -1,7 +1,7 @@
 import { INTEGER, BOOLEAN } from "sequelize";
-import sequelize from "../../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const Permission = sequelize.define("permission", {
+export const Permission = sequelize.define("permission", {
   id: {
     type: INTEGER,
     autoIncrement: true,
@@ -34,5 +34,3 @@ const Permission = sequelize.define("permission", {
     defaultValue: false,
   },
 });
-
-export default Permission;

@@ -1,9 +1,10 @@
 import { INTEGER, TEXT, STRING, DATE } from "sequelize";
-import sequelize from "../../util/database.js";
-import Module from "./module.js";
-import Enrollment from "../enrollment.js";
+import sequelize from "../../../../util/database.js";
 
-const ModuleSubmission = sequelize.define("module_submission", {
+import { Module } from "./index.js";
+import { Enrollment } from "../index.js";
+
+export const ModuleSubmission = sequelize.define("module_submission", {
   id: {
     type: INTEGER,
     autoIncrement: true,
@@ -11,11 +12,11 @@ const ModuleSubmission = sequelize.define("module_submission", {
     primaryKey: true,
   },
   enrollmentId: {
-      type: INTEGER,
-      references: {
+    type: INTEGER,
+    references: {
       model: Enrollment,
-      key: 'id',
-      },
+      key: "id",
+    },
   },
   moduleId: {
     type: INTEGER,
@@ -27,16 +28,14 @@ const ModuleSubmission = sequelize.define("module_submission", {
   date_submitted: DATE,
   score: {
     type: INTEGER,
-    defaultValue: 0
+    defaultValue: 0,
   },
   remarks: {
     type: TEXT,
-    defaultValue: ""
+    defaultValue: "",
   },
   status: {
     type: STRING,
-    defaultValue: 'No Submission'
-  }
+    defaultValue: "No Submission",
+  },
 });
-
-export default ModuleSubmission;

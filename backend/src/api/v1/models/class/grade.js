@@ -1,9 +1,10 @@
 import { BOOLEAN, INTEGER, TEXT } from "sequelize";
-import sequelize from "../../util/database.js";
-import ClassLearningStrand from "./class_learning_strand.js";
-import Enrollment from "../enrollment.js";
+import sequelize from "../../../../util/database.js";
 
-const Grade = sequelize.define("grade", {
+import { ClassLearningStrand } from "./class_learning_strand.js";
+import { Enrollment } from "../enrollment.js";
+
+export const Grade = sequelize.define("grade", {
   id: {
     type: INTEGER,
     autoIncrement: true,
@@ -11,11 +12,11 @@ const Grade = sequelize.define("grade", {
     primaryKey: true,
   },
   enrollmentId: {
-      type: INTEGER,
-      references: {
+    type: INTEGER,
+    references: {
       model: Enrollment,
-      key: 'id',
-      },
+      key: "id",
+    },
   },
   classLearningStrandId: {
     type: INTEGER,
@@ -26,24 +27,22 @@ const Grade = sequelize.define("grade", {
   },
   first_quarter: {
     type: BOOLEAN,
-    defaultValue: false
+    defaultValue: false,
   },
   second_quarter: {
     type: BOOLEAN,
-    defaultValue: false
+    defaultValue: false,
   },
   third_quarter: {
     type: BOOLEAN,
-    defaultValue: false
+    defaultValue: false,
   },
   fourth_quarter: {
     type: BOOLEAN,
-    defaultValue: false
+    defaultValue: false,
   },
   remarks: {
     type: TEXT,
-    defaultValue: ""
+    defaultValue: "",
   },
 });
-
-export default Grade;

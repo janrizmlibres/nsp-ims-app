@@ -1,7 +1,7 @@
 import { INTEGER, STRING } from "sequelize";
-import sequelize from "../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const ParentalInfo = sequelize.define("parental_info", {
+export const ParentalInfo = sequelize.define("parental_info", {
   id: {
     type: INTEGER,
     allowNull: false,
@@ -19,5 +19,3 @@ const ParentalInfo = sequelize.define("parental_info", {
   suffixNameM: STRING,
   occupationM: STRING,
 });
-
-export default ParentalInfo;
