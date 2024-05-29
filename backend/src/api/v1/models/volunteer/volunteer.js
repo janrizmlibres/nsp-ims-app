@@ -1,0 +1,44 @@
+import { INTEGER, STRING, VIRTUAL, BOOLEAN } from "sequelize";
+import sequelize from "../../../../util/database.js";
+
+export const Volunteer = sequelize.define("volunteer", {
+  id: {
+    type: INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  affiliation: {
+    type: STRING,
+    allowNull: false,
+  },
+  lastName: {
+    type: STRING,
+    allowNull: false,
+  },
+  firstName: {
+    type: STRING,
+    allowNull: false,
+  },
+  middleName: STRING,
+  suffix: STRING,
+  isArchived: {
+    type: BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  fullname: {
+    type: VIRTUAL,
+    get() {
+      return (
+        this.firstName +
+        (this.middleName === null ? " " : ` ${this.middleName} `) +
+        this.lastName +
+        (this.suffix === null ? "" : `, ${this.suffix} `)
+      );
+    },
+    set(_value) {
+      throw new Error("Do not try to set the `fullname` value!");
+    },
+  },
+});

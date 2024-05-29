@@ -11,7 +11,7 @@ export const useUsersStore = defineStore('users', () => {
   async function getAllUser(config) {
     const authStore = useAuthStore()
 
-    const result = await axios.get('http://localhost:8080/admin/users', {
+    const result = await axios.get('http://localhost:8080/api/v1/admin/users', {
       params: config,
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
@@ -22,7 +22,7 @@ export const useUsersStore = defineStore('users', () => {
   async function addUser(formData) {
     const authStore = useAuthStore()
 
-    const result = await axios.post('http://localhost:8080/auth/signup', formData, {
+    const result = await axios.post('http://localhost:8080/api/v1/auth/signup', formData, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -33,7 +33,7 @@ export const useUsersStore = defineStore('users', () => {
   async function getUser(userId) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(`http://localhost:8080/admin/user/${userId}`, {
+    const result = await axios.get(`http://localhost:8080/api/v1/admin/user/${userId}`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -44,7 +44,7 @@ export const useUsersStore = defineStore('users', () => {
     const authStore = useAuthStore()
 
     delete formData.password
-    const result = await axios.put(`http://localhost:8080/admin/user/${userId}`, formData, {
+    const result = await axios.put(`http://localhost:8080/api/v1/admin/user/${userId}`, formData, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -56,7 +56,7 @@ export const useUsersStore = defineStore('users', () => {
     const authStore = useAuthStore()
 
     const result = await axios.put(
-      'http://localhost:8080/admin/users/update-permissions',
+      'http://localhost:8080/api/v1/admin/users/update-permissions',
       updatedData,
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
@@ -77,7 +77,7 @@ export const useUsersStore = defineStore('users', () => {
     const authStore = useAuthStore()
 
     const result = await axios.patch(
-      `http://localhost:8080/admin/user/password/${userId}`,
+      `http://localhost:8080/api/v1/admin/user/password/${userId}`,
       { newPw },
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
@@ -92,7 +92,7 @@ export const useUsersStore = defineStore('users', () => {
     const authStore = useAuthStore()
 
     const result = await axios.patch(
-      `http://localhost:8080/admin/user/last-login/${authStore.user.id}`,
+      `http://localhost:8080/api/v1/admin/user/last-login/${authStore.user.id}`,
       { lastLogin: new Date() },
       { headers: { Authorization: 'Bearer ' + authStore.token } }
     )
@@ -104,7 +104,7 @@ export const useUsersStore = defineStore('users', () => {
     const authStore = useAuthStore()
 
     const result = await axios.post(
-      `http://localhost:8080/admin/user/add-audit`,
+      `http://localhost:8080/api/v1/admin/user/add-audit`,
       { userId: authStore.user.id, description, date: new Date() },
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
