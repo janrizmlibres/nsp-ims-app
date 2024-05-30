@@ -21,7 +21,7 @@ export const useStudentsStore = defineStore('students', () => {
   async function getStudents() {
     const authStore = useAuthStore()
 
-    const result = await axios.get('http://localhost:8080/profile/students', {
+    const result = await axios.get('http://localhost:8080/api/v1/profile/students', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -31,7 +31,7 @@ export const useStudentsStore = defineStore('students', () => {
   async function getStudent(studentId) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(`http://localhost:8080/profile/student/${studentId}`, {
+    const result = await axios.get(`http://localhost:8080/api/v1/profile/student/${studentId}`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -50,7 +50,7 @@ export const useStudentsStore = defineStore('students', () => {
       form.append(key, JSON.stringify(formData[key]))
     }
 
-    const result = await axios.post('http://localhost:8080/profile/add-student', form, {
+    const result = await axios.post('http://localhost:8080/api/v1/profile/add-student', form, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -69,35 +69,53 @@ export const useStudentsStore = defineStore('students', () => {
       form.append(key, JSON.stringify(formData[key]))
     }
 
-    const result = await axios.put(`http://localhost:8080/profile/student/${studentId}`, form, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    const result = await axios.put(
+      `http://localhost:8080/api/v1/profile/student/${studentId}`,
+      form,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     return result
   }
 
   async function updateStudentRequirements(studentId, requirementInfos) {
     const authStore = useAuthStore()
-  
-    const result = await axios.patch(`http://localhost:8080/profile/student/${studentId}/requirements`, 
-      { requirement_infos: requirementInfos }, 
+
+    const result = await axios.patch(
+      `http://localhost:8080/profile/student/${studentId}/requirements`,
+      { requirement_infos: requirementInfos },
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
       }
     )
-  
+
     return result
   }
 
   async function getStudentsWithClassLevel() {
-  const authStore = useAuthStore();
+    const authStore = useAuthStore()
 
-  const result = await axios.get('http://localhost:8080/profile/students-with-class-level', {
-    headers: { Authorization: 'Bearer ' + authStore.token }
-  });
+    const result = await axios.get(
+      'http://localhost:8080/api/v1/profile/students-with-class-level',
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
-  studentsWithClassLevel.value = result.data.students;
-}
+    studentsWithClassLevel.value = result.data.students
+  }
 
-  return { students, studentsNormalized, studentsWithClassLevel, getStudents, getStudent, addStudent, updateStudent, updateStudentRequirements, getStudentsWithClassLevel }
+  return {
+    students,
+    studentsNormalized,
+    studentsWithClassLevel,
+    getStudents,
+    getStudent,
+    addStudent,
+    updateStudent,
+    updateStudentRequirements,
+    getStudentsWithClassLevel
+  }
 })

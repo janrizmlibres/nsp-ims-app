@@ -1,0 +1,41 @@
+import { INTEGER, TEXT, STRING, DATE } from "sequelize";
+import sequelize from "../../../../util/database.js";
+
+import { Module } from "./index.js";
+import { Enrollment } from "../index.js";
+
+export const ModuleSubmission = sequelize.define("module_submission", {
+  id: {
+    type: INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  enrollmentId: {
+    type: INTEGER,
+    references: {
+      model: Enrollment,
+      key: "id",
+    },
+  },
+  moduleId: {
+    type: INTEGER,
+    references: {
+      model: Module,
+      key: "id",
+    },
+  },
+  date_submitted: DATE,
+  score: {
+    type: INTEGER,
+    defaultValue: 0,
+  },
+  remarks: {
+    type: TEXT,
+    defaultValue: "",
+  },
+  status: {
+    type: STRING,
+    defaultValue: "No Submission",
+  },
+});
