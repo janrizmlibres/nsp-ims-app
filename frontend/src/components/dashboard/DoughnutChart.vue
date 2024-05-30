@@ -1,10 +1,9 @@
-
 <template>
-    <vue-apex-charts type="donut" :options="chartOptions" :series="series"></vue-apex-charts>
+    <vue-apex-charts :key="chartKey" type="donut" :options="chartOptions" :series="series"></vue-apex-charts>
 </template>
 
 <script setup>
-import { defineProps, reactive } from "vue";
+import { defineProps, reactive, ref, watch } from "vue";
 import VueApexCharts from "vue3-apexcharts";
 
 const props = defineProps({
@@ -12,13 +11,15 @@ const props = defineProps({
     labelsData: Array
 });
 
-const series = reactive(props.seriesData);
+let series = reactive(props.seriesData);
+let chartKey = ref(0); // add a key for the chart
+
 const chartOptions = reactive({
     chart: {
         type: 'donut',
         background: 'transparent',
         width: '3.125rem', // adjust as needed
-        height: '3.125rem' // adjust as needed
+        height: '3.125rem', // adjust as needed
     },
     plotOptions: {
         pie: {
@@ -35,5 +36,10 @@ const chartOptions = reactive({
         show: false
     },
     labels: props.labelsData,
+});
+
+watch(() => props.seriesData, (newSeriesData) => {
+    series = reactive(newSeriesData);
+    chartKey.value++; // increment the key to force re-render
 });
 </script>

@@ -26,8 +26,15 @@ const maleStudents = ref(0);
 const femaleStudents = ref(0);
 
 const totalEnrolledStudents = ref(0)
+const activeEnrolledStudents = ref(0)
+const inactiveEnrolledStudents = ref(0)
+
 const gradeSchoolCount = ref(0)
+const activeGradeSchoolCount = ref(0)
+const inactiveGradeSchoolCount = ref(0)
 const juniorHighSchoolCount = ref(0)
+const activeJuniorHighSchoolCount = ref(0)
+const inactiveJuniorHighSchoolCount = ref(0)
 
 function countGenders(students) {
   let maleCount = 0;
@@ -50,7 +57,7 @@ function getTotalEnrolledStudents() {
   //console.log(totalEnrolledStudents);
 }
 
-const getSchoolLevelCounts = () => {
+function getSchoolLevelCounts () {
   gradeSchoolCount.value = 0;
   juniorHighSchoolCount.value = 0;
 
@@ -62,6 +69,43 @@ const getSchoolLevelCounts = () => {
     }
   });
 };
+
+function getEnrolledStatusCounts() {
+  activeEnrolledStudents.value = 0;
+  inactiveEnrolledStudents.value = 0;
+
+  enrollmentStore.learners.forEach(student => {
+    if (student.status === 'Active') {
+      activeEnrolledStudents.value++;
+    } else if (student.status === 'Inactive') {
+      inactiveEnrolledStudents.value++;
+    }
+  });
+};
+
+function getGradeSchoolStatusCounts() {
+  enrollmentStore.learners.forEach(learner => {
+    if (learner.schoolLevel === 'Grade School') {
+      if (learner.status === 'Active') {
+        activeGradeSchoolCount.value++;
+      } else if (learner.status === 'Inactive') {
+        inactiveGradeSchoolCount.value++;
+      }
+    }
+  });
+}
+
+function getJuniorHighSchoolStatusCounts() {
+  enrollmentStore.learners.forEach(learner => {
+    if (learner.schoolLevel === 'Junior High School') {
+      if (learner.status === 'Active') {
+        activeJuniorHighSchoolCount.value++;
+      } else if (learner.status === 'Inactive') {
+        inactiveJuniorHighSchoolCount.value++;
+      }
+    }
+  });
+}
 
 onMounted(async () => {
   await studentsStore.getStudents()
@@ -77,7 +121,11 @@ const handleTermIdChanged = async (newTermId) => {
   await enrollmentStore.getAllEnrolledFromTerm(newTermId);
   getTotalEnrolledStudents();
   getSchoolLevelCounts();
-  //console.log(gradeSchoolCount.value, juniorHighSchoolCount.value);
+  getEnrolledStatusCounts();
+  getGradeSchoolStatusCounts();
+  getJuniorHighSchoolStatusCounts();
+
+  console.log(activeJuniorHighSchoolCount.value, inactiveJuniorHighSchoolCount.value);
 };
 </script>
 
@@ -98,7 +146,7 @@ const handleTermIdChanged = async (newTermId) => {
           :icon="['fas', 'user-graduate']" />
         <StudentWidget 
           class="student-widget" 
-          :seriesData="[0, 0]" 
+          :seriesData="[activeEnrolledStudents, inactiveEnrolledStudents]" 
           :labelsData="['Inactive', 'Active']" 
           widgetTitle="ENROLLED STUDENTS" 
           :totalText= totalEnrolledStudents.toString()
@@ -108,7 +156,7 @@ const handleTermIdChanged = async (newTermId) => {
            />
         <StudentWidget
           class="student-widget" 
-          :seriesData="[0, 0]" 
+          :seriesData="[activeGradeSchoolCount, inactiveGradeSchoolCount]" 
           :labelsData="['Inactive', 'Active']" 
           widgetTitle="GRADE SCHOOL" 
           :totalText= gradeSchoolCount.toString()
@@ -117,13 +165,13 @@ const handleTermIdChanged = async (newTermId) => {
           :icon="['fas', 'user-graduate']" />
         <StudentWidget
           class="student-widget" 
-          :seriesData="[0, 0]" 
+          :seriesData="[activeJuniorHighSchoolCount, inactiveJuniorHighSchoolCount]" 
           :labelsData="['Inactive', 'Active']" 
           widgetTitle="JUNIOR HIGH SCHOOL" 
           :totalText= juniorHighSchoolCount.toString()
           Data1= "Active"
           Data2= "Inactive"
-          :icon="['fas', 'user']"  />
+          :icon="['fas', 'user-graduate']"  />
         
       </div>
       <div class="charts">
