@@ -36,6 +36,8 @@ const juniorHighSchoolCount = ref(0)
 const activeJuniorHighSchoolCount = ref(0)
 const inactiveJuniorHighSchoolCount = ref(0)
 
+const enrollmentTrend = ref([])
+
 function countGenders(students) {
   let maleCount = 0;
   let femaleCount = 0;
@@ -107,6 +109,26 @@ function getJuniorHighSchoolStatusCounts() {
   });
 }
 
+function getEnrollmentTrendByMonth() {
+  // Create an array with all months
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  // Initialize an object to store the count of enrollments for each month
+  const enrollmentsByMonth = months.reduce((obj, month) => ({ ...obj, [month]: 0 }), {});
+
+  // Iterate over the learners array
+  for (const learner of enrollmentStore.learners) {
+    // Extract the month from the dateEnrolled property
+    const month = new Date(learner.dateEnrolled).getMonth();
+
+    // Increment the count for this month
+    enrollmentsByMonth[months[month]]++;
+  }
+
+  // Convert the enrollmentsByMonth object to the desired output format
+  enrollmentTrend.value = months.map(month => ({ x: month, y: enrollmentsByMonth[month] }));
+}
+
 onMounted(async () => {
   await studentsStore.getStudents()
 
@@ -117,6 +139,20 @@ onMounted(async () => {
 });
 
 const handleTermIdChanged = async (newTermId) => {
+  //reset the values
+  totalEnrolledStudents.value = 0;
+  activeEnrolledStudents.value = 0;
+  inactiveEnrolledStudents.value = 0;
+
+  gradeSchoolCount.value = 0;
+  activeGradeSchoolCount.value = 0;
+  inactiveGradeSchoolCount.value = 0;
+  juniorHighSchoolCount.value = 0;
+  activeJuniorHighSchoolCount.value = 0;
+  inactiveJuniorHighSchoolCount.value = 0;
+
+  enrollmentTrend.value = [];
+
   // handle the new term ID here
   await enrollmentStore.getAllEnrolledFromTerm(newTermId);
   getTotalEnrolledStudents();
@@ -124,8 +160,8 @@ const handleTermIdChanged = async (newTermId) => {
   getEnrolledStatusCounts();
   getGradeSchoolStatusCounts();
   getJuniorHighSchoolStatusCounts();
-
-  console.log(activeJuniorHighSchoolCount.value, inactiveJuniorHighSchoolCount.value);
+  getEnrollmentTrendByMonth();
+  console.log(enrollmentTrend.value);
 };
 </script>
 
@@ -139,14 +175,14 @@ const handleTermIdChanged = async (newTermId) => {
           class="student-widget" 
           :seriesData="[femaleStudents, maleStudents]" 
           :labelsData="['Female', 'Male']" 
-          widgetTitle="STUDENTS" 
+          widgetTitle="TOTAL STUDENTS" 
           :totalText= cumulativeStudets.toString()
           Data1= "Male"
           Data2= "Female"
           :icon="['fas', 'user-graduate']" />
         <StudentWidget 
           class="student-widget" 
-          :seriesData="[activeEnrolledStudents, inactiveEnrolledStudents]" 
+          :seriesData="[inactiveEnrolledStudents, activeEnrolledStudents]" 
           :labelsData="['Inactive', 'Active']" 
           widgetTitle="ENROLLED STUDENTS" 
           :totalText= totalEnrolledStudents.toString()
@@ -156,7 +192,7 @@ const handleTermIdChanged = async (newTermId) => {
            />
         <StudentWidget
           class="student-widget" 
-          :seriesData="[activeGradeSchoolCount, inactiveGradeSchoolCount]" 
+          :seriesData="[inactiveGradeSchoolCount, activeGradeSchoolCount]" 
           :labelsData="['Inactive', 'Active']" 
           widgetTitle="GRADE SCHOOL" 
           :totalText= gradeSchoolCount.toString()
@@ -165,7 +201,7 @@ const handleTermIdChanged = async (newTermId) => {
           :icon="['fas', 'user-graduate']" />
         <StudentWidget
           class="student-widget" 
-          :seriesData="[activeJuniorHighSchoolCount, inactiveJuniorHighSchoolCount]" 
+          :seriesData="[inactiveJuniorHighSchoolCount, activeJuniorHighSchoolCount]" 
           :labelsData="['Inactive', 'Active']" 
           widgetTitle="JUNIOR HIGH SCHOOL" 
           :totalText= juniorHighSchoolCount.toString()
@@ -175,11 +211,12 @@ const handleTermIdChanged = async (newTermId) => {
         
       </div>
       <div class="charts">
+        <LineChart 
+          class="line-chart"
+          :chartData="enrollmentTrend"/>
         <BarChart 
           class="bar-chart"
-          :chartData="[10, 10, 10, 10, 10]" />
-        <LineChart 
-          class="line-chart" :data="enrollmentTrends"/>
+          :chartData="[totalEnrolledStudents, activeEnrolledStudents, inactiveEnrolledStudents, gradeSchoolCount, juniorHighSchoolCount]" />
       </div>
     </div>
   </ContentPane>
@@ -214,11 +251,11 @@ const handleTermIdChanged = async (newTermId) => {
 
   .line-chart {
     margin-left: 25.5rem;
+    margin-bottom: 1.25rem;
   }
   
   .bar-chart {
     margin-left: 25.5rem;
-    margin-bottom: 1.25rem;
   }
 
 </style>

@@ -1,4 +1,5 @@
 <script setup>
+import { defineProps, reactive, ref, watch } from "vue";
 import VueApexCharts from "vue3-apexcharts";
 
 const props = defineProps({
@@ -8,14 +9,15 @@ const props = defineProps({
   }
 });
 
-const series = [
+let series = reactive([
   {
     name: 'Student',
     data: props.chartData
   }
-];
+]);
+// add a key for the chart
 
-const chartOptions = {
+const chartOptions = reactive({
   chart: {
     type: 'bar',
     height: 350
@@ -35,9 +37,19 @@ const chartOptions = {
     align: 'center'
   },
   xaxis: {
-    categories: ['Students', 'Grade School', 'Junior High School', 'Active Students', 'Inactive Students'],
-  },
-};
+    categories: ['Enrolled Students', 'Active Students', 'Inactive Students', 'Grade School', 'Junior High School'],
+    // your xaxis options here
+  }
+});
+
+watch(() => props.chartData, (newChartData) => {
+  series = reactive([
+    {
+      name: 'Student',
+      data: newChartData
+    }
+  ]);
+});
 </script>
 
 <template>
