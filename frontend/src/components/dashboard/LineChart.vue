@@ -43,7 +43,7 @@ const chartOptions = reactive({
   xaxis: {
     type: 'category',
     title: {
-      text: 'Year'
+      text: 'Month'
     }
   },
   yaxis: {

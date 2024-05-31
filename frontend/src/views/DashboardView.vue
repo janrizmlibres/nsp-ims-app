@@ -21,10 +21,6 @@ const volunteerStore = useVolunteerStore();
 const isSidebarHovering = computed(() => sidebarStore.isHovering);
 const isSidebarPinned = computed(() => sidebarStore.isPinned);
 
-const cumulativeStudets = ref(0);
-const maleStudents = ref(0);
-const femaleStudents = ref(0);
-
 const totalEnrolledStudents = ref(0)
 const activeEnrolledStudents = ref(0)
 const inactiveEnrolledStudents = ref(0)
@@ -37,21 +33,6 @@ const activeJuniorHighSchoolCount = ref(0)
 const inactiveJuniorHighSchoolCount = ref(0)
 
 const enrollmentTrend = ref([])
-
-function countGenders(students) {
-  let maleCount = 0;
-  let femaleCount = 0;
-
-  students.forEach(student => {
-    if (student.personal_info.sex === 'M') {
-      maleCount++;
-    } else if (student.personal_info.sex === 'F') {
-      femaleCount++;
-    }
-  });
-
-  return { maleCount, femaleCount };
-}
 
 function getTotalEnrolledStudents() {
   console.log(enrollmentStore.learners);
@@ -129,15 +110,6 @@ function getEnrollmentTrendByMonth() {
   enrollmentTrend.value = months.map(month => ({ x: month, y: enrollmentsByMonth[month] }));
 }
 
-onMounted(async () => {
-  await studentsStore.getStudents()
-
-  maleStudents.value = countGenders(studentsStore.students).maleCount;
-  femaleStudents.value = countGenders(studentsStore.students).femaleCount;
-  cumulativeStudets.value = studentsStore.students.length;
-  
-});
-
 const handleTermIdChanged = async (newTermId) => {
   //reset the values
   totalEnrolledStudents.value = 0;
@@ -161,7 +133,7 @@ const handleTermIdChanged = async (newTermId) => {
   getGradeSchoolStatusCounts();
   getJuniorHighSchoolStatusCounts();
   getEnrollmentTrendByMonth();
-  console.log(enrollmentTrend.value);
+  //console.log(enrollmentTrend.value);
 };
 </script>
 
@@ -170,16 +142,6 @@ const handleTermIdChanged = async (newTermId) => {
     <div>
       <YearButton @termId-changed="handleTermIdChanged" />
       <div class="student-dashboard-panels">
-        <StudentWidget 
-          v-if="maleStudents || femaleStudents"
-          class="student-widget" 
-          :seriesData="[femaleStudents, maleStudents]" 
-          :labelsData="['Female', 'Male']" 
-          widgetTitle="TOTAL STUDENTS" 
-          :totalText= cumulativeStudets.toString()
-          Data1= "Male"
-          Data2= "Female"
-          :icon="['fas', 'user-graduate']" />
         <StudentWidget 
           class="student-widget" 
           :seriesData="[inactiveEnrolledStudents, activeEnrolledStudents]" 

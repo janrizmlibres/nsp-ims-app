@@ -16,12 +16,8 @@ import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
-const { values, columns, header } = defineProps({
+const { values, header } = defineProps({
   values: {
-    type: Array,
-    required: true
-  },
-  columns: {
     type: Array,
     required: true
   },
@@ -30,6 +26,11 @@ const { values, columns, header } = defineProps({
     required: true
   }
 })
+
+const columns = [
+  { field: 'fullName', header: 'Full Name' },
+  { field: 'status', header: 'Status' }
+];
 
 console.log(values, columns); // Use students directly
 

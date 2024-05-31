@@ -6,7 +6,7 @@ import ViewListClassLevel from './ViewListClassLevel.vue'
 import { useStudentsStore } from '@/stores/students'
 import { useVolunteerStore } from '@/stores/volunteer'
 import { useEnrollmentStore } from '@/stores/enrollment'
-import { onMounted } from 'vue'
+import { watch, ref, computed } from 'vue'
 const enrollmentStore = useEnrollmentStore()
 const volunteerStore = useVolunteerStore()
 const studentsStore = useStudentsStore()
@@ -42,11 +42,20 @@ const props = defineProps({
     },
 })
 
-onMounted(async () => {
-    enrollmentStore.allEnrolled.forEach((enrollment, index) => {
-      enrollment.fullname = studentsStore.students[index].fullname;
-    });
-  });
+const learners = ref([]);
+
+// Watch for changes in enrollmentStore.learners
+watch(() => enrollmentStore.learners, (newLearners) => {
+  learners.value = newLearners;
+});
+
+const gradeSchoolLearners = computed(() => {
+  return learners.value.filter(learner => learner.schoolLevel === 'Grade School');
+});
+
+const juniorHighSchoolLearners = computed(() => {
+  return learners.value.filter(learner => learner.schoolLevel === 'Junior High School');
+});
 </script>
 
 <template>
@@ -65,28 +74,18 @@ onMounted(async () => {
         <div class="total-container">
           <div class="total-text">{{ totalText }}</div>
           <div class="total-button">
-            <ViewList 
-              v-if="widgetTitle=='VOLUNTEERS'"
-              :values="volunteerStore.volunteers" 
-              :columns="[
-              { field: 'fullname', header: 'Full Name' },
-              { field: 'affiliation', header: 'Affiliations' },]"
+            <ViewList
+              v-if="widgetTitle=='ENROLLED STUDENTS'" 
+              :values="learners"
               :header="widgetTitle" />
             <ViewList
-              v-if="widgetTitle=='STUDENTS'" 
-              :values="studentsStore.students" 
-              :columns="[
-              { field: 'fullname', header: 'Full Name' },
-              { field: 'personal_info.sex', header: 'Sex' },]"
+              v-if="widgetTitle=='GRADE SCHOOL'" 
+              :values="gradeSchoolLearners"
               :header="widgetTitle" />
-            <ViewList 
-              v-if="widgetTitle=='ENROLLED STUDENTS'"
-              :values="enrollmentStore.allEnrolled" 
-              :columns="[
-              { field: 'fullname', header: 'Full Name' },
-              { field: 'status', header: 'Status' },]"
+            <ViewList
+              v-if="widgetTitle=='JUNIOR HIGH SCHOOL'" 
+              :values="juniorHighSchoolLearners"
               :header="widgetTitle" />
-            <ViewListClassLevel v-if="widgetTitle=='CLASS LEVEL'" />
           </div>
         </div>
       </div>
