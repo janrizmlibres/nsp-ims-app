@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref } from 'vue';
 import ContentPane from "@/components/UI/ContentPane.vue";
 import YearButton from "@/components/dashboard/YearButton.vue";
 import StudentWidget from "@/components/dashboard/StudentWidget.vue";
@@ -7,163 +7,161 @@ import BarChart from "@/components/dashboard/BarChart.vue";
 import LineChart from "@/components/dashboard/LineChart.vue";
 
 import { useSidebarStore } from '@/stores/sidebar.js';
-import { useStudentsStore } from '@/stores/students';
-import { useUtilitiesStore } from '@/stores/utilities';
 import { useEnrollmentStore } from '@/stores/enrollment';
-import { useVolunteerStore } from '@/stores/volunteer';
 
 const enrollmentStore = useEnrollmentStore();
-const studentsStore = useStudentsStore();
 const sidebarStore = useSidebarStore();
-const utilitiesStore = useUtilitiesStore();
-const volunteerStore = useVolunteerStore();
 
 const isSidebarHovering = computed(() => sidebarStore.isHovering);
 const isSidebarPinned = computed(() => sidebarStore.isPinned);
 
-let cumulativeStudets = ref(0);
-let maleStudents = ref(0);
-let femaleStudents = ref(0);
-let gradeSchool = ref(0);
-let juniorHighSchool = ref(0);
-let totalClassLevels = ref(0);
-let activeStudents = ref(0);
-let inactiveStudents = ref(0);
-let totalVolunteers = ref(0);
-let studentVolunteerCount = ref(0);
-let professionalVolunteerCount = ref(0);
+const totalEnrolledStudents = ref(0)
+const activeEnrolledStudents = ref(0)
+const inactiveEnrolledStudents = ref(0)
 
-const countEnrollmentStatus = (enrollments) => {
-  let activeCount = 0;
-  let inactiveCount = 0;
+const gradeSchoolCount = ref(0)
+const activeGradeSchoolCount = ref(0)
+const inactiveGradeSchoolCount = ref(0)
+const juniorHighSchoolCount = ref(0)
+const activeJuniorHighSchoolCount = ref(0)
+const inactiveJuniorHighSchoolCount = ref(0)
 
-  enrollments.forEach(enrollment => {
-    if (enrollment.status === 'Active') {
-      activeCount++;
-    } else if (enrollment.status === 'Inactive') {
-      inactiveCount++;
+const enrollmentTrend = ref([])
+
+function getTotalEnrolledStudents() {
+  totalEnrolledStudents.value = enrollmentStore.learners.length;
+}
+
+function getSchoolLevelCounts () {
+  gradeSchoolCount.value = 0;
+  juniorHighSchoolCount.value = 0;
+
+  enrollmentStore.learners.forEach(student => {
+    if (student.schoolLevel === 'Junior High School') {
+      juniorHighSchoolCount.value++;
+    } else if (student.schoolLevel === 'Grade School') {
+      gradeSchoolCount.value++;
     }
   });
-
-  return { activeCount, inactiveCount };
 };
 
-function countClassLevels(studentsWithClassLevel) {
-  let gradeSchoolCount = 0;
-  let juniorHighSchoolCount = 0;
+function getEnrolledStatusCounts() {
+  activeEnrolledStudents.value = 0;
+  inactiveEnrolledStudents.value = 0;
 
-  studentsWithClassLevel.forEach(student => {
-    student.class_levels.forEach(level => {
-      if (level.school_level === 'Grade School') {
-        gradeSchoolCount++;
-      } else if (level.school_level === 'Junior High School') {
-        juniorHighSchoolCount++;
+  enrollmentStore.learners.forEach(student => {
+    if (student.status === 'Active') {
+      activeEnrolledStudents.value++;
+    } else if (student.status === 'Inactive') {
+      inactiveEnrolledStudents.value++;
+    }
+  });
+};
+
+function getGradeSchoolStatusCounts() {
+  enrollmentStore.learners.forEach(learner => {
+    if (learner.schoolLevel === 'Grade School') {
+      if (learner.status === 'Active') {
+        activeGradeSchoolCount.value++;
+      } else if (learner.status === 'Inactive') {
+        inactiveGradeSchoolCount.value++;
       }
-    });
-  });
-
-  return { gradeSchoolCount, juniorHighSchoolCount };
-}
-
-function countGenders(students) {
-  let maleCount = 0;
-  let femaleCount = 0;
-
-  students.forEach(student => {
-    if (student.personal_info.sex === 'M') {
-      maleCount++;
-    } else if (student.personal_info.sex === 'F') {
-      femaleCount++;
     }
   });
-
-  return { maleCount, femaleCount };
 }
 
-
-onMounted(async () => {
-  await volunteerStore.getAllVolunteers()
-  await studentsStore.getStudents()
-  await enrollmentStore.getAllEnrollments()
-  await studentsStore.getStudentsWithClassLevel()
-  await studentsStore.getStudents()
-
-  const statusCount = countEnrollmentStatus(await enrollmentStore.allEnrolled);
-  activeStudents.value = statusCount.activeCount;
-  inactiveStudents.value = statusCount.inactiveCount;
-
-  gradeSchool.value = countClassLevels(studentsStore.studentsWithClassLevel).gradeSchoolCount;
-  juniorHighSchool.value = countClassLevels(studentsStore.studentsWithClassLevel).juniorHighSchoolCount;
-  maleStudents.value = countGenders(studentsStore.students).maleCount;
-  femaleStudents.value = countGenders(studentsStore.students).femaleCount;
-  cumulativeStudets.value = studentsStore.students.length;
-  totalClassLevels.value = gradeSchool.value + juniorHighSchool.value;
-  totalVolunteers.value = volunteerStore.volunteers.length
-
-  for (let volunteer of volunteerStore.volunteers) {
-    if (volunteer.affiliation === 'Student') {
-      studentVolunteerCount.value++;
-    } else if (volunteer.affiliation === 'Professional') {
-      professionalVolunteerCount.value++;
+function getJuniorHighSchoolStatusCounts() {
+  enrollmentStore.learners.forEach(learner => {
+    if (learner.schoolLevel === 'Junior High School') {
+      if (learner.status === 'Active') {
+        activeJuniorHighSchoolCount.value++;
+      } else if (learner.status === 'Inactive') {
+        inactiveJuniorHighSchoolCount.value++;
+      }
     }
+  });
+}
+
+function getEnrollmentTrendByMonth() {
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const enrollmentsByMonth = months.reduce((obj, month) => ({ ...obj, [month]: 0 }), {});
+
+  for (const learner of enrollmentStore.learners) {
+    const month = new Date(learner.dateEnrolled).getMonth();
+    enrollmentsByMonth[months[month]]++;
   }
-  
-});
+  enrollmentTrend.value = months.map(month => ({ x: month, y: enrollmentsByMonth[month] }));
+}
+
+const handleTermIdChanged = async (newTermId) => {
+  //reset the values
+  totalEnrolledStudents.value = 0;
+  activeEnrolledStudents.value = 0;
+  inactiveEnrolledStudents.value = 0;
+
+  gradeSchoolCount.value = 0;
+  activeGradeSchoolCount.value = 0;
+  inactiveGradeSchoolCount.value = 0;
+  juniorHighSchoolCount.value = 0;
+  activeJuniorHighSchoolCount.value = 0;
+  inactiveJuniorHighSchoolCount.value = 0;
+
+  enrollmentTrend.value = [];
+
+  // handle the new term ID here
+  await enrollmentStore.getAllEnrolledFromTerm(newTermId);
+  getTotalEnrolledStudents();
+  getSchoolLevelCounts();
+  getEnrolledStatusCounts();
+  getGradeSchoolStatusCounts();
+  getJuniorHighSchoolStatusCounts();
+  getEnrollmentTrendByMonth();
+};
 </script>
 
 <template>
   <ContentPane :breadcrumb="[{label: 'Dashboard'}]">
     <div>
+      <YearButton @termId-changed="handleTermIdChanged" />
       <div class="student-dashboard-panels">
         <StudentWidget 
-          v-if="maleStudents || femaleStudents"
           class="student-widget" 
-          :seriesData="[femaleStudents, maleStudents]" 
-          :labelsData="['Female', 'Male']" 
-          widgetTitle="STUDENTS" 
-          :totalText= cumulativeStudets.toString()
-          Data1= "Male"
-          Data2= "Female"
-          :icon="['fas', 'user-graduate']" />
-        <StudentWidget 
-          v-if="activeStudents || inactiveStudents"
-          class="student-widget" 
-          :seriesData="[inactiveStudents, activeStudents]" 
+          :seriesData="[inactiveEnrolledStudents, activeEnrolledStudents]" 
           :labelsData="['Inactive', 'Active']" 
           widgetTitle="ENROLLED STUDENTS" 
-          :totalText= "(inactiveStudents+activeStudents).toString()"
+          :totalText= totalEnrolledStudents.toString()
           Data1= "Active"
           Data2= "Inactive"
           :icon="['fas', 'user-graduate']"
            />
-        <StudentWidget 
-          v-if="gradeSchool || juniorHighSchool"
+        <StudentWidget
           class="student-widget" 
-          :seriesData="[juniorHighSchool, gradeSchool]" 
-          :labelsData="['Junior High School', 'Grade School']" 
-          widgetTitle="CLASS LEVEL" 
-          :totalText= totalClassLevels.toString()
-          Data1= "GS"
-          Data2= "JHS"
+          :seriesData="[inactiveGradeSchoolCount, activeGradeSchoolCount]" 
+          :labelsData="['Inactive', 'Active']" 
+          widgetTitle="GRADE SCHOOL" 
+          :totalText= gradeSchoolCount.toString()
+          Data1= "Active"
+          Data2= "Inactive"
           :icon="['fas', 'user-graduate']" />
         <StudentWidget
-          v-if="studentVolunteerCount || professionalVolunteerCount"
           class="student-widget" 
-          :seriesData="[professionalVolunteerCount, studentVolunteerCount]" 
-          :labelsData="['Professional', 'Student']" 
-          widgetTitle="VOLUNTEERS" 
-          :totalText= "totalVolunteers.toString()"
-          Data1= "Student"
-          Data2= "Professional"
-          :icon="['fas', 'user']"  />
+          :seriesData="[inactiveJuniorHighSchoolCount, activeJuniorHighSchoolCount]" 
+          :labelsData="['Inactive', 'Active']" 
+          widgetTitle="JUNIOR HIGH SCHOOL" 
+          :totalText= juniorHighSchoolCount.toString()
+          Data1= "Active"
+          Data2= "Inactive"
+          :icon="['fas', 'user-graduate']"  />
         
       </div>
       <div class="charts">
-        <LineChart class="line-chart"/>
+        <LineChart 
+          class="line-chart"
+          :chartData="enrollmentTrend"/>
         <BarChart 
-          v-if="cumulativeStudets"
           class="bar-chart"
-          :chartData="[cumulativeStudets, gradeSchool, juniorHighSchool, activeStudents, inactiveStudents]" />
+          :chartData="[totalEnrolledStudents, activeEnrolledStudents, inactiveEnrolledStudents, gradeSchoolCount, juniorHighSchoolCount]" />
       </div>
     </div>
   </ContentPane>
@@ -175,13 +173,11 @@ onMounted(async () => {
     display: grid;
     grid-template-columns: 1fr;
     position: absolute;
-    margin-top: 5rem;
     margin-right: 10rem;
 }
   .student-widget {
     margin-bottom: 1.25rem;
     margin-right: 1.25rem;
-    animation: slide-back 0.5s ease 0s 1 normal forwards;
   }
 
   .header-container {
@@ -189,20 +185,11 @@ onMounted(async () => {
     align-items: center; /* This will vertically align the items */
     margin-bottom: 1.25rem;
   }
-
-  .dashboard-text {
-    font-weight: bold;
-    position: absolute;
-    font-size: 1.875rem;
-    margin-top: 3rem;
-    margin-left: 0.625rem;
-  }
   
   .student-dashboard-panels {
     display: grid;
     grid-template-columns: 1fr;
     position: absolute;
-    margin-top: 5rem;
     margin-right: 0.625rem;
     z-index: 1;
   }
