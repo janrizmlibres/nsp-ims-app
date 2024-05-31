@@ -11,17 +11,13 @@
 
 <script setup>
 import { ref, defineProps } from "vue";
-import Dialog from 'primevue/dialog'; // Assuming you're using PrimeVue for the Dialog component
+import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 
-const { values, columns, header } = defineProps({
+const { values, header } = defineProps({
   values: {
-    type: Array,
-    required: true
-  },
-  columns: {
     type: Array,
     required: true
   },
@@ -31,7 +27,11 @@ const { values, columns, header } = defineProps({
   }
 })
 
-console.log(values, columns); // Use students directly
+const columns = [
+  { field: 'lrn', header: 'LRN' },
+  { field: 'fullName', header: 'Full Name' },
+  { field: 'status', header: 'Status' }
+];
 
 const visible = ref(false);
 </script>

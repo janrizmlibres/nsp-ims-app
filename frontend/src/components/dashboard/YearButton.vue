@@ -1,46 +1,48 @@
 <template>
-  <Button type="button" icon="fa fa-filter" label="Year" class="bg-white border-none float-end" @click="toggle"
-      :pt="buttonPt"
-    />
-    <OverlayPanel ref="op"
-      :pt="{
-        content: {
-            class: 'p-3 px-2 items-center flex'
-        },
-      }">
-      <ul class="flex flex-col gap-2">
-        <li v-for="term of termsOptions" :key="term.id">
-          <span class="p-2 py-1 rounded-md hover:bg-surface-200 transition-all duration-500 ease-in-out cursor-pointer"
-            @click="toggle"
-          >
-            {{ term.academic_year }}
-          </span>
-        </li>
-      </ul>
-    </OverlayPanel>
+  <div class="flex justify-start gap-2 mb-2">
+    <div class="flex flex-row gap-4 items-center">
+      <Dropdown v-model="selectedTerm" :options="termsOptions" optionLabel="academic_year" placeholder="Select an Academic Year" class="w-auto"/>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
-import Button from 'primevue/button';
-import OverlayPanel from 'primevue/overlaypanel';
-import { useUtilitiesStore } from "@/stores/utilities";
+import Dropdown from 'primevue/dropdown'
+import { useTermStore } from '@/stores/term.js'
+import { ref, watch, defineEmits } from 'vue'
+import { useToast } from 'primevue/usetoast';
+import { useEnrollmentStore } from '@/stores/enrollment';
 
-const utilitiesStore = useUtilitiesStore()
+const termStore = useTermStore()
+const enrollmentStore = useEnrollmentStore()
+const toast = useToast()
 
-const termsOptions = computed(() => utilitiesStore.terms)
-const selectedTerm = ref(termsOptions.value.find(term => term.status === true))
-const op = ref();
-const toggle = (event) => {
-    op.value.toggle(event);
+const termsOptions = ref([])
+const selectedTerm = ref(null)
+const totalEnrolledStudents = ref(0)
+
+const emit = defineEmits(['termId-changed']);
+
+// watch selectedTerm and emit the event when it changes
+watch(selectedTerm, (newTerm) => {
+  if (newTerm) {
+    emit('termId-changed', newTerm.id);
+  }
+});
+
+async function getAllTerms()  {
+  try {
+    await termStore.getTerms()
+    termsOptions.value = termStore.terms
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: error.response.data.message,
+      life: 3000
+    })
+  }
 }
 
-const buttonPt = ref({
-  root: {
-    class: ['u-txt-active p-2 rounded-md hover:bg-primary hover:text-white shadow-md']
-  }
-})
+getAllTerms()
 </script>
-
-<style>
-</style>
