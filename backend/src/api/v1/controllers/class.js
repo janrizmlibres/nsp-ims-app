@@ -74,20 +74,37 @@ export async function getAllStudents(req, res, next) {
   const classId = req.params.classId;
 
   try {
-    const enrollments = await Enrollment.findAll({
-      where: { classLevelId: classId },
-      include: [{ model: Student, include: [ContactInfo, PersonalInfo] }],
-    });
+    const activeStudents = await ClassLevel.findByPk(classId, {
+        include: {model: Enrollment, 
+            where: {
+                status: 'Active'
+            },
+            include: [Student]}
+    })
 
-    if (!enrollments.length) {
-      const error = new Error("No students found.");
-      error.statusCode = 404;
-      throw error;
-    }
+    const inactiveStudents = await ClassLevel.findByPk(classId, {
+        include: {model: Enrollment, 
+            where: {
+                status: 'Inactive'
+            },
+            include: [Student]}
+    })
 
-    res.status(200).json({
-      message: "Fetched students successfully!",
-      data: enrollments,
+    const dropStudents = await ClassLevel.findByPk(classId, {
+        include: {model: Enrollment, 
+            where: {
+                status: 'Drop'
+            },
+            include: [Student]}
+    })
+
+    res.status(201).json({ 
+        message: "Fetched all students successfully!",
+        data: {
+            active: activeStudents, 
+            inactive: inactiveStudents, 
+            drop: dropStudents
+        }
     });
   } catch (error) {
     if (!error.statusCode) {
