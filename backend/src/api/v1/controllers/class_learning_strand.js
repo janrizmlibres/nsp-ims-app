@@ -15,6 +15,29 @@ import { Student } from "../models/student/student.js";
 import { Volunteer } from "../models/volunteer/volunteer.js";
 import { Op } from "sequelize";
 
+export async function getClassLearningStrand(req, res, next) {
+  const classLearningStrandId = req.params.classLearningStrandId;
+
+  try {
+    const classLearningStrand = await ClassLearningStrand.findOne({
+      where: {id: classLearningStrandId},
+      include: [ LearningStrand,
+        {model: ClassSchedule, include: [Volunteer]}
+      ]
+    })
+
+    res.status(200).json({
+      message: "Fetched class learning strand successfully.",
+      data: classLearningStrand,
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
 export async function addModule(req, res, next) {
   const classLearningStrandId = req.params.classLearningStrandId;
 
@@ -68,12 +91,6 @@ export async function getAllModules(req, res, next) {
       where: { classLearningStrandId: classLearningStrandId },
     });
 
-    if (!modules.length) {
-      const error = new Error("No modules found.");
-      error.statusCode = 404;
-      throw error;
-    }
-
     for (const module of modules) {
       const noSubmissions = await module.countModule_submissions({
         where: { status: "No Submission" },
@@ -123,12 +140,6 @@ export async function getModule(req, res, next) {
         },
       ],
     });
-
-    if (!module) {
-      const error = new Error("No module found.");
-      error.statusCode = 404;
-      throw error;
-    }
 
     res.status(200).json({
       message: "Fetched module successfully.",
@@ -244,12 +255,6 @@ export async function getAllGrades(req, res, next) {
       ],
     });
 
-    if (!grades.length) {
-      const error = new Error("No grades found.");
-      error.statusCode = 404;
-      throw error;
-    }
-
     res.status(200).json({
       message: "Fetched grades successfully!",
       data: grades,
@@ -337,12 +342,6 @@ export async function getAllSessions(req, res, next) {
       where: { classLearningStrandId: classLearningStrandId },
     });
 
-    if (!sessions.length) {
-      const error = new Error("No sessions found.");
-      error.statusCode = 404;
-      throw error;
-    }
-
     for (const session of sessions) {
       const absent = await session.countAttendances({
         where: { status: "Absent" },
@@ -388,12 +387,6 @@ export async function getSession(req, res, next) {
         { model: ClassLevel, include: [Term] },
       ],
     });
-
-    if (!classLearningStrand.sessions.length) {
-      const error = new Error("No session found.");
-      error.statusCode = 404;
-      throw error;
-    }
 
     const regularAttendances = await Attendance.findAll({
       where: {
