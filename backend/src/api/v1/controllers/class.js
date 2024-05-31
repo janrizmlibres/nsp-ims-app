@@ -1,6 +1,7 @@
 import {
   Attendance,
   ClassLearningStrand,
+  ClassLevel,
   ClassSchedule,
   Grade,
   Module,
@@ -8,7 +9,7 @@ import {
   Session,
 } from "../models/class/index.js";
 
-import { Enrollment, LearningStrand } from "../models/index.js";
+import { Enrollment, LearningStrand, Term } from "../models/index.js";
 import { Student, ContactInfo, PersonalInfo } from "../models/student/index.js";
 import { Volunteer } from "../models/volunteer/volunteer.js";
 
@@ -48,16 +49,6 @@ export async function getClassSchedules(req, res, next) {
       order: [[LearningStrand, "code", "ASC"]],
     });
 
-    if (
-      classLearningStrands.every(
-        (obj) => !obj.dataValues.class_schedules.length
-      )
-    ) {
-      const error = new Error("No class schedules found.");
-      error.statusCode = 404;
-      throw error;
-    }
-
     res.status(200).json({
       message: "Fetched class schedules successfully!",
       data: classLearningStrands,
@@ -67,6 +58,54 @@ export async function getClassSchedules(req, res, next) {
       error.statusCode = 500;
     }
     next(error);
+  }
+}
+
+export async function getAllStrands(req, res, next) {
+  const classId = req.params.classId;
+
+  try {
+      const learningStrands = await ClassLearningStrand.findAll({
+          where: {classLevelId: classId}, 
+          include: [LearningStrand, 
+            {model: ClassSchedule, include: [Volunteer], order: [["start_time", "ASC"]]}
+          ]
+      })
+
+      res.status(201).json({ 
+          message: "Learning strand added!",
+          data: learningStrands
+      });
+  } catch (error) {
+      if (!error.statusCode) {
+          error.statusCode = 500;
+      }
+      next(error);
+  }
+}
+
+export async function getAllModules(req, res, next) {
+  const classId = req.params.classId;
+  
+  try {
+      const classLevel = await ClassLevel.findByPk(classId, {
+          include: {model: ClassLearningStrand, include: [Module]}
+      })
+      
+      const modules = []
+      classLevel.class_learning_strands.forEach(learningStrand => {
+          modules.push(...learningStrand.modules)
+      });
+
+      res.status(201).json({ 
+          message: "Fetched all modules successfully!",
+          data: modules
+      });
+  } catch (error) {
+      if (!error.statusCode) {
+          error.statusCode = 500;
+      }
+      next(error);
   }
 }
 
