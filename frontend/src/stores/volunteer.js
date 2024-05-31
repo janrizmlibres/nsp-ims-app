@@ -3,8 +3,6 @@ import { ref } from 'vue'
 import { useAuthStore } from './auth'
 import axios from 'axios'
 
-const apiUrl = import.meta.env.VITE_API_ENDPOINT
-
 export const useVolunteerStore = defineStore('volunteer', () => {
   const volunteers = ref([])
 
@@ -22,7 +20,7 @@ export const useVolunteerStore = defineStore('volunteer', () => {
   async function getAllVolunteers() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + 'volunteer/volunteers', {
+    const result = await axios.get('http://localhost:8080/api/v1/volunteer/volunteers', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -32,9 +30,13 @@ export const useVolunteerStore = defineStore('volunteer', () => {
   async function addVolunteer(formData) {
     const authStore = useAuthStore()
 
-    const result = await axios.post(apiUrl + 'volunteer/add-volunteer', formData, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    const result = await axios.post(
+      'http://localhost:8080/api/v1/volunteer/add-volunteer',
+      formData,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     return result
   }
@@ -42,7 +44,7 @@ export const useVolunteerStore = defineStore('volunteer', () => {
   async function getVolunteer(id) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + `volunteer/${id}`, {
+    const result = await axios.get(`http://localhost:8080/api/v1/volunteer/${id}`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -52,9 +54,13 @@ export const useVolunteerStore = defineStore('volunteer', () => {
   async function updateVolunteer(id, formData) {
     const authStore = useAuthStore()
 
-    const result = await axios.put(apiUrl + `volunteer/update-volunteer/${id}`, formData, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    const result = await axios.put(
+      `http://localhost:8080/api/v1/volunteer/update-volunteer/${id}`,
+      formData,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     return result
   }
@@ -62,9 +68,12 @@ export const useVolunteerStore = defineStore('volunteer', () => {
   async function deleteVolunteer(id) {
     const authStore = useAuthStore()
 
-    const result = await axios.delete(apiUrl + `volunteer/delete-volunteer/${id}`, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    const result = await axios.delete(
+      `http://localhost:8080/api/v1/volunteer/delete-volunteer/${id}`,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     return result
   }

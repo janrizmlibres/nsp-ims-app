@@ -1,7 +1,7 @@
 import { INTEGER, STRING } from "sequelize";
-import sequelize from "../util/database.js";
+import sequelize from "../../../util/database.js";
 
-const StudentRequirement = sequelize.define("student_requirement", {
+export const StudentRequirement = sequelize.define("student_requirement", {
   id: {
     type: INTEGER,
     autoIncrement: true,
@@ -13,5 +13,3 @@ const StudentRequirement = sequelize.define("student_requirement", {
     allowNull: false,
   },
 });
-
-export default StudentRequirement;

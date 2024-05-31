@@ -1,30 +1,34 @@
-import { validationResult } from 'express-validator';
+import { validationResult } from "express-validator";
 
-import Volunteer from "../models/volunteer/volunteer.js"
-import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
-import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
-import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
-import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
-import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
-import StudentVolunteer from "../models/volunteer/student_volunteer.js";
-import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
+import {
+  Volunteer,
+  ProfessionalVolunteer,
+  StudentVolunteer,
+  VolunteerAvailability,
+  VolunteerContactInformation,
+  VolunteerEmergency,
+  VolunteerPersonalInformation,
+  VolunteerSpecialization,
+} from "../models/volunteer/index.js";
 
 export async function getAllVolunteers(req, res, next) {
   try {
     const volunteers = await Volunteer.findAll({
       where: { isArchived: false },
-      include: [VolunteerPersonalInformation, 
-                VolunteerContactInformation, 
-                VolunteerSpecialization,
-                VolunteerAvailability,
-                VolunteerEmergency,
-                StudentVolunteer,
-                ProfessionalVolunteer]
+      include: [
+        VolunteerPersonalInformation,
+        VolunteerContactInformation,
+        VolunteerSpecialization,
+        VolunteerAvailability,
+        VolunteerEmergency,
+        StudentVolunteer,
+        ProfessionalVolunteer,
+      ],
     });
 
-    res.status(201).json({ 
-      message: "Fetched Volunteers Successfully!", 
-      volunteers: volunteers
+    res.status(201).json({
+      message: "Fetched Volunteers Successfully!",
+      volunteers: volunteers,
     });
   } catch (error) {
     if (!error.statusCode) {
@@ -74,16 +78,16 @@ export async function addVolunteer(req, res, next) {
     //only creates an instance of student volunteer if program and year has an entry
     if (req.body.student.program && req.body.student.year) {
       await StudentVolunteer.create({
-      ...req.body.student,
-      volunteerId: volunteer.id,
+        ...req.body.student,
+        volunteerId: volunteer.id,
       });
     }
 
     //only creates an instance of professional volunteer if work has an entry
     if (req.body.professional.work) {
       await ProfessionalVolunteer.create({
-      ...req.body.professional,
-      volunteerId: volunteer.id,
+        ...req.body.professional,
+        volunteerId: volunteer.id,
       });
     }
 
@@ -92,7 +96,7 @@ export async function addVolunteer(req, res, next) {
       volunteer: volunteer,
     });
   } catch (error) {
-    console.error('Error details:', error);
+    console.error("Error details:", error);
     if (!error.statusCode) {
       error.statusCode = 500;
     }
@@ -104,13 +108,15 @@ export async function getVolunteer(req, res, next) {
   const id = req.params.id;
   try {
     const volunteer = await Volunteer.findByPk(id, {
-      include: [VolunteerPersonalInformation, 
-                VolunteerContactInformation, 
-                VolunteerSpecialization,
-                VolunteerAvailability,
-                VolunteerEmergency,
-                StudentVolunteer,
-                ProfessionalVolunteer]
+      include: [
+        VolunteerPersonalInformation,
+        VolunteerContactInformation,
+        VolunteerSpecialization,
+        VolunteerAvailability,
+        VolunteerEmergency,
+        StudentVolunteer,
+        ProfessionalVolunteer,
+      ],
     });
 
     if (!volunteer) {
@@ -119,7 +125,9 @@ export async function getVolunteer(req, res, next) {
       throw error;
     }
 
-    res.status(200).json({ message: "Volunteer fetched.", volunteer: volunteer });
+    res
+      .status(200)
+      .json({ message: "Volunteer fetched.", volunteer: volunteer });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -155,16 +163,18 @@ export async function updateVolunteer(req, res, next) {
       availability,
       specialization,
       student,
-      professional
+      professional,
     } = req.body;
 
-    const personalInformationInstance = await VolunteerPersonalInformation.findOne({
-      where: { volunteerId: volunteer.id },
-    });
+    const personalInformationInstance =
+      await VolunteerPersonalInformation.findOne({
+        where: { volunteerId: volunteer.id },
+      });
 
-    const contactInformationInstance = await VolunteerContactInformation.findOne({
-      where: { volunteerId: volunteer.id },
-    });
+    const contactInformationInstance =
+      await VolunteerContactInformation.findOne({
+        where: { volunteerId: volunteer.id },
+      });
 
     const emergencyInstance = await VolunteerEmergency.findOne({
       where: { volunteerId: volunteer.id },
@@ -185,8 +195,7 @@ export async function updateVolunteer(req, res, next) {
     const professionalInstance = await ProfessionalVolunteer.findOne({
       where: { volunteerId: volunteer.id },
     });
-    
-    
+
     delete volunteerHeader.fullname; // This line will remove fullName from the update
     await volunteer.update(volunteerHeader);
     delete personalInformation.address;

@@ -1,19 +1,26 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
-import Student from "../models/student/student.js";
-import User from "../models/user/user.js";
-import Term from "../models/term.js";
-import LearningStrand from "../models/learning_strand.js";
-import StudentRequirement from "../models/student_requirement.js";
-import StudentCategory from "../models/student_category.js";
-import Volunteer from "../models/volunteer/volunteer.js";
-import PersonalInfo from "../models/student/personal_info.js";
-import ContactInfo from "../models/student/contact_info.js";
-import EmergencyPerson from "../models/student/emergency_person.js";
-import PreviousSchool from "../models/student/previous_school.js";
-import Enrollment from "../models/enrollment.js";
-import Grade from "../models/class/grade.js";
-import RequirementInfo from "../models/student/requirement_info.js";
+import {
+  Student,
+  PersonalInfo,
+  ContactInfo,
+  EmergencyPerson,
+  PreviousSchool,
+  RequirementInfo,
+} from "../api/v1/models/student/index.js";
+
+import { User } from "../api/v1/models/user/index.js";
+import { Grade } from "../api/v1/models/class/index.js";
+
+import {
+  Term,
+  LearningStrand,
+  StudentRequirement,
+  StudentCategory,
+  Enrollment,
+} from "../api/v1/models/index.js";
+
+import { Volunteer } from "../api/v1/models/volunteer/volunteer.js";
 
 export async function injectAll() {
   await injectUser();
@@ -23,7 +30,7 @@ export async function injectAll() {
   await injectVolunteer();
   await injectStudentRequirement();
   await injectStudentCategory();
-  await injectRequirementInfo()
+  await injectRequirementInfo();
 }
 
 export async function injectStudent() {
@@ -396,7 +403,10 @@ export async function injectUser() {
   const createUser = async (userData) => {
     const [user, perms, audit] = userData;
 
-    user.hashedPw = await bcrypt.hash(user.password, 12);
+    user.hashedPw = await bcrypt.hash(
+      user.password,
+      Number(process.env.PW_SALT)
+    );
     delete user.password;
 
     const createdUser = await User.create(user);
@@ -621,8 +631,6 @@ export async function injectVolunteer() {
     },
   ];
 
-  
-
   const volunteerPersonalInformationData = [
     {
       nickname: "Shelly",
@@ -722,7 +730,6 @@ export async function injectVolunteer() {
 }
 
 export async function injectRequirementInfo() {
-
   const students = await Student.findAll();
 
   const studentRequirements = await StudentRequirement.findAll();
@@ -732,7 +739,7 @@ export async function injectRequirementInfo() {
       await RequirementInfo.create({
         studentId: student.id,
         studentRequirementId: studentRequirement.id,
-        met: true
+        met: true,
       });
     }
   }

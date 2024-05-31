@@ -1,9 +1,7 @@
 import { validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 
-import User from "../models/user/user.js";
-import Permission from "../models/user/permission.js";
-import Audit from "../models/user/audit.js";
+import { User, Permission, Audit } from "../models/user/index.js";
 
 export async function getUsers(req, res, next) {
   try {
@@ -145,7 +143,10 @@ export async function updatePassword(req, res, next) {
       throw error;
     }
 
-    const hashedPw = await bcrypt.hash(req.body.newPw, 12);
+    const hashedPw = await bcrypt.hash(
+      req.body.newPw,
+      Number(process.env.PW_SALT)
+    );
     await user.update({ hashedPw });
 
     res.status(200).json({ message: "Password updated." });

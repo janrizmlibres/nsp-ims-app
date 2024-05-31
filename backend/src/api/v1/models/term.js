@@ -1,7 +1,7 @@
 import { INTEGER, DATE, BOOLEAN, STRING } from "sequelize";
-import sequelize from "../../util/database.js";
+import sequelize from "../../../util/database.js";
 
-const Term = sequelize.define("term", {
+export const Term = sequelize.define("term", {
   id: {
     type: INTEGER,
     autoIncrement: true,
@@ -25,5 +25,3 @@ const Term = sequelize.define("term", {
     allowNull: false,
   },
 });
-
-export default Term;

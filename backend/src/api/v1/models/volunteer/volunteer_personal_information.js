@@ -1,7 +1,7 @@
 import { INTEGER, DATE, STRING, VIRTUAL } from "sequelize";
-import sequelize from "../../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const VolunteerPersonalInformation = sequelize.define(
+export const VolunteerPersonalInformation = sequelize.define(
   "volunteer_personal_information",
   {
     id: {
@@ -58,5 +58,3 @@ const VolunteerPersonalInformation = sequelize.define(
     },
   }
 );
-
-export default VolunteerPersonalInformation;

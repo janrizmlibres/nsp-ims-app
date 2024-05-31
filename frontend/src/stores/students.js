@@ -3,8 +3,6 @@ import { computed, ref } from 'vue'
 import { useAuthStore } from './auth'
 import axios from 'axios'
 
-const apiUrl = import.meta.env.VITE_API_ENDPOINT
-
 export const useStudentsStore = defineStore('students', () => {
   const students = ref([])
   const studentsWithClassLevel = ref([])
@@ -23,7 +21,7 @@ export const useStudentsStore = defineStore('students', () => {
   async function getStudents() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + 'profile/students', {
+    const result = await axios.get('http://localhost:8080/api/v1/profile/students', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -33,7 +31,7 @@ export const useStudentsStore = defineStore('students', () => {
   async function getStudent(studentId) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + `profile/student/${studentId}`, {
+    const result = await axios.get(`http://localhost:8080/api/v1/profile/student/${studentId}`, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -52,7 +50,7 @@ export const useStudentsStore = defineStore('students', () => {
       form.append(key, JSON.stringify(formData[key]))
     }
 
-    const result = await axios.post(apiUrl + 'profile/add-student', form, {
+    const result = await axios.post('http://localhost:8080/api/v1/profile/add-student', form, {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 
@@ -71,19 +69,9 @@ export const useStudentsStore = defineStore('students', () => {
       form.append(key, JSON.stringify(formData[key]))
     }
 
-    const result = await axios.put(apiUrl + `profile/student/${studentId}`, form, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
-
-    return result
-  }
-
-  async function updateStudentRequirements(studentId, requirementInfos) {
-    const authStore = useAuthStore()
-
-    const result = await axios.patch(
-      `http://localhost:8080/profile/student/${studentId}/requirements`,
-      { requirement_infos: requirementInfos },
+    const result = await axios.put(
+      `http://localhost:8080/api/v1/profile/student/${studentId}`,
+      form,
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
       }
@@ -95,9 +83,12 @@ export const useStudentsStore = defineStore('students', () => {
   async function getStudentsWithClassLevel() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + 'profile/students-with-class-level', {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    const result = await axios.get(
+      'http://localhost:8080/api/v1/profile/students-with-class-level',
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     studentsWithClassLevel.value = result.data.students
   }

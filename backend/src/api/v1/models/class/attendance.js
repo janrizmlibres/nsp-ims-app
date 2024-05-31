@@ -1,21 +1,22 @@
 import { INTEGER, STRING, DATE, TEXT } from "sequelize";
-import sequelize from "../../util/database.js";
-import Session from "./session.js";
-import Enrollment from "../enrollment.js";
+import sequelize from "../../../../util/database.js";
 
-const Attendance = sequelize.define("attendance", {
+import { Session } from "./session.js";
+import { Enrollment } from "../enrollment.js";
+
+export const Attendance = sequelize.define("attendance", {
   id: {
-      type: INTEGER,
-      autoIncrement: true,
-      allowNull: false,
-      primaryKey: true,
+    type: INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
   },
   enrollmentId: {
-      type: INTEGER,
-      references: {
+    type: INTEGER,
+    references: {
       model: Enrollment,
-      key: 'id',
-      },
+      key: "id",
+    },
   },
   sessionId: {
     type: INTEGER,
@@ -26,12 +27,10 @@ const Attendance = sequelize.define("attendance", {
   },
   status: {
     type: STRING,
-    defaultValue: 'Absent'
+    defaultValue: "Absent",
   },
   remarks: {
     type: TEXT,
-    defaultValue: ""
+    defaultValue: "",
   },
 });
-
-export default Attendance;

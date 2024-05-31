@@ -3,8 +3,6 @@ import { ref } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from './auth'
 
-const apiUrl = import.meta.env.VITE_API_ENDPOINT
-
 export const useEnrollmentStore = defineStore('enrollment', () => {
   const learners = ref([])
   const learner = ref(null)
@@ -14,9 +12,12 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   async function getAllEnrolledFromTerm(termID) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + `enrollment/retrieve-from-term/${termID}`, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    const result = await axios.get(
+      `http://localhost:8080/api/v1/enrollment/retrieve-from-term/${termID}`,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     learners.value = result.data.learners
   }
@@ -24,9 +25,12 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   async function getEnrolled(studentId, enrollmentId) {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + `enrollment/${studentId}/${enrollmentId}/retrieve`, {
-      headers: { Authorization: 'Bearer ' + authStore.token }
-    })
+    const result = await axios.get(
+      `http://localhost:8080/api/v1/enrollment/${studentId}/${enrollmentId}/retrieve`,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
 
     learner.value = result.data.enrolled
   }
@@ -54,7 +58,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
       }
     })
 
-    await axios.post(apiUrl + 'enrollment/enroll-learner', form, {
+    await axios.post('http://localhost:8080/api/v1/enrollment/enroll-learner', form, {
       headers: {
         Authorization: 'Bearer ' + authStore.token,
         'Content-Type': 'multipart/form-data'
@@ -73,7 +77,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
       form.append(key, JSON.stringify(data[key]))
     }
 
-    await axios.patch(apiUrl + `enrollment/${enrollmentId}/update`, form, {
+    await axios.patch(`http://localhost:8080/api/v1/enrollment/${enrollmentId}/update`, form, {
       headers: {
         Authorization: 'Bearer ' + authStore.token,
         'Content-Type': 'multipart/form-data'
@@ -85,7 +89,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     const authStore = useAuthStore()
 
     await axios.patch(
-      apiUrl + `enrollment/${enrollmentId}/status/update`,
+      `http://localhost:8080/api/v1/enrollment/${enrollmentId}/status/update`,
       {
         statusToChange
       },
@@ -99,7 +103,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     const authStore = useAuthStore()
 
     const result = await axios.get(
-      apiUrl + `enrollment/retrieve-modules/${enrollmentId}/${classLearningStrandId}`,
+      `http://localhost:8080/api/v1/enrollment/retrieve-modules/${enrollmentId}/${classLearningStrandId}`,
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
       }
@@ -117,7 +121,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     const authStore = useAuthStore()
 
     const result = await axios.get(
-      apiUrl + `enrollment/retrieve-grades/${enrollmentId}/${classLearningStrandId}`,
+      `http://localhost:8080/api/v1/enrollment/retrieve-grades/${enrollmentId}/${classLearningStrandId}`,
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
       }
@@ -134,7 +138,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     const authStore = useAuthStore()
 
     const result = await axios.get(
-      apiUrl + `enrollment/retrieve-attendance/${enrollmentId}/${classLearningStrandId}`,
+      `http://localhost:8080/api/v1/enrollment/retrieve-attendance/${enrollmentId}/${classLearningStrandId}`,
       {
         headers: { Authorization: 'Bearer ' + authStore.token }
       }
@@ -151,7 +155,7 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
   async function getAllEnrollments() {
     const authStore = useAuthStore()
 
-    const result = await axios.get(apiUrl + 'enrollment/enrollments', {
+    const result = await axios.get('http://localhost:8080/api/v1/enrollment/enrollments', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
 

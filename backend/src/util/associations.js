@@ -1,40 +1,45 @@
-import Student from "../models/student/student.js";
-import PersonalInfo from "../models/student/personal_info.js";
-import ContactInfo from "../models/student/contact_info.js";
-import EmergencyPerson from "../models/student/emergency_person.js";
-import ParentalInfo from "../models/student/parental_info.js";
-import PreviousSchool from "../models/student/previous_school.js";
-import StudentRequirement from "../models/student_requirement.js";
-import RequirementInfo from "../models/student/requirement_info.js";
+import {
+  Student,
+  PersonalInfo,
+  ContactInfo,
+  EmergencyPerson,
+  ParentalInfo,
+  PreviousSchool,
+  RequirementInfo,
+} from "../api/v1/models/student/index.js";
 
-import ClassLearningStrand from "../models/class/class_learning_strand.js";
-import ClassSchedule from "../models/class/class_schedule.js";
-import Module from "../models/class/module.js";
-import ModuleSubmission from "../models/class/module_submission.js";
-import Grade from "../models/class/grade.js";
-import Session from "../models/class/session.js";
-import Attendance from "../models/class/attendance.js";
+import {
+  ClassLearningStrand,
+  ClassSchedule,
+  ClassLevel,
+  Module,
+  ModuleSubmission,
+  Grade,
+  Session,
+  Attendance,
+} from "../api/v1/models/class/index.js";
 
-import Term from "../models/term.js";
-import ClassLevel from "../models/class/class_level.js";
-import LearningStrand from "../models/learning_strand.js";
+import {
+  Term,
+  LearningStrand,
+  StudentRequirement,
+  Enrollment,
+} from "../api/v1/models/index.js";
 
-import Enrollment from "../models/enrollment.js";
+import { User, Permission, Audit } from "../api/v1/models/user/index.js";
 
-import User from "../models/user/user.js";
-import Permission from "../models/user/permission.js";
-import Audit from "../models/user/audit.js";
+import {
+  Volunteer,
+  StudentVolunteer,
+  ProfessionalVolunteer,
+  VolunteerPersonalInformation,
+  VolunteerContactInformation,
+  VolunteerEmergency,
+  VolunteerSpecialization,
+  VolunteerAvailability,
+} from "../api/v1/models/volunteer/index.js";
 
-import Volunteer from "../models/volunteer/volunteer.js";
-import StudentVolunteer from "../models/volunteer/student_volunteer.js";
-import ProfessionalVolunteer from "../models/volunteer/professional_volunteer.js";
-import VolunteerPersonalInformation from "../models/volunteer/volunteer_personal_information.js";
-import VolunteerContactInformation from "../models/volunteer/volunteer_contact_information.js";
-import VolunteerEmergency from "../models/volunteer/volunteer_emergency_contact.js";
-import VolunteerSpecialization from "../models/volunteer/volunteer_specialization.js";
-import VolunteerAvailability from "../models/volunteer/volunteer_availability.js";
-
-export default setAssociations = () => {
+function setAssociations() {
   // Student-PersonalInfo Relationship
   Student.hasOne(PersonalInfo);
   PersonalInfo.belongsTo(Student);
@@ -155,4 +160,6 @@ export default setAssociations = () => {
   // Volunteer-Specialization Relationship
   Volunteer.hasOne(VolunteerSpecialization);
   VolunteerSpecialization.belongsTo(Volunteer);
-};
+}
+
+export default setAssociations;

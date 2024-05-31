@@ -11,7 +11,7 @@ export default function (req, res, next) {
     }
 
     const token = authHeader.split(" ")[1];
-    const decodedToken = jwt.verify(token, "HEHESECRET");
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
     req.userId = decodedToken.userId;
     next();

@@ -1,7 +1,7 @@
 import { INTEGER, STRING } from "sequelize";
-import sequelize from "../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const EmergencyPerson = sequelize.define("emergency_person", {
+export const EmergencyPerson = sequelize.define("emergency_person", {
   id: {
     type: INTEGER,
     allowNull: false,
@@ -27,5 +27,3 @@ const EmergencyPerson = sequelize.define("emergency_person", {
     allowNull: false,
   },
 });
-
-export default EmergencyPerson;

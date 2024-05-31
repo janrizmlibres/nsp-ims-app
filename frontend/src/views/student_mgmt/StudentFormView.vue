@@ -119,9 +119,9 @@ watch(
   () => emit('routeChange')
 )
 
-provide('formData', readonly({ formData, updateFormData }))
+provide('formData', readonly({ formData, updateFormData: handleDataChanged }))
 
-function updateFormData(part, data) {
+function handleDataChanged(part, data) {
   const updateMapping = {
     [FormParts.Identity]: () => (formData.value.identity = data),
     [FormParts.Personal]: () => (formData.value.personalInfo = data),
@@ -262,36 +262,35 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Student'}, {label: `${headerText}`}]">
+  <ContentPane
+    :breadcrumb="[{ label: 'Records' }, { label: 'Student' }, { label: `${headerText}` }]"
+  >
     <form @submit.prevent="handleConfirm" class="h-full">
       <div class="flex flex-col gap-3 h-full mr-1">
         <IdentityForm
-          @dataChanged="updateFormData"
+          @dataChanged="handleDataChanged"
           :identity="formData.identity"
           :isViewMode="$route.meta.isViewMode"
           :key="updateKey"
         />
-        <BulkForm @dataChanged="updateFormData" :key="updateKey + 1" />
+        <BulkForm @dataChanged="handleDataChanged" :key="updateKey + 1" />
 
         <div class="flex flex-row justify-end gap-2">
-            <Button
-              type="submit"
-              :disabled="!isFormDirty && !route.meta.isViewMode"
-            >
-              <div>
-                <font-awesome-icon
-                  icon="fa-solid fa-circle-check"
-                  class="absolute top-2/4 -mt-2 left-3"
-                />
-                <h2 class="pl-5 font-bold">{{ confirmBtnText }}</h2>
-              </div>
-            </Button>
-            <Button
-              severity="danger"
-              :label="cancelBtnText"
-              icon="fa-solid fa-circle-xmark"
-              @click="handleCancel"
-            />
+          <Button type="submit" :disabled="!isFormDirty && !route.meta.isViewMode">
+            <div>
+              <font-awesome-icon
+                icon="fa-solid fa-circle-check"
+                class="absolute top-2/4 -mt-2 left-3"
+              />
+              <h2 class="pl-5 font-bold">{{ confirmBtnText }}</h2>
+            </div>
+          </Button>
+          <Button
+            severity="danger"
+            :label="cancelBtnText"
+            icon="fa-solid fa-circle-xmark"
+            @click="handleCancel"
+          />
         </div>
       </div>
     </form>

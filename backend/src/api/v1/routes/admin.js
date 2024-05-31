@@ -1,10 +1,54 @@
 import express from "express";
 import { body } from "express-validator";
+
 import * as adminController from "../controllers/admin.js";
-import isAuth from "../middleware/is_auth.js";
+import isAuth from "../middlewares/is_auth.js";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    Books:
+ *      type: object
+ *      required:
+ *        - title
+ *        - description
+ *        - finished
+ *      properties:
+ *        id:
+ *          type: string
+ *          description: The auto-generated id of the book
+ *        title:
+ *          type: string
+ *          description: The title of the book
+ *        description:
+ *          type: string
+ *          description: The book explanation
+ */
+
+/**
+ * @swagger
+ * /v1/employee/{id}:
+ *   get:
+ *     summary: Get employee by ID (SAMPLE ONLY).
+ *     description: Get employee by ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Employee ID
+ *     responses:
+ *       '200':
+ *         description: A successful response
+ *       '404':
+ *         description: Employee not found
+ *       '500':
+ *         description: Internal server error
+ */
 router.get("/users", isAuth, adminController.getUsers);
 
 router.get("/user/:userId", isAuth, adminController.getUser);

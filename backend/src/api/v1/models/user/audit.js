@@ -1,7 +1,7 @@
 import { STRING, INTEGER, DATE } from "sequelize";
-import sequelize from "../../../util/database.js";
+import sequelize from "../../../../util/database.js";
 
-const Audit = sequelize.define("audit", {
+export const Audit = sequelize.define("audit", {
   id: {
     type: INTEGER,
     allowNull: false,
@@ -17,5 +17,3 @@ const Audit = sequelize.define("audit", {
     allowNull: false,
   },
 });
-
-export default Audit;
