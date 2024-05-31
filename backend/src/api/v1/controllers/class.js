@@ -12,6 +12,26 @@ import { Enrollment, LearningStrand } from "../models/index.js";
 import { Student, ContactInfo, PersonalInfo } from "../models/student/index.js";
 import { Volunteer } from "../models/volunteer/volunteer.js";
 
+export async function getClass(req, res, next) {
+  const classId = req.params.classId;
+
+  try {
+    const classLevel = await ClassLevel.findByPk(classId, {
+      include: [Term]
+    });
+    
+    res.status(200).json({
+      message: "Fetched class successfully.",
+      data: classLevel,
+    });
+  } catch(error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
 export async function getClassSchedules(req, res, next) {
   const classId = req.params.classId;
 
