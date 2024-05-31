@@ -28,6 +28,7 @@ const { values, header } = defineProps({
 })
 
 const columns = [
+  { field: 'lrn', header: 'LRN' },
   { field: 'fullName', header: 'Full Name' },
   { field: 'status', header: 'Status' }
 ];
