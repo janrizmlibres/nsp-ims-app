@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useAuthStore } from './auth'
 
 export const useClassLearningStrandStore = defineStore('classLearningStrand', () => {
-  async function getStrand(classLearningStrandId) {
+  async function getClassLearningStrand(classLearningStrandId) {
     const authStore = useAuthStore()
 
     const result = await axios.get(
@@ -264,7 +264,7 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
   }
 
   return {
-    getStrand,
+    getClassLearningStrand,
     addModule,
     getAllModules,
     getModule,
