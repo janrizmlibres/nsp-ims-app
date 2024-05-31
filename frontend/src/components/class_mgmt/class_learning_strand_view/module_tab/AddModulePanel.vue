@@ -4,6 +4,7 @@ import Button from 'primevue/button';
 import InputNumber from 'primevue/inputnumber';
 import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
+import OverlayPanel from 'primevue/overlaypanel';
 import { useToast } from 'primevue/usetoast';
 import { computed, inject, ref } from 'vue';
 
@@ -16,16 +17,15 @@ const toast = useToast()
 const classLearningStrandStore = useClassLearningStrandStore()
 const usersStore = useUsersStore()
 
+const op = inject('op')
 const term = inject('term')
 const classLevel = inject('classLevel')
-const learningStrandInput = inject('learningStrandInput')
-const termStatus = inject('termStatus')
+const learningStrand = inject('learningStrand')
 const allModules = inject('allModules')
 const min = ref()
 const max = ref()
 const dates = ref(null);
 const selectionType = ref(1)
-const disableInput = computed(() => !learningStrandInput.value || !termStatus.value)
 const disableAdd = computed(() => (() => {
         if (invalidModuleRange.value) return true
         if (selectionType.value === 1 && 
@@ -61,7 +61,7 @@ async function addModule() {
             range.value.push(date)
         }
 
-        await classLearningStrandStore.addModule(learningStrandInput.value.id, {
+        await classLearningStrandStore.addModule(learningStrand.value.id, {
             min: min.value,
             max: max.value ? max.value : min.value,
             distriDate: range.value[0],
@@ -77,8 +77,8 @@ async function addModule() {
             try {
                 await usersStore.addAudit(
                     selectionType.value === 1 ? 
-                    `Added: LAS ${min.value} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}` :
-                    `Added: LAS ${min.value} to LAS ${max.value} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    `Added: LAS ${min.value} to ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}` :
+                    `Added: LAS ${min.value} to LAS ${max.value} to ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {
                 console.log(error);
@@ -151,31 +151,33 @@ function resetForm() {
 </script>
 
 <template>
-    <div class="flex flex-col">
-        <span class="font-semibold text-lg u-txt-active mb-4">Add Learning Activity Sheets</span>
-        <div class="flex flex-col mb-4">
-            <label>Selection Type</label>
-            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="disableInput" @update:modelValue="resetForm" />
+    <OverlayPanel ref="op">
+        <div class="flex flex-col">
+            <span class="font-semibold text-lg u-txt-active mb-4">Add Learning Activity Sheets</span>
+            <div class="flex flex-col mb-4">
+                <label>Selection Type</label>
+                <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" @update:modelValue="resetForm" />
+            </div>
+            <div v-if="selectionType === 1" class="flex flex-col mb-4">
+                <label for="title">No.</label>
+                <InputNumber v-model="min" inputId="num" :invalid="invalidModuleRange" :min="1" @update:modelValue="validateModuleRangeInput" />
+            </div>
+            <div v-if="selectionType === 2" class="flex flex-col mb-4">
+                <label for="title">From</label>
+                <InputNumber v-model="min" inputId="min" :invalid="invalidModuleRange" :min="1" @update:modelValue="validateModuleRangeInput" />
+            </div>
+            <div v-if="selectionType === 2" class="flex flex-col mb-4">
+                <label for="title">To</label>
+                <InputNumber v-model="max" inputId="max" :invalid="invalidModuleRange" :min="min+1" :max="min+10" @update:modelValue="validateModuleRangeInput" />
+            </div>
+            <div class="flex flex-col gap-4 mb-4">
+                <label for="calendar">Distribution Date - Retrieval Date</label>
+                <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
+            </div>
+            <div class="flex flex-row gap-2">
+                <Button type="button" outlined label="Add" :disabled="disableAdd" @click="addModule" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
+                <Button type="button" outlined label="Reset" :disabled="!min && !max && !dates" @click="resetForm" severity="danger" class="w-full" />
+            </div>
         </div>
-        <div v-if="selectionType === 1" class="flex flex-col mb-4">
-            <label for="title">No.</label>
-            <InputNumber v-model="min" inputId="num" :invalid="invalidModuleRange" :min="1" :disabled="disableInput" @update:modelValue="validateModuleRangeInput" />
-        </div>
-        <div v-if="selectionType === 2" class="flex flex-col mb-4">
-            <label for="title">From</label>
-            <InputNumber v-model="min" inputId="min" :invalid="invalidModuleRange" :min="1" @update:modelValue="validateModuleRangeInput" />
-        </div>
-        <div v-if="selectionType === 2" class="flex flex-col mb-4">
-            <label for="title">To</label>
-            <InputNumber v-model="max" inputId="max" :invalid="invalidModuleRange" :min="min+1" :max="min+10" @update:modelValue="validateModuleRangeInput" />
-        </div>
-        <div class="flex flex-col gap-4 mb-4">
-            <label for="calendar">Distribution Date - Retrieval Date</label>
-            <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" :disabled="disableInput" />
-        </div>
-        <div class="flex flex-row gap-2">
-            <Button type="button" outlined label="Add" :disabled="disableAdd" @click="addModule" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
-            <Button type="button" outlined label="Reset" :disabled="!min && !max && !dates" @click="resetForm" severity="danger" class="w-full" />
-        </div>
-    </div>
+    </OverlayPanel>
 </template>

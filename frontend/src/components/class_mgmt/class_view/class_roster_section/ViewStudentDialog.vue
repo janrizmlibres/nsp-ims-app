@@ -116,7 +116,7 @@ function setImageModal(value) {
     >
       &times;
     </span>
-    <img :src="photoUrl" class="m-auto block w-5/6 max-w-3xl" />
+    <img :src="photoUrl" class="m-auto block w-5/6 max-w-3xl item" />
   </div>
   <Dialog
     v-model:visible="studentDialogState"
@@ -134,7 +134,7 @@ function setImageModal(value) {
         class: ['h-[80%] w-[80%] !rounded-2xl']
       },
       header: {
-        class: ['!rounded-t-2xl']
+        class: ['!rounded-t-2xl !items-start']
       },
       content: {
         class: ['h-full !rounded-b-2xl']
@@ -184,8 +184,8 @@ function setImageModal(value) {
         </div>
       </div>
     </template>
-    <div class="relative flex flex-col h-full shadow-xl">
-      <Toolbar class="!u-bg-pcolor-2 !rounded-t-md !rounded-b-none !border-none">
+    <div class="relative flex flex-col h-full shadow-xl rounded-b-2xl">
+      <Toolbar class="!u-gradient-bg-pcolor !rounded-t-2xl !rounded-b-none !border-none">
         <template #end>
           <div v-if="activeTab !== 1" class="flex flex-row gap-4 items-center mr-4">
             <label class="font-semibold text-white">Learning Strand:</label>
@@ -199,7 +199,7 @@ function setImageModal(value) {
           </div>
         </template>
       </Toolbar>
-      <TabView v-model:activeIndex="activeTab" class="!rounded-b-md">
+      <TabView v-model:activeIndex="activeTab" class="!rounded-b-2xl">
         <TabPanel>
           <template #header>
             <div class="flex items-center gap-2">

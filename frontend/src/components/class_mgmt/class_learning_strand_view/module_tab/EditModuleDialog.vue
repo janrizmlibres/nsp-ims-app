@@ -22,7 +22,7 @@ const usersStore = useUsersStore()
 const editModuleDialogState = inject('editModuleDialogState')
 const module = inject('module')
 const term = inject('term')
-const learningStrandInput = inject('learningStrandInput')
+const learningStrand = inject('learningStrand')
 const classLevel = inject('classLevel')
 const dates = ref([])
 const disableUpdate = computed(() => dates.value ? (dates.value.length === 0 || dates.value[1] === null) : !dates.value)
@@ -56,7 +56,7 @@ async function updateModule() {
 
             try {
                 await usersStore.addAudit(
-                    `Updated: ${module.value.title} date range from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    `Updated: ${module.value.title} date range from ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {
                 console.log(error);

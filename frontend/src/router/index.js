@@ -10,7 +10,9 @@ import EnrollLearnersView from '@/views/enrollment/EnrollLearnersView.vue'
 import EditEnrolledView from '@/views/enrollment/EditEnrolledView.vue'
 
 // Class Management Views
-import ManageClassView from '@/views/class_mgmt/ManageClassView.vue'
+import ClassesView from '@/views/class_mgmt/ClassesView.vue'
+import ClassView from '@/views/class_mgmt/ClassView.vue'
+import StrandView from '@/views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
 import SessionView from '@/views/class_mgmt/SessionView.vue'
 
@@ -34,6 +36,8 @@ import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vu
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
 
 import { useAuthStore } from '@/stores/auth'
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -178,9 +182,28 @@ const router = createRouter({
           },
           children: [
             {
+              path: '/classes',
+              name: 'classes',
+              component: ClassesView
+            },
+            {
               path: '/class',
-              name: 'class-management',
-              component: ManageClassView
+              name: 'class',
+              query: {id: Number, strand: Number, module: Number, session: Number},
+              components: [ClassView, StrandView, ModuleView, SessionView],
+              beforeEnter: (to) => {
+                if (
+                  !to.query.id ||
+                  (to.query.id && (to.query.module || to.query.session))
+                ) return {name: 'dashboard'}
+                else return true
+              }
+            },
+            {
+              path: '/strand',
+              name: 'strand',
+              query: {id: Number},
+              component: StrandView
             },
             {
               path: '/module',
@@ -275,10 +298,6 @@ const router = createRouter({
     },
     { path: '/:misc(.*)', redirect: { name: 'login' } }
   ]
-})
-
-router.getRoutes().forEach((route) => {
-  route.components ? (route.components.default.name = route.name) : null
 })
 
 router.beforeEach((to) => {

@@ -3,6 +3,7 @@ import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
+import OverlayPanel from 'primevue/overlaypanel';
 import { computed, inject, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { format } from 'date-fns';
@@ -13,8 +14,8 @@ const toast = useToast()
 const classLearningStrandStore = useClassLearningStrandStore()
 const usersStore = useUsersStore()
 
-const learningStrandInput = inject('learningStrandInput')
-const termStatus = inject('termStatus')
+const op = inject('op')
+const learningStrand = inject('learningStrand')
 const term = inject('term')
 const classLevel = inject('classLevel')
 const data = inject('selectedMonth')
@@ -27,7 +28,7 @@ const currentMonth = ref()
 const selectionType = ref(1)
 const disableAdd = computed(() => (date.value ? (date.value.length === 0 || date.value[1] === null) : !date.value) || invalidDateRange.value)
 
-const disableInputComponent = computed(() => !data.value || !termStatus.value)
+const disableInputComponent = computed(() => !data.value)
 const invalidDateRange = ref(false)
 
 const selection = ref([
@@ -66,7 +67,7 @@ async function addSession() {
             newDates.push(newDate)
         }
 
-        await classLearningStrandStore.addSession(learningStrandInput.value.id, {dates:newDates}). then(async (message) =>{
+        await classLearningStrandStore.addSession(learningStrand.value.id, {dates:newDates}). then(async (message) =>{
             toast.add({
                 severity: 'success',
                 summary: 'Success',
@@ -77,7 +78,7 @@ async function addSession() {
             try {
                 for (const date of newDates) {
                     await usersStore.addAudit(
-                        `Added: Session ${date} to ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                        `Added: Session ${date} to ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                     )
                 }
             } catch(error) {
@@ -153,23 +154,25 @@ watch(() => data.value, (data) => {
 </script>
 
 <template>
-    <div class="flex flex-col">
-        <span class="font-semibold text-lg u-txt-active mb-4">Add Session</span>
-        <div class="flex flex-col mb-4">
-            <label>Selection Type</label>
-            <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="disableInputComponent" @update:modelValue="resetForm" />
+    <OverlayPanel ref="op">
+        <div class="flex flex-col">
+            <span class="font-semibold text-lg u-txt-active mb-4">Add Session</span>
+            <div class="flex flex-col mb-4">
+                <label>Selection Type</label>
+                <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="disableInputComponent" @update:modelValue="resetForm" />
+            </div>
+            <div v-if="selectionType === 1" class="flex flex-col gap-4 mb-4">
+                <label>Session Date</label>
+                <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :invalid="invalidDateRange" :disabled="disableInputComponent" @update:modelValue="validateModuleRangeInput" />
+            </div>
+            <div v-if="selectionType === 2" class="flex flex-col gap-4 mb-4">
+                <label>Session Dates</label>
+                <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :invalid="invalidDateRange" :disabled="disableInputComponent" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="validateModuleRangeInput" />
+            </div>
+            <div class="flex flex-row gap-2">
+                <Button type="button" outlined label="Add" :disabled="disableAdd" @click="addSession" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
+                <Button type="button" outlined label="Reset" :disabled="!date" @click="resetForm" severity="danger" class="w-full" />
+            </div>
         </div>
-        <div v-if="selectionType === 1" class="flex flex-col gap-4 mb-4">
-            <label>Session Date</label>
-            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :invalid="invalidDateRange" :disabled="disableInputComponent" @update:modelValue="validateModuleRangeInput" />
-        </div>
-        <div v-if="selectionType === 2" class="flex flex-col gap-4 mb-4">
-            <label>Session Dates</label>
-            <Calendar v-model="date" id="calendar" :minDate="minDate" :maxDate="maxDate" :currentMonth="currentMonth" showIcon showButtonBar iconDisplay="input" :invalid="invalidDateRange" :disabled="disableInputComponent" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="validateModuleRangeInput" />
-        </div>
-        <div class="flex flex-row gap-2">
-            <Button type="button" outlined label="Add" :disabled="disableAdd" @click="addSession" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
-            <Button type="button" outlined label="Reset" :disabled="!date" @click="resetForm" severity="danger" class="w-full" />
-        </div>
-    </div>
+    </OverlayPanel>
 </template>

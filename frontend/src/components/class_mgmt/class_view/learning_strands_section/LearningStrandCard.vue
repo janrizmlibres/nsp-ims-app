@@ -1,65 +1,48 @@
 <script setup>
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import MeterGroup from 'primevue/metergroup';
 import Button from 'primevue/button';
 import OverlayPanel from 'primevue/overlaypanel';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { format } from 'date-fns';
 
 const router = useRouter()
+const route = useRoute()
 const props = defineProps(['data'])
 
-const data = ref(props.data)
-
-function showStrand() {
-    router.push({ name: 'strand', query: { id: data.value.id} })
-}
-
+const data = computed(() => props.data)
 const class_schedules = data.value.class_schedules
-const schedules = ref([])
-
-for (const schedule of class_schedules) {
-    const format = schedule.days + ' | ' + formatDate(schedule.start_time) + ' - ' + formatDate(schedule.end_time) 
-    schedules.value.push({data:format})
-}
-
-function formatDate(time) {
-    let hms = time.split(':')
-    let hours = hms[0]
-    const minutes = hms[1]
-    const seconds = hms[2]
-    let dd = "AM"
-
-    if (hours >= 12) {
-        hours = hours - 12
-        dd = "PM"
-    }
-    if (hours === 0) {
-        hours = 12
-    }
-
-    const formattedTime = `${hours}:${minutes} ${dd}`
-    return time.replace(new RegExp(`${hms[0]}:${minutes}:${seconds}`), formattedTime)
-}
 const op = ref();
+
 const toggle = (event) => {
     op.value.toggle(event);
+}
+
+function showStrand() {
+    router.push({ name: 'class', query: { ...route.query, strand: data.value.id } })
 }
 </script>
 
 <template>
-    <div class="flex flex-row justify-between bg-white u-txt-active shadow-md rounded-lg p-4">
-        <div class="flex flex-col font-semibold content-center flex-1 mr-8 hover:cursor-pointer hover:underline hover:u-txt-pcolor">
+    <div class="flex flex-row justify-between bg-white u-border-bottom hover:u-bg-pcolor hover:text-white u-txt-active shadow-md rounded-2xl p-6 transition-all duration-300">
+        <div class="flex flex-col font-semibold content-center flex-1 mr-8 hover:cursor-pointer hover:underline">
             <p class="u-txt-inactive">{{ data.learning_strand.code }}</p>
             <p class="text-lg"
             @click="showStrand">
                 {{ data.learning_strand.name }}
             </p>
         </div>
-        <MeterGroup :value="[{label:'Complete', value: null}]" class="flex-[2]" />
-        <Button icon="fa fa-circle-info" text rounded aria-label="Filter" class="ml-4" @click="toggle" />
+        <MeterGroup :value="[{label:'Complete', value: null}]" class="flex-[2] self-center" />
+        <Button icon="fa fa-circle-info fa-xl" text rounded aria-label="Filter" class="ml-4" @click="toggle" />
         <OverlayPanel ref="op">
             <div class="flex flex-col w-[16rem]">
-                Test
+                <div v-if="class_schedules"><span>No Schedules Yet.</span></div>
+                <div v-else v-for="class_schedule of class_schedules" :key="class_schedule" class="flex flex-col">
+                    <span> {{ class_schedule.volunteer.fullname }} </span>
+                    <span> {{ class_schedule.school_days }} </span>
+                    <span> {{ format(new Date("01/01/0001 " + class_schedule.start_time), "hh:mm aaa") }} </span>
+                    <span> {{ format(new Date("01/01/0001 " + class_schedule.end_time), "hh:mm aaa") }} </span>
+                </div>
             </div>
         </OverlayPanel>
     </div>
