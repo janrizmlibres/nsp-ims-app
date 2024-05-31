@@ -15,7 +15,6 @@ let series = reactive([
     data: props.chartData
   }
 ]);
-// add a key for the chart
 
 const chartOptions = reactive({
   chart: {
@@ -38,7 +37,6 @@ const chartOptions = reactive({
   },
   xaxis: {
     categories: ['Enrolled Students', 'Active Students', 'Inactive Students', 'Grade School', 'Junior High School'],
-    // your xaxis options here
   }
 });
 

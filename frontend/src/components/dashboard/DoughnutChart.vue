@@ -12,25 +12,25 @@ const props = defineProps({
 });
 
 let series = reactive(props.seriesData);
-let chartKey = ref(0); // add a key for the chart
+let chartKey = ref(0);
 
 const chartOptions = reactive({
     chart: {
         type: 'donut',
         background: 'transparent',
-        width: '3.125rem', // adjust as needed
-        height: '3.125rem', // adjust as needed
+        width: '3.125rem', 
+        height: '3.125rem',
     },
     plotOptions: {
         pie: {
             donut: {
-                size: '87%', // adjust as needed
+                size: '87%',
             },
         },
     },
     colors: ['#BB9837', '#265492'],
     dataLabels: {
-        enabled: false, // disable data labels
+        enabled: false,
     },
     legend: {
         show: false
@@ -40,6 +40,6 @@ const chartOptions = reactive({
 
 watch(() => props.seriesData, (newSeriesData) => {
     series = reactive(newSeriesData);
-    chartKey.value++; // increment the key to force re-render
+    chartKey.value++;
 });
 </script>

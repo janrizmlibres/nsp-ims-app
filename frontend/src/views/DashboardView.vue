@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref } from 'vue';
 import ContentPane from "@/components/UI/ContentPane.vue";
 import YearButton from "@/components/dashboard/YearButton.vue";
 import StudentWidget from "@/components/dashboard/StudentWidget.vue";
@@ -7,16 +7,10 @@ import BarChart from "@/components/dashboard/BarChart.vue";
 import LineChart from "@/components/dashboard/LineChart.vue";
 
 import { useSidebarStore } from '@/stores/sidebar.js';
-import { useStudentsStore } from '@/stores/students';
-import { useUtilitiesStore } from '@/stores/utilities';
 import { useEnrollmentStore } from '@/stores/enrollment';
-import { useVolunteerStore } from '@/stores/volunteer';
 
 const enrollmentStore = useEnrollmentStore();
-const studentsStore = useStudentsStore();
 const sidebarStore = useSidebarStore();
-const utilitiesStore = useUtilitiesStore();
-const volunteerStore = useVolunteerStore();
 
 const isSidebarHovering = computed(() => sidebarStore.isHovering);
 const isSidebarPinned = computed(() => sidebarStore.isPinned);
@@ -35,9 +29,7 @@ const inactiveJuniorHighSchoolCount = ref(0)
 const enrollmentTrend = ref([])
 
 function getTotalEnrolledStudents() {
-  console.log(enrollmentStore.learners);
   totalEnrolledStudents.value = enrollmentStore.learners.length;
-  //console.log(totalEnrolledStudents);
 }
 
 function getSchoolLevelCounts () {
@@ -91,22 +83,14 @@ function getJuniorHighSchoolStatusCounts() {
 }
 
 function getEnrollmentTrendByMonth() {
-  // Create an array with all months
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-  // Initialize an object to store the count of enrollments for each month
   const enrollmentsByMonth = months.reduce((obj, month) => ({ ...obj, [month]: 0 }), {});
 
-  // Iterate over the learners array
   for (const learner of enrollmentStore.learners) {
-    // Extract the month from the dateEnrolled property
     const month = new Date(learner.dateEnrolled).getMonth();
-
-    // Increment the count for this month
     enrollmentsByMonth[months[month]]++;
   }
-
-  // Convert the enrollmentsByMonth object to the desired output format
   enrollmentTrend.value = months.map(month => ({ x: month, y: enrollmentsByMonth[month] }));
 }
 
@@ -133,7 +117,6 @@ const handleTermIdChanged = async (newTermId) => {
   getGradeSchoolStatusCounts();
   getJuniorHighSchoolStatusCounts();
   getEnrollmentTrendByMonth();
-  //console.log(enrollmentTrend.value);
 };
 </script>
 

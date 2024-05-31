@@ -21,14 +21,12 @@ const termsOptions = ref([])
 const selectedTerm = ref(null)
 const totalEnrolledStudents = ref(0)
 
-// define the emits
 const emit = defineEmits(['termId-changed']);
 
 // watch selectedTerm and emit the event when it changes
 watch(selectedTerm, (newTerm) => {
   if (newTerm) {
     emit('termId-changed', newTerm.id);
-    //console.log(newTerm.id);
   }
 });
 

@@ -11,7 +11,7 @@
 
 <script setup>
 import { ref, defineProps } from "vue";
-import Dialog from 'primevue/dialog'; // Assuming you're using PrimeVue for the Dialog component
+import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -32,8 +32,6 @@ const columns = [
   { field: 'fullName', header: 'Full Name' },
   { field: 'status', header: 'Status' }
 ];
-
-console.log(values, columns); // Use students directly
 
 const visible = ref(false);
 </script>

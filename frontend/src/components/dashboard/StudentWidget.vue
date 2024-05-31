@@ -2,14 +2,9 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DoughnutChart from './DoughnutChart.vue'
 import ViewList from './ViewList.vue'
-import ViewListClassLevel from './ViewListClassLevel.vue'
-import { useStudentsStore } from '@/stores/students'
-import { useVolunteerStore } from '@/stores/volunteer'
 import { useEnrollmentStore } from '@/stores/enrollment'
 import { watch, ref, computed } from 'vue'
 const enrollmentStore = useEnrollmentStore()
-const volunteerStore = useVolunteerStore()
-const studentsStore = useStudentsStore()
 
 const props = defineProps({
   seriesData: {
