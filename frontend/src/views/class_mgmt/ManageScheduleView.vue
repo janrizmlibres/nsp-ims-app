@@ -1,6 +1,6 @@
 <script setup>
 // Custom
-import SchedulesTable from '@/components/class_mgmt/manage_schedule_view/SchedulesTable.vue';
+import SchedulesTable from '@/components/utilities_view/SchedulesTable.vue';
 
 const props = defineProps(['classLevel', 'termStatus'])
 </script>

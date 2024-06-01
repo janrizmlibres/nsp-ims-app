@@ -7,79 +7,39 @@ import Row from 'primevue/row';
 import Toolbar from 'primevue/toolbar';
 import Button from 'primevue/button';
 import { inject, provide, ref } from 'vue';
-import { format } from 'date-fns';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
 // Custom
-import AddScheduleSection from './AddScheduleSection.vue';
+import AddSchedulePanel from './AddSchedulePanel.vue';
 import EditScheduleDialog from './EditScheduleDialog.vue';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useClassStore } from '@/stores/class';
 import { useUsersStore } from '@/stores/users';
 
 const classLearningStrandStore = useClassLearningStrandStore()
-const classStore = useClassStore()
 const usersStore = useUsersStore()
 
 const toast = useToast()
 const confirm = useConfirm()
 
-const termStatus = inject('termStatus')
 const term = inject('term')
 const classLevel = inject('classLevel')
-const classData = ref([])
-const isFetching = ref(false)
+const classData = inject('classData')
 const selectedSchedules = ref([])
 const metaKey = ref(true)
 const editScheduleDialogState = ref(false)
 const schedule = ref()
 const dt = ref()
 const dtDiv = ref()
+const op = ref()
 
+const updateScheduleTable = inject('updateScheduleTable')
+
+provide('op', op)
 provide('schedule', schedule)
 provide('editScheduleDialogState', editScheduleDialogState)
-provide('updateScheduleTable', updateScheduleTable)
-
-function updateScheduleTable() {
-    isFetching.value = true
-    classData.value.length = 0
-
-    classStore.getClassSchedules(classLevel.value.id).then((data) => {
-        for (const learningStrand of data) {
-            for (const schedule of learningStrand.class_schedules) {
-                const start_time = format(new Date("01/01/0001 " + schedule.start_time), "hh:mm aaa")
-                const end_time = format(new Date("01/01/0001 " + schedule.end_time), "hh:mm aaa")
-
-                classData.value.push({
-                    id: learningStrand.id,
-                    classLevelId: learningStrand.classLevelId,
-                    scheduleId: schedule.id,
-                    code: learningStrand.learning_strand.code,
-                    name: learningStrand.learning_strand.name,
-                    volunteer: schedule.volunteer,
-                    school_days: schedule.days.split(','),
-                    start_time: start_time,
-                    end_time: end_time,
-                    updatedAt: schedule.updatedAt
-                })
-            }
-        }
-
-        isFetching.value = false
-    }).catch((error) => {
-        toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.response.data.message,
-            life: 3000
-        })
-
-        isFetching.value = false
-    })
-}
 
 updateScheduleTable()
 
@@ -126,15 +86,16 @@ function editSchedule(data) {
 function deselect() {
     selectedSchedules.value = []
 }
+
+const toggle = (event) => {
+    op.value.toggle(event);
+}
 </script>
 
 <template>
     <div class="flex h-full w-full">
-        <div v-if="termStatus" class="flex flex-col mr-10 p-2 gap-4" >
-            <AddScheduleSection />
-        </div>
-        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
-            <Toolbar class="!p-2 h-16">
+        <div class="flex flex-col h-full w-full overflow-hidden" ref="dtDiv">
+            <Toolbar class="!p-2 h-16 border-x-0 rounded-none">
                 <template #start>
                     <span v-if="selectedSchedules.length" class="flex flex-row gap-8 items-center mx-2">
                         <span class="flex items-center gap-2">
@@ -143,11 +104,14 @@ function deselect() {
                                 {{ selectedSchedules.length + ' selected' }}
                             </p>
                         </span>
-                        <span v-if="termStatus" class="flex gap-1 items-center">
-                            <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/>
+                        <span class="flex gap-1 items-center">
                             <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteSchedules"/>
                         </span>
                     </span>
+                </template>
+                <template #end>
+                    <Button text icon="fa fa-plus" label="Add Schedule" aria-label="add-schedule" style="height: 2rem;" class="!rounded-full mr-2 gap-2" @click="toggle"/>
+                    <AddSchedulePanel />
                 </template>
             </Toolbar>
             <DataTable :value="classData" dataKey="scheduleId"
@@ -174,7 +138,7 @@ function deselect() {
 
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">
-                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedSchedules.length}, {'text-white hover:u-bg-scolor': selectedSchedules.length}]" />
+                        <Button icon="fa fa-pencil" text @click="editSchedule(slotProps.data)" :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedSchedules.length}, {'text-white hover:u-bg-scolor': selectedSchedules.length}]" />
                     </template>
                 </Column>
                 <Column field="name" />

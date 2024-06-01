@@ -37,10 +37,10 @@
 
 @layer utilities {
   .u-gradient-bg-pcolor {
-    background: rgb(2,40,89);
-    background: linear-gradient(35deg, rgba(2,40,89,1) 25%, rgba(38,84,146,1) 100%);
+    background: #022859;
+    background: linear-gradient(35deg, #022859 25%, #265492 100%);
   }
-
+  
   .u-main-bg {
     background-color: #EEEEEE;
   }

@@ -1,18 +1,17 @@
 <script setup>
 // Presets
 import DataTable from 'primevue/datatable';
-import Dropdown from 'primevue/dropdown';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Toolbar from 'primevue/toolbar';
 import Badge from 'primevue/badge';
 import { inject, provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { format } from 'date-fns';
 
 // Custom
-import AddSessionSection from './AddSessionSection.vue';
+import AddSessionPanel from './AddSessionPanel.vue';
 import EditSessionDialog from './EditSessionDialog.vue';
 
 // stores
@@ -27,40 +26,35 @@ const usersStore = useUsersStore()
 const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
+const route = useRoute()
 
-const termStatus = inject('termStatus')
 const term = inject('term')
-const learningStrands = inject('learningStrands')
 const classLevel = inject('classLevel')
+const learningStrand = inject('learningStrand')
+
 const isFetching = ref(false)
 const metaKey = ref(true)
-const learningStrandInput = ref()
 const selectedSessions = ref([])
 const session = ref()
 const editSessionDialogState = ref(false)
 const sessionByMonths = ref()
 const selectedRow = ref({}) 
 const selectedMonth = ref()
-const dt = ref()
-const dtDiv = ref()
-
+const op = ref()
 const cols = ref([
     {field: 'absent', header: 'Absent'},
     {field: 'present', header: 'Present'},
     {field: 'total', header: 'Total'},
 ])
 
-provide('learningStrandInput', learningStrandInput)
+provide('op', op)
+provide('learningStrand', learningStrand)
 provide('session', session)
 provide('sessionByMonths', sessionByMonths)
-provide('selectedMonth', selectedMonth)
 provide('editSessionDialogState', editSessionDialogState)
 provide('updateSessionTable', updateSessionTable)
 
-watch(() => learningStrands.value, () => {
-    learningStrandInput.value = null
-    sessionByMonths.value = null
-})
+watch(() => learningStrand.value, () => updateSessionTable())
 
 function updateSessionTable() {
     isFetching.value = true
@@ -87,7 +81,7 @@ function updateSessionTable() {
         return months
     })()
 
-    classLearningStrandStore.getAllSessions(learningStrandInput.value.id).then((sessions) => {
+    classLearningStrandStore.getAllSessions(learningStrand.value.id).then((sessions) => {
         sessions.reduce((months, obj) => {
             const month = new Date(obj.date).getMonth()
             
@@ -131,7 +125,7 @@ async function deleteModules() {
                     try {
                         selectedSessions.value.forEach(async (session) => {
                             await usersStore.addAudit(
-                                `Deleted: Session ${new Date(session.date).toDateString()} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                                `Deleted: Session ${new Date(session.date).toDateString()} from ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                             ).then(deselect())
                         })
                     } catch(error) {
@@ -148,7 +142,7 @@ async function deleteModules() {
 }
 
 function viewSession() {
-    router.push({ name: 'session-info', query: { id: selectedSessions.value[selectedSessions.value.length-1].id, status: termStatus.value } })
+    router.push({ name: 'class', query: { ...route.query, session: selectedSessions.value[selectedSessions.value.length-1].id }})
 }
 
 const getNumericLabel = (field) => {
@@ -186,15 +180,16 @@ function onCollapseRow() {
     deselect()
     selectedRow.value = {}
 }
+
+const toggle = (event) => {
+    op.value.toggle(event);
+}
 </script>
 
 <template>
     <div class="flex h-full w-full">
-        <div v-if="termStatus" class="flex flex-col mr-10 p-2 gap-4" >
-            <AddSessionSection />
-        </div>
-        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
-            <Toolbar class="!p-2">
+        <div class="flex flex-col h-full w-full overflow-hidden">
+            <Toolbar class="!p-2 h-[4.35rem]">
                 <template #start>
                     <span v-if="selectedSessions.length" class="flex flex-row gap-8 items-center mx-2">
                         <span class="flex items-center gap-2">
@@ -203,17 +198,15 @@ function onCollapseRow() {
                                 {{ selectedSessions.length + ' selected' }}
                             </p>
                         </span>
-                        <span class="flex gap-1" v-if="termStatus">
+                        <span class="flex gap-1" >
                             <!-- <Button icon="fa fa-download" text aria-label="Download Selected" style="height: 2rem; width: 2rem;" @click="{}"/> -->
                             <Button icon="fa fa-trash" text aria-label="Delete Selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
                         </span>
                     </span>
                 </template>
                 <template #end>
-                    <div class="flex flex-row gap-4 items-center">
-                        <label class="font-semibold">Learning Strand:</label>
-                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="updateSessionTable" /> 
-                    </div>
+                    <Button text icon="fa fa-plus" label="Add Session" aria-label="add-session" style="height: 2rem;" class="!rounded-full mr-2 gap-2" @click="toggle"/>
+                    <AddSessionPanel />
                 </template>
             </Toolbar>
             <DataTable v-model:expandedRows="selectedRow" :value="sessionByMonths" dataKey="id" :loading="isFetching"
@@ -243,16 +236,17 @@ function onCollapseRow() {
                         :value="slotProps.data.sessions" dataKey="id"
                         v-model:selection="selectedSessions"
                         selectionMode="multiple" :metaKeySelection="metaKey" @row-dblclick="viewSession" @blur="deselect()"
-                        sortField="date" :sortOrder="1" removableSort class="unselectable" ref="dt"
+                        sortField="date" :sortOrder="1" removableSort class="unselectable"
                         paginator :rows="7"
                         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                         currentPageReportTemplate="{first} to {last} of {totalRecords}"
                     >
                         <template #empty> <div class="text-center">No records found.</div> </template>
 
+                        <Column :exportable="false" selectionMode="multiple" headerStyle="width: 3rem"></Column>
                         <Column :exportable="false" style="width:2rem">
                             <template #body="slotProps">
-                                <Button v-if="termStatus" icon="fa fa-pencil" text :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedSessions.length}, {'text-white hover:u-bg-scolor': selectedSessions.length}]" @click="editSession(slotProps.data)" />
+                                <Button icon="fa fa-pencil" text :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedSessions.length}, {'text-white hover:u-bg-scolor': selectedSessions.length}]" @click="editSession(slotProps.data)" />
                             </template>
                         </Column>
                         <Column field="date" header="Session Date" sortable>

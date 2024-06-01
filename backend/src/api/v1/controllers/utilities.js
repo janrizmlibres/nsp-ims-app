@@ -67,11 +67,38 @@ export async function getTerms(req, res, next) {
       include: [
         {
           model: ClassLevel,
-          include: [{ model: ClassLearningStrand, include: [LearningStrand] }],
+          order: [[ClassLevel, "school_level", "ASC"]],
         },
       ],
-      order: [["id", "DESC"]],
+      order: [["batch_number", "DESC"]],
     });
+
+    for (const term of terms) {
+      for (const classLevel of term.class_levels) {
+        const activeCount = await classLevel.countEnrollments({
+          where: {
+            status: 'Active'
+          }
+        })
+
+        const inactiveCount = await classLevel.countEnrollments({
+          where: {
+            status: 'Inactive'
+          }
+        })
+
+        const dropCount = await classLevel.countEnrollments({
+          where: {
+            status: 'Drop'
+          }
+        })
+
+        classLevel.dataValues.activeCount = activeCount
+        classLevel.dataValues.inactiveCount = inactiveCount
+        classLevel.dataValues.dropCount = dropCount
+        classLevel.dataValues.total = activeCount + inactiveCount + dropCount
+      }
+    }
 
     res.status(200).json({
       message: "Academic Terms fetched successfully!",

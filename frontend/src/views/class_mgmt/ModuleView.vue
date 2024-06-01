@@ -42,7 +42,7 @@ provide('updateModuleSubmissionTable', updateModuleSubmissionTable)
 function updateModuleSubmissionTable() {
     isFetching.value = true
 
-    classLearningStrandStore.getModule(route.query.id).then((data) => {
+    classLearningStrandStore.getModule(route.query.module).then((data) => {
         const actTemp = []
         const inactTemp = []
         const dropTemp = []
@@ -59,13 +59,12 @@ function updateModuleSubmissionTable() {
         inactive.value = inactTemp
         drop.value = dropTemp
 
-        console.log(data);
         term.value = data.class_learning_strand.class_level.term
         classLevel.value = data.class_learning_strand.class_level
-        learningStrand.value = data.class_learning_strand.learning_strand
+        learningStrand.value = data.class_learning_strand
         module.value = data
         moduleTitle.value = data.title
-        strandName.value = data.class_learning_strand.learning_strand.name
+        strandName.value = data.class_learning_strand.name
     }).catch((error) => {
         toast.add({
             severity: 'error',
@@ -79,17 +78,19 @@ function updateModuleSubmissionTable() {
 }
 
 watch(() => route.query, () => {
-    if (route.name === 'module-info') {
+    if (route.name === 'class') {
         updateModuleSubmissionTable()
     }
 }, {immediate: true})
 </script>
 
 <template>
-    <ContentPane :breadcrumb="[{label: 'Management'}, {label: 'Class'}, {label: strandName}, {label: moduleTitle}]">
-        <ModuleInfoSection />
-        <Divider class="before:border-t before:border-surface-400 my-10"/>
-        <ModuleTab />
+    <ContentPane :breadcrumb="[{label: `S.Y ${term ? term.academic_year : ''}`}, {label: classLevel ? classLevel.school_level : ''}, {label: strandName}, {label: moduleTitle}]">
+        <div class="h-full overflow-y-auto">
+            <ModuleInfoSection />
+            <Divider class="before:border-t before:border-surface-400 my-10"/>
+            <ModuleTab />
+        </div>
     </ContentPane>
 </template>
 

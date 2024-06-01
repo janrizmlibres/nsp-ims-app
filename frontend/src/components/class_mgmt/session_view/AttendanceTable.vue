@@ -8,7 +8,7 @@ import Textarea from 'primevue/textarea';
 import Tag from 'primevue/tag';
 import ProgressSpinner from 'primevue/progressspinner';
 import { inject, ref, watch } from 'vue';
-import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
+import { onBeforeRouteLeave, useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 
@@ -19,7 +19,6 @@ import { useUsersStore } from '@/stores/users';
 const classLearningStrandStore = useClassLearningStrandStore()
 const usersStore = useUsersStore()
 
-const route = useRoute()
 const toast = useToast()
 const confirm = useConfirm()
 const router = useRouter()
@@ -203,7 +202,7 @@ onBeforeRouteLeave((to) => {
                     {{ slotProps.data.updatedAt.toLocaleString() }}
                 </template>
             </Column>
-            <template #footer v-if="route.query.status === 'true'">
+            <template #footer>
                 <div class="flex flex-row justify-end items-center">
                     <div v-if="edit" class="flex flex-row gap-4">
                         <Button icon="fa fa-check" label="Save" aria-label="Save Grades" iconClass="['mr-4']" size="small" rounded outlined :disabled="disableSave" @click="updateAttendances"/>

@@ -23,39 +23,46 @@ const statuses = ref([
 ]);
 
 const getStatusLabel = (status) => {
-  switch (status) {
-    case 'Graded':
-    return 'success'
+    switch (status) {
+        case 'Graded':
+        return 'success'
 
-    case 'Submitted':
-    return 'warning'
+        case 'Submitted':
+        return 'warning'
 
-    case 'No Submission':
-    return 'danger'
+        case 'No Submission':
+        return 'danger'
 
-    default:
-    return null
-  }
+        default:
+        return null
+    }
+}
+
+const getScoreBadge = (score, totalScore) => {
+    if (score >= 0.75*totalScore) return 'success'
+    else if (score < 0.75*totalScore && score >= 0.50*totalScore) return 'warning'
+    else if (score < 0.50*totalScore && score >= 0) return 'danger'
+    else return null
 }
 
 function sumSelectedModulesScore() {
-  return selectedModules.value.reduce((total, item) => total + item.score, 0)
+    return selectedModules.value.reduce((total, item) => total + item.score, 0)
 }
 
 function deselect() {
-  selectedModules.value = []
+    selectedModules.value = []
 }
 
 function onClickOutside(event) {
-  if (dt.value && !dtDiv.value.contains(event.target)) deselect()
+    if (dt.value && !dtDiv.value.contains(event.target)) deselect()
 }
 
 onMounted(() => {
-  document.addEventListener('click', onClickOutside)
+    document.addEventListener('click', onClickOutside)
 })
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', onClickOutside)
+    document.removeEventListener('click', onClickOutside)
 })
 </script>
 
@@ -69,7 +76,7 @@ onBeforeUnmount(() => {
                         {{ selectedModules.length + ' selected' }}
                     </p>
                     <span class="flex gap-1 items-center float-end">
-                        Total Score: {{ sumSelectedModulesScore() }}
+                        Computed Score: {{ sumSelectedModulesScore() }}
                     </span>
                 </span>
             </template>
@@ -89,6 +96,7 @@ onBeforeUnmount(() => {
         >
             <template #empty> <div class="text-center">No records found.</div> </template>
 
+            <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
             <Column field="title" header="Title" />
             <Column field="distribution_date" header="Distribution Date" />
             <Column field="retrieval_date" header="Retrieval Date" />
@@ -107,7 +115,12 @@ onBeforeUnmount(() => {
             <Column field="date_submitted" header="Date Submitted" />
             <Column field="score" header="Score">
                 <template #body="slotProps">
-                    <Badge :value="slotProps.data.score" :severity="slotProps.data.score > 0 ? 'success' : 'danger'" />
+                    <Badge :value="slotProps.data.score" :severity="getScoreBadge(slotProps.data.score, slotProps.data.total_score)" />
+                </template>
+            </Column>
+            <Column field="total_score" header="Total Score">
+                <template #body="slotProps">
+                    <Badge :value="slotProps.data.total_score" severity="info" />
                 </template>
             </Column>
             <Column field="remarks" header="Remarks" />

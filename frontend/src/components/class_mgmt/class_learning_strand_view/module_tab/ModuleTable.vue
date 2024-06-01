@@ -10,45 +10,45 @@ import Badge from 'primevue/badge';
 import InputText from 'primevue/inputtext';
 import { computed, inject, provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import ProgressSpinner from 'primevue/progressspinner';
+import { useConfirm } from 'primevue/useconfirm';
 
 // Custom
-import AddModuleSection from './AddModuleSection.vue'
+import AddModulePanel from './AddModulePanel.vue'
 import EditModuleDialog from './EditModuleDialog.vue'
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
-import { useConfirm } from 'primevue/useconfirm';
-import ProgressSpinner from 'primevue/progressspinner';
 import { useUsersStore } from '@/stores/users';
+
 
 const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
+const route = useRoute()
 
 const classLearningStrandStore = useClassLearningStrandStore()
 const usersStore = useUsersStore()
 
-const learningStrands = inject('learningStrands')
-const termStatus = inject('termStatus')
+const filters = inject('filters')
 const term = inject('term')
 const classLevel = inject('classLevel')
-const filters = inject('filters')
+const learningStrand = inject('learningStrand')
+
 const allModules = ref([])
 const module = ref()
-const learningStrandInput = ref()
 const selectedModules = ref([])
 const isFetching = ref(false)
 const metaKey = ref(true)
 const editModuleDialogState = ref(false)
 const dt = ref()
-const dtDiv = ref()
-
+const op = ref()
 const cols = ref([
     { field: 'no_submissions', header: 'No Submissions' },
     { field: 'submitted', header: 'Submitted' },
     { field: 'graded', header: 'Graded' },
-    { field: 'total', header: 'Total' }
+    { field: 'total_score', header: 'Total Score' }
 ])
 
 const selectedModulesStatus = computed(() => {
@@ -62,16 +62,13 @@ const statuses = ref([
     {label: 'Done', value: true}
 ]);
 
+provide('op', op)
 provide('allModules', allModules)
 provide('module', module)
 provide('editModuleDialogState', editModuleDialogState)
-provide('learningStrandInput', learningStrandInput)
 provide('updateModuleTable', updateModuleTable)
 
-watch(() => learningStrands.value, () => {
-    learningStrandInput.value = null
-    allModules.value.length = 0
-})
+watch(() => learningStrand.value, () => updateModuleTable())
 
 function updateModuleTable() {
     deselect()
@@ -79,7 +76,7 @@ function updateModuleTable() {
     isFetching.value = true
     allModules.value.length = 0
     
-    classLearningStrandStore.getAllModules(learningStrandInput.value.id).then((modules) => {
+    classLearningStrandStore.getAllModules(learningStrand.value.id).then((modules) => {
         for (const module of modules) {
             allModules.value.push({
                 id: module.id,
@@ -89,7 +86,7 @@ function updateModuleTable() {
                 no_submissions: module.noSubmissions,
                 submitted: module.submitted,
                 graded: module.graded,
-                total: module.total,
+                total_score: module.total_score,
                 status: module.status,
                 updatedAt: new Date(module.updatedAt).toLocaleString()
             })
@@ -126,7 +123,7 @@ async function deleteModules() {
                     try {
                         selectedModules.value.forEach(async (module) => {
                             await usersStore.addAudit(
-                                `Deleted: ${module.title} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                                `Deleted: ${module.title} from ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                             ).then(deselect())
                         })
                     } catch(error) {
@@ -166,7 +163,7 @@ async function markAs() {
             try {
                 selectedModules.value.forEach(async (module) => {
                     await usersStore.addAudit(
-                        `Updated: Marked ${module.title} as ${status ? 'undone' : 'done'} from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                        `Updated: Marked ${module.title} as ${status ? 'undone' : 'done'} from ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                     ).then(deselect())
                 })
             } catch(error) {
@@ -181,13 +178,7 @@ async function markAs() {
 }
 
 function viewModule() {
-    router.push({
-        name: 'module-info',
-        query: {
-            id: selectedModules.value[selectedModules.value.length - 1].id,
-            status: termStatus.value
-        }
-    })
+    router.push({ name: 'class', query: { ...route.query, module: selectedModules.value[selectedModules.value.length - 1].id}})
 }
 
 function deselect() {
@@ -218,7 +209,7 @@ const getNumericLabel = (field) => {
         case 'graded':
         return 'success'
 
-        case 'total':
+        case 'total_score':
         return 'info'
 
         default:
@@ -230,14 +221,15 @@ function editModule(data) {
     module.value = {... data}
     editModuleDialogState.value = true
 }
+
+const toggle = (event) => {
+    op.value.toggle(event);
+}
 </script>
 
 <template>
     <div class="flex h-full w-full">
-        <div v-if="termStatus" class="flex flex-col rounded-md mr-10 p-2 gap-8" >
-            <AddModuleSection /> 
-        </div>
-        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl" ref="dtDiv">
+        <div class="flex flex-col h-full w-full overflow-hidden">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">
@@ -247,7 +239,7 @@ function editModule(data) {
                                 {{ selectedModules.length + ' selected' }}
                             </p>
                         </span>
-                        <span v-if="termStatus" class="flex gap-1 items-center">
+                        <span class="flex gap-1 items-center">
                             <!-- <Button icon="fa fa-download" text aria-label="download-selected" style="height: 2rem; width: 2rem;" @click="{}"/> -->
                             <Button icon="fa fa-trash" text aria-label="delete-selected" style="height: 2rem; width: 2rem;" @click="deleteModules"/>
                             <Button v-if="selectedModulesStatus === false" label="mark as done" text aria-label="mark-as-done" size="small" @click="markAs"/>
@@ -256,10 +248,10 @@ function editModule(data) {
                     </span>
                 </template>
                 <template #end>
-                    <div class="flex flex-row gap-4 items-center mr-4">
-                        <label class="font-semibold">Learning Strand:</label>
-                        <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" placeholder="Select a Learning Strand" style="width: 20rem;" @update:modelValue="updateModuleTable" /> 
-                    </div>
+                    <span>
+                        <Button text icon="fa fa-plus" label="Add Module" aria-label="add-module" style="height: 2rem;" class="!rounded-full mr-2 gap-2" @click="toggle"/>
+                        <AddModulePanel /> 
+                    </span>
                     <span class="relative">
                         <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
                         <InputText v-model="filters['global'].value" placeholder="Keyword Search" class="pl-10 font-normal"/>
@@ -287,10 +279,10 @@ function editModule(data) {
                 <template #paginatorend>
                     <div></div>
                 </template>
-
+                <Column :exportable="false" selectionMode="multiple" headerStyle="width: 3rem"></Column>
                 <Column :exportable="false" style="width:2rem">
                     <template #body="slotProps">
-                        <Button v-if="termStatus" icon="fa fa-pencil" text @click="editModule(slotProps.data)" :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedModules.length}, {'text-white hover:u-bg-scolor': selectedModules.length}]" />
+                        <Button icon="fa fa-pencil" text @click="editModule(slotProps.data)" :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !selectedModules.length}, {'text-white hover:u-bg-scolor': selectedModules.length}]" />
                     </template>
                 </Column>
                 <Column field="title" header="Title" sortable />
@@ -306,7 +298,7 @@ function editModule(data) {
                         <Tag :value="slotProps.data.status ? 'Done' : 'Not Done'" :severity="getStatusLabel(slotProps.data.status)" />
                     </template>
                     <template #filter="{ filterModel }">
-                        <Dropdown v-model="filterModel.value" :options="statuses" optionLabel="label" optionValue="value"  placeholder="Select One" class="p-column-filter" showClear>
+                        <Dropdown v-model="filterModel.value" :options="statuses" optionLabel="label" optionValue="value"  placeholder="Select One" class="w-full" showClear>
                             <template #option="slotProps">
                                 <Tag :value="slotProps.option.label" :severity="getStatusLabel(slotProps.option.value)" />
                             </template>

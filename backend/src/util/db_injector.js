@@ -420,11 +420,60 @@ export async function injectUser() {
 export async function injectAcademicYear() {
   const termData = [
     {
-      id: 8,
+      batch_number: 8,
       academic_year: "2023-2024",
       start_date: new Date("2023-08-01"),
       end_date: new Date("2024-05-31"),
       status: true,
+    },
+    {
+      batch_number: 7,
+      academic_year: "2022-2023",
+      start_date: new Date("2022-08-01"),
+      end_date: new Date("2023-05-31"),
+      status: false,
+    },
+    {
+      batch_number: 6,
+      academic_year: "2021-2022",
+      start_date: new Date("2021-08-01"),
+      end_date: new Date("2022-05-31"),
+      status: false,
+    },
+    {
+      batch_number: 5,
+      academic_year: "2020-2021",
+      start_date: new Date("2020-08-01"),
+      end_date: new Date("2021-05-31"),
+      status: false,
+    },
+    {
+      batch_number: 4,
+      academic_year: "2019-2020",
+      start_date: new Date("2019-08-01"),
+      end_date: new Date("2020-05-31"),
+      status: false,
+    },
+    {
+      batch_number: 3,
+      academic_year: "2018-2019",
+      start_date: new Date("2018-08-01"),
+      end_date: new Date("2019-05-31"),
+      status: false,
+    },
+    {
+      batch_number: 2,
+      academic_year: "2017-2018",
+      start_date: new Date("2017-08-01"),
+      end_date: new Date("2018-05-31"),
+      status: false,
+    },
+    {
+      batch_number: 1,
+      academic_year: "2016-2017",
+      start_date: new Date("2016-08-01"),
+      end_date: new Date("2017-05-31"),
+      status: false,
     },
   ];
 
@@ -444,16 +493,12 @@ export async function injectAcademicYear() {
   );
 
   const academic_years = await Term.findAll();
-  const learningStrands = await LearningStrand.findAll();
 
   await Promise.all(
     academic_years.map(async (academic_year) => {
       classLevelData.map(async (class_level) => {
-        const classLevel = await academic_year.createClass_level({
+        await academic_year.createClass_level({
           school_level: class_level.school_level,
-        });
-        learningStrands.map(async (learningStrand) => {
-          await classLevel.addLearning_strand(learningStrand);
         });
       });
     })
@@ -463,8 +508,16 @@ export async function injectAcademicYear() {
 export async function injectLearningStrand() {
   const learningStrandData = [
     {
-      code: "LS1",
+      code: "Learning Strand 1 English",
       name: "Communication Skills - English",
+    },
+    {
+      code: "Learning Strand 1 Filipino",
+      name: "Communication Skills - Filipino",
+    },
+    {
+      code: "Learning Strand 3",
+      name: "Science",
     },
   ];
 

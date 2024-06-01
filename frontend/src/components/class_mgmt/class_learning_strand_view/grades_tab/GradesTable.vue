@@ -23,10 +23,9 @@ const confirm = useConfirm()
 const props = defineProps(['modelValue', 'disableEdit'])
 
 const filters = inject('filters')
-const learningStrandInput = inject('learningStrandInput')
+const learningStrand = inject('learningStrand')
 const classLevel = inject('classLevel')
 const term = inject('term')
-const termStatus = inject('termStatus')
 const isFetching = inject('isFetching')
 const grades = ref([])
 const startingData = []
@@ -91,7 +90,7 @@ async function updateGrades() {
             try {
                 for (const grade of Array.from(updatedData)) {
                     await usersStore.addAudit(
-                        `Updated: Grade of ${grade.firstName} ${grade.lastName} in ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                        `Updated: Grade of ${grade.firstName} ${grade.lastName} in ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                     )
                 }
             } catch(error) {
@@ -185,7 +184,7 @@ function changeMode() {
                 {{ new Date(slotProps.data.grades.updatedAt).toLocaleString() }}
             </template>
         </Column>
-        <template #footer v-if="termStatus">
+        <template #footer>
             <div class="flex flex-row justify-between items-center">
                 <p>
                     Record(s) count: <span class="u-txt-red"> {{ grades.length }} </span>

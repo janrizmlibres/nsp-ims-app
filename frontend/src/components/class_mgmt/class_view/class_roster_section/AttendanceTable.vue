@@ -4,6 +4,7 @@ import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 import InputText from 'primevue/inputtext';
 import Dropdown from 'primevue/dropdown';
+import Toolbar from 'primevue/toolbar';
 import { inject, ref } from 'vue';
 
 const studentAttendances = inject('studentAttendances')
@@ -47,6 +48,20 @@ function countPresent(month) {
 
 <template>
   <div class="flex flex-col h-full w-full">
+    <Toolbar class="!p-2">
+        <template #end>
+          <span class="relative float-end">
+            <i
+              class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600"
+            />
+            <InputText
+              v-model="filters['global'].value"
+              placeholder="Keyword Search"
+              class="pl-10 font-normal"
+            />
+          </span>
+        </template>
+    </Toolbar>
     <DataTable
       :value="studentAttendances"
       dataKey="id"
@@ -65,18 +80,6 @@ function countPresent(month) {
     >
       <template #empty> <div class="text-center">No records found.</div> </template>
 
-      <template #header>
-        <span class="relative float-end">
-          <i
-            class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600"
-          />
-          <InputText
-            v-model="filters['global'].value"
-            placeholder="Keyword Search"
-            class="pl-10 font-normal"
-          />
-        </span>
-      </template>
       <template #groupheader="slotProps">
         <span class="font-semibold">{{ slotProps.data.month }}</span>
       </template>
