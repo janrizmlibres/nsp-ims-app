@@ -18,7 +18,7 @@ const op = inject('op')
 const learningStrand = inject('learningStrand')
 const term = inject('term')
 const classLevel = inject('classLevel')
-const data = inject('selectedMonth')
+const selectedMonth = ref()
 const sessionByMonths = inject('sessionByMonths')
 const sessions = ref([])
 const date = ref()
@@ -28,7 +28,7 @@ const currentMonth = ref()
 const selectionType = ref(1)
 const disableAdd = computed(() => (date.value ? (date.value.length === 0 || date.value[1] === null) : !date.value) || invalidDateRange.value)
 
-const disableInputComponent = computed(() => !data.value)
+const disableInputComponent = computed(() => !selectedMonth.value)
 const invalidDateRange = ref(false)
 
 const selection = ref([
@@ -78,7 +78,7 @@ async function addSession() {
             try {
                 for (const date of newDates) {
                     await usersStore.addAudit(
-                        `Added: Session ${date} to ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                        `Added: Session ${date} to ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                     )
                 }
             } catch(error) {
@@ -141,9 +141,7 @@ function resetForm() {
     date.value = null
 }
 
-watch(() => data.value, (data) => {
-    resetForm()
-    
+watch(() => selectedMonth.value, (data) => {
     if (data) {
         let date = new Date(data.date)
         minDate.value = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -157,6 +155,10 @@ watch(() => data.value, (data) => {
     <OverlayPanel ref="op">
         <div class="flex flex-col">
             <span class="font-semibold text-lg u-txt-active mb-4">Add Session</span>
+            <div class="flex flex-col mb-4">
+                <label>Select Month</label>
+                <Dropdown v-model="selectedMonth" :options="sessionByMonths" optionLabel="month" class="w-full" />
+            </div>
             <div class="flex flex-col mb-4">
                 <label>Selection Type</label>
                 <Dropdown v-model="selectionType" :options="selection" optionLabel="label" optionValue="value" class="w-full" :disabled="disableInputComponent" @update:modelValue="resetForm" />

@@ -9,7 +9,7 @@ import {
   Session,
 } from "../models/class/index.js";
 
-import { Term, Enrollment, LearningStrand } from "../models/index.js";
+import { Term, Enrollment } from "../models/index.js";
 
 import { Student } from "../models/student/student.js";
 import { Volunteer } from "../models/volunteer/volunteer.js";
@@ -21,7 +21,7 @@ export async function getClassLearningStrand(req, res, next) {
   try {
     const classLearningStrand = await ClassLearningStrand.findOne({
       where: {id: classLearningStrandId},
-      include: [ LearningStrand,
+      include: [
         {model: ClassSchedule, include: [Volunteer]}
       ]
     })
@@ -41,7 +41,7 @@ export async function getClassLearningStrand(req, res, next) {
 export async function addModule(req, res, next) {
   const classLearningStrandId = req.params.classLearningStrandId;
 
-  const { min, max, distriDate, retriDate } = req.body;
+  const { min, max, distriDate, retriDate, total_score } = req.body;
 
   try {
     const classLearningStrand = await ClassLearningStrand.findByPk(
@@ -64,6 +64,7 @@ export async function addModule(req, res, next) {
           title: title,
           distribution_date: distriDate,
           retrieval_date: retriDate,
+          total_score: total_score
         })
         .then(async (module) => {
           for (const enrollment of enrollments) {
@@ -104,12 +105,9 @@ export async function getAllModules(req, res, next) {
         where: { status: "Graded" },
       });
 
-      const total = noSubmissions + submitted + graded;
-
       module.dataValues.noSubmissions = noSubmissions;
       module.dataValues.submitted = submitted;
       module.dataValues.graded = graded;
-      module.dataValues.total = total;
     }
 
     res.status(200).json({
@@ -136,7 +134,7 @@ export async function getModule(req, res, next) {
         },
         {
           model: ClassLearningStrand,
-          include: [{ model: ClassLevel, include: [Term] }, LearningStrand],
+          include: [{ model: ClassLevel, include: [Term] }],
         },
       ],
     });
@@ -161,7 +159,7 @@ export async function updateModule(req, res, next) {
       where: { id: moduleId },
     });
 
-    res.status(204).json({
+    res.status(201).json({
       message: "Updated module successfully!",
     });
   } catch (error) {
@@ -178,7 +176,7 @@ export async function updateModuleStatus(req, res, next) {
   try {
     await Module.update({ status: !status }, { where: { id: moduleIds } });
 
-    res.status(204).json({
+    res.status(201).json({
       message: "Updated module statuses successfully!",
     });
   } catch (error) {
@@ -197,7 +195,7 @@ export async function deleteModules(req, res, next) {
       where: { id: moduleIds },
     });
 
-    res.status(204).json({
+    res.status(201).json({
       message: "Deleted modules successfully!",
     });
   } catch (error) {
@@ -223,7 +221,7 @@ export async function updateModuleSubmissions(req, res, next) {
       });
     }
 
-    res.status(204).json({
+    res.status(201).json({
       message: "Updated module submissions successfully!",
     });
   } catch (error) {
@@ -251,7 +249,7 @@ export async function getAllGrades(req, res, next) {
           where: { classLevelId: classLearningStrand.classLevelId },
           include: [Student],
         },
-        { model: ClassLearningStrand, include: [LearningStrand] },
+        { model: ClassLearningStrand},
       ],
     });
 
@@ -287,7 +285,7 @@ export async function updateGrades(req, res, next) {
       await enrollmentInstance.grades[0].update(enrollment.grades);
     }
 
-    res.status(204).json({
+    res.status(201).json({
       message: "Updated grades successfully!",
     });
   } catch (error) {
@@ -383,7 +381,6 @@ export async function getSession(req, res, next) {
     const classLearningStrand = await ClassLearningStrand.findOne({
       include: [
         { model: Session, where: { "$sessions.id$": sessionId } },
-        LearningStrand,
         { model: ClassLevel, include: [Term] },
       ],
     });
@@ -443,7 +440,7 @@ export async function updateSession(req, res, next) {
       { where: { id: sessionId } }
     );
 
-    res.status(204).json({
+    res.status(201).json({
       message: "Updated session successfully!",
     });
   } catch (error) {
@@ -462,7 +459,7 @@ export async function deleteSessions(req, res, next) {
       where: { id: sessionIds },
     });
 
-    res.status(204).json({ message: "Deleted sessions successfully!" });
+    res.status(201).json({ message: "Deleted sessions successfully!" });
   } catch (error) {
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -482,7 +479,7 @@ export async function updateAttendances(req, res, next) {
       });
     }
 
-    res.status(204).json({
+    res.status(201).json({
       message: "Updated attendances successfully!",
     });
   } catch (error) {
@@ -532,7 +529,7 @@ export async function updateSchedule(req, res, next) {
       where: { id: scheduleId },
     });
 
-    res.status(204).json({
+    res.status(201).json({
       message: "Updated class schedule successfully!",
     });
   } catch (error) {
@@ -552,7 +549,7 @@ export async function deleteSchedules(req, res, next) {
       where: { id: scheduleIds },
     });
 
-    res.status(204).json({
+    res.status(201).json({
       message: "Deleted class schedules successfully!",
     });
   } catch (error) {

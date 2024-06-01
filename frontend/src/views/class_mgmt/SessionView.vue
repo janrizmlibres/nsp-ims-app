@@ -39,9 +39,8 @@ provide('isFetching', isFetching)
 function updateAttendanceTable() {
     isFetching.value = true
 
-    classLearningStrandStore.getSession(route.query.id).then((data) => {
-        console.log(data);
-        learningStrand.value = data.classLearningStrand.learning_strand
+    classLearningStrandStore.getSession(route.query.session).then((data) => {
+        learningStrand.value = data.classLearningStrand
         term.value = data.classLearningStrand.class_level.term
         classLevel.value = data.classLearningStrand.class_level
         session.value = data.session
@@ -49,7 +48,7 @@ function updateAttendanceTable() {
         hybrid.value = data.attendances.hybrid
         drop.value = data.attendances.drop
         date.value = new Date(session.value.date).toDateString()
-        strand.value = data.classLearningStrand.learning_strand.name
+        strand.value = data.classLearningStrand.name
     }).catch((error) => {
         toast.add({
             severity: 'error',
@@ -63,14 +62,14 @@ function updateAttendanceTable() {
 }
 
 watch(() => route.query, () => {
-    if (route.name === 'session-info') {
+    if (route.name === 'class') {
         updateAttendanceTable()
     }
 }, {immediate: true})
 </script>
 
 <template>
-    <ContentPane :breadcrumb="[{label: 'Management'}, {label: 'Class'}, {label: strand}, {label: date}]">
+    <ContentPane :breadcrumb="[{label: `S.Y ${term ? term.academic_year : ''}`}, {label: classLevel ? classLevel.school_level : ''}, {label: strand}, {label: date}]">
         <AttendanceTab />
     </ContentPane>
 </template>

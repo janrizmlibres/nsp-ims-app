@@ -26,6 +26,20 @@ export const useClassStore = defineStore('class', () => {
     return result.data.data
   }
 
+  async function addLearningStrands(form) {
+    const authStore = useAuthStore()
+
+    const result = await axios.post(
+      `http://localhost:8080/api/v1/class/strands/add`,
+      form,
+      {
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
+
+    return result.data.message
+  }
+
   async function getAllLearningStrands(classId) {
       const authStore = useAuthStore()
 
@@ -34,6 +48,20 @@ export const useClassStore = defineStore('class', () => {
       })
       
       return result.data.data
+  }
+
+  async function removeStrands(form) {
+    const authStore = useAuthStore()
+
+    const result = await axios.delete(
+      `http://localhost:8080/api/v1/class/strands/remove`,
+      {
+        data: form,
+        headers: { Authorization: 'Bearer ' + authStore.token }
+      }
+    )
+
+    return result.data.message
   }
 
   async function getAllModules(classId) {
@@ -69,5 +97,5 @@ export const useClassStore = defineStore('class', () => {
     return result.data.data
   }
 
-  return { leave, getClass, getClassSchedules, getAllLearningStrands, getAllModules, getAllStudents, getStudent }
+  return { leave, getClass, getClassSchedules, addLearningStrands, getAllLearningStrands, removeStrands, getAllModules, getAllStudents, getStudent }
 })

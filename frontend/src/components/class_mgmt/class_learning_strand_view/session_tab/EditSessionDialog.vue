@@ -39,7 +39,7 @@ async function updateSession() {
 
             try {
                 await usersStore.addAudit(
-                    `Updated: Remarks of session ${new Date(session.value.date).toDateString()} of ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    `Updated: Remarks of session ${new Date(session.value.date).toDateString()} of ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {
                 console.log(error);

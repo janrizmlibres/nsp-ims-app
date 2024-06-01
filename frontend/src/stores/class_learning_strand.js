@@ -191,6 +191,8 @@ export const useClassLearningStrandStore = defineStore('classLearningStrand', ()
       }
     )
 
+    console.log(result);
+
     return result.data.message
   }
 

@@ -5,7 +5,6 @@ import { ref } from 'vue'
 
 export const useUtilitiesStore = defineStore('utilities', () => {
   const terms = ref([])
-  const visibleAddTermDialog = ref(false)
   const strands = ref([])
   const visibleAddStrandDialog = ref(false)
   const requirements = ref([])
@@ -32,10 +31,6 @@ export const useUtilitiesStore = defineStore('utilities', () => {
     })
 
     terms.value = result.data.data
-  }
-
-  function showHideAddTermDialog() {
-    visibleAddTermDialog.value = !visibleAddTermDialog.value
   }
 
   async function updateTerm(termId, form) {
@@ -65,7 +60,7 @@ export const useUtilitiesStore = defineStore('utilities', () => {
     const result = await axios.get('http://localhost:8080/api/v1/utilities/strands', {
       headers: { Authorization: 'Bearer ' + authStore.token }
     })
-    console.log(result.data.data)
+    
     strands.value = result.data.data
   }
 
@@ -211,10 +206,8 @@ export const useUtilitiesStore = defineStore('utilities', () => {
 
   return {
     terms,
-    visibleAddTermDialog,
     addTerm,
     getTerms,
-    showHideAddTermDialog,
     updateTerm,
     strands,
     visibleAddStrandDialog,

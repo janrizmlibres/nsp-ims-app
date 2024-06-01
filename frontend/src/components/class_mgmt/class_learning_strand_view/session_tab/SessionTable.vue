@@ -7,7 +7,7 @@ import Toolbar from 'primevue/toolbar';
 import Badge from 'primevue/badge';
 import { inject, provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { format } from 'date-fns';
 
 // Custom
@@ -26,6 +26,7 @@ const usersStore = useUsersStore()
 const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
+const route = useRoute()
 
 const term = inject('term')
 const classLevel = inject('classLevel')
@@ -50,11 +51,10 @@ provide('op', op)
 provide('learningStrand', learningStrand)
 provide('session', session)
 provide('sessionByMonths', sessionByMonths)
-provide('selectedMonth', selectedMonth)
 provide('editSessionDialogState', editSessionDialogState)
 provide('updateSessionTable', updateSessionTable)
 
-watch(() => learningStrand.value, () => updateSessionTable(), {immediate: false})
+watch(() => learningStrand.value, () => updateSessionTable())
 
 function updateSessionTable() {
     isFetching.value = true
@@ -125,7 +125,7 @@ async function deleteModules() {
                     try {
                         selectedSessions.value.forEach(async (session) => {
                             await usersStore.addAudit(
-                                `Deleted: Session ${new Date(session.date).toDateString()} from ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                                `Deleted: Session ${new Date(session.date).toDateString()} from ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                             ).then(deselect())
                         })
                     } catch(error) {
@@ -142,7 +142,7 @@ async function deleteModules() {
 }
 
 function viewSession() {
-    router.push({ name: 'session-info', query: { id: selectedSessions.value[selectedSessions.value.length-1].id }})
+    router.push({ name: 'class', query: { ...route.query, session: selectedSessions.value[selectedSessions.value.length-1].id }})
 }
 
 const getNumericLabel = (field) => {
@@ -188,7 +188,7 @@ const toggle = (event) => {
 
 <template>
     <div class="flex h-full w-full">
-        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl">
+        <div class="flex flex-col h-full w-full overflow-hidden">
             <Toolbar class="!p-2 h-[4.35rem]">
                 <template #start>
                     <span v-if="selectedSessions.length" class="flex flex-row gap-8 items-center mx-2">

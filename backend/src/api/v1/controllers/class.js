@@ -9,8 +9,8 @@ import {
   Session,
 } from "../models/class/index.js";
 
-import { Enrollment, LearningStrand, Term } from "../models/index.js";
-import { Student, ContactInfo, PersonalInfo } from "../models/student/index.js";
+import { Enrollment, Term } from "../models/index.js";
+import { Student } from "../models/student/index.js";
 import { Volunteer } from "../models/volunteer/volunteer.js";
 
 export async function getClass(req, res, next) {
@@ -40,13 +40,13 @@ export async function getClassSchedules(req, res, next) {
     const classLearningStrands = await ClassLearningStrand.findAll({
       where: { classLevelId: classId },
       include: [
-        LearningStrand,
         {
           model: ClassSchedule,
           include: [Volunteer],
+          order: [["start_time", "ASC"]]
         },
       ],
-      order: [[LearningStrand, "code", "ASC"]],
+      order: [["code", "ASC"]],
     });
 
     res.status(200).json({
@@ -61,15 +61,32 @@ export async function getClassSchedules(req, res, next) {
   }
 }
 
+export async function addLearningStrands(req, res, next) {
+  try {
+    await ClassLearningStrand.bulkCreate(req.body)
+
+    res.status(201).json({
+      message: "Added learning strands successfully!",
+    });
+  } catch (error) {
+      if (!error.statusCode) {
+          error.statusCode = 500;
+      }
+      next(error);
+  }
+}
+
 export async function getAllStrands(req, res, next) {
   const classId = req.params.classId;
 
   try {
       const learningStrands = await ClassLearningStrand.findAll({
           where: {classLevelId: classId}, 
-          include: [LearningStrand, 
-            {model: ClassSchedule, include: [Volunteer], order: [["start_time", "ASC"]]}
-          ]
+          include: [ 
+            {model: ClassSchedule, include: [Volunteer], order: [["start_time", "ASC"]]},
+            Module
+          ],
+          order: [["code", "ASC"]]
       })
 
       res.status(201).json({ 
@@ -81,6 +98,25 @@ export async function getAllStrands(req, res, next) {
           error.statusCode = 500;
       }
       next(error);
+  }
+}
+
+export async function removeStrands(req, res, next) {
+  const { learningStrandIds } = req.body;
+
+  try {
+    await ClassLearningStrand.destroy({
+      where: { id: learningStrandIds },
+    });
+
+    res.status(201).json({
+      message: "Deleted class learning strands successfully!",
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
   }
 }
 
@@ -161,7 +197,6 @@ export async function getStudent(req, res, next) {
     const classLearningStrands = await ClassLearningStrand.findAll({
       where: { classLevelId: classId },
       include: [
-        LearningStrand,
         { model: Grade, where: { enrollmentId: enrollmentId } },
         {
           model: Module,

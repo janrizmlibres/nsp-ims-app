@@ -11,7 +11,9 @@ const route = useRoute()
 const props = defineProps(['data'])
 
 const data = computed(() => props.data)
-const class_schedules = data.value.class_schedules
+const finishedModules = computed(() => {
+    return data.value.modules.filter(module => module.status === true)
+})
 const op = ref();
 
 const toggle = (event) => {
@@ -26,20 +28,21 @@ function showStrand() {
 <template>
     <div class="flex flex-row justify-between bg-white u-border-bottom hover:u-bg-pcolor hover:text-white u-txt-active shadow-md rounded-2xl p-6 transition-all duration-300">
         <div class="flex flex-col font-semibold content-center flex-1 mr-8 hover:cursor-pointer hover:underline">
-            <p class="u-txt-inactive">{{ data.learning_strand.code }}</p>
+            <p class="u-txt-inactive">{{ data.code }}</p>
             <p class="text-lg"
             @click="showStrand">
-                {{ data.learning_strand.name }}
+                {{ data.name }}
             </p>
         </div>
-        <MeterGroup :value="[{label:'Complete', value: null}]" class="flex-[2] self-center" />
+        <MeterGroup :value="[{label:'Complete', value: finishedModules.length}]" :max="data ? data.modules.length : 0" class="flex-[2] self-center" />
         <Button icon="fa fa-circle-info fa-xl" text rounded aria-label="Filter" class="ml-4" @click="toggle" />
         <OverlayPanel ref="op">
-            <div class="flex flex-col w-[16rem]">
-                <div v-if="class_schedules"><span>No Schedules Yet.</span></div>
-                <div v-else v-for="class_schedule of class_schedules" :key="class_schedule" class="flex flex-col">
+            <div class="flex flex-col">
+                <span class="text-lg font-semibold u-txt-active mb-4">Class Schedules</span>
+                <div v-if="!data.class_schedules.length"><span>No Schedules Yet.</span></div>
+                <div v-else v-for="class_schedule of data.class_schedules" :key="class_schedule.id" class="flex flex-col mb-2">
                     <span> {{ class_schedule.volunteer.fullname }} </span>
-                    <span> {{ class_schedule.school_days }} </span>
+                    <span> {{ class_schedule.days }} </span>
                     <span> {{ format(new Date("01/01/0001 " + class_schedule.start_time), "hh:mm aaa") }} </span>
                     <span> {{ format(new Date("01/01/0001 " + class_schedule.end_time), "hh:mm aaa") }} </span>
                 </div>

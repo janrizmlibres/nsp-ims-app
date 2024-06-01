@@ -67,7 +67,7 @@ export async function getTerms(req, res, next) {
       include: [
         {
           model: ClassLevel,
-          order: [["school_level", "ASC"]],
+          order: [[ClassLevel, "school_level", "ASC"]],
         },
       ],
       order: [["batch_number", "DESC"]],

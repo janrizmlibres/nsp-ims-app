@@ -24,7 +24,7 @@ provide('filters', filters)
 </script>
 
 <template>
-    <div>
+    <div class="h-full">
         <div class="bg-transparent border-none flex flex-row justify-between items-center">
             <div class="flex flex-row gap-4 items-center px-4">
                 <i class="fa fa-address-book fa-2xl u-txt-active"></i>

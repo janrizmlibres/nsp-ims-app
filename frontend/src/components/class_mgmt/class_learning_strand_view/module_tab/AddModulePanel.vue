@@ -25,17 +25,18 @@ const allModules = inject('allModules')
 const min = ref()
 const max = ref()
 const dates = ref(null);
+const score = ref()
 const selectionType = ref(1)
 const disableAdd = computed(() => (() => {
         if (invalidModuleRange.value) return true
         if (selectionType.value === 1 && 
-            (!min.value || (dates.value ? (dates.value.length === 0 || dates.value[1] === null) : !dates.value))
+            (!min.value || (dates.value ? (dates.value.length === 0 || dates.value[1] === null) : !dates.value) || !score.value)
         ) {
             return true
         }
 
         if (selectionType.value === 2 &&
-            (!min.value || !max.value || (dates.value ? (dates.value.length === 0 || dates.value[1] === null) : !dates.value))
+            (!min.value || !max.value || (dates.value ? (dates.value.length === 0 || dates.value[1] === null) : !dates.value)  || !score.value)
         ) {
             return true
         }
@@ -65,7 +66,8 @@ async function addModule() {
             min: min.value,
             max: max.value ? max.value : min.value,
             distriDate: range.value[0],
-            retriDate: range.value[1]
+            retriDate: range.value[1],
+            total_score: score.value
         }).then(async (message) => {
             toast.add({
                 severity: 'success',
@@ -77,8 +79,8 @@ async function addModule() {
             try {
                 await usersStore.addAudit(
                     selectionType.value === 1 ? 
-                    `Added: LAS ${min.value} to ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}` :
-                    `Added: LAS ${min.value} to LAS ${max.value} to ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    `Added: LAS ${min.value} to ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}` :
+                    `Added: LAS ${min.value} to LAS ${max.value} to ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {
                 console.log(error);
@@ -173,6 +175,10 @@ function resetForm() {
             <div class="flex flex-col gap-4 mb-4">
                 <label for="calendar">Distribution Date - Retrieval Date</label>
                 <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" />
+            </div>
+            <div class="flex flex-col mb-4">
+                <label for="title">Total Score</label>
+                <InputNumber v-model="score" inputId="score" />
             </div>
             <div class="flex flex-row gap-2">
                 <Button type="button" outlined label="Add" :disabled="disableAdd" @click="addModule" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />

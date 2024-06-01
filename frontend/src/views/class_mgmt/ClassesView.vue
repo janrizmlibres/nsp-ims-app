@@ -28,7 +28,6 @@ const terms = ref([])
 const selectedRow = ref({})
 const selectedClass = ref()
 const primarySelection = ref({})
-
 const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
@@ -142,9 +141,11 @@ function navigateToClass(id) {
                             v-model:selection="selectedClass"
                             :value="slotProps.data.class_levels"
                             dataKey="id"
+                            selectionMode="single"
                             >
+
                             <Column selectionMode="single" headerStyle="width: 3rem"></Column>
-                            <Column header="School Level" field="school_level"> </Column>
+                            <Column header="School Level" field="school_level" />
                             <Column v-for="col of numericColumns" :key="col.field" :field="col.field" :header="col.header">
                                 <template #body="{ data, field }">
                                     <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>

@@ -22,8 +22,8 @@ provide('filters', filters)
 </script>
 
 <template>
-    <div class="flex flex-col h-full overflow-hidden shadow-xl">
-        <Toolbar class="!p-2">
+    <div class="relative flex flex-col h-full overflow-hidden shadow-xl">
+        <Toolbar class="!p-2 rounded-t-2xl">
             <template #start>
                 <div class="flex flex-row gap-4 items-center px-4">
                     <i class="fa fa-note-sticky fa-lg u-txt-active"></i>
@@ -37,7 +37,7 @@ provide('filters', filters)
                 </span>
             </template>
         </Toolbar>
-        <TabView>
+        <TabView class="h-full p-2 bg-white shadow-xl rounded-b-2xl u-border-bottom u-txt-active">
             <TabPanel header="Active">
                 <ModuleSubmissionTable v-model="active" :disableEdit="false" />
             </TabPanel>

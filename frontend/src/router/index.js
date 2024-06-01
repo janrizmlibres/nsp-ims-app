@@ -21,6 +21,7 @@ import StudentCategoryView from '@/views/utilities/StudentCategoryView.vue'
 import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
 import LearningStrandView from '@/views/utilities/LearningStrandView.vue'
 import TermView from '@/views/utilities/TermView.vue'
+import ClassConfigureView from '@/views/utilities/ClassConfigureView.vue'
 
 // User Management Views
 import UserRecordsView from '@/views/user_mgmt/UserRecordsView.vue'
@@ -199,30 +200,6 @@ const router = createRouter({
                 else return true
               }
             },
-            {
-              path: '/strand',
-              name: 'strand',
-              query: {id: Number},
-              component: StrandView
-            },
-            {
-              path: '/module',
-              name: 'module-info',
-              component: ModuleView,
-              query: { id: Number, status: Boolean },
-              beforeEnter: (to) => {
-                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
-              }
-            },
-            {
-              path: '/session',
-              name: 'session-info',
-              component: SessionView,
-              query: { id: Number, status: Boolean },
-              beforeEnter: (to) => {
-                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
-              }
-            }
           ]
         },
         {
@@ -268,24 +245,30 @@ const router = createRouter({
           },
           children: [
             {
-              path: '/configuration/academic_terms',
+              path: 'academic_terms',
               name: 'academic-term-configuration',
               component: TermView
             },
             {
-              path: '/configuration/learning_strand',
+              path: 'learning_strand',
               name: 'learning-strand-configuration',
               component: LearningStrandView
             },
             {
-              path: '/configuration/student_requirement',
+              path: 'student_requirement',
               name: 'student-requirement-configuration',
               component: StudentRequirementView
             },
             {
-              path: '/configuration/student_category',
+              path: 'student_category',
               name: 'student-category-configuration',
               component: StudentCategoryView
+            },
+            {
+              path: 'class',
+              name: 'class-configuration',
+              query: {id: Number},
+              component: ClassConfigureView
             }
           ]
         },

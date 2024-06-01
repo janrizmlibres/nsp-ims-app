@@ -3,6 +3,7 @@
 import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
+import ProgressSpinner from 'primevue/progressspinner';
 
 // Custom Components
 import ContentPane from '@/components/UI/ContentPane.vue';
@@ -16,6 +17,7 @@ const route = useRoute()
 const toast = useToast()
 const classStore = useClassStore()
 
+const isLoading = ref(true)
 const schoolLevel = ref()
 const term = ref()
 const strands = ref([])
@@ -26,13 +28,14 @@ watch(() => route.query, (query) => {
         classStore.getClass(query.id).then((data) => {
             schoolLevel.value = data.school_level
             term.value = data.term
-        });
-        classStore.getAllLearningStrands(query.id).then((data) => 
+        })
+        classStore.getAllLearningStrands(query.id).then((data) => {
             strands.value = data
-        )
-        classStore.getAllStudents(query.id).then((data) => 
+        })
+        classStore.getAllStudents(query.id).then((data) => {
             students.value = data
-        )
+            isLoading.value = false
+        })
     } catch (error) {
         toast.add({
             severity: 'error',
@@ -45,7 +48,8 @@ watch(() => route.query, (query) => {
 </script>
 
 <template>
-    <ContentPane :breadcrumb="[{label: `S.Y ${term ? term.academic_year : ''}`}, {label: schoolLevel}]">
+    <ProgressSpinner v-if="isLoading" class="h-full" />
+    <ContentPane v-else :breadcrumb="[{label: `S.Y ${term ? term.academic_year : ''}`}, {label: schoolLevel}]">
         <div class="h-full overflow-y-auto">
             <LearningStrandsSection v-model="strands" />
             <ClassRosterSection v-model="students" />

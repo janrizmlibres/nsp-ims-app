@@ -21,7 +21,6 @@ import {
 
 import {
   Term,
-  LearningStrand,
   StudentRequirement,
   Enrollment,
 } from "../api/v1/models/index.js";
@@ -80,10 +79,6 @@ function setAssociations() {
   ClassLevel.belongsTo(Term);
 
   // Class Learning Strand Relationship
-  ClassLevel.belongsToMany(LearningStrand, { through: ClassLearningStrand });
-  LearningStrand.belongsToMany(ClassLevel, { through: ClassLearningStrand });
-  LearningStrand.hasMany(ClassLearningStrand);
-  ClassLearningStrand.belongsTo(LearningStrand);
   ClassLevel.hasMany(ClassLearningStrand);
   ClassLearningStrand.belongsTo(ClassLevel);
 

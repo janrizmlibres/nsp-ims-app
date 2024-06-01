@@ -36,6 +36,7 @@ const studentModules = computed(() =>
             ? new Date(obj.module_submissions[0].date_submitted).toDateString()
             : null,
           score: obj.module_submissions[0].score,
+          total_score: obj.total_score,
           remarks: obj.module_submissions[0].remarks
         })
 
@@ -49,8 +50,8 @@ const studentGrades = computed(() =>
     ? learningStrands.value.reduce((arr, obj) => {
         const grades = arr.concat({
           id: obj.grades[0].id,
-          lsCode: obj.learning_strand.code,
-          title: obj.learning_strand.name,
+          lsCode: obj.code,
+          title: obj.name,
           first_quarter: obj.grades[0].first_quarter,
           second_quarter: obj.grades[0].second_quarter,
           third_quarter: obj.grades[0].third_quarter,
@@ -185,14 +186,14 @@ function setImageModal(value) {
       </div>
     </template>
     <div class="relative flex flex-col h-full shadow-xl rounded-b-2xl">
-      <Toolbar class="!u-gradient-bg-pcolor !rounded-t-2xl !rounded-b-none !border-none">
+      <Toolbar class="h-24 !u-gradient-bg-pcolor !rounded-t-2xl !rounded-b-none !border-none">
         <template #end>
           <div v-if="activeTab !== 1" class="flex flex-row gap-4 items-center mr-4">
             <label class="font-semibold text-white">Learning Strand:</label>
             <Dropdown
               v-model="learningStrandInput"
               :options="learningStrands"
-              optionLabel="learning_strand.name"
+              optionLabel="name"
               placeholder="Select a Learning Strand"
               style="width: 20rem"
             />

@@ -10,8 +10,7 @@ import Badge from 'primevue/badge';
 import InputText from 'primevue/inputtext';
 import { computed, inject, provide, ref, watch } from 'vue';
 import { useToast } from 'primevue/usetoast';
-import { useRouter } from 'vue-router';
-import { FilterMatchMode, FilterOperator } from 'primevue/api';
+import { useRoute, useRouter } from 'vue-router';
 import ProgressSpinner from 'primevue/progressspinner';
 import { useConfirm } from 'primevue/useconfirm';
 
@@ -27,15 +26,12 @@ import { useUsersStore } from '@/stores/users';
 const toast = useToast()
 const router = useRouter()
 const confirm = useConfirm()
+const route = useRoute()
 
 const classLearningStrandStore = useClassLearningStrandStore()
 const usersStore = useUsersStore()
 
-const filters = ref({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
-});
-
+const filters = inject('filters')
 const term = inject('term')
 const classLevel = inject('classLevel')
 const learningStrand = inject('learningStrand')
@@ -52,7 +48,7 @@ const cols = ref([
     { field: 'no_submissions', header: 'No Submissions' },
     { field: 'submitted', header: 'Submitted' },
     { field: 'graded', header: 'Graded' },
-    { field: 'total', header: 'Total' }
+    { field: 'total_score', header: 'Total Score' }
 ])
 
 const selectedModulesStatus = computed(() => {
@@ -72,7 +68,7 @@ provide('module', module)
 provide('editModuleDialogState', editModuleDialogState)
 provide('updateModuleTable', updateModuleTable)
 
-watch(() => learningStrand.value, () => updateModuleTable(), {immediate: false})
+watch(() => learningStrand.value, () => updateModuleTable())
 
 function updateModuleTable() {
     deselect()
@@ -90,7 +86,7 @@ function updateModuleTable() {
                 no_submissions: module.noSubmissions,
                 submitted: module.submitted,
                 graded: module.graded,
-                total: module.total,
+                total_score: module.total_score,
                 status: module.status,
                 updatedAt: new Date(module.updatedAt).toLocaleString()
             })
@@ -127,7 +123,7 @@ async function deleteModules() {
                     try {
                         selectedModules.value.forEach(async (module) => {
                             await usersStore.addAudit(
-                                `Deleted: ${module.title} from ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                                `Deleted: ${module.title} from ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                             ).then(deselect())
                         })
                     } catch(error) {
@@ -167,7 +163,7 @@ async function markAs() {
             try {
                 selectedModules.value.forEach(async (module) => {
                     await usersStore.addAudit(
-                        `Updated: Marked ${module.title} as ${status ? 'undone' : 'done'} from ${learningStrand.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                        `Updated: Marked ${module.title} as ${status ? 'undone' : 'done'} from ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                     ).then(deselect())
                 })
             } catch(error) {
@@ -182,12 +178,7 @@ async function markAs() {
 }
 
 function viewModule() {
-    router.push({
-        name: 'module-info',
-        query: {
-            id: selectedModules.value[selectedModules.value.length - 1].id,
-        }
-    })
+    router.push({ name: 'class', query: { ...route.query, module: selectedModules.value[selectedModules.value.length - 1].id}})
 }
 
 function deselect() {
@@ -218,7 +209,7 @@ const getNumericLabel = (field) => {
         case 'graded':
         return 'success'
 
-        case 'total':
+        case 'total_score':
         return 'info'
 
         default:
@@ -238,7 +229,7 @@ const toggle = (event) => {
 
 <template>
     <div class="flex h-full w-full">
-        <div class="flex flex-col h-full w-full overflow-hidden shadow-xl">
+        <div class="flex flex-col h-full w-full overflow-hidden">
             <Toolbar class="!p-2">
                 <template #start>
                     <span v-if="selectedModules.length" class="flex flex-row gap-8 items-center mx-2">

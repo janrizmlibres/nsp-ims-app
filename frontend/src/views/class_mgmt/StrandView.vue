@@ -16,6 +16,8 @@ import SessionTable from '@/components/class_mgmt/class_learning_strand_view/ses
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';
 import { useClassStore } from '@/stores/class';
+import GradesTab from '@/components/class_mgmt/class_learning_strand_view/grades_tab/GradesTab.vue';
+import { FilterMatchMode, FilterOperator } from 'primevue/api';
 
 const classLearningStrandStore = useClassLearningStrandStore()
 const classStore = useClassStore()
@@ -28,9 +30,15 @@ const learningStrand = ref()
 const name = ref()
 const classSchedules = ref()
 
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] }
+});
+
 provide('term', term)
 provide('classLevel', classLevel)
 provide('learningStrand', learningStrand)
+provide('filters', filters)
 
 watch(() => route.query, (query) => {
     try {
@@ -41,7 +49,7 @@ watch(() => route.query, (query) => {
         classLearningStrandStore.getClassLearningStrand(query.strand).then((data) => {
             learningStrand.value = data
             classSchedules.value = data.class_schedules
-            name.value = data.learning_strand.name
+            name.value = data.name
         })
     } catch(error) {
         console.log(error);
@@ -60,28 +68,35 @@ watch(() => route.query, (query) => {
         <div class="h-full overflow-y-auto">
             <StrandInfoSection v-model="classSchedules" />
             <Divider class="before:border-t before:border-surface-400 my-10"/>
-            <div class="h-full relative bg-white shadow-xl rounded-2xl p-2">
-                <TabView class="h-full">
-                    <TabPanel>
-                        <template #header>
-                            <div class="flex items-center gap-2">
-                                <i class="fa fa-note-sticky" />
-                                <span class="font-bold whitespace-nowrap">Modules</span>
-                            </div>
-                        </template>
-                        <ModuleTable />
-                    </TabPanel>
-                    <TabPanel>
-                        <template #header>
-                            <div class="flex items-center gap-2">
-                                <i class="fa fa-calendar-days" />
-                                <span class="font-bold whitespace-nowrap">Sessions</span>
-                            </div>
-                        </template>
-                        <SessionTable />
-                    </TabPanel>
-                </TabView>
-            </div>
+            <TabView class="relative h-full p-2 bg-white shadow-xl rounded-2xl u-border-bottom u-txt-active">
+                <TabPanel>
+                    <template #header>
+                        <div class="flex items-center gap-2">
+                            <i class="fa fa-note-sticky" />
+                            <span class="font-bold whitespace-nowrap">Modules</span>
+                        </div>
+                    </template>
+                    <ModuleTable />
+                </TabPanel>
+                <TabPanel>
+                    <template #header>
+                        <div class="flex items-center gap-2">
+                            <i class="fa fa-star" />
+                            <span class="font-bold whitespace-nowrap">Grades</span>
+                        </div>
+                    </template>
+                    <GradesTab />
+                </TabPanel>
+                <TabPanel>
+                    <template #header>
+                        <div class="flex items-center gap-2">
+                            <i class="fa fa-calendar-days" />
+                            <span class="font-bold whitespace-nowrap">Sessions</span>
+                        </div>
+                    </template>
+                    <SessionTable />
+                </TabPanel>
+            </TabView>
         </div>
     </ContentPane>
 </template>
