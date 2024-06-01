@@ -18,7 +18,6 @@ let series = reactive([
 
 const chartOptions = reactive({
   chart: {
-    height: 350,
     type: 'line',
     zoom: {
       enabled: false
@@ -60,14 +59,14 @@ watch(() => props.chartData, (newChartData) => {
 
 <template>
   <div class="LineChart-widget">
-    <vue-apex-charts type="line" height="310" :options="chartOptions" :series="series"></vue-apex-charts>
+    <vue-apex-charts type="line" height="100%" :options="chartOptions" :series="series"></vue-apex-charts>
   </div>
 </template>
 
 <style>
 .LineChart-widget {
     padding: 0.3125rem;
-    height: 20.0625rem;
+    
     background-color: white;
     border-radius: 0.625rem;
     border-bottom: 0.3125rem solid #265492;
