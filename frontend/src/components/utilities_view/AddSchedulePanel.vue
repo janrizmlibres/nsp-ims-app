@@ -4,6 +4,7 @@ import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import MultiSelect from 'primevue/multiselect';
+import OverlayPanel from 'primevue/overlaypanel';
 import { computed, inject, onMounted, ref } from 'vue';
 import { useToast } from 'primevue/usetoast';
 
@@ -18,10 +19,10 @@ const toast = useToast()
 const classLearningStrandStore = useClassLearningStrandStore()
 const usersStore = useUsersStore()
 
-const termStatus = inject('termStatus')
+const op = inject('op')
 const term = inject('term')
 const classLevel = inject('classLevel')
-const learningStrands = inject('learningStrands')
+const classLearningStrands = inject('classLearningStrands')
 const volunteerStore = useVolunteerStore()
 const volunteers = computed(() => volunteerStore.volunteers)
 
@@ -76,7 +77,7 @@ async function addSchedule() {
 
         try {
             await usersStore.addAudit(
-                `Added: Schedule for ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                `Added: Schedule for ${learningStrandInput.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
             )
         } catch(error) {
             console.log(error);
@@ -122,33 +123,35 @@ function resetForm() {
 </script>
 
 <template>
-    <div class="flex flex-col">
-        <span class="font-semibold text-lg u-txt-active mb-4">Add Schedule</span>
-        <div class="flex flex-col mb-4">
-            <label>Learning Strand</label>
-            <Dropdown v-model="learningStrandInput" :options="learningStrands" optionLabel="learning_strand.name" :disabled="!termStatus" placeholder="Select a Strand" />
+    <OverlayPanel ref="op">
+        <div class="flex flex-col">
+            <span class="font-semibold text-lg u-txt-active mb-4">Add Schedule</span>
+            <div class="flex flex-col mb-4">
+                <label>Learning Strand</label>
+                <Dropdown v-model="learningStrandInput" :options="classLearningStrands" optionLabel="name" placeholder="Select a Strand" />
+            </div>
+            <div class="flex flex-col mb-4">
+                <label>Teacher</label>
+                <Dropdown v-model="formData.volunteer" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" showClear />
+            </div>
+            <div class="flex flex-col mb-4">
+                <label>Days</label>
+                <MultiSelect v-model="formData.school_days" :options="days" placeholder="Select Days" :maxSelectedLabels="3" />
+            </div>
+            <div class="flex flex-col mb-4">
+                <label>Start Time</label>
+                <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.start_time" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" timeOnly hourFormat="12" @update:modelValue="invalid = false" />
+            </div>
+            <div class="flex flex-col mb-4">
+                <label>End Time</label>
+                <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.end_time" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" timeOnly hourFormat="12" @update:modelValue="invalid = false" />
+            </div>
+            <div class="flex flex-row gap-2">
+                <Button type="button" outlined label="Add" :disabled="disableSubmitButton" @click="addSchedule" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
+                <Button type="button" outlined label="Reset" :disabled="enableResetButton" @click="resetForm" severity="danger" class="w-full" />
+            </div>
         </div>
-        <div class="flex flex-col mb-4">
-            <label>Teacher</label>
-            <Dropdown v-model="formData.volunteer" :options="volunteers" optionLabel="fullname" placeholder="Select a Teacher" showClear :disabled="!termStatus" />
-        </div>
-        <div class="flex flex-col mb-4">
-            <label>Days</label>
-            <MultiSelect v-model="formData.school_days" :options="days" placeholder="Select Days" :maxSelectedLabels="3" :disabled="!termStatus" />
-        </div>
-        <div class="flex flex-col mb-4">
-            <label>Start Time</label>
-            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.start_time" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" timeOnly hourFormat="12" :disabled="!termStatus" @update:modelValue="invalid = false" />
-        </div>
-        <div class="flex flex-col mb-4">
-            <label>End Time</label>
-            <Calendar id="calendar-timeonly" :invalid="invalid" v-model="formData.end_time" showIcon iconDisplay="input" icon="pi pi-clock cursor-pointer" timeOnly hourFormat="12" :disabled="!termStatus" @update:modelValue="invalid = false" />
-        </div>
-        <div class="flex flex-row gap-2">
-            <Button type="button" outlined label="Add" :disabled="disableSubmitButton" @click="addSchedule" class="w-full u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />
-            <Button type="button" outlined label="Reset" :disabled="enableResetButton" @click="resetForm" severity="danger" class="w-full" />
-        </div>
-    </div>
+    </OverlayPanel>
 </template>
 
 <style>

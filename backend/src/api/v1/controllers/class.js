@@ -1,6 +1,7 @@
 import {
   Attendance,
   ClassLearningStrand,
+  ClassLevel,
   ClassSchedule,
   Grade,
   Module,
@@ -8,9 +9,29 @@ import {
   Session,
 } from "../models/class/index.js";
 
-import { Enrollment, LearningStrand } from "../models/index.js";
-import { Student, ContactInfo, PersonalInfo } from "../models/student/index.js";
+import { Enrollment, Term } from "../models/index.js";
+import { Student } from "../models/student/index.js";
 import { Volunteer } from "../models/volunteer/volunteer.js";
+
+export async function getClass(req, res, next) {
+  const classId = req.params.classId;
+
+  try {
+    const classLevel = await ClassLevel.findByPk(classId, {
+      include: [Term]
+    });
+    
+    res.status(200).json({
+      message: "Fetched class successfully.",
+      data: classLevel,
+    });
+  } catch(error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
 
 export async function getClassSchedules(req, res, next) {
   const classId = req.params.classId;
@@ -19,24 +40,14 @@ export async function getClassSchedules(req, res, next) {
     const classLearningStrands = await ClassLearningStrand.findAll({
       where: { classLevelId: classId },
       include: [
-        LearningStrand,
         {
           model: ClassSchedule,
           include: [Volunteer],
+          order: [["start_time", "ASC"]]
         },
       ],
-      order: [[LearningStrand, "code", "ASC"]],
+      order: [["code", "ASC"]],
     });
-
-    if (
-      classLearningStrands.every(
-        (obj) => !obj.dataValues.class_schedules.length
-      )
-    ) {
-      const error = new Error("No class schedules found.");
-      error.statusCode = 404;
-      throw error;
-    }
 
     res.status(200).json({
       message: "Fetched class schedules successfully!",
@@ -50,24 +61,125 @@ export async function getClassSchedules(req, res, next) {
   }
 }
 
+export async function addLearningStrands(req, res, next) {
+  try {
+    await ClassLearningStrand.bulkCreate(req.body)
+
+    res.status(201).json({
+      message: "Added learning strands successfully!",
+    });
+  } catch (error) {
+      if (!error.statusCode) {
+          error.statusCode = 500;
+      }
+      next(error);
+  }
+}
+
+export async function getAllStrands(req, res, next) {
+  const classId = req.params.classId;
+
+  try {
+      const learningStrands = await ClassLearningStrand.findAll({
+          where: {classLevelId: classId}, 
+          include: [ 
+            {model: ClassSchedule, include: [Volunteer], order: [["start_time", "ASC"]]},
+            Module
+          ],
+          order: [["code", "ASC"]]
+      })
+
+      res.status(201).json({ 
+          message: "Learning strand added!",
+          data: learningStrands
+      });
+  } catch (error) {
+      if (!error.statusCode) {
+          error.statusCode = 500;
+      }
+      next(error);
+  }
+}
+
+export async function removeStrands(req, res, next) {
+  const { learningStrandIds } = req.body;
+
+  try {
+    await ClassLearningStrand.destroy({
+      where: { id: learningStrandIds },
+    });
+
+    res.status(201).json({
+      message: "Deleted class learning strands successfully!",
+    });
+  } catch (error) {
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+}
+
+export async function getAllModules(req, res, next) {
+  const classId = req.params.classId;
+  
+  try {
+      const classLevel = await ClassLevel.findByPk(classId, {
+          include: {model: ClassLearningStrand, include: [Module]}
+      })
+      
+      const modules = []
+      classLevel.class_learning_strands.forEach(learningStrand => {
+          modules.push(...learningStrand.modules)
+      });
+
+      res.status(201).json({ 
+          message: "Fetched all modules successfully!",
+          data: modules
+      });
+  } catch (error) {
+      if (!error.statusCode) {
+          error.statusCode = 500;
+      }
+      next(error);
+  }
+}
+
 export async function getAllStudents(req, res, next) {
   const classId = req.params.classId;
 
   try {
-    const enrollments = await Enrollment.findAll({
-      where: { classLevelId: classId },
-      include: [{ model: Student, include: [ContactInfo, PersonalInfo] }],
-    });
+    const activeStudents = await ClassLevel.findByPk(classId, {
+        include: {model: Enrollment, 
+            where: {
+                status: 'Active'
+            },
+            include: [Student]}
+    })
 
-    if (!enrollments.length) {
-      const error = new Error("No students found.");
-      error.statusCode = 404;
-      throw error;
-    }
+    const inactiveStudents = await ClassLevel.findByPk(classId, {
+        include: {model: Enrollment, 
+            where: {
+                status: 'Inactive'
+            },
+            include: [Student]}
+    })
 
-    res.status(200).json({
-      message: "Fetched students successfully!",
-      data: enrollments,
+    const dropStudents = await ClassLevel.findByPk(classId, {
+        include: {model: Enrollment, 
+            where: {
+                status: 'Drop'
+            },
+            include: [Student]}
+    })
+
+    res.status(201).json({ 
+        message: "Fetched all students successfully!",
+        data: {
+            active: activeStudents, 
+            inactive: inactiveStudents, 
+            drop: dropStudents
+        }
     });
   } catch (error) {
     if (!error.statusCode) {
@@ -85,7 +197,6 @@ export async function getStudent(req, res, next) {
     const classLearningStrands = await ClassLearningStrand.findAll({
       where: { classLevelId: classId },
       include: [
-        LearningStrand,
         { model: Grade, where: { enrollmentId: enrollmentId } },
         {
           model: Module,

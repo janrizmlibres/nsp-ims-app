@@ -1,280 +1,223 @@
 <script setup>
+// Presets
+import { onMounted, provide, ref } from 'vue';
+import { useToast } from 'primevue/usetoast';
+import ProgressSpinner from 'primevue/progressspinner';
+import Button from 'primevue/button';
+import Badge from 'primevue/badge';
+import Tag from 'primevue/tag';
+import { FilterMatchMode } from 'primevue/api';
+
+// Custom
+import AddTermPanel from '@/components/utilities_view/AddTermPanel.vue'
 import ContentPane from '@/components/UI/ContentPane.vue'
-import AddTermDialog from '@/components/utilities_view/AddTermDialog.vue'
+import EditTermDialog from '@/components/utilities_view/EditTermDialog.vue';
 
-import Button from 'primevue/button'
-import Calendar from 'primevue/calendar'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import { useToast } from 'primevue/usetoast'
-import { ref, watch, onMounted } from 'vue'
-
+// stores
 import { useUtilitiesStore } from '@/stores/utilities';
+import Card from 'primevue/card';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import InputText from 'primevue/inputtext';
+import { useRouter } from 'vue-router';
 
-const termStore = useUtilitiesStore()
+const utilitiesStore = useUtilitiesStore()
+
+const router = useRouter()
 const toast = useToast()
+const isLoading = ref(true)
 
 const terms = ref([])
-const editingRows = ref([])
+const selectedRow = ref({})
+const primarySelection = ref(null)
+const term = ref()
+const op = ref()
+const editTermDialogState = ref(false)
+const filters = ref({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+});
 
-const onRowEditSave = async (event) => {
-    let { data, newData } = event
+const numericColumns = ref([
+    {field: 'activeCount', header: 'Active'},
+    {field: 'inactiveCount', header: 'Inactive'},
+    {field: 'dropCount', header: 'Drop'},
+    {field: 'total', header: 'Total'}
+])
 
-    if (data.status === false || newData.status === false) {
-        toast.add({
-            severity: 'info',
-            summary: 'Edit Disabled',
-            detail: 'Editing is disabled for inactive academic terms.',
-            life: 3000
-        })
-        return
-    }
-    
-    if (JSON.stringify(data) !== JSON.stringify(newData)) {
-
-        let startDateYear = newData.start_date.getFullYear();
-        let endDateYear = newData.end_date.getFullYear();
-
-        // Check if there's an existing term with the same academic year as the new data
-        // And the academic year of the term being edited is not the same as the new academic yea
-        if (termStore.terms.some(term => term.academic_year === startDateYear + '-' + endDateYear) && termStore.terms.find(term => term.id === newData.id).academic_year !== startDateYear + '-' + endDateYear) {
-            toast.add({
-              severity: 'error',
-              summary: 'Duplicate Academic Term',
-              detail: 'An Academic Term already exists.',
-              life: 3000
-            })
-          return
-        }
-
-        if (endDateYear - startDateYear !== 1) {
-            toast.add({
-                severity: 'error',
-                summary: 'Invalid Date Range',
-                detail: 'The start and end dates must be exactly one year apart.',
-                life: 3000
-            })
-          return
-        }
-
-        if (newData.start_date > newData.end_date) {
-            toast.add({
-              severity: 'error',
-              summary: 'Invalid Date Range',
-              detail: 'The start date cannot be later than the end date.',
-              life: 3000
-            })
-          return
-        }
-
-        try {
-            await termStore.updateTerm(newData.id, {
-                start_date: newData.start_date,
-                end_date: newData.end_date,
-                academic_year: startDateYear + '-' + endDateYear
-            })
-
-            await termStore.getTerms()
-
-            toast.add({
-              severity: 'success',
-              summary: 'Update Successful',
-              detail: 'The date range has been updated successfully!',
-              life: 3000
-            })
-        } catch (error) {
-            toast.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Unexpected error encountered. Please refresh this page.',
-              life: 3000
-            })
-        }
-    }
-}
-
-const onRowEditCancel = () => {
-    toast.add({
-        severity: 'info',
-        summary: 'Cancelled',
-        detail: 'Date range update cancelled.',
-        life: 3000
-    })
-}
+provide('editTermDialogState', editTermDialogState)
+provide('term', term)
+provide('op', op)
+provide('updateTermsTable', updateTermsTable)
 
 onMounted(async () => {
-  try {
-    await termStore.getTerms()
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Unexpected error encountered. Please refresh this page.',
-      life: 3000
-    })
-  }
+  updateTermsTable()
 })
 
-async function fetchTerms(data) {
-  terms.value.length = 0
+async function updateTermsTable() {
   try {
-    for (const term of data) {
-      let start_date = new Date(term.start_date)
-      let end_date = new Date(term.end_date)
-
-      const temp = ref({
-        id: term.id,
-        academic_year: term.academic_year,
-        start_date: start_date,
-        end_date: end_date,
-        status: term.status
+      await utilitiesStore.getTerms()
+      terms.value = utilitiesStore.terms
+      isLoading.value = false
+  } catch(error) {
+      console.log(error);
+      toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Unexpected error encountered. Please refresh this page.',
+          life: 3000
       })
-
-      terms.value.push(temp.value)
-    }
-  } catch (error) {
-    console.log(error)
   }
 }
 
-watch(() => termStore.terms, fetchTerms, { immediate: false })
+function getNumericLabel(field) {
+    switch (field) {
+        case 'dropCount':
+        return 'danger'
+
+        case 'inactiveCount':
+        return 'warning'
+
+        case 'activeCount':
+        return 'success'
+
+        case 'total':
+        return 'info'
+
+        default:
+        return null
+    }
+}
+
+function getStatusLabel(field) {
+    switch (field) {
+        case false:
+        return 'warning'
+
+        case true:
+        return 'success'
+
+        default:
+        return null
+    }
+}
+
+function onExpandRow(id) {
+    selectedRow.value = {}
+    const checkProp = id in selectedRow.value
+    if (checkProp) delete selectedRow.value[id]
+    else selectedRow.value[id] = true
+    selectedRow.value = { ...selectedRow.value }
+}
+
+function onCollapseRow() {
+    selectedRow.value = {}
+}
+
+function editTerm(data) {
+    term.value = {... data}
+    editTermDialogState.value = true
+}
+
+function configureClass(data) {
+  router.push( { name: 'class-configuration', query: {id: data.id}})
+}
+
+const toggle = (event) => {
+    op.value.toggle(event);
+}
 </script>
 
 <template>
-  <ContentPane :breadcrumb="[{label: 'Management'}, {label: 'Terms'}]">
-    <div class="bg-white shadow-xl rounded-2xl h-full p-5">
-      <DataTable
-        v-model:value="terms"
-        dataKey="id"
-        sortField="id"
-        :sortOrder="-1"
-        removableSort
-        resizableColumns
-        columnResizeMode="fit"
-        showGridlines
-        scrollable
-        v-model:editingRows="editingRows"
-        editMode="row"
-        @row-edit-save="onRowEditSave"
-        @row-edit-cancel="onRowEditCancel"
-        :ptOptions="{ mergeProps: true }"
-        :pt="{
-          root: {
-            class: ['flex flex-col justify-between overflow-auto']
-          },
-          table: {
-            class: 'bg-white border-spacing-0 border-separate'
-          },
-          thead: {
-            class: 'bg-surface-0 top-0 z-40 sticky'
-          },
-          tbody: {
-            class: 'sticky z-20'
-          },
-          column: {
-            headercell: ({ context, props }) => ({
-              class: [
-                'font-medium',
-                {
-                  'space-nowrap border-y bg-clip-padding': context.resizable
-                },
-                (props.sortable === '' || props.sortable) && context.sorted
-                  ? 'bg-white u-txt-active'
-                  : 'bg-white u-txt-active',
-                {
-                  'hover:bg-surface-50': context.sorted
-                }
-              ]
-            }),
-            sorticon: ({ context }) => ({
-              class: [
-                'ml-2',
-                context.sorted
-                  ? 'u-txt-scolor dark:text-white/80'
-                  : 'u-txt-active dark:text-white/70'
-              ]
-            }),
-            bodycell: { class: 'py-4 ' },
-            roweditorinitbutton: {
-              class: [
-                'relative',
-                'inline-flex items-center justify-center',
-                'text-left',
-                'w-8 h-8',
-                'border-0 rounded-full',
-                'u-txt-pcolor',
-                'border-transparent',
-                'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-400/50',
-                'hover:text-surface-700 hover:bg-surface-300/20',
-                'transition duration-200',
-                'overflow-hidden',
-                'cursor-pointer select-none'
-              ]
-            }
-          },
-          bodyrow: ({ context, props }) => ({
-            class: [
-              { 'u-bg-pcolor text-surface-100 dark:bg-primary-400/30': context.selected },
-              { 'bg-surface-0 text-surface-600 dark:bg-surface-800': !context.selected },
-              { 'font-bold bg-surface-0 dark:bg-surface-800': props.frozenRow },
-              {
-                'focus:outline-none focus:outline-offset-0 focus:ring focus:ring-transparent':
-                  context.selectable
-              },
-              {
-                'hover:bg-surface-100 hover:u-txt-active': props.selectionMode && !context.selected
-              },
-              { 'cursor-pointer': props.selectionMode }
-            ]
-          })
-        }"
-      >
-        <template #empty> <div class="text-center">No academic terms found.</div> </template>
-        <template #loading>
-          <div class="text-center">Loading academic terms records. Please wait.</div>
-        </template>
+    <ProgressSpinner v-if="isLoading" class="h-full" />
+    <ContentPane v-else :breadcrumb="[{label: 'Management'}, {label: 'Terms'}]">
+        <div class="flex justify-end gap-2 mb-2">
+            <span class="relative">
+                <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
+                    <InputText v-model="filters['global'].value" placeholder="Search..." class="pl-10 font-normal w-96 shadow-sm"
+                />
+            </span>
+            <span>
+              <Button class="u-bg-pcolor text-white hover:u-bg-pcolor" icon="fa fa-calendar-plus" raised rounded @click="toggle"/>
+              <AddTermPanel />
+            </span>
+        </div>
+        <Card class="h-full !rounded-2xl overflow-hidden" 
+            :pt="{body: {class:['flex flex-col h-full overflow-hidden']}, content: {class:['flex-grow !py-0 overflow-hidden']}}" 
+            :ptOptions="{mergeProps:true}">
+            <template #content>
+                <DataTable
+                    :loading="isLoading" scrollable
+                    v-model:expandedRows="selectedRow"
+                    :value="terms"
+                    dataKey="id"
+                    v-model:filters="filters"
+                    v-model:selection="primarySelection"
+                    selectionMode="single"
+                    @rowSelect="onExpandRow(primarySelection.id)"
+                    @rowUnselect="onCollapseRow()"
+                >
+                    <template #empty> <div class="text-center">No records found.</div> </template>
+                    <template #loading> <ProgressSpinner class="flex justify-center" /> </template>
+                    <Column expander style="width: 2rem" />
+                    <Column :exportable="false" style="width:2rem">
+                        <template #body="slotProps">
+                            <Button icon="fa fa-pencil" text @click="editTerm(slotProps.data)" :class="[{'u-txt-pcolor hover:u-bg-pcolor hover:text-white': !primarySelection}, {'text-white hover:u-bg-scolor': primarySelection}]" />
+                        </template>
+                    </Column>
+                    <Column field="batch_number" header="Batch No." />
+                    <Column field="academic_year" header="Academic Year" />
+                    <Column field="start_date" header="Start Date">
+                        <template #body="slotProps">
+                            {{ new Date(slotProps.data.start_date).toDateString() }}
+                        </template>
+                    </Column>
+                    <Column field="end_date" header="End Date">
+                        <template #body="slotProps">
+                            {{ new Date(slotProps.data.end_date).toDateString() }}
+                        </template>
+                    </Column>
+                    <Column field="status" header="Status">
+                      <template #body="slotProps">
+                        <Tag :value="slotProps.data.status ? 'Active' : 'Inactive'" :severity="getStatusLabel(slotProps.data.status)" />
+                      </template>
+                    </Column>
 
-        <Column field="id" header="Batch No." sortable/>
-        <Column field="academic_year" header="Academic Year" />
-        <Column field="start_date" header="Start Date">
-          <template #body="slotProps">
-            {{ slotProps.data.start_date.toDateString() }}
-          </template>
-          <template #editor="{ data, field }">
-            <Calendar
-              v-model="data[field]"
-              id="calendar"
-              showIcon
-              iconDisplay="input"
-              :manualInput="false"
-            />
-          </template>
-        </Column>
-        <Column field="end_date" header="End Date">
-          <template #body="slotProps">
-            {{ slotProps.data.end_date.toDateString() }}
-          </template>
-          <template #editor="{ data, field }">
-            <Calendar
-              v-model="data[field]"
-              id="calendar"
-              showIcon
-              iconDisplay="input"
-              :manualInput="false"
-            />
-          </template>
-        </Column>
-        <Column field="status" header="Status">
-          <template #body="slotProps">
-            {{ slotProps.data.status ? 'Active' : 'Inactive' }}
-          </template>
-        </Column>
-        <Column :rowEditor="true" bodyStyle="text-align:center" class="sticky right-0" style="width: 5rem;" />
-        <template #footer> 
-            <Button class="u-txt-pcolor hover:bg-surface-300/20" icon="fa fa-plus" label="Create an Academic Term" text raised rounded @click="termStore.showHideAddTermDialog"/>
-            <AddTermDialog />
-        </template>
-      </DataTable>
-    </div>
-  </ContentPane>
+                    <template #expansion="slotProps">
+                        <div class="p-1 rounded-md">
+                            <DataTable
+                            :value="slotProps.data.class_levels"
+                            dataKey="id"
+                            >
+                              <Column header="School Level" field="school_level" />
+                              <Column v-for="col of numericColumns" :key="col.field" :field="col.field" :header="col.header">
+                                  <template #body="{ data, field }">
+                                      <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
+                                  </template>
+                              </Column>
+                              <Column
+                                headerStyle="width: 5rem; text-align: center"
+                                bodyStyle="text-align: center; overflow: visible"
+                                class="right-0"
+                                frozen
+                              >
+                                <template #body="{ data }">
+                                  <Button
+                                    type="button"
+                                    icon="fa fa-gear"
+                                    @click="configureClass(data)"
+                                    text
+                                    aria-haspopup="true"
+                                    aria-controls="overlay_menu"
+                                    class="u-txt-active hover:transform hover:bg-transparent hover:scale-[1.10]"
+                                  />
+                                </template>
+                              </Column>
+                            </DataTable>
+                        </div>
+                    </template>
+                </DataTable>
+            </template>
+        </Card>
+        <EditTermDialog />
+    </ContentPane>
 </template>

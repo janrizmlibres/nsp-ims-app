@@ -20,6 +20,10 @@ export const Module = sequelize.define("module", {
     type: DATE,
     allowNull: false,
   },
+  total_score: {
+    type: INTEGER,
+    allowNull: false
+  },
   status: {
     type: BOOLEAN,
     defaultValue: false,

@@ -1,54 +1,23 @@
 <script setup>
 //Presets
-import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
 import Dropdown from 'primevue/dropdown';
-import Toolbar from 'primevue/toolbar';
 import ProgressSpinner from 'primevue/progressspinner';
-import { inject, onMounted, provide, ref } from 'vue';
-import { useToast } from 'primevue/usetoast';
+import { computed, inject, provide, ref } from 'vue';
 
 //Custom
 import ViewStudentDialog from './ViewStudentDialog.vue';
 
-//stores
-import { useClassStore } from '@/stores/class';
+const props = defineProps(['modelValue'])
 
-const toast = useToast()
-
-const classStore = useClassStore()
-
-const classLevel = inject('classLevel')
 const filters = inject('filters')
-const learners = ref([])
-const selectedStudent = ref()
-const studentDialogState = ref(false)
-const isFetching = ref(false)
-
-provide('studentData', selectedStudent)
-provide('studentDialogState', studentDialogState)
-
-const columns = ref([
-    {field: 'category', header: 'Category'},
-    {field: 'civilStatus', header: 'Civil Status'},
-    {field: 'contactNum', header: 'Contact Number'},
-])
-
-const statuses = ref([
-    {label: 'Active', value: 'Active'},
-    {label: 'Inactive', value: 'Inactive'},
-    {label: 'Drop', value: 'Drop'},
-]);
-
-function updateStudentsTable() {
-    isFetching.value = true
-    learners.value.length = 0 
-    
-    classStore.getAllStudents(classLevel.value.id).then((enrollments) => {
-        for (const enrollment of enrollments) {
+const learners = computed(() => {
+    let data = []
+    if (props.modelValue) {
+        for (const enrollment of props.modelValue.enrollments) {
             const temp = {
                 id: enrollment.id,
                 classLevelId: enrollment.classLevelId,
@@ -68,23 +37,29 @@ function updateStudentsTable() {
                 photoUrl: enrollment.student.photoUrl
             }
 
-            learners.value.push(temp)
+            data.push(temp)
         }
+    }
+    return data
+})
+const selectedStudent = ref()
+const studentDialogState = ref(false)
+const isFetching = ref(false)
 
-        isFetching.value = false
-    }).catch((error) => {
-            toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.response.data.message,
-            life: 3000
-        })
+provide('studentData', selectedStudent)
+provide('studentDialogState', studentDialogState)
 
-        isFetching.value = false
-    })
-}
+const columns = ref([
+    {field: 'category', header: 'Category'},
+    {field: 'civilStatus', header: 'Civil Status'},
+    {field: 'contactNum', header: 'Contact Number'},
+])
 
-onMounted(() => updateStudentsTable())
+const statuses = ref([
+    {label: 'Active', value: 'Active'},
+    {label: 'Inactive', value: 'Inactive'},
+    {label: 'Drop', value: 'Drop'},
+]);
 
 const getStatusLabel = (status) => {
     switch (status) {
@@ -110,16 +85,8 @@ function viewStudent(student) {
 
 <template>
     <div class="relative flex flex-col h-full">
-        <Toolbar class="!rounded-none !border-x-0">
-            <template #end>
-                <span class="relative float-end">
-                    <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
-                    <InputText v-model="filters['global'].value" placeholder="Keyword Search" class="pl-10 font-normal w-96"/>
-                </span>
-            </template>
-        </Toolbar>
         <DataTable 
-            :value="learners" dataKey="id" scrollable class="shadow-md" :loading="isFetching"
+            :value="learners" dataKey="id" scrollable :loading="isFetching"
             v-model:filters="filters" filterDisplay="menu"
             :globalFilterFields="['lastName', 'firstName', 'middleName', 'contactNum']"
             sortField="lastName" :sortOrder="1" removableSort
@@ -129,13 +96,6 @@ function viewStudent(student) {
         >
             <template #loading> <ProgressSpinner class="self-center" /> </template>
             <template #empty> <div class="text-center">No records found.</div> </template>
-            
-            <template #paginatorstart>
-                    <Button type="button" icon="pi pi-refresh" text @click="updateStudentsTable" />
-                </template>
-                <template #paginatorend>
-                    <div></div>
-                </template>
 
             <Column header="Action" :exportable="false" frozen>
                 <template #body="slotProps">
@@ -175,7 +135,11 @@ function viewStudent(student) {
                     {{ slotProps.data.birthday ? new Date(slotProps.data.birthday).toDateString() : slotProps.data.birthday}}
                 </template>
             </Column>
-            <Column field="dateEnrolled" header="Date Enrolled" style="min-width: 10rem;" />
+            <Column field="dateEnrolled" header="Date Enrolled" style="min-width: 10rem;">
+                <template #body="slotProps">
+                    {{ new Date(slotProps.data.dateEnrolled).toDateString() }}
+                </template>
+            </Column>
         </DataTable>
     </div>
     <ViewStudentDialog />

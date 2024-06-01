@@ -1,7 +1,7 @@
 <script setup>
 // Presets
 import Divider from 'primevue/divider';
-import StrandCard from './StrandCard.vue';
+import LearningStrandCard from './LearningStrandCard.vue';
 import { computed } from 'vue';
 
 const props = defineProps(['modelValue'])
@@ -19,7 +19,7 @@ const strands = computed(() => props.modelValue)
         
         <span v-if="strands.length === 0" class="flex flex-col text-center">No learning strands created.</span>
         <div v-else class="flex flex-col gap-4">
-            <StrandCard v-for="learningStrand of strands" :key="learningStrand.teacher" :data="learningStrand" />
+            <LearningStrandCard v-for="learningStrand of strands" :key="learningStrand.id" :data="learningStrand" />
         </div>
     </div>
 </template>

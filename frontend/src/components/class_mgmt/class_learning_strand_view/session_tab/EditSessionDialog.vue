@@ -20,7 +20,7 @@ const usersStore = useUsersStore()
 
 const editSessionDialogState = inject('editSessionDialogState')
 const session = inject('session')
-const learningStrandInput = inject('learningStrandInput')
+const learningStrand = inject('learningStrand')
 const term = inject('term')
 const classLevel = inject('classLevel')
 const startingData = computed(() => structuredClone(toRaw(session.value)))
@@ -39,7 +39,7 @@ async function updateSession() {
 
             try {
                 await usersStore.addAudit(
-                    `Updated: Remarks of session ${new Date(session.value.date).toDateString()} of ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    `Updated: Remarks of session ${new Date(session.value.date).toDateString()} of ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {
                 console.log(error);

@@ -5,6 +5,12 @@ import isAuth from "../middlewares/is_auth.js";
 const router = express.Router();
 
 router.get(
+  "/:classLearningStrandId",
+  isAuth,
+  classLearningStrandController.getClassLearningStrand
+);
+
+router.get(
   "/:classLearningStrandId/modules",
   isAuth,
   classLearningStrandController.getAllModules

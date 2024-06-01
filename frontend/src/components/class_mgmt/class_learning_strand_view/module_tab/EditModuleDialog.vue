@@ -22,9 +22,9 @@ const usersStore = useUsersStore()
 const editModuleDialogState = inject('editModuleDialogState')
 const module = inject('module')
 const term = inject('term')
-const learningStrandInput = inject('learningStrandInput')
+const learningStrand = inject('learningStrand')
 const classLevel = inject('classLevel')
-const dates = ref([])
+const dates = ref(null)
 const disableUpdate = computed(() => dates.value ? (dates.value.length === 0 || dates.value[1] === null) : !dates.value)
 const enableLeave = computed(() => dates.value ? dates.value.length === 0 : !dates.value)
 
@@ -52,11 +52,11 @@ async function updateModule() {
                 life: 3000
             })
             
-            dates.value = []
+            dates.value = null
 
             try {
                 await usersStore.addAudit(
-                    `Updated: ${module.value.title} date range from ${learningStrandInput.value.learning_strand.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
+                    `Updated: ${module.value.title} date range from ${learningStrand.value.code} of ${classLevel.value.school_level}, SY ${term.value.academic_year}`
                 )
             } catch(error) {
                 console.log(error);
@@ -81,12 +81,12 @@ async function cancel() {
             message: 'Do you really want to leave? you have unsaved changes!',
             header: 'Redirect Confirmation',
             accept: () => {
-                dates.value = []
+                dates.value = null
                 editModuleDialogState.value = false
             }
         })
     } else {
-        dates.value = []
+        dates.value = null
         editModuleDialogState.value = false
     }
 }
@@ -101,7 +101,7 @@ onBeforeRouteLeave(() => {
         message: 'Do you really want to leave? you have unsaved changes!',
         header: 'Redirect Confirmation',
         accept: () => {
-            dates.value = []
+            dates.value = null
             router.back()
         }
     })
