@@ -39,7 +39,7 @@ export async function injectStudent() {
     category: "Street Children",
     firstName: "Gordon",
     lastName: "Ramsay",
-    photoUrl: "images/gordon.jpg",
+    photoUrl: "static/images/gordon.jpg",
   });
 
   await PersonalInfo.create({
@@ -90,7 +90,7 @@ export async function injectStudent() {
     category: "Child Laborer",
     firstName: "Kim",
     lastName: "Chiu",
-    photoUrl: "images/kim.jpg",
+    photoUrl: "static/images/kim.jpg",
   });
 
   await PersonalInfo.create({

@@ -112,6 +112,8 @@ const isFormDirty = computed(() => {
 
         value1 = value1.getTime()
         value2 = value2.getTime()
+      } else if (value1 instanceof Array) {
+        continue
       }
 
       if (value1 !== value2) return true
@@ -273,6 +275,9 @@ onMounted(async () => {
     for (const key in initialData) {
       formData.value[key] = initialData[key]
     }
+
+    console.log(initialData)
+    console.log(formData.value)
 
     updateKey.value += 1
   } catch (error) {
