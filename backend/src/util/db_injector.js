@@ -54,6 +54,7 @@ export async function injectStudent() {
     religion: "Roman Catholic",
     sex: "M",
     civilStatus: "Single",
+    homeDistrict: "1st District",
     homeBlkLtSt: "Lackadaisy Hotel",
     homeBarangay: "St. Missouri",
     homeCity: "New York City",
@@ -741,7 +742,6 @@ export async function injectVolunteer() {
       city: "City B",
       province: "Province B",
     },
-    
   ];
 
   const volunteerEmergencyContacts = [
@@ -789,10 +789,7 @@ export async function injectVolunteer() {
   }
 
   function getSpecialization() {
-    let area = [
-      "LS1-E",
-      "LS1-F",
-    ];
+    let area = ["LS1-E", "LS1-F"];
     return area[Math.floor(Math.random() * 2)];
   }
 

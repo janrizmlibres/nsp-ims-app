@@ -34,6 +34,7 @@ export const PersonalInfo = sequelize.define("personal_info", {
     values: ["Married", "Widowed", "Separated", "Divorced", "Single"],
     allowNull: false,
   },
+  homeDistrict: STRING,
   homeBlkLtSt: {
     type: STRING,
     allowNull: false,

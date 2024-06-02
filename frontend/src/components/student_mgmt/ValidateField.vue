@@ -1,7 +1,14 @@
 <script setup>
 import { ref } from 'vue'
 
-const isInvalid = ref(false)
+const props = defineProps({
+  isInvalid: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const isInvalid = ref(props.isInvalid)
 
 function inputEntered(value) {
   isInvalid.value = !value

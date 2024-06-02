@@ -9,13 +9,18 @@ import { objectMap } from '@/util/helpers'
 import ValidateField from '../../ValidateField.vue'
 
 const { formData, updateFormData } = inject('formData')
+const contactsInvalidState = inject('contactsInvalidState')
 
 const contactInfo = formData.contactInfo
 const emergencyInfo = formData.emergencyPerson
 
 const leftFields = ref({
   email: { label: 'Email Address', data: contactInfo.email },
-  contactNum: { label: 'Contact Number', data: contactInfo.contactNum },
+  contactNum: {
+    label: 'Contact Number',
+    data: contactInfo.contactNum,
+    isInvalid: contactsInvalidState.value.contact
+  },
   facebook: { label: 'Facebook', data: contactInfo.facebook }
 })
 
@@ -24,7 +29,11 @@ const rightFields = ref({
   firstName: { label: 'First Name', data: emergencyInfo.firstName },
   middleName: { label: 'Middle Name', data: emergencyInfo.middleName },
   suffixName: { label: 'Suffix', data: emergencyInfo.suffixName },
-  contactNum: { label: 'Contact Number', data: emergencyInfo.contactNum }
+  contactNum: {
+    label: 'Contact Number',
+    data: emergencyInfo.contactNum,
+    isInvalid: contactsInvalidState.value.emergency
+  }
 })
 
 const selectedRelationship = ref(emergencyInfo.relationship)
@@ -59,7 +68,11 @@ function updateEmergencyContact() {
               <div class="text-red-500 text-xl">*</div>
             </div>
 
-            <ValidateField v-if="key === 'contactNum'" v-slot="slotProps">
+            <ValidateField
+              v-if="key === 'contactNum'"
+              :isInvalid="field.isInvalid"
+              v-slot="slotProps"
+            >
               <InputText
                 class="col-span-3"
                 type="text"
@@ -119,7 +132,11 @@ function updateEmergencyContact() {
             </div>
 
             <template v-if="key !== 'suffixName'">
-              <ValidateField v-if="key !== 'middleName'" v-slot="slotProps">
+              <ValidateField
+                v-if="key !== 'middleName'"
+                :isInvalid="field.isInvalid || false"
+                v-slot="slotProps"
+              >
                 <InputText
                   class="col-span-3"
                   type="text"

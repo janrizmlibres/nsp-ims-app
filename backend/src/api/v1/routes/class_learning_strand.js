@@ -51,6 +51,7 @@ router.post(
   isAuth,
   classLearningStrandController.addModule
 );
+
 router.post(
   "/:classLearningStrandId/session/add",
   isAuth,

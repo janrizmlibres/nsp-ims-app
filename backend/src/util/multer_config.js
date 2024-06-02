@@ -2,8 +2,10 @@ import multer from "multer";
 import { v4 as uuidv4 } from "uuid";
 
 export const fileStorage = multer.diskStorage({
-  destination: (req, file, cb) => { 
-    file.mimetype === "application/pdf" ? cb(null, "enrollmentForms") : cb(null, "images")
+  destination: (req, file, cb) => {
+    file.mimetype === "application/pdf"
+      ? cb(null, "static/documents/pdfs")
+      : cb(null, "static/images");
   },
   filename: (req, file, cb) => cb(null, uuidv4() + "-" + file.originalname),
 });

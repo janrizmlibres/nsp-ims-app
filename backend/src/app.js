@@ -25,49 +25,11 @@ import {
 } from "./api/v1/routes/index.js";
 
 const app = express();
+const router = express.Router();
 const port = process.env.PORT || 3000;
-setAssociations();
-
-app.use(express.json());
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-app.use("/images", express.static(path.join(__dirname, "images")));
-app.use(
-  "/enrollmentForms",
-  cors(),
-  express.static(path.join(__dirname, "enrollmentForms"))
-);
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  next();
-});
-
-app.options("/*", (_, res) => {
-  res.sendStatus(200);
-});
-
-app.get("/", (_, res) => {
-  res.send("Please enter a valid endpoint.");
-});
-
-const router = express.Router();
-
-app.use("/api/v1/profile", profileRoutes);
-app.use("/api/v1/admin", adminRoutes);
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/enrollment", enrollmentRoutes);
-app.use("/api/v1/term", termRoutes);
-app.use("/api/v1/class", classRoutes);
-app.use("/api/v1/classLearningStrand", classLearningStrandRoutes);
-app.use("/api/v1/utilities", utilitiesRoutes);
-app.use("/api/v1/volunteer", volunteerRoutes);
+setAssociations();
 
 const swaggerOptions = {
   swaggerDefinition: {
@@ -82,7 +44,40 @@ const swaggerOptions = {
 };
 
 const specs = swaggerjsdoc(swaggerOptions);
+
+app.use(express.json());
+
+app.use(
+  "/static/images",
+  express.static(path.join(__dirname, "../static/images"))
+);
+app.use(
+  "/static/documents/pdfs",
+  express.static(path.join(__dirname, "../static/documents/pdfs"))
+);
+
+app.use(cors());
+
+app.options("/*", (_, res) => {
+  res.sendStatus(200);
+});
+
+app.get("/", (_, res) => {
+  res.send("Please enter a valid endpoint.");
+});
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.use("/api/v1", router);
+
+router.use("/profile", profileRoutes);
+router.use("/admin", adminRoutes);
+router.use("/auth", authRoutes);
+router.use("/enrollment", enrollmentRoutes);
+router.use("/term", termRoutes);
+router.use("/class", classRoutes);
+router.use("/classLearningStrand", classLearningStrandRoutes);
+router.use("/utilities", utilitiesRoutes);
+router.use("/volunteer", volunteerRoutes);
 
 app.use((error, _req, res, next) => {
   console.log(error);

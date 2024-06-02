@@ -68,6 +68,7 @@ export async function getStudent(req, res, next) {
 export async function addStudent(req, res, next) {
   try {
     const errors = validationResult(req);
+    console.log(errors);
 
     if (!errors.isEmpty()) {
       const error = new Error("Validation failed, entered data is incorrect.");
