@@ -104,7 +104,7 @@ export async function login(req, res, next) {
     }
 
     const authToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     const refreshToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
@@ -188,7 +188,6 @@ export async function refreshToken(req, res, next) {
 
 export async function logout(req, res, next) {
   const token = req.body.token;
-  const refreshToken = req.body.refreshToken;
 
   try {
     jwt.verify(token, process.env.JWT_SECRET);
@@ -198,8 +197,18 @@ export async function logout(req, res, next) {
     }
   }
 
-  if (refreshToken) {
-    invalidatedTokens.push(refreshToken);
+  // Check if invalidatedTokens has reached a certain size
+  if (invalidatedTokens.length > 100) {
+    invalidatedTokens = invalidatedTokens.filter((token) => {
+      try {
+        jwt.verify(token, process.env.JWT_SECRET);
+        // If the token is still valid, keep it in the array
+        return true;
+      } catch (error) {
+        // If the token is no longer valid, remove it from the array
+        return false;
+      }
+    });
   }
 
   return res.status(200).json({ message: "Logout successful" });
