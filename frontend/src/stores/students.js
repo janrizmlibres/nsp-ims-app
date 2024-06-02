@@ -101,7 +101,6 @@ export const useStudentsStore = defineStore('students', () => {
     getStudent,
     addStudent,
     updateStudent,
-    updateStudentRequirements,
     getStudentsWithClassLevel
   }
 })

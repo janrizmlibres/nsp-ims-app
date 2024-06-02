@@ -47,8 +47,14 @@ const specs = swaggerjsdoc(swaggerOptions);
 
 app.use(express.json());
 
-app.use("/static/images", express.static(path.join(__dirname, "images")));
-app.use("static/documents/pdfs", express.static(path.join(__dirname, "pdfs")));
+app.use(
+  "/static/images",
+  express.static(path.join(__dirname, "../static/images"))
+);
+app.use(
+  "/static/documents/pdfs",
+  express.static(path.join(__dirname, "../static/documents/pdfs"))
+);
 
 app.use(cors());
 

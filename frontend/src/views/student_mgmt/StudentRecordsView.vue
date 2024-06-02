@@ -4,6 +4,7 @@ import Column from 'primevue/column'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
+import Tag from 'primevue/tag'
 
 import ContentPane from '@/components/UI/ContentPane.vue'
 import StudentHeader from '@/components/student_mgmt/StudentHeader.vue'
@@ -50,6 +51,8 @@ onMounted(async () => {
   try {
     await studentsStore.getStudents()
     await utilitiesStore.getCategories()
+
+    console.log(studentsStore.studentsNormalized)
   } catch (error) {
     console.log(error)
   }
@@ -57,14 +60,17 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ContentPane :breadcrumb="[{label: 'Records'}, {label: 'Students'}]">
+  <ContentPane :breadcrumb="[{ label: 'Records' }, { label: 'Students' }]">
     <StudentHeader
       :dt="dt"
       :globalFilter="filters.global.value"
       @filterChanged="updateGlobalFilter"
     />
 
-    <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="!rounded-2xl h-full overflow-hidden inline-block">
+    <Card
+      :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }"
+      class="!rounded-2xl h-full overflow-hidden inline-block"
+    >
       <template #content>
         <DataTable
           ref="dt"
@@ -72,7 +78,9 @@ onMounted(async () => {
           v-model:filters="filters"
           dataKey="id"
           filterDisplay="menu"
-          paginator :rows="15" :rowsPerPageOptions="[15, 20, 30, 50]"
+          paginator
+          :rows="15"
+          :rowsPerPageOptions="[15, 20, 30, 50]"
           paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
           :globalFilterFields="['lrn', 'firstName', 'lastName']"
@@ -113,11 +121,24 @@ onMounted(async () => {
 
           <template v-for="col of columns" :key="col.field">
             <Column
-              v-if="!['sex', 'category'].includes(col.field)"
+              v-if="!['sex', 'category', 'lrn'].includes(col.field)"
               :field="col.field"
               :header="col.header"
               sortable
             ></Column>
+
+            <Column
+              v-else-if="col.field === 'lrn'"
+              :field="col.field"
+              :header="col.header"
+              sortable
+            >
+              <template #body="slotProps">
+                <Tag v-if="!slotProps.data.lrn" severity="warning" value="No Data" />
+                <span v-else>{{ slotProps.data.lrn }}</span>
+              </template>
+            </Column>
+
             <Column v-else :field="col.field" :header="col.header" sortable>
               <template #filter="{ filterModel }">
                 <Dropdown

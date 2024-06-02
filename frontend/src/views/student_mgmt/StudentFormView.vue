@@ -39,6 +39,7 @@ const initialData = {
     religion: '',
     sex: null,
     civilStatus: null,
+    homeDistrict: '',
     homeBlkLtSt: '',
     homeBarangay: '',
     homeCity: '',
@@ -86,7 +87,12 @@ const initialData = {
 const formData = ref(structuredClone(initialData))
 
 let isOkToLeave = false
+
 const updateKey = ref(0)
+const contactsInvalidState = ref({
+  contact: false,
+  emergency: false
+})
 
 const headerText = computed(() => {
   if (!route.params.studentId) return 'Add'
@@ -114,12 +120,15 @@ const isFormDirty = computed(() => {
   return false
 })
 
+const contactRe = /(\+63|0)\s?\d{3}\s?\d{3}\s?\d{4}/
+
 watch(
   () => route.name,
   () => emit('routeChange')
 )
 
 provide('formData', readonly({ formData, updateFormData: handleDataChanged }))
+provide('contactsInvalidState', readonly(contactsInvalidState))
 
 function handleDataChanged(part, data) {
   const updateMapping = {
@@ -170,6 +179,17 @@ async function submitForm() {
       }
     })
   } catch (error) {
+    const contactNumOk = contactRe.exec(formData.value.contactInfo.contactNum)
+    const emergencyNumOk = contactRe.exec(formData.value.emergencyPerson.contactNum)
+    const eitherContactsInvalid = !contactNumOk || !emergencyNumOk
+
+    contactsInvalidState.value.contact = contactNumOk !== null ? false : true
+    contactsInvalidState.value.emergency = emergencyNumOk !== null ? false : true
+
+    if (eitherContactsInvalid) {
+      updateKey.value += 1
+    }
+
     confirm.require({
       group: 'user-headless',
       header: 'Data is Incorrect',
@@ -227,7 +247,7 @@ onMounted(async () => {
     initialData.identity = {
       ...mapValues(filterObject(identity), (v) => (isNil(v) ? '' : v)),
       suffixName: identity.suffixName,
-      lrn: identity.lrn.toString()
+      lrn: identity.lrn ? identity.lrn.toString() : ''
     }
 
     initialData.personalInfo = {
@@ -256,6 +276,7 @@ onMounted(async () => {
 
     updateKey.value += 1
   } catch (error) {
+    console.log(error)
     router.back()
   }
 })

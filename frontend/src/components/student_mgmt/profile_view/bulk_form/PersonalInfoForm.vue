@@ -35,6 +35,7 @@ const birthPlace = ref({
   birthProvince: personalInfo.birthProvince
 })
 const address = ref({
+  homeDistrict: { label: 'District', data: personalInfo.homeDistrict },
   homeBlkLtSt: { label: 'Blk/Lt/St', data: personalInfo.homeBlkLtSt },
   homeBarangay: { label: 'Barangay', data: personalInfo.homeBarangay },
   homeCity: { label: 'City', data: personalInfo.homeCity },
@@ -275,8 +276,8 @@ onMounted(() => {
           :key="key"
           class="col-span-3"
           :class="{
-            'flex items-center mt-6': value.label === 'Blk/Lt/St',
-            'col-start-2 mt-4': value.label !== 'Blk/Lt/St'
+            'flex items-center mt-6': value.label === 'District',
+            'col-start-2 mt-4': value.label !== 'District'
           }"
           :pt="floatLabelPt"
         >
