@@ -45,6 +45,7 @@ const address = ref({
 const sex = ['M', 'F']
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 const civilStatus = ['Married', 'Widowed', 'Separated', 'Divorced', 'Single']
+const districts = ['1st District', '2nd District']
 
 const months = ref([])
 const days = computed(() => {
@@ -281,7 +282,7 @@ onMounted(() => {
           }"
           :pt="floatLabelPt"
         >
-          <ValidateField v-slot="slotProps">
+          <ValidateField v-if="key !== 'homeDistrict'" v-slot="slotProps">
             <InputText
               class="w-full"
               :id="key"
@@ -299,6 +300,17 @@ onMounted(() => {
               :invalid="slotProps.isInvalid"
             />
           </ValidateField>
+
+          <Dropdown
+            v-else
+            class="w-full"
+            v-model="value.data"
+            :options="districts"
+            @change="handleUpdate"
+            :pt="{ root: ({ props }) => ({ class: { '!opacity-100': props.disabled } }) }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="$route.meta.isViewMode"
+          />
 
           <label :for="key">{{ value.label }}</label>
         </FloatLabel>
