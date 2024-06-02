@@ -18,7 +18,11 @@ const identityValidator = [
     .optional({ values: "null" })
     .trim()
     .matches("^[A-Za-z]+.?$"),
-  body("identity.lrn").isNumeric({ locale: "en-US" }),
+  body("identity.lrn")
+    .default(null)
+    .optional({ values: "null" })
+    .trim()
+    .isNumeric({ locale: "en-US" }),
   body("identity.category").exists({ values: "null" }),
 ];
 
