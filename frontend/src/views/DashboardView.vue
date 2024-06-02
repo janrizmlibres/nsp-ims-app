@@ -9,6 +9,8 @@ import LineChart from "@/components/dashboard/LineChart.vue";
 import { useSidebarStore } from '@/stores/sidebar.js';
 import { useEnrollmentStore } from '@/stores/enrollment';
 
+import ScrollPanel from 'primevue/scrollpanel';
+
 const enrollmentStore = useEnrollmentStore();
 const sidebarStore = useSidebarStore();
 
@@ -158,7 +160,7 @@ const handleTermIdChanged = async (newTermId) => {
       <div class="charts">
         <LineChart 
           class="line-chart"
-          :chartData="enrollmentTrend"/>
+          :chartData="enrollmentTrend" />
         <BarChart 
           class="bar-chart"
           :chartData="[totalEnrolledStudents, activeEnrolledStudents, inactiveEnrolledStudents, gradeSchoolCount, juniorHighSchoolCount]" />
@@ -197,10 +199,12 @@ const handleTermIdChanged = async (newTermId) => {
   .line-chart {
     margin-left: 25.5rem;
     margin-bottom: 1.25rem;
+    height: 35vh;
   }
   
   .bar-chart {
     margin-left: 25.5rem;
+    height: 35vh;
   }
 
 </style>

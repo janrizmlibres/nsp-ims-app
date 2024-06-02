@@ -19,7 +19,6 @@ let series = reactive([
 const chartOptions = reactive({
   chart: {
     type: 'bar',
-    height: 350
   },
   plotOptions: {
     bar: {
@@ -52,14 +51,13 @@ watch(() => props.chartData, (newChartData) => {
 
 <template>
     <div class="BarChart-widget">
-      <vue-apex-charts type="bar" height="310" :options="chartOptions" :series="series"></vue-apex-charts>
+      <vue-apex-charts type="bar" height="100%" :options="chartOptions" :series="series"></vue-apex-charts>
     </div>
 </template>
 
 <style>
 .BarChart-widget {
     padding: 0.3125rem;
-    height: 20.0625rem;
     background-color: white;
     border-radius: 0.625rem;
     border-bottom: 0.3125rem solid #265492;
