@@ -20,14 +20,23 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import { useRouter } from 'vue-router';
+import { useStudentsStore } from '@/stores/students';
+import { useEnrollmentStore } from '@/stores/enrollment';
+import { useVolunteerStore } from '@/stores/volunteer';
 
 const utilitiesStore = useUtilitiesStore()
+const studentsStore = useStudentsStore()
+const enrollmentStore = useEnrollmentStore()
+const volunteerStore = useVolunteerStore()
 
 const router = useRouter()
 const toast = useToast()
 const isLoading = ref(true)
 
 const terms = ref([])
+const students = ref()
+const enrollments = ref()
+const volunteers = ref()
 const selectedRow = ref({})
 const primarySelection = ref(null)
 const term = ref()
@@ -50,23 +59,32 @@ provide('op', op)
 provide('updateTermsTable', updateTermsTable)
 
 onMounted(async () => {
-  updateTermsTable()
+    await studentsStore.getStudents()
+    students.value = studentsStore.students
+
+    await enrollmentStore.getAllEnrollments()
+    enrollments.value = enrollmentStore.allEnrolled
+    
+    await volunteerStore.getAllVolunteers()
+    volunteers.value = volunteerStore.volunteers
+
+    updateTermsTable()
 })
 
 async function updateTermsTable() {
-  try {
-      await utilitiesStore.getTerms()
-      terms.value = utilitiesStore.terms
-      isLoading.value = false
-  } catch(error) {
-      console.log(error);
-      toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Unexpected error encountered. Please refresh this page.',
-          life: 3000
-      })
-  }
+    try {
+        await utilitiesStore.getTerms()
+        terms.value = utilitiesStore.terms
+        isLoading.value = false
+    } catch(error) {
+        console.log(error);
+        toast.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Unexpected error encountered. Please refresh this page.',
+            life: 3000
+        })
+    }
 }
 
 function getNumericLabel(field) {
@@ -119,7 +137,7 @@ function editTerm(data) {
 }
 
 function configureClass(data) {
-  router.push( { name: 'class-configuration', query: {id: data.id}})
+    router.push( { name: 'class-configuration', query: {id: data.id}})
 }
 
 const toggle = (event) => {
@@ -137,8 +155,8 @@ const toggle = (event) => {
                 />
             </span>
             <span>
-              <Button class="u-bg-pcolor text-white hover:u-bg-pcolor" icon="fa fa-calendar-plus" raised rounded @click="toggle"/>
-              <AddTermPanel />
+                <Button class="u-bg-pcolor text-white hover:u-bg-pcolor" icon="fa fa-calendar-plus" raised rounded @click="toggle"/>
+                <AddTermPanel />
             </span>
         </div>
         <Card class="h-full !rounded-2xl overflow-hidden" 
@@ -176,10 +194,25 @@ const toggle = (event) => {
                             {{ new Date(slotProps.data.end_date).toDateString() }}
                         </template>
                     </Column>
+                    <Column header="Student Admissions">
+                        <template #body="slotProps">
+                            <Tag :value="`${students.value ? students.value.length : 0}/${slotProps.data.student_admission_kpi}`" severity="info" />
+                        </template>
+                    </Column>
+                    <Column header="Enrollments">
+                        <template #body="slotProps">
+                            <Tag :value="`${enrollments.value ? enrollments.value.length : 0}/${slotProps.data.enrollment_kpi}`" severity="info" />
+                        </template>
+                    </Column>
+                    <Column header="Volunteer Admissions">
+                        <template #body="slotProps">
+                            <Tag :value="`${volunteers.value ? volunteers.value.length : 0}/${slotProps.data.volunteer_admission_kpi}`" severity="info" />
+                        </template>
+                    </Column>
                     <Column field="status" header="Status">
-                      <template #body="slotProps">
-                        <Tag :value="slotProps.data.status ? 'Active' : 'Inactive'" :severity="getStatusLabel(slotProps.data.status)" />
-                      </template>
+                        <template #body="slotProps">
+                            <Tag :value="slotProps.data.status ? 'Active' : 'Inactive'" :severity="getStatusLabel(slotProps.data.status)" />
+                        </template>
                     </Column>
 
                     <template #expansion="slotProps">
@@ -188,30 +221,30 @@ const toggle = (event) => {
                             :value="slotProps.data.class_levels"
                             dataKey="id"
                             >
-                              <Column header="School Level" field="school_level" />
-                              <Column v-for="col of numericColumns" :key="col.field" :field="col.field" :header="col.header">
-                                  <template #body="{ data, field }">
-                                      <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
-                                  </template>
-                              </Column>
-                              <Column
-                                headerStyle="width: 5rem; text-align: center"
-                                bodyStyle="text-align: center; overflow: visible"
-                                class="right-0"
-                                frozen
-                              >
-                                <template #body="{ data }">
-                                  <Button
-                                    type="button"
-                                    icon="fa fa-gear"
-                                    @click="configureClass(data)"
-                                    text
-                                    aria-haspopup="true"
-                                    aria-controls="overlay_menu"
-                                    class="u-txt-active hover:transform hover:bg-transparent hover:scale-[1.10]"
-                                  />
-                                </template>
-                              </Column>
+                                <Column header="School Level" field="school_level" />
+                                <Column v-for="col of numericColumns" :key="col.field" :field="col.field" :header="col.header">
+                                    <template #body="{ data, field }">
+                                        <Badge :value="data[field]" :severity="getNumericLabel(col.field)"></Badge>
+                                    </template>
+                                </Column>
+                                <Column
+                                    headerStyle="width: 5rem; text-align: center"
+                                    bodyStyle="text-align: center; overflow: visible"
+                                    class="right-0"
+                                    frozen
+                                >
+                                    <template #body="{ data }">
+                                    <Button
+                                        type="button"
+                                        icon="fa fa-gear"
+                                        @click="configureClass(data)"
+                                        text
+                                        aria-haspopup="true"
+                                        aria-controls="overlay_menu"
+                                        class="u-txt-active hover:transform hover:bg-transparent hover:scale-[1.10]"
+                                    />
+                                    </template>
+                                </Column>
                             </DataTable>
                         </div>
                     </template>

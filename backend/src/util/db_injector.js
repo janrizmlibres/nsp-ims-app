@@ -34,12 +34,16 @@ export async function injectAll() {
 }
 
 export async function injectStudent() {
+  let admitted_year
+
+  admitted_year = getRandomDate().getFullYear()
   const student1 = await Student.create({
     lrn: "198765150721",
     category: "Street Children",
     firstName: "Gordon",
     lastName: "Ramsay",
     photoUrl: "images/gordon.jpg",
+    admitted_year: admitted_year + '-' + (admitted_year+1)
   });
 
   await PersonalInfo.create({
@@ -84,12 +88,14 @@ export async function injectStudent() {
     studentId: student1.id,
   });
 
+  admitted_year = getRandomDate().getFullYear()
   const student2 = await Student.create({
     lrn: "123456789012345",
     category: "Child Laborer",
     firstName: "Kim",
     lastName: "Chiu",
     photoUrl: "images/kim.jpg",
+    admitted_year: admitted_year + '-' + (admitted_year+1)
   });
 
   await PersonalInfo.create({
@@ -134,11 +140,13 @@ export async function injectStudent() {
     studentId: student2.id,
   });
 
+  admitted_year = getRandomDate().getFullYear()
   const student3 = await Student.create({
     lrn: "987654321098765",
     category: "Indigenous People",
     firstName: "Maria",
     lastName: "Gonzalez",
+    admitted_year: admitted_year + '-' + (admitted_year+1)
   });
 
   await PersonalInfo.create({
@@ -183,12 +191,14 @@ export async function injectStudent() {
     studentId: student3.id,
   });
 
+  admitted_year = getRandomDate().getFullYear()
   const student4 = await Student.create({
     lrn: "543210987654321",
     category: "Child Laborer",
     firstName: "Juan",
     lastName: "Del Cruz",
     photoUrl: "images/juan.jpg",
+    admitted_year: admitted_year + '-' + (admitted_year+1)
   });
 
   await PersonalInfo.create({
@@ -233,12 +243,14 @@ export async function injectStudent() {
     studentId: student4.id,
   });
 
+  admitted_year = getRandomDate().getFullYear()
   const student5 = await Student.create({
     lrn: "135792468013579",
     category: "Street Children",
     firstName: "Liza",
     lastName: "Soberano",
     photoUrl: "images/liza.jpg",
+    admitted_year: admitted_year + '-' + (admitted_year+1)
   });
 
   await PersonalInfo.create({
@@ -424,6 +436,9 @@ export async function injectAcademicYear() {
       academic_year: "2023-2024",
       start_date: new Date("2023-08-01"),
       end_date: new Date("2024-05-31"),
+      student_admission_kpi: 50,
+      enrollment_kpi: 50,
+      volunteer_admission_kpi: 10,
       status: true,
     },
     {
@@ -431,6 +446,9 @@ export async function injectAcademicYear() {
       academic_year: "2022-2023",
       start_date: new Date("2022-08-01"),
       end_date: new Date("2023-05-31"),
+      student_admission_kpi: 50,
+      enrollment_kpi: 50,
+      volunteer_admission_kpi: 10,
       status: false,
     },
     {
@@ -438,6 +456,9 @@ export async function injectAcademicYear() {
       academic_year: "2021-2022",
       start_date: new Date("2021-08-01"),
       end_date: new Date("2022-05-31"),
+      student_admission_kpi: 50,
+      enrollment_kpi: 50,
+      volunteer_admission_kpi: 10,
       status: false,
     },
     {
@@ -445,6 +466,9 @@ export async function injectAcademicYear() {
       academic_year: "2020-2021",
       start_date: new Date("2020-08-01"),
       end_date: new Date("2021-05-31"),
+      student_admission_kpi: 50,
+      enrollment_kpi: 50,
+      volunteer_admission_kpi: 10,
       status: false,
     },
     {
@@ -452,6 +476,9 @@ export async function injectAcademicYear() {
       academic_year: "2019-2020",
       start_date: new Date("2019-08-01"),
       end_date: new Date("2020-05-31"),
+      student_admission_kpi: 50,
+      enrollment_kpi: 50,
+      volunteer_admission_kpi: 10,
       status: false,
     },
     {
@@ -459,6 +486,9 @@ export async function injectAcademicYear() {
       academic_year: "2018-2019",
       start_date: new Date("2018-08-01"),
       end_date: new Date("2019-05-31"),
+      student_admission_kpi: 50,
+      enrollment_kpi: 50,
+      volunteer_admission_kpi: 10,
       status: false,
     },
     {
@@ -466,6 +496,9 @@ export async function injectAcademicYear() {
       academic_year: "2017-2018",
       start_date: new Date("2017-08-01"),
       end_date: new Date("2018-05-31"),
+      student_admission_kpi: 50,
+      enrollment_kpi: 50,
+      volunteer_admission_kpi: 10,
       status: false,
     },
     {
@@ -473,6 +506,9 @@ export async function injectAcademicYear() {
       academic_year: "2016-2017",
       start_date: new Date("2016-08-01"),
       end_date: new Date("2017-05-31"),
+      student_admission_kpi: 50,
+      enrollment_kpi: 50,
+      volunteer_admission_kpi: 10,
       status: false,
     },
   ];
@@ -676,11 +712,13 @@ export async function injectVolunteer() {
       firstName: "Shelly",
       middleName: "eyy",
       suffix: "Jr.",
+      admitted_year: '2022-2023'
     },
     {
       affiliation: "Student",
       lastName: "Fuentes",
       firstName: "Alonzo",
+      admitted_year: '2023-2024'
     },
   ];
 

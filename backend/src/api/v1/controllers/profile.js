@@ -19,7 +19,7 @@ import { ClassLevel } from "../models/class/class_level.js";
 export async function getStudents(_req, res, next) {
   try {
     const students = await Student.findAll({
-      include: [PersonalInfo, ContactInfo, RequirementInfo],
+      include: [PersonalInfo, ContactInfo, RequirementInfo, PreviousSchool],
     });
 
     res.status(200).json({

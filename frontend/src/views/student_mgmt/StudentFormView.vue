@@ -29,7 +29,8 @@ const initialData = {
     suffixName: null,
     lrn: '',
     category: null,
-    photoUrl: null
+    photoUrl: null,
+    admitted_year: new Date().getFullYear()
   },
   personalInfo: {
     birthday: null,
