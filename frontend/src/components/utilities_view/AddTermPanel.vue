@@ -21,6 +21,8 @@ const disableAdd = computed(() => invalidBatch.value || invalidRange.value || !b
 const invalidBatch = ref(false)
 const invalidRange = ref(false)
 
+const onSubmit = inject('updateTermsTable')
+
 async function addTerm() {
     try {        
         const range = ref([])
@@ -31,7 +33,7 @@ async function addTerm() {
         }
         
         await utilitiesStore.addTerm({
-            batch_number: batch,
+            batch_number: batch.value,
             academic_year: range.value[0].getFullYear() + '-' + range.value[1].getFullYear(),
             start_date: range.value[0],
             end_date: range.value[1],
@@ -40,7 +42,7 @@ async function addTerm() {
             volunteer_admission_kpi: vaKPI.value
         })
 
-        await utilitiesStore.getTerms()
+        onSubmit()
 
         toast.add({
             severity: 'success',

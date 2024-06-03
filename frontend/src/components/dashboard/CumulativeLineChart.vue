@@ -69,44 +69,57 @@ function setChartData() {
 
     volunteerCount = Array.from(volunteerCount, item => item || 0);
 
-    var saKPI = data.value.terms.filter(term => term.student_admission_kpi)
-    var eKPI = data.value.terms.filter(term => term.enrollment_kpi)
-    var vaKPI = data.value.terms.filter(term => term.volunteer_admission_kpi)
+    var saKPI = data.value.terms.map(term => term.student_admission_kpi)
+    var eKPI = data.value.terms.map(term => term.enrollment_kpi)
+    var vaKPI = data.value.terms.map(term => term.volunteer_admission_kpi)
+
 
     return {
         labels: years,
         datasets: [
             {
+                type: 'bar',
                 label: 'Student Admission',
                 data: studentCount,
                 fill: false,
-                borderColor: documentStyle.getPropertyValue('--cyan-500'),
+                backgroundColor: documentStyle.getPropertyValue('--cyan-500'),
+                borderColor: 'white',
+                borderWidth: 2
             },
             {
+                type: 'bar',
                 label: 'Student Enrollment',
                 data: enrollmentCount,
                 fill: false,
-                borderColor: documentStyle.getPropertyValue('--pink-500'),
+                backgroundColor: documentStyle.getPropertyValue('--pink-500'),
+                borderColor: 'white',
+                borderWidth: 2
             },
             {
+                type: 'bar',
                 label: 'Volunteer Admission',
                 data: volunteerCount,
                 fill: false,
-                borderColor: documentStyle.getPropertyValue('--yellow-500'),
+                backgroundColor: documentStyle.getPropertyValue('--yellow-500'),
+                borderColor: 'white',
+                borderWidth: 2
             },
             {
+                type: 'line',
                 label: 'Student Admission KPI',
                 data: saKPI,
                 fill: false,
                 borderColor: documentStyle.getPropertyValue('--bluegray-500'),
             },
             {
+                type: 'line',
                 label: 'Enrollment KPI',
                 data: eKPI,
                 fill: false,
                 borderColor: documentStyle.getPropertyValue('--indigo-500'),
             },
             {
+                type: 'line',
                 label: 'Volunteer Admission KPI',
                 data: vaKPI,
                 fill: false,
@@ -159,7 +172,7 @@ function setChartOptions() {
         :pt="{body: {class: ['h-full']}, content: {class:['h-full !py-0']}}" :ptOptions="{mergeProps: true}"
     >
         <template #content>
-            <Chart type="line" :data="chartData" :options="chartOptions" class="h-full" />
+            <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full" />
         </template>
     </Card>
 </template>

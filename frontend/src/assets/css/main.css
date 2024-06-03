@@ -216,11 +216,13 @@
   }
 
   .u-bg-indigo {
-    background-color: var(--indigo-500);
+    background: rgb(38,84,146);
+    background: linear-gradient(47deg, rgba(38,84,146,1) 0%, rgba(99,102,241,1) 100%);
   }
 
   .u-bg-teal {
-    background-color: var(--teal-500);
+    background: rgb(38,84,146);
+    background: linear-gradient(47deg, rgba(38,84,146,1) 0%, rgba(20,184,166,1) 100%);
   }
 
   .u-bg-purple {
@@ -240,6 +242,11 @@
   .u-bg-yellow {
     background: rgb(38,84,146);
     background: linear-gradient(47deg, rgba(38,84,146,1) 0%, rgba(234,179,8,1) 100%);
+  }
+
+  .u-bg-orange {
+    background: rgb(38,84,146);
+    background: linear-gradient(47deg, rgba(38,84,146,1) 0%, rgba(249,115,22,1) 100%);
   }
 
   .u-border-bottom {

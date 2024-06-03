@@ -21,6 +21,7 @@ const confirm = useConfirm()
 
 const studentsStore = useStudentsStore()
 
+let date = new Date().getFullYear()
 const initialData = {
   identity: {
     firstName: '',
@@ -30,7 +31,7 @@ const initialData = {
     lrn: '',
     category: null,
     photoUrl: null,
-    admitted_year: new Date().getFullYear()
+    admitted_year: date + '-' + (date+1)
   },
   personalInfo: {
     birthday: null,

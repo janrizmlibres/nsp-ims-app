@@ -12,6 +12,7 @@ const chartOptions = computed(() => setChartOptions())
 const datasets = ref()
 const filterAttribute = ref()
 const op = ref()
+
 function setChartData() {
     const documentStyle = getComputedStyle(document.body);
 

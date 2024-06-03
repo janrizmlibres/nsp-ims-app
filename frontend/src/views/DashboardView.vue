@@ -12,6 +12,7 @@ import CumulativeWidget from "@/components/dashboard/CumulativeWidget.vue"
 import CumulativeLineChart from "@/components/dashboard/CumulativeLineChart.vue"
 import ListWidget from "@/components/dashboard/ListWidget.vue"
 import KPIWidget from "@/components/dashboard/KPIWidget.vue"
+import StudentStatusWidget from "@/components/dashboard/StudentStatusWidget.vue"
 import LearnersProfile from "@/components/dashboard/LearnersProfileWidget.vue"
 
 import { useEnrollmentStore } from '@/stores/enrollment';
@@ -40,6 +41,14 @@ const dataByYear = ref({
   enrollments: null,
   volunteers: null,
 })
+
+const isLoading = ref(false)
+const enrollmentKPIData = ref([])
+const quickViewData = ref()
+const schoolLevelData = ref({
+  gradeSchool: [],
+  juniorHighSchool: []
+})
 const selectedTerm = ref()
 
 const studentFilter = ref()
@@ -47,6 +56,8 @@ const volunteerFilter = ref()
 
 const isCReload = ref(false)
 const isPReload = ref(false)
+
+const selectedData = ref('Enrollments')
 
 onMounted(async () => {
   await utilitiesStore.getTerms()
@@ -100,16 +111,62 @@ onMounted(async () => {
   updateDatasets(selectedTerm.value)
 })
 
+provide('isLoading', isLoading)
+provide('selectedData', selectedData)
+provide('updateQuickViewTable', updateQuickViewTable)
+provide('resetQuickViewTable', resetQuickViewTable)
+provide('changeDataset', changeDataset)
+
 function updateDatasets(selectedTerm) {
-  dataByYear.value.students = studentsStore.students.filter(student => student.admitted_year === selectedTerm.academic_year),
+  dataByYear.value.students = studentsStore.students.filter(student => student.admitted_year === selectedTerm.academic_year)
+
   dataByYear.value.enrollments = enrollmentStore.allEnrolled.filter(enrollment => {
       let date = new Date(enrollment.dateEnrolled).getFullYear()
 
       return (date + '-' + (date+1)) === selectedTerm.academic_year
-  }),
+  })
+
+  enrollmentKPIData.value = dataByYear.value.enrollments.reduce((acc, current) => {
+    if (current.class_level.school_level === 'Grade School') {
+      acc[0] = (acc[0] || 0) + 1;
+    } else {
+      acc[1] = (acc[1] || 0) + 1;
+    }
+    return acc;
+  }, [0, 0]);
+
   dataByYear.value.volunteers = volunteersStore.volunteers.filter(volunteer => volunteer.admitted_year === selectedTerm.academic_year)
 
+  quickViewData.value = JSON.parse(JSON.stringify(dataByYear.value))
+
+  schoolLevelData.value.gradeSchool = dataByYear.value.enrollments.filter(enrollment => enrollment.class_level.school_level === 'Grade School')
+  schoolLevelData.value.juniorHighSchool = dataByYear.value.enrollments.filter(enrollment => enrollment.class_level.school_level === 'Junior High School')
+
   reloadpVisuals()
+}
+
+function updateQuickViewTable(classLevel, attribute, selectedLabel) {
+  selectedData.value = 'Enrollments'
+  quickViewData.value.enrollments = dataByYear.value.enrollments.filter(enrollment => {
+    if(attribute.value === 'category') {
+      return (enrollment.student[attribute.value] === selectedLabel && enrollment.class_level.school_level === classLevel)
+    } else {
+      return (enrollment.student.personal_info[attribute.value] === selectedLabel && enrollment.class_level.school_level === classLevel)
+    }
+  })
+  changeDataset()
+}
+
+function resetQuickViewTable() {
+  quickViewData.value = JSON.parse(JSON.stringify(dataByYear.value))
+  changeDataset()
+}
+
+function changeDataset() {
+    isLoading.value = true
+    setTimeout(function(){
+        isLoading.value = false
+    }, 500);
 }
 
 function reloadCVisuals() {
@@ -236,12 +293,13 @@ function reloadpVisuals() {
 <template>
   <ContentPane :breadcrumb="[{label: 'Dashboard'}]">
     <div class="h-full overflow-y-auto overflow-x-hidden px-4">
-      <Fieldset :toggleable="true"
+      <Fieldset
         :pt="{
-          root: {class: ['border-none bg-transparent !p-0 mb-4']},
+          root: {class: ['h-full border-none bg-transparent !p-0 mb-4']},
           legend: {class: ['!rounded-2xl bg-transparent border-none']},
           toggler: {class: ['!p-2']},
-          content: {class: ['!p-0 !pt-2 flex flex-row']}
+          toggleableContent: {class:['h-full']},
+          content: {class: ['!p-0 !pt-2 h-full flex flex-row']}
         }" :ptOptions="{mergeProps: true}">
         <template #legend>
             <div class="flex align-items-center gap-2 pl-2">
@@ -251,7 +309,7 @@ function reloadpVisuals() {
         </template>
 
         <ProgressSpinner v-if="isCReload" class="flex justify-center" />
-        <div v-else id="cVisuals" class="grow grid xl:grid-cols-2 xl:grid-rows-3 grid-cols-1 grid-rows-4 auto-cols-max auto-rows-max gap-8">
+        <div v-else id="cVisuals" class="grow grid xl:grid-cols-2 xl:grid-rows-3 grid-cols-1 grid-rows-3 auto-cols-max auto-rows-max gap-8">
           <CumulativeWidget :data="cData.students" :filterOptions="studentFilter" icon="fa fa-address-book" title="Admitted Students" color="u-bg-cyan" />
           <CumulativeWidget :data="cData.volunteers" :filterOptions="volunteerFilter" icon="fa fa-chalkboard-user" title="Admitted Volunteers" color="u-bg-pink" />
           <CumulativeLineChart />
@@ -264,7 +322,7 @@ function reloadpVisuals() {
         :pt="{
           root: {class: ['h-full border-none bg-transparent !p-0']},
           legend: {class: ['!rounded-2xl bg-transparent border-none']},
-          toggler: {class: ['!p-2']},
+          toggler: {class: ['flex flex-col !p-2']},
           toggleableContent: {class:['h-full']},
           content: {class: ['h-full flex flex-col !p-0']}
         }" :ptOptions="{mergeProps: true}">
@@ -282,11 +340,15 @@ function reloadpVisuals() {
         </div>
 
         <ProgressSpinner v-if="isPReload" class="grow flex justify-center" />
-        <div v-else id="cVisuals" class="grow grid grid-cols-4 grid-rows-3 auto-rows-max auto-cols-max gap-4">
-          <ListWidget :data="dataByYear" />
-          <KPIWidget :data="dataByYear.students ? dataByYear.students.length : 0" :kpi="selectedTerm ? selectedTerm.student_admission_kpi : 0" title="Student Admissions" label="Student Admissions" :chartColor="documentStyle.getPropertyValue('--cyan-500')" />
-          <KPIWidget :data="dataByYear.enrollments ? dataByYear.enrollments.length : 0" :kpi="selectedTerm ? selectedTerm.enrollment_kpi : 0" title="Enrollments" label="Enrollments" :chartColor="documentStyle.getPropertyValue('--pink-500')" />
-          <KPIWidget :data="dataByYear.volunteers ? dataByYear.volunteers.length : 0" :kpi="selectedTerm ?  selectedTerm.volunteer_admission_kpi : 0" title="Volunteer Admissions" label="Volunteer Admissions" :chartColor="documentStyle.getPropertyValue('--yellow-500')" />
+        <div v-else id="cVisuals" class="grow grid grid-cols-4 grid-rows-4 auto-rows-max auto-cols-max gap-8">
+          <ListWidget :data="quickViewData" />
+          <KPIWidget :data="dataByYear.students ? [dataByYear.students.length] : [0]" :kpi="selectedTerm ? selectedTerm.student_admission_kpi : 0" title="Student Admissions" :label="['Student Admissions']" :chartColor="[documentStyle.getPropertyValue('--cyan-500')]" bgColor="u-bg-cyan" />
+          <KPIWidget :data="enrollmentKPIData ? enrollmentKPIData : [0,0]" :kpi="selectedTerm ? selectedTerm.enrollment_kpi : 0" title="Enrollments" :label="['Grade School','Junior High School']" :chartColor="[documentStyle.getPropertyValue('--pink-500'), documentStyle.getPropertyValue('--purple-500')]" bgColor="u-bg-pink" />
+          <KPIWidget :data="dataByYear.volunteers ? [dataByYear.volunteers.length] : [0]" :kpi="selectedTerm ?  selectedTerm.volunteer_admission_kpi : 0" title="Volunteer Admissions" :label="['Volunteer Admissions']" :chartColor="[documentStyle.getPropertyValue('--yellow-500')]" bgColor="u-bg-yellow" />
+          <div class="grid grid-rows-subgrid grid-cols-2 col-span-3 gap-4">
+            <StudentStatusWidget :data="schoolLevelData.gradeSchool" title="Grade School" icon="fa fa-school" bgColor="u-bg-indigo" />
+            <StudentStatusWidget :data="schoolLevelData.juniorHighSchool" title="Junior High School" icon="fa fa-school" bgColor="u-bg-orange" />
+          </div>
           <LearnersProfile :data="dataByYear.enrollments" />
         </div>
       </Fieldset>
