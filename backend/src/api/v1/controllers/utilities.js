@@ -10,25 +10,8 @@ import {
 
 // for Academic Term Creation Operations
 export async function addTerm(req, res, next) {
-  const { academic_year, start_date, end_date } = req.body;
-
   try {
-    const activeTerm = await Term.findOne({
-      where: { status: true },
-    });
-
-    if (activeTerm) {
-      activeTerm.update({
-        status: false,
-      });
-    }
-
-    const term = await Term.create({
-      academic_year: academic_year,
-      start_date: start_date,
-      end_date: end_date,
-      status: true,
-    });
+    const term = await Term.create(req.body);
 
     const classLevelData = [
       { school_level: "Grade School" },
@@ -37,17 +20,6 @@ export async function addTerm(req, res, next) {
 
     for (const classLevel of classLevelData) {
       await term.createClass_level(classLevel);
-    }
-
-    const classLevels = await ClassLevel.findAll({
-      where: { termId: term.id },
-    });
-    const learningStrands = await LearningStrand.findAll();
-
-    for (const classLevel of classLevels) {
-      for (const learningStrand of learningStrands) {
-        await classLevel.addLearning_strand(learningStrand);
-      }
     }
 
     res.status(201).json({

@@ -27,5 +27,18 @@ export const Term = sequelize.define("term", {
   status: {
     type: BOOLEAN,
     allowNull: false,
+    defaultValue: false
   },
+  student_admission_kpi: {
+    type: INTEGER,
+    defaultValue: 0,
+  },
+  enrollment_kpi: {
+    type: INTEGER,
+    defaultValue: 0,
+  },
+  volunteer_admission_kpi: {
+    type: INTEGER,
+    defaultValue: 0,
+  }
 });

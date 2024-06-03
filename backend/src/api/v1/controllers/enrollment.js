@@ -11,6 +11,8 @@ import {
 
 import { Term, Enrollment } from "../models/index.js";
 import { Student } from "../models/student/student.js";
+import { PersonalInfo } from "../models/student/personal_info.js";
+import { PreviousSchool } from "../models/student/previous_school.js";
 
 /**
  * Retrieves all learners enrolled in a term.
@@ -290,7 +292,9 @@ const clearEnrollmentForm = (filePath) => {
 
 export const getAllEnrollments = async (req, res, next) => {
   try {
-    const enrollments = await Enrollment.findAll();
+    const enrollments = await Enrollment.findAll({
+      include:[ClassLevel, {model: Student, include: [PersonalInfo, PreviousSchool]}]
+    });
     res.status(200).json(enrollments);
   } catch (error) {
     next(error);

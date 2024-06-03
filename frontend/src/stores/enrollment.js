@@ -99,58 +99,58 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     )
   }
 
-  async function getEnrolledModules(enrollmentId, classLearningStrandId) {
-    const authStore = useAuthStore()
+  // async function getEnrolledModules(enrollmentId, classLearningStrandId) {
+  //   const authStore = useAuthStore()
 
-    const result = await axios.get(
-      `http://localhost:8080/api/v1/enrollment/retrieve-modules/${enrollmentId}/${classLearningStrandId}`,
-      {
-        headers: { Authorization: 'Bearer ' + authStore.token }
-      }
-    )
+  //   const result = await axios.get(
+  //     `http://localhost:8080/api/v1/enrollment/retrieve-modules/${enrollmentId}/${classLearningStrandId}`,
+  //     {
+  //       headers: { Authorization: 'Bearer ' + authStore.token }
+  //     }
+  //   )
 
-    modules.value = result.data.modules
-    console.log('modules', modules.value)
-  }
+  //   modules.value = result.data.modules
+  //   console.log('modules', modules.value)
+  // }
 
-  function setModules(modules) {
-    modules.value = modules
-  }
+  // function setModules(modules) {
+  //   modules.value = modules
+  // }
 
-  async function getEnrolledGrades(enrollmentId, classLearningStrandId) {
-    const authStore = useAuthStore()
+  // async function getEnrolledGrades(enrollmentId, classLearningStrandId) {
+  //   const authStore = useAuthStore()
 
-    const result = await axios.get(
-      `http://localhost:8080/api/v1/enrollment/retrieve-grades/${enrollmentId}/${classLearningStrandId}`,
-      {
-        headers: { Authorization: 'Bearer ' + authStore.token }
-      }
-    )
+  //   const result = await axios.get(
+  //     `http://localhost:8080/api/v1/enrollment/retrieve-grades/${enrollmentId}/${classLearningStrandId}`,
+  //     {
+  //       headers: { Authorization: 'Bearer ' + authStore.token }
+  //     }
+  //   )
 
-    grades.value = result.data.grades
-  }
+  //   grades.value = result.data.grades
+  // }
 
-  function setGrades(grades) {
-    grades.value = grades
-  }
+  // function setGrades(grades) {
+  //   grades.value = grades
+  // }
 
-  async function getEnrolledAttendance(enrollmentId, classLearningStrandId) {
-    const authStore = useAuthStore()
+  // async function getEnrolledAttendance(enrollmentId, classLearningStrandId) {
+  //   const authStore = useAuthStore()
 
-    const result = await axios.get(
-      `http://localhost:8080/api/v1/enrollment/retrieve-attendance/${enrollmentId}/${classLearningStrandId}`,
-      {
-        headers: { Authorization: 'Bearer ' + authStore.token }
-      }
-    )
+  //   const result = await axios.get(
+  //     `http://localhost:8080/api/v1/enrollment/retrieve-attendance/${enrollmentId}/${classLearningStrandId}`,
+  //     {
+  //       headers: { Authorization: 'Bearer ' + authStore.token }
+  //     }
+  //   )
 
-    attendance.value = result.data.attendance
-    console.log('attendance', attendance.value)
-  }
+  //   attendance.value = result.data.attendance
+  //   console.log('attendance', attendance.value)
+  // }
 
-  function setAttendance(attendance) {
-    attendance.value = attendance
-  }
+  // function setAttendance(attendance) {
+  //   attendance.value = attendance
+  // }
 
   async function getAllEnrollments() {
     const authStore = useAuthStore()
@@ -173,12 +173,12 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     enrollLearners,
     getEnrolled,
     updateLearner,
-    setModules,
-    getEnrolledModules,
-    getEnrolledGrades,
-    setGrades,
-    getEnrolledAttendance,
-    setAttendance,
+    // setModules,
+    // getEnrolledModules,
+    // getEnrolledGrades,
+    // setGrades,
+    // getEnrolledAttendance,
+    // setAttendance,
     getAllEnrollments
   }
 })

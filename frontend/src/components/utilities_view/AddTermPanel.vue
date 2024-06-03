@@ -13,10 +13,15 @@ const toast = useToast()
 
 const op = inject('op')
 const batch = ref(null)
+const saKPI = ref(0)
+const eKPI = ref(0)
+const vaKPI = ref(0)
 const dates = ref(null);
 const disableAdd = computed(() => invalidBatch.value || invalidRange.value || !batch.value || (dates.value ? !dates.value[1] : !dates.value))
 const invalidBatch = ref(false)
 const invalidRange = ref(false)
+
+const onSubmit = inject('updateTermsTable')
 
 async function addTerm() {
     try {        
@@ -28,13 +33,16 @@ async function addTerm() {
         }
         
         await utilitiesStore.addTerm({
-            batch_number: batch,
+            batch_number: batch.value,
             academic_year: range.value[0].getFullYear() + '-' + range.value[1].getFullYear(),
             start_date: range.value[0],
             end_date: range.value[1],
+            student_admission_kpi: saKPI.value,
+            enrollment_kpi: eKPI.value,
+            volunteer_admission_kpi: vaKPI.value
         })
 
-        await utilitiesStore.getTerms()
+        onSubmit()
 
         toast.add({
             severity: 'success',
@@ -126,6 +134,21 @@ function resetForm() {
                 <div class="flex flex-col">
                     <label>Start Date - End Date</label>
                     <Calendar v-model="dates" id="calendar" :invalid="invalidRange" showIcon showButtonBar iconDisplay="input" selectionMode="range" hideOnRangeSelection :manualInput="false" @update:modelValue="validateInputs" />
+                </div>
+                <div class="flex flex-col">
+                    <label>Student Admission KPI</label>
+                    <InputNumber v-model="saKPI" :min="0" />
+                    <small>Optional</small>
+                </div>
+                <div class="flex flex-col">
+                    <label>Enrollment KPI</label>
+                    <InputNumber v-model="eKPI" :min="0" />
+                    <small>Optional</small>
+                </div>
+                <div class="flex flex-col">
+                    <label>Volunteer Admission KPI</label>
+                    <InputNumber v-model="vaKPI" :min="0" />
+                    <small>Optional</small>
                 </div>
             </div>
             <div class="flex justify-end gap-2">

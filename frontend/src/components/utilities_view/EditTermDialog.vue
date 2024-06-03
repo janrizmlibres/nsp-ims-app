@@ -188,6 +188,21 @@ onBeforeRouteLeave(() => {
                 <Calendar v-model="dates" id="calendar" showIcon showButtonBar iconDisplay="input" selectionMode="range" :invalid="invalidRange" hideOnRangeSelection :manualInput="false" @update:modelValue="validateInputs" />
                 <small>Optional</small>
             </div>
+            <div class="flex flex-col">
+                <label>Student Admission KPI</label>
+                <InputNumber v-model="term.saKPI" :min="0" />
+                <small>Optional</small>
+            </div>
+            <div class="flex flex-col">
+                <label>Enrollment KPI</label>
+                <InputNumber v-model="term.eKPI" :min="0" />
+                <small>Optional</small>
+            </div>
+            <div class="flex flex-col">
+                <label>Volunteer Admission KPI</label>
+                <InputNumber v-model="term.vaKPI" :min="0" />
+                <small>Optional</small>
+            </div>
         </div>
         <div class="flex justify-end gap-2">
             <Button type="button" outlined rounded label="Update" :disabled="disableUpdate" @click="updateTerm" class="u-border-pcolor u-txt-pcolor hover:u-bg-pcolor-2 hover:text-white" />

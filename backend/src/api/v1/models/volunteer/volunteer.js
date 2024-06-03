@@ -22,6 +22,10 @@ export const Volunteer = sequelize.define("volunteer", {
   },
   middleName: STRING,
   suffix: STRING,
+  admitted_year: {
+    type: STRING,
+    allowNull: false
+  },
   isArchived: {
     type: BOOLEAN,
     allowNull: false,

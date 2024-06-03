@@ -38,4 +38,8 @@ export const Student = sequelize.define("student", {
       throw new Error("Do not try to set the `fullname` value!");
     },
   },
+  admitted_year: {
+    type: STRING,
+    allowNull: false
+  },
 });
