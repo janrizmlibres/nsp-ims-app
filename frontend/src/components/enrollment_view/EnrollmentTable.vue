@@ -169,8 +169,8 @@ function editEnrolled(data) {
 
 async function downloadEnrollmentForm(name, filePath) {
   try {
-    console.log('http://localhost:8080/' + filePath)
-    const response = await fetch(import.meta.env.VITE_API_ENDPOINT + `/${filePath}`)
+    filePath = filePath.replace(/ /g, '%20');
+    const response = await fetch(import.meta.env.VITE_API_ENDPOINT + `${filePath}`)
     if (!response.ok) {
       throw new Error('HTTP error ' + response.status)
     }

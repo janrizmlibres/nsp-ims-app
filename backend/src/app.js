@@ -53,6 +53,7 @@ app.use(
 );
 app.use(
   "/static/documents/pdfs",
+  cors(),
   express.static(path.join(__dirname, "../static/documents/pdfs"))
 );
 
