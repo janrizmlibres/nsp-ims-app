@@ -85,13 +85,13 @@ export const useEnrollmentStore = defineStore('enrollment', () => {
     })
   }
 
-  async function changeEnrolledStatus(enrollmentId, statusToChange) {
+  async function changeEnrolledStatus(enrollmentId, status) {
     const authStore = useAuthStore()
 
     await axios.patch(
       `http://localhost:8080/api/v1/enrollment/${enrollmentId}/status/update`,
       {
-        statusToChange
+        status
       },
       {
         headers: { Authorization: 'Bearer ' + authStore.token }

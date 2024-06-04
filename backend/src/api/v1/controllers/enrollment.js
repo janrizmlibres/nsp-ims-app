@@ -269,7 +269,7 @@ export const changeEnrollmentStatus = async (req, res, next) => {
     const enrollment = await Enrollment.findByPk(req.params.enrollmentId);
 
     await enrollment.update({
-      status: req.body.statusToChange,
+      status: req.body.status,
     });
 
     res.status(201).json({
