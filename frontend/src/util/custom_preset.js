@@ -79,7 +79,7 @@ const customPreset = usePassThrough(
     },
     datatable: {
       root: {
-        class: ['flex flex-col h-full pt-2 overflow-auto']
+        class: ['flex flex-col h-full overflow-auto']
       },
       column: {
         headercell: ({ context, props }) => ({

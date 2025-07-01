@@ -25,13 +25,15 @@ const toast = useToast()
 const volunteerStore = useVolunteerStore()
 const userStore = useUsersStore()
 
+let date = new Date().getFullYear()
 const initialData = {
   volunteerHeader: {
     affiliation: null,
     firstName: null,
     middleName: null,
     lastName: null,
-    suffix: null
+    suffix: null,
+    admitted_year: date + '-' + (date+1)
   },
 
   personalInformation: {

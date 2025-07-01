@@ -51,11 +51,11 @@ async function addLearningStrand() {
             return
         }
     
-        if (code.value.trim().length > 25) {
+        if (code.value.trim().length > 50) {
             toast.add({
                 severity: 'error',
                 summary: 'Code Too Long',
-                detail: 'It should not exceed 25 characters.',
+                detail: 'It should not exceed 50 characters.',
                 life: 3000
             })
             return

@@ -101,12 +101,10 @@ export default {
 }
 
 .widget {
-    display: flex;
+  display: flex;
   flex-direction: column;
   justify-content: flex-start; /* Aligns children to the start on the main axis */
   align-items: flex-start; /* Aligns children to the start on the cross axis */
-  width: 24.375rem;
-  height: 9.375rem;
   background-color: white;
   border-radius: 0.625rem;
   border-bottom: 0.3125rem solid #265492;

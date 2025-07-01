@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 import axios from 'axios'
 
 test('login test', async () => {
-  const response = await axios.post('http://localhost:8080/auth/login', {
+  const response = await axios.post(import.meta.env.VITE_API_ENDPOINT + 'auth/login', {
     userId: '91267',
     password: 'rootpass'
   })
@@ -23,7 +23,7 @@ test('login test', async () => {
 
 test('login test - no user ID', async () => {
   try {
-    await axios.post('http://localhost:8080/auth/login', {
+    await axios.post(import.meta.env.VITE_API_ENDPOINT + 'auth/login', {
       password: 'rootpass'
     })
   } catch (error) {
@@ -36,7 +36,7 @@ test('login test - no user ID', async () => {
 
 test('login test - no password', async () => {
   try {
-    await axios.post('http://localhost:8080/auth/login', {
+    await axios.post(import.meta.env.VITE_API_ENDPOINT + 'auth/login', {
       userId: '91267'
     })
   } catch (error) {
@@ -49,7 +49,7 @@ test('login test - no password', async () => {
 
 test('login test - user ID does not exist', async () => {
   try {
-    await axios.post('http://localhost:8080/auth/login', {
+    await axios.post(import.meta.env.VITE_API_ENDPOINT + 'auth/login', {
       userId: '00000',
       password: 'rootpass'
     })
@@ -63,7 +63,7 @@ test('login test - user ID does not exist', async () => {
 
 test('login test - incorrect password', async () => {
   try {
-    await axios.post('http://localhost:8080/auth/login', {
+    await axios.post(import.meta.env.VITE_API_ENDPOINT + 'auth/login', {
       userId: '91267',
       password: 'wrongpass'
     })

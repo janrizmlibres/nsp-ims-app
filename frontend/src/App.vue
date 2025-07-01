@@ -29,32 +29,12 @@ axios.interceptors.response.use(
         error.response.data.message === 'Not authenticated.')
     ) {
       confirm.require({
-        group: 'authenticationError',
-        message: ' Do you want to extend your session? ',
+        group: 'sessionError',
+        message: ' Your session has expired. You have been logged out. ',
         header: 'Confirmation',
-        acceptButton: 'Yes',
-        rejectButton: 'No',
+        acceptButton: 'OK',
         accept: async () => {
-          await authStore.extendSession()
-
-          confirm.require({
-            group: 'user-headless',
-            header: 'Session Extended',
-            message: 'Your session has been extended.',
-            acceptLabel: 'OK',
-            icon: 'fa-solid fa-hourglass-start'
-          })
-        },
-        reject: async () => {
           await authStore.logout()
-
-          confirm.require({
-            group: 'user-headless',
-            header: 'You Have Been Logged Out',
-            message: 'Session Expired. Please login again.',
-            acceptLabel: 'OK',
-            icon: 'fa-solid fa-road-barrier'
-          })
 
           await router.push({ name: 'login' })
         }

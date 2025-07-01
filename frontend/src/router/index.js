@@ -10,7 +10,9 @@ import EnrollLearnersView from '@/views/enrollment/EnrollLearnersView.vue'
 import EditEnrolledView from '@/views/enrollment/EditEnrolledView.vue'
 
 // Class Management Views
-import ManageClassView from '@/views/class_mgmt/ManageClassView.vue'
+import ClassesView from '@/views/class_mgmt/ClassesView.vue'
+import ClassView from '@/views/class_mgmt/ClassView.vue'
+import StrandView from '@/views/class_mgmt/StrandView.vue'
 import ModuleView from '../views/class_mgmt/ModuleView.vue'
 import SessionView from '@/views/class_mgmt/SessionView.vue'
 
@@ -19,6 +21,7 @@ import StudentCategoryView from '@/views/utilities/StudentCategoryView.vue'
 import StudentRequirementView from '@/views/utilities/StudentRequirementView.vue'
 import LearningStrandView from '@/views/utilities/LearningStrandView.vue'
 import TermView from '@/views/utilities/TermView.vue'
+import ClassConfigureView from '@/views/utilities/ClassConfigureView.vue'
 
 // User Management Views
 import UserRecordsView from '@/views/user_mgmt/UserRecordsView.vue'
@@ -34,6 +37,8 @@ import VolunteerRecordsView from '@/views/volunteer_view/VolunteerRecordsView.vu
 import AdmitVolunteerView from '@/views/volunteer_view/AdmitVolunteerView.vue'
 
 import { useAuthStore } from '@/stores/auth'
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -178,28 +183,23 @@ const router = createRouter({
           },
           children: [
             {
+              path: '/classes',
+              name: 'classes',
+              component: ClassesView
+            },
+            {
               path: '/class',
-              name: 'class-management',
-              component: ManageClassView
-            },
-            {
-              path: '/module',
-              name: 'module-info',
-              component: ModuleView,
-              query: { id: Number, status: Boolean },
+              name: 'class',
+              query: {id: Number, strand: Number, module: Number, session: Number},
+              components: [ClassView, StrandView, ModuleView, SessionView],
               beforeEnter: (to) => {
-                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
+                if (
+                  !to.query.id ||
+                  (to.query.id && (to.query.module || to.query.session))
+                ) return {name: 'dashboard'}
+                else return true
               }
             },
-            {
-              path: '/session',
-              name: 'session-info',
-              component: SessionView,
-              query: { id: Number, status: Boolean },
-              beforeEnter: (to) => {
-                return Object.keys(to.query).length === 0 ? { name: 'dashboard' } : true
-              }
-            }
           ]
         },
         {
@@ -245,24 +245,30 @@ const router = createRouter({
           },
           children: [
             {
-              path: '/configuration/academic_terms',
+              path: 'academic_terms',
               name: 'academic-term-configuration',
               component: TermView
             },
             {
-              path: '/configuration/learning_strand',
+              path: 'learning_strand',
               name: 'learning-strand-configuration',
               component: LearningStrandView
             },
             {
-              path: '/configuration/student_requirement',
+              path: 'student_requirement',
               name: 'student-requirement-configuration',
               component: StudentRequirementView
             },
             {
-              path: '/configuration/student_category',
+              path: 'student_category',
               name: 'student-category-configuration',
               component: StudentCategoryView
+            },
+            {
+              path: 'class',
+              name: 'class-configuration',
+              query: {id: Number},
+              component: ClassConfigureView
             }
           ]
         },
@@ -275,10 +281,6 @@ const router = createRouter({
     },
     { path: '/:misc(.*)', redirect: { name: 'login' } }
   ]
-})
-
-router.getRoutes().forEach((route) => {
-  route.components ? (route.components.default.name = route.name) : null
 })
 
 router.beforeEach((to) => {

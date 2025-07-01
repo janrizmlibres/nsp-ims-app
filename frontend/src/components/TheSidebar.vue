@@ -80,7 +80,7 @@ const items = computed(() => [
     key: '5',
     label: 'Class Management',
     icon: 'fa fa-book-open',
-    route: { name: 'class-management' }
+    route: { name: 'classes' }
   },
   {
     key: '6',
