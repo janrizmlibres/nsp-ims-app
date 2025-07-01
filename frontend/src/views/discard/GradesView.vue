@@ -6,7 +6,7 @@ import { useToast } from 'primevue/usetoast';
 
 // // Custom
 import ContentPane from '@/components/UI/ContentPane.vue';
-import GradesSection from '@/components/class_mgmt/manage_grade_view/GradesTab.vue';
+import GradesSection from '@/components/class_mgmt/class_learning_strand_view/grades_tab/GradesTab.vue';
 
 // stores
 import { useClassLearningStrandStore } from '@/stores/class_learning_strand';

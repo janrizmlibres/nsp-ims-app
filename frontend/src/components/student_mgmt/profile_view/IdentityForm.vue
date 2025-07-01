@@ -260,30 +260,21 @@ onMounted(async () => {
         </FloatLabel>
 
         <FloatLabel class="col-span-2 mt-5 mb-3" :pt="floatLabelPt">
-          <ValidateField v-slot="slotProps">
-            <InputText
-              class="w-full"
-              id="lrn"
-              type="text"
-              v-model="name.lrn"
-              required
-              @update:modelValue="
-                () => {
-                  handleUpdate()
-                  slotProps.inputEntered(name.lrn)
-                }
-              "
-              :pt="{
-                root: ({ context }) => {
-                  return { class: [{ '!opacity-100': context.disabled }] }
-                }
-              }"
-              :ptOptions="{ mergeProps: true }"
-              :disabled="isViewMode"
-              :invalid="slotProps.isInvalid"
-            />
-          </ValidateField>
-          <label for="lrn">LRN <span class="text-red-500 text-xl">*</span></label>
+          <InputText
+            class="w-full"
+            id="lrn"
+            type="text"
+            v-model="lrn"
+            @update:modelValue="handleUpdate"
+            :pt="{
+              root: ({ context }) => {
+                return { class: [{ '!opacity-100': context.disabled }] }
+              }
+            }"
+            :ptOptions="{ mergeProps: true }"
+            :disabled="isViewMode"
+          />
+          <label for="lrn">LRN</label>
         </FloatLabel>
 
         <FloatLabel class="col-span-2 mt-5 mb-3" :pt="floatLabelPt">

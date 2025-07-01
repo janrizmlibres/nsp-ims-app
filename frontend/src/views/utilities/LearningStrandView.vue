@@ -106,11 +106,11 @@ const onRowEditSave = async (event) => {
             return
         }
 
-        if (newData.code.trim().length > 25) {
+        if (newData.code.trim().length > 50) {
             toast.add({
                 severity: 'error',
                 summary: 'Code Too Long',
-                detail: 'It should not exceed 25 characters.',
+                detail: 'It should not exceed 50 characters.',
                 life: 3000
             })
             return

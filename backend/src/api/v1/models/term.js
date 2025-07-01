@@ -1,0 +1,44 @@
+import { INTEGER, DATE, BOOLEAN, STRING } from "sequelize";
+import sequelize from "../../../util/database.js";
+
+export const Term = sequelize.define("term", {
+  id: {
+    type: INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true,
+  },
+  batch_number: {
+    type: INTEGER,
+    allowNull: false,
+  },
+  academic_year: {
+    type: STRING,
+    allowNull: false,
+  },
+  start_date: {
+    type: DATE,
+    allowNull: false,
+  },
+  end_date: {
+    type: DATE,
+    allowNull: false,
+  },
+  status: {
+    type: BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  student_admission_kpi: {
+    type: INTEGER,
+    defaultValue: 0,
+  },
+  enrollment_kpi: {
+    type: INTEGER,
+    defaultValue: 0,
+  },
+  volunteer_admission_kpi: {
+    type: INTEGER,
+    defaultValue: 0,
+  }
+});

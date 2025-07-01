@@ -28,34 +28,33 @@ const toast = useToast()
 const termStore = useTermStore()
 const dt = ref()
 
-const menu = ref();
+const menu = ref()
 const items = ref((data) => [
-    {
-        label: 'Options',
-        items: [
-            {
-                label: 'edit',
-                icon: 'fa fa-pencil',
-                command: () => editEnrolled(data)
-            },
-            {
-                label: data.status === 'Active' ? 'Deactivate' : 'Activate',
-                icon: data.status === 'Active' ? 'fa fa-toggle-on' : 'fa fa-toggle-off',
-                command: () => confirmStatusChange(data)
-                
-            },
-            {
-                label: 'drop',
-                icon: 'fa fa-user-minus',
-                command: () => confirmDrop(data)
-            }
-        ]
-    }
-]);
+  {
+    label: 'Options',
+    items: [
+      {
+        label: 'edit',
+        icon: 'fa fa-pencil',
+        command: () => editEnrolled(data)
+      },
+      {
+        label: data.status === 'Active' ? 'Deactivate' : 'Activate',
+        icon: data.status === 'Active' ? 'fa fa-toggle-on' : 'fa fa-toggle-off',
+        command: () => confirmStatusChange(data)
+      },
+      {
+        label: 'drop',
+        icon: 'fa fa-user-minus',
+        command: () => confirmDrop(data)
+      }
+    ]
+  }
+])
 
 const toggle = (event) => {
-    menu.value.toggle(event);
-};
+  menu.value.toggle(event)
+}
 
 const confirmDrop = (data) => {
   confirm.require({
@@ -120,7 +119,7 @@ async function refreshStudentTable() {
   }
 }
 
-const getSeverity = (data) => {
+const getSeverityStatus = (data) => {
   switch (data) {
     case 'Active':
       return 'success'
@@ -130,6 +129,25 @@ const getSeverity = (data) => {
 
     case 'Drop':
       return 'danger'
+
+    default:
+      return null
+  }
+}
+
+const getSeverityPromotionStatus = (data) => {
+  switch (data) {
+    case 'Passed':
+      return 'success'
+
+    case 'Completed':
+      return 'info'
+
+    case 'Failed':
+      return 'danger'
+
+    case 'Pending':
+      return 'warning'
 
     default:
       return null
@@ -155,10 +173,12 @@ const filters = ref({
     constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
   },
   schoolLevel: { value: null, matchMode: FilterMatchMode.EQUALS },
-  status: { value: null, matchMode: FilterMatchMode.EQUALS }
+  status: { value: null, matchMode: FilterMatchMode.EQUALS },
+  promotionStatus: { value: null, matchMode: FilterMatchMode.EQUALS }
 })
 
 const statuses = ref(['Active', 'Inactive', 'Drop'])
+const promotionStatuses = ref(['Passed', 'Completed', 'Failed', 'Pending'])
 const schoolLevels = ref(['Grade School', 'Junior High School'])
 
 function editEnrolled(data) {
@@ -170,26 +190,26 @@ function editEnrolled(data) {
 
 async function downloadEnrollmentForm(name, filePath) {
   try {
-    console.log("http://localhost:8080/" + filePath);
-    const response = await fetch(`http://localhost:8080/${filePath}`);
+    filePath = filePath.replace(/ /g, '%20');
+    const response = await fetch(import.meta.env.VITE_API_ENDPOINT + `${filePath}`)
     if (!response.ok) {
-      throw new Error("HTTP error " + response.status);
+      throw new Error('HTTP error ' + response.status)
     }
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${name}_enrollment_form.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const blob = await response.blob()
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${name}_enrollment_form.pdf`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   } catch (error) {
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: error.message,
       life: 3000
-    });
+    })
   }
 }
 
@@ -197,27 +217,37 @@ refreshStudentTable()
 </script>
 
 <template>
-  <EnrollmentHeader
-    :dt="dt"
-    :globalFilter="filters"
-  />
-  <Card :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }" class="h-full !rounded-2xl inline-block">
+  <EnrollmentHeader :dt="dt" :globalFilter="filters" />
+  <Card
+    :pt="{ content: 'h-full', body: 'h-full px-4 pt-1' }"
+    class="h-full !rounded-2xl inline-block"
+  >
     <template #content>
       <DataTable
         ref="dt"
         v-model:filters="filters"
         :value="learnersData"
-        paginator :rows="15" :rowsPerPageOptions="[15, 20, 30, 50]"
+        paginator
+        :rows="15"
+        :rowsPerPageOptions="[15, 20, 30, 50]"
         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
         currentPageReportTemplate="{first} to {last} of {totalRecords}"
         dataKey="id"
         filterDisplay="menu"
-        :globalFilterFields="['lrn', 'lastName', 'firstName', 'middleName', 'schoolLevel', 'status']"
+        :globalFilterFields="[
+          'lrn',
+          'lastName',
+          'firstName',
+          'middleName',
+          'schoolLevel',
+          'status',
+          'promotionStatus'
+        ]"
         removableSort
       >
         <template #empty> <div class="text-center">No records found.</div> </template>
 
-        <column frozen field="lrn" header="LRN" style="min-width: 12rem;" sortable>
+        <column frozen field="lrn" header="LRN" style="min-width: 12rem" sortable>
           <template #body="{ data }">
             {{ data.lrn }}
           </template>
@@ -230,7 +260,7 @@ refreshStudentTable()
             />
           </template>
         </column>
-        <column frozen field="lastName" header="Last Name" style="min-width: 12rem;" sortable>
+        <column frozen field="lastName" header="Last Name" style="min-width: 12rem" sortable>
           <template #body="{ data }">
             {{ data.lastName }}
           </template>
@@ -243,7 +273,7 @@ refreshStudentTable()
             />
           </template>
         </column>
-        <column frozen field="firstName" header="First Name" style="min-width: 12rem;" sortable>
+        <column frozen field="firstName" header="First Name" style="min-width: 12rem" sortable>
           <template #body="{ data }">
             {{ data.firstName }}
           </template>
@@ -256,7 +286,7 @@ refreshStudentTable()
             />
           </template>
         </column>
-        <column field="middleName" header="Middle Name" style="min-width: 14rem;" sortable>
+        <column field="middleName" header="Middle Name" style="min-width: 14rem" sortable>
           <template #body="{ data }">
             {{ data.middleName }}
           </template>
@@ -296,20 +326,17 @@ refreshStudentTable()
             </Dropdown>
           </template>
         </column>
-        <column field="dateEnrolled" header="Date Enrolled" style="min-width: 12rem;" sortable>
+        <column field="dateEnrolled" header="Date Enrolled" style="min-width: 12rem" sortable>
           <template #body="{ data }">
             {{ data.dateEnrolled ? new Date(data.dateEnrolled).toISOString().split('T')[0] : '' }}
           </template>
         </column>
-        <column
-          header="Enrollment Form"
-          style="min-width: 10rem;"
-        >
+        <column header="Enrollment Form" style="min-width: 10rem">
           <template #body="{ data }">
             <Button
               icon="fa fa-eye"
               label="View"
-              @click="downloadEnrollmentForm(data.lastName, data.enrollmentFormURL)" 
+              @click="downloadEnrollmentForm(data.lastName, data.enrollmentFormURL)"
               size="small"
               class="u-bg-scolor text-white hover:transform hover:u-bg-scolor hover:scale-[1.10]"
             />
@@ -324,7 +351,7 @@ refreshStudentTable()
         >
           <template #body="{ data }">
             <div class="flex align-items-center gap-2">
-              <Tag :value="data.status" :severity="getSeverity(data.status)" />
+              <Tag :value="data.status" :severity="getSeverityStatus(data.status)" />
             </div>
           </template>
           <template #filter="{ filterModel }">
@@ -336,12 +363,39 @@ refreshStudentTable()
             >
               <template #option="slotProps">
                 <div class="flex align-items-center gap-2">
-                  <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                  <Tag :value="slotProps.option" :severity="getSeverityStatus(slotProps.option)" />
                 </div>
               </template>
             </Dropdown>
           </template>
-        </Column>
+        </column>
+        <column
+            header="Promotion Status"
+            filterField="promotionStatus"
+            :showFilterMatchModes="false"
+            :filterMenuStyle="{ width: '7rem' }"
+            style="min-width: 7rem"
+        >
+          <template #body="{ data }">
+            <div class="flex align-items-center gap-2">
+              <Tag :value="data.promotionStatus" :severity="getSeverityPromotionStatus(data.promotionStatus)" />
+            </div>
+          </template>
+          <template #filter="{ filterModel }">
+            <Dropdown
+                v-model="filterModel.value"
+                :options="promotionStatuses"
+                placeholder="Select One"
+                class="p-column-filter"
+            >
+              <template #option="slotProps">
+                <div class="flex align-items-center gap-2">
+                  <Tag :value="slotProps.option" :severity="getSeverityPromotionStatus(slotProps.option)" />
+                </div>
+              </template>
+            </Dropdown>
+          </template>
+        </column>
         <column
           headerStyle="width: 5rem; text-align: center"
           bodyStyle="text-align: center; overflow: visible"
@@ -349,18 +403,27 @@ refreshStudentTable()
           frozen
         >
           <template #body="{ data }">
-            <Button v-if="data.status !== 'Drop'" type="button" icon="pi pi-ellipsis-v" @click="toggle" text aria-haspopup="true" aria-controls="overlay_menu" class="u-txt-active hover:transform hover:bg-transparent hover:scale-[1.10]" />
+            <Button
+              v-if="data.status !== 'Drop'"
+              type="button"
+              icon="pi pi-ellipsis-v"
+              @click="toggle"
+              text
+              aria-haspopup="true"
+              aria-controls="overlay_menu"
+              class="u-txt-active hover:transform hover:bg-transparent hover:scale-[1.10]"
+            />
             <Menu ref="menu" id="overlay_menu" :model="items(data)" :popup="true" />
           </template>
         </column>
 
         <template #footer>
           <span class="font-medium">
-              Record(s) count:
-              <span class="u-txt-red">
-                {{ learnersData.length }}
-              </span>
+            Record(s) count:
+            <span class="u-txt-red">
+              {{ learnersData.length }}
             </span>
+          </span>
         </template>
       </DataTable>
     </template>
