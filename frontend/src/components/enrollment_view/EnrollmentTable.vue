@@ -119,7 +119,7 @@ async function refreshStudentTable() {
   }
 }
 
-const getSeverity = (data) => {
+const getSeverityStatus = (data) => {
   switch (data) {
     case 'Active':
       return 'success'
@@ -129,6 +129,25 @@ const getSeverity = (data) => {
 
     case 'Drop':
       return 'danger'
+
+    default:
+      return null
+  }
+}
+
+const getSeverityPromotionStatus = (data) => {
+  switch (data) {
+    case 'Passed':
+      return 'success'
+
+    case 'Completed':
+      return 'info'
+
+    case 'Failed':
+      return 'danger'
+
+    case 'Pending':
+      return 'warning'
 
     default:
       return null
@@ -154,10 +173,12 @@ const filters = ref({
     constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
   },
   schoolLevel: { value: null, matchMode: FilterMatchMode.EQUALS },
-  status: { value: null, matchMode: FilterMatchMode.EQUALS }
+  status: { value: null, matchMode: FilterMatchMode.EQUALS },
+  promotionStatus: { value: null, matchMode: FilterMatchMode.EQUALS }
 })
 
 const statuses = ref(['Active', 'Inactive', 'Drop'])
+const promotionStatuses = ref(['Passed', 'Completed', 'Failed', 'Pending'])
 const schoolLevels = ref(['Grade School', 'Junior High School'])
 
 function editEnrolled(data) {
@@ -219,7 +240,8 @@ refreshStudentTable()
           'firstName',
           'middleName',
           'schoolLevel',
-          'status'
+          'status',
+          'promotionStatus'
         ]"
         removableSort
       >
@@ -329,7 +351,7 @@ refreshStudentTable()
         >
           <template #body="{ data }">
             <div class="flex align-items-center gap-2">
-              <Tag :value="data.status" :severity="getSeverity(data.status)" />
+              <Tag :value="data.status" :severity="getSeverityStatus(data.status)" />
             </div>
           </template>
           <template #filter="{ filterModel }">
@@ -341,7 +363,34 @@ refreshStudentTable()
             >
               <template #option="slotProps">
                 <div class="flex align-items-center gap-2">
-                  <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                  <Tag :value="slotProps.option" :severity="getSeverityStatus(slotProps.option)" />
+                </div>
+              </template>
+            </Dropdown>
+          </template>
+        </column>
+        <column
+            header="Promotion Status"
+            filterField="promotionStatus"
+            :showFilterMatchModes="false"
+            :filterMenuStyle="{ width: '7rem' }"
+            style="min-width: 7rem"
+        >
+          <template #body="{ data }">
+            <div class="flex align-items-center gap-2">
+              <Tag :value="data.promotionStatus" :severity="getSeverityPromotionStatus(data.promotionStatus)" />
+            </div>
+          </template>
+          <template #filter="{ filterModel }">
+            <Dropdown
+                v-model="filterModel.value"
+                :options="promotionStatuses"
+                placeholder="Select One"
+                class="p-column-filter"
+            >
+              <template #option="slotProps">
+                <div class="flex align-items-center gap-2">
+                  <Tag :value="slotProps.option" :severity="getSeverityPromotionStatus(slotProps.option)" />
                 </div>
               </template>
             </Dropdown>

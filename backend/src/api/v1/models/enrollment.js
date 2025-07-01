@@ -29,6 +29,7 @@ export const Enrollment = sequelize.define("enrollment", {
   ftl_pretest: INTEGER,
   dateEnrolled: DATE,
   status: STRING,
+  promotionStatus: STRING,
   regularity: STRING,
   remarks: TEXT,
   enrollmentFormURL: STRING,

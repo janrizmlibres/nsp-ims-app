@@ -53,6 +53,7 @@ export const getAllEnrolledOnTerm = async (req, res, next) => {
           schoolLevel: classLevel.school_level,
           dateEnrolled: student.enrollment.dateEnrolled,
           status: student.enrollment.status,
+          promotionStatus: student.enrollment.promotionStatus,
           term: currentTerm.academic_year,
           classLevelId: classLevel.id,
           enrollmentId: student.enrollment.id,
@@ -146,6 +147,7 @@ export const enrollLearners = async (req, res, next) => {
           ftl_pretest: learner.fltPretestScore,
           dateEnrolled: new Date(),
           status: "Active",
+          promotionStatus: "Pending",
           regularity: learner.selectedRegularity,
           remarks: learner.selectedRemarks,
           enrollmentFormURL:
@@ -267,7 +269,7 @@ export const changeEnrollmentStatus = async (req, res, next) => {
     const enrollment = await Enrollment.findByPk(req.params.enrollmentId);
 
     await enrollment.update({
-      status: req.body.statusToChange,
+      status: req.body.status,
     });
 
     res.status(201).json({
