@@ -53,4 +53,4 @@ The backend's controller tests use Mocha, Chai and Sinon. Run `npx mocha --timeo
 
 ## License
 
-Released under the CC0 1.0 Universal license.
+Released under the CC0 1.0 Universal license. See [LICENSE](LICENSE).
